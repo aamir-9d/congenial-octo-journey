@@ -1,6 +1,12 @@
 ---
+import Disclose from './Disclose.astro';
+
 /**
  * "Three places the money goes missing." Dark section, four cards.
+ *
+ * Below 768px each card's body collapses behind a tap target: the title and the
+ * red code line carry the point, and four full paragraphs stacked is a wall on
+ * a phone.
  *
  * Every string is byte-identical to the export. Apostrophes are ASCII U+0027,
  * not typographic — the export used no curly quotes anywhere, and swapping
@@ -54,7 +60,9 @@ const problems = [
           <div data-reveal="1" class:list={['problems__card', { 'problems__card--lead': p.highlight }]}>
             <div class:list={['problems__num', { 'problems__num--amber': p.numAmber }]}>{p.num}</div>
             <h3 class="problems__title">{p.title}</h3>
-            <p class="problems__body">{p.body}</p>
+            <Disclose label="Why it happens" describes={p.title} class="disclose--on-dark">
+              <p class="problems__body">{p.body}</p>
+            </Disclose>
             <div class="problems__code">{p.code}</div>
           </div>
         ))
@@ -63,6 +71,7 @@ const problems = [
       <div data-reveal="1" class="problems__card">
         <div class="problems__num">04</div>
         <h3 class="problems__title">The web-to-app gap.</h3>
+        <Disclose label="Why it happens" describes="The web-to-app gap" class="disclose--on-dark">
         <p class="problems__body">
           Someone clicks a Google ad on your website, installs later, subscribes a week after that.
           Without <span class="problems__token">gclid</span>/<span class="problems__token"
@@ -70,6 +79,7 @@ const problems = [
           >/<span class="problems__token">wbraid</span> capture and a conversion sent back, Google
           never learns which click earned the money &#8212; so it optimises toward the wrong people.
         </p>
+        </Disclose>
         <div class="problems__code">web_click &#8594; install &#8594; ??? &#8594; subscription</div>
       </div>
     </div>

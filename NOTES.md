@@ -107,6 +107,34 @@ every sibling in its row — so instead the title and meta each reserve two line
 via `min-height: calc(2 * 1.65em)`. Closed cards line up; opening one still
 grows only itself.
 
+### Mobile pass (21 Aug)
+
+Reviewed on a real phone, which turned up more than the desktop screenshots did.
+
+- **Bio copy was being sliced mid-word** at 375/390/414px. Flagged item 2 above,
+  now fixed.
+- **Long descriptions collapse below 768px.** Problems, the Loop stations,
+  Founders and Proof each put their body copy behind a tap target
+  (`Disclose.astro`). The heading, the statistic and the red code line stay —
+  those carry the point; the paragraph is for whoever wants it. Above 768px the
+  toggle does not exist and everything reads as before.
+  Collapsed state is CSS gated on `.js`, so it applies at first paint with no
+  flash, and with scripting off nothing is ever hidden.
+- **The empty founder photo frame is gone.** A 4:3 grey void is most of a phone
+  screen showing nothing. The frame renders the moment a file appears in
+  `public/img/`; that is a build-time change, so no visitor sees a shift.
+- **Founders read as cards below 768px**, rather than two long runs of text
+  sharing one background.
+- **The nav pill was mostly empty on mobile.** Below 480px the links are hidden
+  and their `margin-left: auto` went with them, so the CTA sat against the logo.
+  The auto margin now moves to the CTA at the same breakpoint.
+- **In-page anchors landed under the fixed nav.** Added `scroll-margin-top:
+  96px` to the section targets.
+
+The disclosure button labels are new UI text, so each button carries
+`data-added` and the copy-parity check lifts it out. The body copy inside stays
+in the comparison, unchanged.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five
@@ -144,21 +172,15 @@ Advisory, not counted as a failure: the card border `#E2E0DA` on `#F7F6F3` is
 cards are also delimited by their fill and padding — so this is legitimate as
 drawn. Recorded because it is the kind of number someone will ask about.
 
-### 2. Founder cards are clipped below 480px
+### 2. ~~Founder cards are clipped below 480px~~ — FIXED 21 Aug
 
-`grid-template-columns: repeat(auto-fit, minmax(420px, 1fr))` has an inflexible
-420px floor. At 375px the wrapper is 343px wide, so the track overflows by ~77px
-and `overflow-x: hidden` on `<body>` cuts it off — the right edge of the founder
-bios is not readable at 375, 390 or 414px.
+Confirmed on a real phone: the bio copy was sliced mid-word ("carrier-g…",
+"LTE and 5G c…"). `minmax(420px, 1fr)` has an inflexible floor, so at 375px the
+343px-wide track overflowed by ~77px and `overflow-x: hidden` clipped it.
 
-Every other grid in the design uses a 280px floor, which is why this reads as an
-untested breakpoint rather than an intent. It behaves identically in the
-original export.
-
-**Fix:** one rule in `Founders.astro` —
-`@media (max-width: 480px) { .founders__grid { grid-template-columns: 1fr } }`.
-Not applied because it changes the 375px render, which is an acceptance
-criterion.
+Now `minmax(min(420px, 100%), 1fr)` — keeps the 420px floor wherever there is
+room and collapses where there is not. Cutting words in half on every phone is a
+defect, not a signed-off decision.
 
 ### 3. The mobile touch-target rule in the export never fires
 

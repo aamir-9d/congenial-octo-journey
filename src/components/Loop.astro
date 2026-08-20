@@ -1,6 +1,12 @@
 ---
+import Disclose from './Disclose.astro';
+
 /**
  * "The Full Loop" — four stations around a cycle.
+ *
+ * On the narrow layout the body and outcome collapse behind a tap target. The
+ * station number and its one-word name are the sequence; the detail is for
+ * whoever wants it.
  *
  * The export rendered two entirely separate markup trees and chose between
  * them from JS (`window.innerWidth >= 1024`). Here both live in the DOM and a
@@ -86,8 +92,10 @@ const cell = ['a', 'b', 'c', 'd'];
           <div class="loop__card loop__card--stacked">
             <div class="loop__station">STATION {s.n}</div>
             <h3 class="loop__title loop__title--narrow">{s.title}</h3>
-            <p class="loop__body">{s.body}</p>
-            <p class="loop__outcome">{s.outcome}</p>
+            <Disclose label="What it covers" describes={s.title}>
+              <p class="loop__body">{s.body}</p>
+              <p class="loop__outcome">{s.outcome}</p>
+            </Disclose>
           </div>
         ))
       }

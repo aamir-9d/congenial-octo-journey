@@ -33,6 +33,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* The nav is fixed 16px from the top and ~64px tall. Without this, jumping to
+   an in-page anchor parks its heading underneath the pill. */
+:target,
+section[id] {
+  scroll-margin-top: 96px;
+}
+
 body {
   margin: 0;
   background: var(--c-paper);
@@ -290,6 +297,66 @@ input[type='range'] {
   border-color: var(--c-ink);
   background: rgba(var(--rgb-ink), 0.04);
   color: var(--c-ink);
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile disclosure.
+
+   Above 768px the toggle does not exist and the body is simply content. Below
+   it, and only once `.js` confirms scripting, the body collapses behind a tap
+   target. Gating on `.js` is what stops the content flashing open and then
+   shutting on load, and what keeps everything readable with scripting off.
+   --------------------------------------------------------------------------- */
+
+.disclose__toggle {
+  display: none;
+}
+
+.disclose__body {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .js .disclose__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-2xs);
+    padding: var(--space-2xs) 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-mono-md);
+    color: var(--c-teal);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    /* 44px of vertical tap area without moving the text. */
+    min-height: 44px;
+  }
+
+  .js .disclose__icon::before {
+    content: '+';
+    font-size: var(--fs-body-md);
+    line-height: 1;
+  }
+
+  .js .disclose.is-open .disclose__icon::before {
+    /* U+2212 minus, matching the stack accordion. */
+    content: '\2212';
+  }
+
+  .js .disclose:not(.is-open) .disclose__body {
+    display: none;
+  }
+
+  .js .disclose.is-open .disclose__body {
+    margin-top: var(--space-2xs);
+  }
+}
+
+/* On a dark ground the teal is too low-contrast; the amber reads. */
+.disclose--on-dark .disclose__toggle {
+  color: var(--c-amber);
 }
 
 /* Screen-reader-only, for the live regions the chart announces through. */

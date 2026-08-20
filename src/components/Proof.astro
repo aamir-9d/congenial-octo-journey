@@ -1,5 +1,13 @@
 ---
-/** "Three findings, from real audits." Dark section, three stat columns. */
+import Disclose from './Disclose.astro';
+
+/**
+ * "Three findings, from real audits." Dark section, three stat columns.
+ *
+ * The statistic is the argument; the paragraph explains it. Below 768px the
+ * explanation collapses, so the section reads as three numbers you can take in
+ * at a glance.
+ */
 
 const findings = [
   {
@@ -29,7 +37,9 @@ const findings = [
         findings.map((f) => (
           <div data-reveal="1" class="proof__item">
             <div class="proof__stat">{f.stat}</div>
-            <p class="proof__body">{f.body}</p>
+            <Disclose label="What happened" describes={f.stat} class="disclose--on-dark">
+              <p class="proof__body">{f.body}</p>
+            </Disclose>
           </div>
         ))
       }

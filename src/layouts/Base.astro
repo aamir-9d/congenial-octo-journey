@@ -121,11 +121,13 @@ const LATIN =
       import { captureAttribution } from '../scripts/attribution';
       import { initConsent } from '../scripts/consent';
       import { initEngagement } from '../scripts/engagement';
+      import { initDisclose } from '../scripts/disclose';
 
       // Capture click IDs first: everything downstream reads the cookie it writes.
       captureAttribution();
       initConsent();
       initReveal();
+      initDisclose();
       initEngagement();
     </script>
   </body>

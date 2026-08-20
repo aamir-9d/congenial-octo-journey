@@ -1,14 +1,18 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
+import Disclose from './Disclose.astro';
 
 /**
  * The two founders.
  *
- * The export used <image-slot> placeholders carrying no image data. Those are
- * resolved at build time: drop `aamir.jpg` / `faisal.jpg` into public/img/ and
- * they render; until then a token-coloured box at the identical aspect ratio
- * and radius holds the layout exactly, so nothing shifts when the photos land.
+ * The export used <image-slot> placeholders carrying no image data. Resolved at
+ * build time: drop `aamir.jpg` / `faisal.jpg` into public/img/ and the frame
+ * renders. Until then there is no frame — a 4:3 grey void is most of a phone
+ * screen showing nothing, which is worse than the absence.
+ *
+ * Below 768px the bios collapse behind a tap target and each founder reads as a
+ * card. Three paragraphs each is right on a desktop and a wall on a phone.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -49,10 +53,14 @@ const founders = [
     <div class="founders__grid">
       {
         founders.map((f) => (
-          <div data-reveal="1">
-            <div class="founders__frame">
-              {
-                hasPhoto(f.file) ? (
+          <div data-reveal="1" class="founders__card">
+            {
+              /* No frame at all until the photo exists. A 4:3 grey void is a
+                 whole screen of nothing on a phone, and worse than the absence.
+                 The moment the file lands in public/img/ this renders; that is a
+                 build-time change, so nothing shifts for a visitor. */
+              hasPhoto(f.file) && (
+                <div class="founders__frame">
                   <img
                     src={`${base}/img/${f.file}`}
                     alt={f.alt}
@@ -62,18 +70,18 @@ const founders = [
                     decoding="async"
                     class="founders__photo"
                   />
-                ) : (
-                  <div class="founders__placeholder" role="presentation" />
-                )
-              }
-            </div>
+                </div>
+              )
+            }
             <h3 class="founders__name">{f.name}</h3>
             <div class="founders__role">{f.role}</div>
-            <div class="founders__bio">
-              {f.bio.map((para) => (
-                <p>{para}</p>
-              ))}
-            </div>
+            <Disclose label="Background" describes={f.name}>
+              <div class="founders__bio">
+                {f.bio.map((para) => (
+                  <p>{para}</p>
+                ))}
+              </div>
+            </Disclose>
             <a href={f.linkedin} target="_blank" rel="noopener" class="link founders__linkedin">
               LinkedIn &#8599;
             </a>
@@ -93,9 +101,16 @@ const founders = [
     background: var(--c-paper);
   }
 
+  /* `min(420px, 100%)`, not a bare `420px`.
+     A bare 420px is an inflexible floor: at 375px the wrapper is 343px wide, so
+     the track overflowed by ~77px and `overflow-x: hidden` on <body> sliced the
+     bio copy mid-word. Wrapping the floor in `min()` keeps 420px wherever there
+     is room for it and collapses to the available width where there is not.
+     Previously flagged and left alone as a signed-off decision; cutting words in
+     half on every phone is a defect, not a decision. */
   .founders__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
     gap: var(--space-lg);
   }
 
@@ -112,12 +127,19 @@ const founders = [
     display: block;
   }
 
-  .founders__placeholder {
-    width: 100%;
-    height: 100%;
-    background: var(--c-paper-alt);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-12);
+  /* Below 768px each founder reads as a discrete card rather than two long
+     runs of text sharing one background. */
+  @media (max-width: 767px) {
+    .founders__card {
+      background: var(--c-white);
+      border: 1px solid var(--c-line);
+      border-radius: var(--r-12);
+      padding: var(--space-md);
+    }
+
+    .founders__name {
+      margin-top: 0;
+    }
   }
 
   .founders__name {
@@ -161,14 +183,4 @@ const founders = [
     color: var(--c-ink);
     max-width: var(--measure-pull-narrow);
   }
-
-  /* NOTE — reproduced faithfully, and it is a real defect.
-     `minmax(420px, 1fr)` has an inflexible 420px floor. At 375px the wrap is
-     343px wide, so the track overflows by ~77px and `overflow-x: hidden` on
-     <body> clips it: the right edge of the bio copy is cut off at 375, 390 and
-     414px. Every other grid in the design uses a 280px floor, so this looks
-     like an untested breakpoint rather than an intent.
-     The fix is one rule — `@media (max-width: 480px) { grid-template-columns:
-     1fr }` — but it changes the 375px render, and the brief is explicit that
-     things that look wrong get flagged rather than fixed. See NOTES.md. */
 </style>

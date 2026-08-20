@@ -85,4 +85,13 @@
     background: var(--c-amber-hover);
     color: var(--c-ink-deep);
   }
+
+  /* Below 480px the links are hidden (global.css) and their `margin-left: auto`
+     goes with them, so the CTA collapsed against the logo and left most of the
+     pill empty. Move the auto margin onto the CTA at the same breakpoint. */
+  @media (max-width: 480px) {
+    .nav__cta {
+      margin-left: auto;
+    }
+  }
 </style>

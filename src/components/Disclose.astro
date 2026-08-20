@@ -1,0 +1,51 @@
+---
+/**
+ * Mobile-only disclosure.
+ *
+ * Long body copy is the right call on a wide screen and the wrong one on a
+ * phone, where it turns every section into a wall. This collapses its slot
+ * behind a tap target below 768px and leaves it fully expanded above.
+ *
+ * No JS is needed to *read* anything: the markup renders open, and the
+ * collapsed state only applies once the `.js` class is on <html> (set by an
+ * inline script in the head, before first paint, so there is no flash of
+ * expanded content). With scripting off, everything simply stays visible.
+ *
+ * Styles live in global.css, not here — the slot carries the parent
+ * component's scope, and shared primitives belong in one unscoped place.
+ */
+
+interface Props {
+  /** Button text. Should say what is behind it, not "read more". */
+  label?: string;
+  /** Names what the control reveals, so screen-reader users hear which one. */
+  describes?: string;
+  /** e.g. `disclose--on-dark`. Astro does not forward `class` on its own. */
+  class?: string;
+}
+
+const { label = 'Details', describes, class: extra } = Astro.props;
+
+/* Stable per-instance id so the button can point at what it controls. */
+const id = `disclose-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div class:list={['disclose', extra]}>
+  {/* `data-added`: the button's label is new UI text the export never had, so
+      the copy-parity check lifts it out. The body is the design's own copy and
+      stays in the comparison. */}
+  <button
+    type="button"
+    class="disclose__toggle"
+    data-added="mobile"
+    aria-expanded="false"
+    aria-controls={id}
+    aria-label={describes ? `${label}: ${describes}` : undefined}
+  >
+    <span>{label}</span>
+    <span class="disclose__icon" aria-hidden="true"></span>
+  </button>
+  <div class="disclose__body" id={id}>
+    <slot />
+  </div>
+</div>
