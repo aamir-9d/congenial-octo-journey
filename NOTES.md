@@ -3,6 +3,8 @@
 Findings, deliberate deviations, and verification results from porting the
 Claude Design export to a shipped Astro site.
 
+**Deployed:** https://aamir-9d.github.io/congenial-octo-journey/
+
 Anything in **Flagged, not fixed** is a decision waiting on you. Nothing in that
 list has been changed.
 

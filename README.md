@@ -3,6 +3,8 @@
 Marketing site for E2E Apps — mobile growth and measurement for subscription and
 ad-monetised apps.
 
+**Live:** https://aamir-9d.github.io/congenial-octo-journey/
+
 Ported from a Claude Design export (`E2E Apps Homepage.dc.html`) to Astro. The
 export depended on Claude Design's internal runtime — `support.js`, which
 self-loads React and Babel from unpkg, and `image-slot.js` — and did not render
