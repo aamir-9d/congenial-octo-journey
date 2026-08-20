@@ -76,6 +76,37 @@ or look noisy on `#F7F6F3`.
 
 ---
 
+### A second binding bug: the hero card was frozen
+
+The hero summary card is a **sibling** of `.calc`, not a descendant, and
+`calculator.ts` scoped its binding query to `.calc`. So the six figures were
+server-rendered with the defaults and then never updated again — while the card
+read *"Live from the model below. Move a slider and these move."* It did not.
+
+The binding root is now `#top`, which contains the calculator and both hero
+cards. `tests/styles.test.ts` asserts every `data-bind` element falls inside it.
+
+### Hero chart added
+
+The bottom-aligned card left the whole upper-right quadrant empty, so the hero
+still read as unbalanced even after the row was filled. There is now a compact
+chart above the numbers, drawing the same two curves from the same model at a
+fixed viewBox — teal for the money, dashed grey for what the dashboard reports,
+amber for the gap between them, and the breakeven dot. It is live: the sliders
+redraw it.
+
+New design, so it is marked `data-added` and excluded from the copy-parity
+comparison, like the contact form.
+
+### Stack bundles evened up
+
+The bundle grid is `align-items: start`, so every card sizes to its own content
+and a one-line title sat a line shorter than a two-line one. `start` is the
+right call for an accordion — `stretch` would make opening one card stretch
+every sibling in its row — so instead the title and meta each reserve two lines
+via `min-height: calc(2 * 1.65em)`. Closed cards line up; opening one still
+grows only itself.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five

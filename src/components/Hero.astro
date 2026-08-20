@@ -38,6 +38,63 @@ const summaryRows = [
     </div>
 
     <div class="hero__aside">
+      {/* Same curves as the calculator below, at a fixed viewBox so this needs
+          no measurement. It is the argument in one picture: the teal line is
+          the money, the dashed line is what the dashboard reports, and the
+          amber between them is what gets missed. Live — it redraws with the
+          sliders. */}
+      <figure class="hero__chart" data-added="review">
+        <figcaption class="hero__chart-title">CUMULATIVE NET PER INSTALL</figcaption>
+        <svg
+          id="mini-chart"
+          viewBox={view.mini.vb}
+          class="hero__chart-svg"
+          role="img"
+          aria-labelledby="miniTitle miniDesc"
+          preserveAspectRatio="none"
+        >
+          <title id="miniTitle">Cumulative net per install, true versus dashboard-measured</title>
+          <desc id="miniDesc" data-bind="chartSummary">{view.chartSummary}</desc>
+          <path id="mini-gap" d={view.mini.gapPath} fill="#E39A1F" opacity={view.mini.gapOpacity}></path>
+          <line
+            id="mini-zero"
+            x1="0"
+            y1={view.mini.zeroY}
+            x2="340"
+            y2={view.mini.zeroY}
+            stroke="#5C6779"
+            stroke-width="1"
+            vector-effect="non-scaling-stroke"></line>
+          <path
+            id="mini-meas"
+            d={view.mini.measPath}
+            fill="none"
+            stroke="#5C6779"
+            stroke-width="1.5"
+            stroke-dasharray="5 4"
+            vector-effect="non-scaling-stroke"></path>
+          <path
+            id="mini-true"
+            d={view.mini.truePath}
+            fill="none"
+            stroke="#0E6E63"
+            stroke-width="2.4"
+            stroke-linejoin="round"
+            vector-effect="non-scaling-stroke"
+            pathLength="1"
+            class="drawn"></path>
+          <g id="mini-cross" opacity={view.mini.crossOpacity}>
+            <circle id="mini-dot" cx={view.mini.crossX} cy={view.mini.zeroY} r="4.5" fill="#E39A1F" stroke="#FFFFFF" stroke-width="2" vector-effect="non-scaling-stroke"></circle>
+          </g>
+        </svg>
+        <div class="hero__chart-legend">
+          <span class="hero__legend-item"><span class="hero__swatch--true"></span>True</span>
+          <span class="hero__legend-item"><span class="hero__swatch--meas"></span>Dashboard</span>
+          <span class="hero__legend-item"><span class="hero__swatch--gap"></span>Missed</span>
+          <span class="hero__chart-be" data-bind="breakevenLabel">{view.breakevenLabel}</span>
+        </div>
+      </figure>
+
       <div class="hero__summary">
         <div class="hero__summary-title">THE COHORT BELOW, IN NUMBERS</div>
         <div class="hero__summary-rows">
@@ -139,11 +196,86 @@ const summaryRows = [
     padding: var(--space-sm) var(--space-md);
   }
 
+  /* A column now, holding the chart above the numbers. `justify-content:
+     flex-end` is the column-direction equivalent of the `align-items: flex-end`
+     the export asked for: keep the block on the baseline of the headline. */
   .hero__aside {
     flex: 1 1 320px;
     min-width: min(100%, 280px);
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+  }
+
+  .hero__chart {
+    margin: 0;
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .hero__chart-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-2xs);
+    letter-spacing: var(--ls-eyebrow-md);
+    color: var(--c-ink-soft);
+  }
+
+  /* `preserveAspectRatio: none` plus a fixed height lets the curve fill the
+     card at any column width. Strokes carry `vector-effect` so they keep their
+     weight rather than stretching with the box. */
+  .hero__chart-svg {
+    display: block;
+    width: 100%;
+    height: 150px;
+    margin-top: var(--space-xs);
+  }
+
+  .hero__chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs) var(--space-sm);
+    margin-top: var(--space-xs);
+    padding-top: var(--space-2xs);
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-2xs);
+    color: var(--c-ink-soft);
+  }
+
+  .hero__legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+  }
+
+  .hero__swatch--true {
+    width: 14px;
+    height: 3px;
+    background: var(--c-teal);
+    border-radius: var(--r-2);
+  }
+
+  .hero__swatch--meas {
+    width: 14px;
+    height: 0;
+    border-top: 2px dashed var(--c-ink-soft);
+  }
+
+  .hero__swatch--gap {
+    width: 12px;
+    height: 8px;
+    background: var(--c-amber);
+    opacity: 0.28;
+    border-radius: var(--r-2);
+  }
+
+  .hero__chart-be {
+    margin-left: auto;
+    color: var(--c-ink);
   }
 
   .hero__summary {

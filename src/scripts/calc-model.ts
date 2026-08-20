@@ -257,11 +257,27 @@ export interface CalcView {
   activeD30Label: string;
   d7Mismatch: boolean;
 
+  /* Compact copy of the same curves for the hero, at a fixed viewBox so it
+     needs no measurement — the SVG scales to whatever width it is given. */
+  mini: {
+    vb: string;
+    truePath: string;
+    measPath: string;
+    gapPath: string;
+    gapOpacity: number;
+    zeroY: string;
+    crossX: string;
+    crossOpacity: number;
+  };
+
   /* raw values, for the analytics layer */
   breakevenDay: number | null;
   activeCpi: number;
   ltvPerInstall: number;
 }
+
+/** Fixed drawing box for the hero chart. Scales via viewBox, never measured. */
+const MINI = { w: 340, h: 150, left: 6, right: 6, top: 12, bottom: 12 };
 
 /**
  * The export's `renderVals`, minus the event handlers and the accordion/filter
@@ -327,6 +343,38 @@ export function computeView(s: CalcState): CalcView {
   const gapAtH = isSub ? sub.trueRev(H) - sub.measRev(H) : 0;
   const predD7 = ad.predD7 * 100;
   const beVisible = be !== null && be <= H;
+
+  /* --- the same curves again, in the hero's fixed box ---------------------
+     Same series, same y-domain, so the shape the hero teases is the shape the
+     calculator draws. Only the scale differs. */
+  const mx = (d: number) => MINI.left + (d / H) * (MINI.w - MINI.left - MINI.right);
+  const my = (v: number) =>
+    MINI.h - MINI.bottom - ((v - yMin) / (yMax - yMin)) * (MINI.h - MINI.top - MINI.bottom);
+
+  const miniStep = (vals: number[]) => {
+    let p = 'M' + mx(0).toFixed(1) + ' ' + my(vals[0]!).toFixed(1);
+    for (let i = 1; i < xs.length; i++) {
+      const x = mx(xs[i]!).toFixed(1);
+      p += ' L' + x + ' ' + my(vals[i - 1]!).toFixed(1) + ' L' + x + ' ' + my(vals[i]!).toFixed(1);
+    }
+    return p;
+  };
+  const miniSmooth = (vals: number[]) =>
+    xs.map((d, i) => (i ? 'L' : 'M') + mx(d).toFixed(1) + ' ' + my(vals[i]!).toFixed(1)).join(' ');
+
+  const miniTrue = isSub ? miniStep(tv) : miniSmooth(tv);
+  let miniMeas = '';
+  let miniGap = '';
+  if (isSub) {
+    miniMeas = miniStep(mv);
+    let g = miniTrue;
+    for (let i = xs.length - 1; i >= 0; i--) {
+      const x = mx(xs[i]!).toFixed(1);
+      g += ' L' + x + ' ' + my(mv[i]!).toFixed(1);
+      if (i > 0) g += ' L' + x + ' ' + my(mv[i - 1]!).toFixed(1);
+    }
+    miniGap = g + ' Z';
+  }
 
   return {
     isSub,
@@ -455,6 +503,17 @@ export function computeView(s: CalcState): CalcView {
         ' cost per install, breaking even ' +
         (ad.be === null ? 'never' : 'on day ' + ad.be) +
         '.',
+
+    mini: {
+      vb: `0 0 ${MINI.w} ${MINI.h}`,
+      truePath: miniTrue,
+      measPath: miniMeas,
+      gapPath: miniGap,
+      gapOpacity: isSub ? 0.22 : 0,
+      zeroY: my(0).toFixed(1),
+      crossX: (be === null ? MINI.w - MINI.right : mx(Math.min(be, H))).toFixed(1),
+      crossOpacity: beVisible ? 1 : 0,
+    },
 
     breakevenDay: be,
     activeCpi: cpi,

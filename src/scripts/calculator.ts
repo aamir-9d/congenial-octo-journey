@@ -22,7 +22,14 @@ type Bindable = keyof CalcView;
 const DEBOUNCE_MS = 800;
 
 export function initCalculator(): void {
-  const root = document.querySelector<HTMLElement>('.calc');
+  /* The hero section, not `.calc`.
+     The summary card and the hero chart are siblings of the calculator, not
+     descendants of it. Binding against `.calc` meant they were server-rendered
+     with the defaults and then frozen — the card literally read "Live from the
+     model below. Move a slider and these move" while doing nothing of the
+     sort. `#top` contains the calculator and both, so one query reaches all of
+     them. */
+  const root = document.getElementById('top');
   const wrap = document.getElementById('chart-wrap');
   if (!root || !wrap) return;
 
@@ -64,6 +71,15 @@ export function initCalculator(): void {
     truePath: el<SVGPathElement>('p-true'),
     zeroText: el<SVGTextElement>('zero-text'),
     crossMark: el<SVGGElement>('cross-mark'),
+
+    // Hero chart — same curves, fixed viewBox, no measurement needed.
+    miniSvg: el<SVGSVGElement>('mini-chart'),
+    miniGap: el<SVGPathElement>('mini-gap'),
+    miniZero: el<SVGLineElement>('mini-zero'),
+    miniMeas: el<SVGPathElement>('mini-meas'),
+    miniTrue: el<SVGPathElement>('mini-true'),
+    miniCross: el<SVGGElement>('mini-cross'),
+    miniDot: el<SVGCircleElement>('mini-dot'),
     crossLine: el<SVGLineElement>('cross-line'),
     crossDot: el<SVGCircleElement>('cross-dot'),
     lblBe: el<HTMLElement>('lbl-be'),
@@ -160,6 +176,18 @@ export function initCalculator(): void {
     refs.crossLine?.setAttribute('y2', v.zeroY);
     refs.crossDot?.setAttribute('cx', v.crossX);
     refs.crossDot?.setAttribute('cy', v.zeroY);
+
+    /* Hero chart. */
+    const m = v.mini;
+    refs.miniGap?.setAttribute('d', m.gapPath);
+    refs.miniGap?.setAttribute('opacity', String(m.gapOpacity));
+    refs.miniZero?.setAttribute('y1', m.zeroY);
+    refs.miniZero?.setAttribute('y2', m.zeroY);
+    refs.miniMeas?.setAttribute('d', m.measPath);
+    refs.miniTrue?.setAttribute('d', m.truePath);
+    refs.miniCross?.setAttribute('opacity', String(m.crossOpacity));
+    refs.miniDot?.setAttribute('cx', m.crossX);
+    refs.miniDot?.setAttribute('cy', m.zeroY);
 
     /* Label positions, as custom properties the stylesheet consumes. */
     const L = v.labels;

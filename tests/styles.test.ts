@@ -28,11 +28,6 @@ const skip = !distExists && 'run `npm run build` first';
 
 const html = distExists ? fs.readFileSync(path.join(DIST, 'index.html'), 'utf8') : '';
 
-/** Every `data-astro-cid-*` token present on an element in the document. */
-function scopesOnElements(source: string): Set<string> {
-  return new Set([...source.matchAll(/data-astro-cid-([a-z0-9]+)(?==|[\s>])/gi)].map((m) => m[1]!));
-}
-
 /** Class names used by elements, and the scope token each element carries. */
 function classUsage(source: string): Map<string, Set<string | null>> {
   const usage = new Map<string, Set<string | null>>();
@@ -122,4 +117,38 @@ test('slider fields carry their layout, not the browser default', { skip }, () =
     const scoped = new RegExp(`\\.${cls}(?![\\w-])[^,{]*data-astro-cid`).test(css);
     assert.ok(!scoped, `.${cls} is scope-gated; Slider.astro's markup cannot receive it`);
   }
+});
+
+test('everything with a data-bind sits inside the element the calculator binds against', { skip }, () => {
+  // calculator.ts scopes its binding query to #top. The hero summary card and
+  // the hero chart are siblings of .calc, not descendants — binding against
+  // .calc left them server-rendered with the defaults and then frozen, while
+  // the card claimed "Live from the model below. Move a slider and these move".
+  const start = html.indexOf('id="top"');
+  assert.ok(start > -1, 'no #top section in the built page');
+
+  // Everything from #top to the section that follows it.
+  const end = html.indexOf('id="services"');
+  assert.ok(end > start, 'could not find the section after #top');
+  const inside = html.slice(start, end);
+
+  const total = (html.match(/data-bind=/g) ?? []).length;
+  const within = (inside.match(/data-bind=/g) ?? []).length;
+
+  assert.equal(
+    within,
+    total,
+    `${total - within} data-bind element(s) fall outside #top and would never update`,
+  );
+  assert.ok(total > 30, `expected the calculator's bindings, found only ${total}`);
+});
+
+test('the hero card and chart are inside the binding root', { skip }, () => {
+  const start = html.indexOf('id="top"');
+  const end = html.indexOf('id="services"');
+  const inside = html.slice(start, end);
+
+  assert.match(inside, /id="mini-chart"/, 'hero chart is outside #top');
+  assert.match(inside, /class="hero__summary"/, 'hero summary card is outside #top');
+  assert.match(inside, /class="calc"/, 'the calculator itself is outside #top');
 });

@@ -243,8 +243,21 @@ const filters = [
     flex: 1;
   }
 
+  /* Reserve two lines for the title and the meta.
+
+     The grid is `align-items: start`, so every card sizes to its own content —
+     which is the right call for an accordion, because `stretch` would make
+     opening one card stretch every sibling in its row. The cost is that a card
+     titled "Attribution & MMP" is a line shorter than "Backend &
+     Infrastructure", and the closed grid looks ragged.
+
+     Reserving the space fixes the raggedness without giving up the accordion
+     behaviour: closed cards line up, and opening one still grows only itself.
+     `1.65` is the inherited body line-height, and `em` keeps this correct if
+     the type scale ever moves. */
   .stack__title {
     display: block;
+    min-height: calc(2 * 1.65em);
     font-family: var(--font-display);
     font-weight: 700;
     font-size: var(--fs-h-xs);
@@ -254,6 +267,7 @@ const filters = [
 
   .stack__meta {
     display: block;
+    min-height: calc(2 * 1.65em);
     margin-top: var(--space-3xs);
     font-family: var(--font-mono);
     font-size: var(--fs-mono-sm);
