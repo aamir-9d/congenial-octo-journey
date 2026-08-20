@@ -68,16 +68,31 @@ const summaryRows = [
     padding: calc(var(--space-2xl) + 48px) var(--gutter) var(--space-2xl);
   }
 
+  /* `stretch`, not `flex-start`.
+     The summary card already carries `align-items: flex-end`, which says it
+     wants to sit on the baseline of the headline block — but `flex-start` here
+     collapsed the aside to its own content height, so that instruction had
+     nothing to align against and never fired. Same shape of bug as the inert
+     `style-hover` attributes. */
   .hero__row {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-lg);
-    align-items: flex-start;
+    align-items: stretch;
   }
 
+  /* The export gave the text column `flex: 1 1 460px; max-width: 34em` and the
+     card `flex: 0 1 320px`. At every viewport from 1024px up that left 190px of
+     the row unused: the text column hit its 578px cap and stopped, and the card
+     had `flex-grow: 0` so it could not take the slack. A 58px headline then had
+     to wrap eight times inside 578px.
+
+     Both columns now share the row, roughly 3:1, so the space is used and the
+     headline breaks about four times instead. No type, colour or copy changed —
+     the h1 keeps its own `max-width: 16em` and the paragraph its 34em measure,
+     so neither runs to an unreadable length. */
   .hero__lede {
-    flex: 1 1 460px;
-    max-width: var(--measure-hero-lead);
+    flex: 3 1 460px;
   }
 
   .hero__eyebrow {
@@ -125,7 +140,7 @@ const summaryRows = [
   }
 
   .hero__aside {
-    flex: 0 1 320px;
+    flex: 1 1 320px;
     min-width: min(100%, 280px);
     display: flex;
     align-items: flex-end;
@@ -183,5 +198,62 @@ const summaryRows = [
     font-size: var(--fs-body-xs);
     line-height: var(--lh-normal);
     color: var(--c-ink-soft);
+  }
+
+  /* --- entrance -----------------------------------------------------------
+     The hero is above the fold, so this runs on load rather than through the
+     IntersectionObserver the lower sections use.
+
+     Gated on `.js`, like the scroll reveal, so with scripting off nothing is
+     ever hidden. Only opacity and transform animate — both composited, so
+     there is no layout shift and no CLS cost.
+
+     The headline is the LCP element and starts at opacity 0, which means its
+     80ms delay is added to LCP. That is the entire performance price, and it
+     is deliberately the shortest delay in the sequence for that reason. */
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  :global(.js) .hero__eyebrow,
+  :global(.js) .hero__h1,
+  :global(.js) .hero__lead,
+  :global(.js) .hero__actions,
+  :global(.js) .hero__aside {
+    animation: hero-rise 0.55s var(--ease-out-soft) both;
+  }
+
+  :global(.js) .hero__eyebrow {
+    animation-delay: 0s;
+  }
+  :global(.js) .hero__h1 {
+    animation-delay: 0.08s;
+  }
+  :global(.js) .hero__lead {
+    animation-delay: 0.17s;
+  }
+  :global(.js) .hero__actions {
+    animation-delay: 0.25s;
+  }
+  :global(.js) .hero__aside {
+    animation-delay: 0.33s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .hero__eyebrow,
+    :global(.js) .hero__h1,
+    :global(.js) .hero__lead,
+    :global(.js) .hero__actions,
+    :global(.js) .hero__aside {
+      animation: none;
+    }
   }
 </style>

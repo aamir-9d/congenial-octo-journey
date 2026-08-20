@@ -10,6 +10,72 @@ list has been changed.
 
 ---
 
+## Changed after review (2026-08-21)
+
+Three things came out of looking at the deployed page next to a competitor.
+
+### A regression I introduced, now fixed: sliders rendered unstyled
+
+Extracting `Slider.astro` out of `Calculator.astro` left the slider markup in
+one component and its CSS in another. Astro scopes a component's `<style>` to
+that component's own elements, so the rules never reached the markup: every
+slider field lost its flex row, its mono 11.5px label and its full width, and
+rendered as body-sized text beside a default-width input.
+
+**Not the export's fault and not a design decision — my bug.** The whole
+existing suite waved it through, because the copy was right, the numbers were
+right and the markup was right. Only the CSS did not arrive. This is precisely
+the gap a screenshot diff would have caught, and precisely why the missing
+browser matters.
+
+Fixed by moving the rules into `src/styles/calculator.css`, imported rather than
+scoped. `tests/styles.test.ts` now checks every class on every built page
+against the rules that could match it. On its first run it found two more dead
+classes, `.calc__swatch` and `.contact__block`, both since removed.
+
+### Hero rebalanced
+
+The export gave the text column `flex: 1 1 460px; max-width: 34em` and the card
+`flex: 0 1 320px`. From 1024px up that left **190px of the row unused** — the
+text column hit its 578px cap and stopped, and the card had `flex-grow: 0` so it
+could not take the slack. A 58px headline then wrapped eight times inside 578px
+while the card floated at the top of a much taller column.
+
+Both columns now share the row about 3:1 — 691px and 397px at 1440px, no dead
+space at any width. The row also moved from `align-items: flex-start` to
+`stretch`, which finally activates the `align-items: flex-end` the card already
+carried: it was asking to sit on the baseline of the headline block, and the
+parent was collapsing its height so the instruction had nothing to align
+against. Same shape of bug as the inert `style-hover` attributes.
+
+No type, colour or copy changed. The h1 keeps its own `max-width: 16em` and the
+paragraph its 34em measure.
+
+**Honest caveat:** the mock-up shown at approval said the headline would drop
+from eight lines to four. Measuring the column arithmetic rather than the text,
+five or six is the realistic figure — I cannot measure text wrapping without a
+browser. If it still reads too tall, dropping the h1 clamp from
+`clamp(34px, 5.1vw, 58px)` to a 48px maximum is a one-line change, and the only
+one of these that touches a signed-off type value.
+
+### Hero entrance animation
+
+Eyebrow, headline, paragraph, buttons and summary card now fade and rise in
+sequence on load, 80–330ms apart, 550ms each. Pure CSS, no JS, gated on the same
+`.js` class as the scroll reveal so nothing is ever hidden without scripting.
+
+Only `opacity` and `transform` animate, both composited, so there is no layout
+shift. The one cost: the headline is the LCP element and starts at opacity 0, so
+its 80ms delay is added to LCP. That is why it has the shortest delay in the
+sequence.
+
+An animated backdrop was considered and rejected: it is the most expensive thing
+on the competitor's page, it is a real risk to the 95+ mobile target, and a
+low-contrast constellation that reads well on near-black will either disappear
+or look noisy on `#F7F6F3`.
+
+---
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five
