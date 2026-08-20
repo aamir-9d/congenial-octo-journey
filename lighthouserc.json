@@ -1,0 +1,30 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./dist",
+      "numberOfRuns": 3
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["error", { "minScore": 0.95 }],
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2000 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.05 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 150 }],
+
+        "categories:best-practices": ["warn", { "minScore": 0.95 }],
+
+        "categories:accessibility": ["warn", { "minScore": 0.95 }],
+        "color-contrast": "warn",
+
+        "categories:seo": ["warn", { "minScore": 1 }],
+
+        "unused-javascript": "off",
+        "uses-long-cache-ttl": "off",
+        "is-crawlable": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

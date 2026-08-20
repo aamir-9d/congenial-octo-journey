@@ -1,0 +1,80 @@
+---
+/**
+ * Consent Mode v2 defaults, then GTM.
+ *
+ * Order matters and is the whole point of this component:
+ *   1. dataLayer exists,
+ *   2. every consent signal is defaulted to `denied`,
+ *   3. only then does the container load.
+ *
+ * A default that arrives after the container has fired is a default that did
+ * nothing, which is the single most common way Consent Mode is got wrong.
+ *
+ * GTM itself is deferred to the browser's idle time. It is one of the two
+ * things (Calendly is the other) that would otherwise decide our Lighthouse
+ * mobile score.
+ *
+ * With no PUBLIC_GTM_ID configured this renders nothing at all, so local builds
+ * and previews stay clean.
+ */
+
+const GTM_ID = import.meta.env.PUBLIC_GTM_ID ?? '';
+const enabled = /^GTM-[A-Z0-9]+$/.test(GTM_ID);
+---
+
+{
+  enabled && (
+    <Fragment>
+      <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+      <script is:inline>
+        {`
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+
+// Denied until the visitor says otherwise. wait_for_update holds tags briefly
+// so a fast "accept" is not raced by the container firing first.
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  analytics_storage: 'denied',
+  functionality_storage: 'granted',
+  security_storage: 'granted',
+  wait_for_update: 500
+});
+gtag('set', 'ads_data_redaction', true);
+gtag('set', 'url_passthrough', true);
+`}
+      </script>
+
+      <script is:inline define:vars={{ GTM_ID }}>
+        {`
+// Load the container once the page is interactive, so it never competes with
+// the LCP. requestIdleCallback where available, load event otherwise.
+(function () {
+  var loaded = false;
+  function loadGtm() {
+    if (loaded) return;
+    loaded = true;
+    window.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtm.js?id=' + GTM_ID;
+    document.head.appendChild(s);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(loadGtm, 0);
+  } else {
+    window.addEventListener('load', function () {
+      'requestIdleCallback' in window
+        ? requestIdleCallback(loadGtm, { timeout: 3000 })
+        : setTimeout(loadGtm, 1200);
+    });
+  }
+})();
+`}
+      </script>
+    </Fragment>
+  )
+}

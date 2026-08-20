@@ -39,10 +39,52 @@ function decode(s: string): string {
     .replace(/&([a-z]+);/gi, (m, name) => ENTITIES[name.toLowerCase()] ?? m);
 }
 
+/**
+ * Remove every element carrying `data-added`, and its subtree.
+ *
+ * Phase 2 onward adds markup the export never had — the contact form, the
+ * Calendly block, the consent banner. Each is tagged at its root with
+ * `data-added` so this check can lift it out and go on comparing the design's
+ * own copy, instead of being switched off the moment the page grows.
+ */
+function stripAdded(html: string): string {
+  const opener = /<([a-z][a-z0-9-]*)\b[^>]*\sdata-added[\s=>][^>]*>/i;
+  let out = html;
+
+  for (;;) {
+    const match = opener.exec(out);
+    if (!match) return out;
+
+    const tag = match[1]!.toLowerCase();
+    const start = match.index;
+
+    if (match[0].endsWith('/>')) {
+      out = out.slice(0, start) + out.slice(start + match[0].length);
+      continue;
+    }
+
+    // Walk to the matching close tag, counting nested opens of the same name.
+    const scan = new RegExp(`<(/?)${tag}\\b[^>]*>`, 'gi');
+    scan.lastIndex = start;
+    let depth = 0;
+    let end = -1;
+    for (let m = scan.exec(out); m; m = scan.exec(out)) {
+      depth += m[1] === '/' ? -1 : 1;
+      if (depth === 0) {
+        end = m.index + m[0].length;
+        break;
+      }
+    }
+
+    if (end === -1) throw new Error(`unbalanced <${tag} data-added> — cannot strip it reliably`);
+    out = out.slice(0, start) + out.slice(end);
+  }
+}
+
 /** Visible text runs, in document order. */
 function textRuns(html: string): string[] {
   return decode(
-    html
+    stripAdded(html)
       .replace(/<script[\s\S]*?<\/script>/gi, ' ')
       .replace(/<style[\s\S]*?<\/style>/gi, ' ')
       .replace(/<head[\s\S]*?<\/head>/gi, ' ')
@@ -89,6 +131,26 @@ test('every string in the export survives into the port, unchanged', { skip: !di
         `  port:   ...${port.slice(Math.max(0, i - 80), i + 120)}`,
     );
   }
+});
+
+test('the data-added strip is actually doing something', { skip: !distExists && 'run `npm run build` first' }, () => {
+  // Guards the check above from passing for the wrong reason. If a refactor
+  // drops the `data-added` marker, the parity test would quietly start
+  // comparing Phase 2 copy against an export that never had it — and fail
+  // confusingly. If it drops the added sections instead, this catches that too.
+  const html = fs.readFileSync(PORT, 'utf8');
+  assert.match(html, /data-added=/, 'no data-added markers in the built page');
+  assert.match(html, /Tell me what you're running\./, 'the contact form is missing from the page');
+
+  const compared = textRuns(html).join(' ');
+  assert.ok(
+    !compared.includes("Tell me what you're running."),
+    'Phase 2 copy leaked into the parity comparison — the strip did not run',
+  );
+  assert.ok(
+    compared.includes('Three findings, from real audits.'),
+    'the strip removed more than it should have',
+  );
 });
 
 test('no template binding leaks into the built page', { skip: !distExists && 'run `npm run build` first' }, () => {

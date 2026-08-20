@@ -37,6 +37,13 @@ jobs:
       # checks all read from dist/, so they run after the build.
       - run: npm test
 
+      # Reported, not enforced: the amber-on-white pairings fail WCAG AA and
+      # that is a signed-off design decision (see NOTES.md). `|| true` keeps it
+      # visible in the log without blocking. Drop the `|| true` once the palette
+      # question is settled.
+      - name: Contrast audit
+        run: node scripts/check-contrast.mjs || true
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

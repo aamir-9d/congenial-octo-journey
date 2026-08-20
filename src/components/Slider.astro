@@ -25,6 +25,9 @@ const view = computeView(INITIAL_STATE);
     <label for={id}>{label}</label>
     <span class="calc__field-val" data-bind={bind}>{view[bind]}</span>
   </div>
+  {/* `aria-valuetext` carries the formatted readout — "8.0%", "$1.20" — so a
+      screen reader announces what the page shows rather than the raw number.
+      calculator.ts keeps it in step on every render. */}
   <input
     id={id}
     type="range"
@@ -32,7 +35,9 @@ const view = computeView(INITIAL_STATE);
     max={max}
     step={step}
     value={INITIAL_STATE[key]}
+    aria-valuetext={String(view[bind])}
     data-slider={key}
+    data-readout={bind}
     class:list={['calc__range', { 'calc__range--sm': small }]}
   />
 </div>

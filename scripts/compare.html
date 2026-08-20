@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Port vs export — visual diff</title>
+    <style>
+      :root {
+        --bg: #14161c;
+        --panel: #1c1f27;
+        --line: #2c3039;
+        --text: #e8e8ea;
+        --dim: #969aa6;
+        --amber: #e39a1f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.5 ui-sans-serif, system-ui, sans-serif;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 24px;
+        align-items: center;
+        padding: 14px 20px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      h1 { font-size: 15px; margin: 0; font-weight: 600; }
+      .group { display: flex; gap: 6px; align-items: center; }
+      label { color: var(--dim); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+      button, select {
+        font: inherit;
+        font-size: 13px;
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: #262a33;
+        color: var(--text);
+        cursor: pointer;
+      }
+      button[aria-pressed='true'] { background: var(--amber); color: #14161c; border-color: var(--amber); }
+      .hint { color: var(--dim); font-size: 12px; }
+      .stage { display: flex; gap: 20px; padding: 20px; align-items: flex-start; overflow-x: auto; }
+      .stage[data-mode='overlay'] { display: block; position: relative; }
+      figure { margin: 0; flex: none; }
+      figcaption {
+        font-size: 12px;
+        color: var(--dim);
+        padding-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      iframe {
+        border: 1px solid var(--line);
+        background: #fff;
+        display: block;
+        height: 90vh;
+      }
+      .stage[data-mode='overlay'] figure { position: absolute; top: 20px; left: 20px; }
+      .stage[data-mode='overlay'] figure:last-child { mix-blend-mode: difference; }
+      .stage[data-mode='overlay'] figcaption { display: none; }
+      .note {
+        margin: 0 20px 20px;
+        padding: 12px 16px;
+        border-left: 2px solid var(--amber);
+        background: var(--panel);
+        color: var(--dim);
+        font-size: 13px;
+        max-width: 80ch;
+      }
+      code { color: var(--text); }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Port vs export</h1>
+
+      <div class="group">
+        <label for="w">Width</label>
+        <select id="w">
+          <option>1440</option>
+          <option>1280</option>
+          <option>1024</option>
+          <option>768</option>
+          <option>414</option>
+          <option>390</option>
+          <option selected>375</option>
+        </select>
+      </div>
+
+      <div class="group">
+        <button id="side" aria-pressed="true">Side by side</button>
+        <button id="over" aria-pressed="false">Difference</button>
+      </div>
+
+      <span class="hint">Difference mode: black = identical. Scroll both to the same place first.</span>
+    </header>
+
+    <p class="note">
+      Serve the repo root over HTTP and open this file from that server, not from
+      <code>file://</code> — the export needs to fetch React from unpkg, and <code>file://</code>
+      blocks it. From the repo root: <code>npx serve -l 8080 .</code> then open
+      <code>http://localhost:8080/scripts/compare.html</code>. Build the port first
+      (<code>npm run build</code>). The export is the original
+      <code>E2E Apps Homepage.dc.html</code>; if it renders blank, check the console — it means
+      unpkg was unreachable.
+    </p>
+
+    <div class="stage" id="stage" data-mode="side">
+      <figure>
+        <figcaption>Export (original)</figcaption>
+        <iframe id="a" title="Original export"></iframe>
+      </figure>
+      <figure>
+        <figcaption>Port (dist)</figcaption>
+        <iframe id="b" title="Astro port"></iframe>
+      </figure>
+    </div>
+
+    <script>
+      // Both live one directory up from scripts/.
+      const ORIGINAL = '../E2E%20Apps%20Homepage.dc.html';
+      const PORT = '../dist/index.html';
+
+      const a = document.getElementById('a');
+      const b = document.getElementById('b');
+      const stage = document.getElementById('stage');
+      const widthSelect = document.getElementById('w');
+      const side = document.getElementById('side');
+      const over = document.getElementById('over');
+
+      function applyWidth() {
+        const w = widthSelect.value + 'px';
+        a.style.width = w;
+        b.style.width = w;
+      }
+
+      function setMode(mode) {
+        stage.dataset.mode = mode;
+        side.setAttribute('aria-pressed', String(mode === 'side'));
+        over.setAttribute('aria-pressed', String(mode === 'overlay'));
+      }
+
+      widthSelect.addEventListener('change', applyWidth);
+      side.addEventListener('click', () => setMode('side'));
+      over.addEventListener('click', () => setMode('overlay'));
+
+      a.src = ORIGINAL;
+      b.src = PORT;
+      applyWidth();
+    </script>
+  </body>
+</html>

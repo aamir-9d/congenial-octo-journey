@@ -17,8 +17,7 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 
-# local pixel-parity harness (see NOTES.md)
-compare.html
+# (scripts/compare.html is committed — it is the pixel-parity harness)
 
 # macOS / editors
 .DS_Store

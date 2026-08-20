@@ -1,0 +1,88 @@
+---
+/**
+ * JSON-LD: the business and the two people who are it.
+ *
+ * The LinkedIn URLs are the ones already in the design, used as `sameAs` so the
+ * two Person entries are resolvable to real profiles rather than bare strings.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = new URL(`${base}/`, Astro.site).href;
+const logo = new URL(`${base}/favicon.svg`, Astro.site).href;
+const image = new URL(`${base}/og-image.png`, Astro.site).href;
+
+const AAMIR = 'https://www.linkedin.com/in/aamir-jan-khan/';
+const FAISAL = 'https://www.linkedin.com/in/muhammad-faisal-khan-3606365/';
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${home}#business`,
+      name: 'E2E Apps',
+      url: home,
+      logo,
+      image,
+      email: 'hello@e2eapps.com',
+      description:
+        'Mobile growth and measurement for subscription and ad-monetised apps: attribution and MMP work, SKAdNetwork schemas, server-side revenue pipelines, and the paid media that runs on top of them.',
+      slogan: 'One specialist owns the entire growth loop — a second owns the infrastructure it runs on.',
+      areaServed: 'Worldwide',
+      priceRange: '$$$',
+      knowsAbout: [
+        'Mobile measurement partners',
+        'SKAdNetwork and AdAttributionKit',
+        'Web-to-app attribution',
+        'Subscription revenue analytics',
+        'Google Ads app campaigns',
+        'Apple Search Ads',
+        'Conversions APIs',
+        'App store optimisation',
+      ],
+      employee: [{ '@id': `${home}#aamir` }, { '@id': `${home}#faisal` }],
+      sameAs: [AAMIR, FAISAL],
+    },
+    {
+      '@type': 'Person',
+      '@id': `${home}#aamir`,
+      name: 'Aamir Jan Khan',
+      jobTitle: 'Measurement & Growth',
+      url: AAMIR,
+      sameAs: [AAMIR],
+      worksFor: { '@id': `${home}#business` },
+      knowsAbout: [
+        'Mobile measurement partners',
+        'Google Ads app campaigns',
+        'Subscription analytics',
+        'Web-to-app attribution',
+      ],
+    },
+    {
+      '@type': 'Person',
+      '@id': `${home}#faisal`,
+      name: 'Muhammad Faisal Khan',
+      jobTitle: 'Infrastructure & Operations',
+      url: FAISAL,
+      sameAs: [FAISAL],
+      worksFor: { '@id': `${home}#business` },
+      knowsAbout: [
+        'Server-side event pipelines',
+        'App Store Server Notifications',
+        'Carrier-grade mobile networks',
+        'Cloud infrastructure and monitoring',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${home}#website`,
+      url: home,
+      name: 'E2E Apps',
+      publisher: { '@id': `${home}#business` },
+      inLanguage: 'en',
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />

@@ -1,0 +1,327 @@
+---
+/**
+ * Contact form and the inline Calendly embed.
+ *
+ * NEW DESIGN. The signed-off export had no form and no booking — its only
+ * outbound links were two LinkedIn profiles and a mailto. Everything here is
+ * built strictly from the existing tokens: amber pill CTA, Plex Mono labels,
+ * 12px radii, the same dark ground as the closing section. It is the one place
+ * new design was necessary, and it is flagged in NOTES.md.
+ *
+ * Calendly is inline rather than a popup — popups get blocked and lose the
+ * conversion — and its script is not fetched until the widget scrolls into
+ * view, because it is heavy enough to decide the mobile Lighthouse score.
+ */
+
+const CALENDLY_URL = import.meta.env.PUBLIC_CALENDLY_URL ?? '';
+const FORM_ENDPOINT = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
+
+const hasCalendly = /^https:\/\/calendly\.com\//.test(CALENDLY_URL);
+
+const spendOptions = [
+  'Not spending yet',
+  'Under $10k / month',
+  '$10k – $50k / month',
+  '$50k – $250k / month',
+  'Over $250k / month',
+];
+---
+
+<section id="book" class="contact section" data-section="contact" data-added="phase-2">
+  <div class="contact__inner">
+    {
+      hasCalendly && (
+        <div class="contact__block">
+          <div class="eyebrow eyebrow--amber">PICK A TIME</div>
+          <h2 class="contact__head">Thirty minutes, no pitch.</h2>
+          <p class="contact__lead">
+            If a slot works, take it. You'll get a calendar invite and nothing else &#8212; no
+            sequence, no newsletter.
+          </p>
+          <div
+            id="calendly-embed"
+            class="contact__calendly"
+            data-calendly-url={CALENDLY_URL}
+            aria-label="Booking calendar"
+          >
+            <noscript>
+              <a href={CALENDLY_URL} class="link" target="_blank" rel="noopener">
+                Open the booking calendar
+              </a>
+            </noscript>
+          </div>
+        </div>
+      )
+    }
+
+    <div class="contact__block">
+      <div class="eyebrow eyebrow--amber">OR SEND IT OVER</div>
+      <h2 class="contact__head">Tell me what you're running.</h2>
+      <p class="contact__lead">
+        The more specific you are about the setup, the more specific I can be about what's wrong
+        with it.
+      </p>
+
+      <form id="contact-form" class="form" novalidate data-endpoint={FORM_ENDPOINT}>
+        <div class="form__row">
+          <label class="form__field">
+            <span class="form__label">Name</span>
+            <input type="text" name="name" required autocomplete="name" maxlength="120" class="form__input" />
+            <span class="form__error" data-error="name" hidden></span>
+          </label>
+
+          <label class="form__field">
+            <span class="form__label">Work email</span>
+            <input type="email" name="email" required autocomplete="email" maxlength="200" class="form__input" />
+            <span class="form__error" data-error="email" hidden></span>
+          </label>
+        </div>
+
+        <div class="form__row">
+          <label class="form__field">
+            <span class="form__label">App store URL</span>
+            <input
+              type="url"
+              name="appUrl"
+              inputmode="url"
+              placeholder="https://apps.apple.com/..."
+              maxlength="400"
+              class="form__input"
+            />
+            <span class="form__error" data-error="appUrl" hidden></span>
+          </label>
+
+          <label class="form__field">
+            <span class="form__label">Monthly ad spend</span>
+            <select name="spend" required class="form__input form__input--select">
+              <option value="">Select</option>
+              {spendOptions.map((o) => <option value={o}>{o}</option>)}
+            </select>
+            <span class="form__error" data-error="spend" hidden></span>
+          </label>
+        </div>
+
+        <label class="form__field">
+          <span class="form__label">What's the problem?</span>
+          <textarea name="message" rows="5" required maxlength="4000" class="form__input form__textarea"></textarea>
+          <span class="form__error" data-error="message" hidden></span>
+        </label>
+
+        {/* Honeypot. Hidden from people, irresistible to bots. Not
+            `display:none` — some bots skip those — and aria-hidden plus
+            tabindex keeps it off the keyboard path and out of the a11y tree. */}
+        <div class="form__trap" aria-hidden="true">
+          <label for="company-website">Company website</label>
+          <input id="company-website" type="text" name="company_website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="form__actions">
+          <button type="submit" class="btn-amber form__submit">Send it</button>
+          <p class="form__note">
+            Goes straight to my inbox. No sequence, no CRM nurture, no newsletter.
+          </p>
+        </div>
+
+        <p class="form__status" data-status role="status" aria-live="polite" hidden></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initContactForm } from '../scripts/contact-form';
+  import { initCalendly } from '../scripts/calendly';
+  initContactForm();
+  initCalendly();
+</script>
+
+<style>
+  .contact {
+    background: var(--c-ink-deep);
+    border-top: 1px solid rgba(var(--rgb-paper), 0.1);
+  }
+
+  .contact__inner {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .contact__head {
+    font-size: var(--fs-h2-dark);
+    color: var(--c-paper);
+    max-width: var(--measure-heading);
+  }
+
+  .contact__lead {
+    margin-top: var(--space-sm);
+    max-width: var(--measure-italic);
+    font-size: var(--fs-body-lg);
+    color: rgba(var(--rgb-paper), 0.6);
+    font-style: italic;
+  }
+
+  /* Calendly's own iframe sets the height; this reserves it up front so the
+     widget arriving does not shift the page (and cost us the CLS budget). */
+  .contact__calendly {
+    margin-top: var(--space-lg);
+    min-height: 700px;
+    border-radius: var(--r-12);
+    overflow: hidden;
+    background: rgba(var(--rgb-paper), 0.045);
+    border: 1px solid rgba(var(--rgb-paper), 0.1);
+  }
+
+  @media (max-width: 767px) {
+    .contact__calendly {
+      min-height: 1000px;
+    }
+  }
+
+  /* --- form -------------------------------------------------------------- */
+
+  .form {
+    margin-top: var(--space-lg);
+    display: grid;
+    gap: var(--space-sm);
+    max-width: 720px;
+  }
+
+  .form__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: var(--space-sm) var(--space-md);
+  }
+
+  .form__field {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .form__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-mono-md);
+    color: rgba(var(--rgb-paper), 0.72);
+  }
+
+  .form__input {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: var(--fs-body-md);
+    color: var(--c-paper);
+    background: rgba(var(--rgb-paper), 0.045);
+    border: 1px solid rgba(var(--rgb-paper), 0.16);
+    border-radius: var(--r-8);
+    padding: var(--space-2xs) var(--space-xs);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .form__input::placeholder {
+    color: rgba(var(--rgb-paper), 0.32);
+  }
+
+  .form__input:hover {
+    border-color: rgba(var(--rgb-paper), 0.28);
+  }
+
+  .form__input:focus {
+    outline: none;
+    border-color: var(--c-amber);
+    background: rgba(var(--rgb-paper), 0.07);
+  }
+
+  .form__input[aria-invalid='true'] {
+    border-color: var(--c-red);
+  }
+
+  .form__input--select {
+    /* Native select popups render in the OS palette; the closed control still
+       has to match the field next to it. */
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(247, 246, 243, 0.6) 50%),
+      linear-gradient(135deg, rgba(247, 246, 243, 0.6) 50%, transparent 50%);
+    background-position: calc(100% - 18px) center, calc(100% - 13px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: var(--space-lg);
+  }
+
+  .form__input--select option {
+    background: var(--c-ink-deep);
+    color: var(--c-paper);
+  }
+
+  .form__textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: var(--lh-normal);
+  }
+
+  .form__error {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-red);
+  }
+
+  .form__error[hidden] {
+    display: none;
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    align-items: center;
+    margin-top: var(--space-2xs);
+  }
+
+  .form__submit {
+    font-size: var(--fs-body-md);
+    padding: var(--space-sm) var(--space-lg);
+  }
+
+  .form__submit[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .form__note {
+    flex: 1 1 240px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-ink-soft);
+  }
+
+  .form__status {
+    font-size: var(--fs-body-md);
+    line-height: var(--lh-normal);
+    border-radius: var(--r-8);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .form__status[hidden] {
+    display: none;
+  }
+
+  .form__status[data-tone='ok'] {
+    color: var(--c-paper);
+    background: rgba(var(--rgb-teal), 0.22);
+    border: 1px solid rgba(var(--rgb-teal), 0.55);
+  }
+
+  .form__status[data-tone='error'] {
+    color: var(--c-paper);
+    background: rgba(var(--rgb-red), 0.18);
+    border: 1px solid rgba(var(--rgb-red), 0.5);
+  }
+</style>

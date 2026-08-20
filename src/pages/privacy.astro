@@ -1,0 +1,221 @@
+---
+import Prose from '../layouts/Prose.astro';
+
+/**
+ * Written against what Phase 3 actually implements, not a template. Every tool
+ * named here exists in the codebase; every retention period is the one really
+ * configured. If the tracking changes, this page changes with it.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const cookies = [
+  {
+    name: 'e2e_consent',
+    who: 'Us (first-party)',
+    life: '180 days',
+    why: 'Remembers whether you accepted or rejected analytics and advertising cookies, so you are not asked on every page.',
+  },
+  {
+    name: 'e2e_attr',
+    who: 'Us (first-party)',
+    life: '90 days',
+    why: 'Holds the advertising click identifier from the link you arrived on (see below) so that if you later contact us we can tell which ad brought you. Set regardless of your choice; nothing is transmitted anywhere unless you submit the form.',
+  },
+  {
+    name: '_ga, _ga_*',
+    who: 'Google Analytics 4',
+    life: '2 years',
+    why: 'Distinguishes one visitor from another so we can count sessions. Only set after you accept.',
+  },
+  {
+    name: '_gcl_*',
+    who: 'Google Ads',
+    life: '90 days',
+    why: 'Attributes a conversion back to a Google Ads click. Only set after you accept.',
+  },
+  {
+    name: '_fbp',
+    who: 'Meta',
+    life: '90 days',
+    why: 'Attributes a conversion back to a Meta ad. Only set after you accept.',
+  },
+  {
+    name: 'li_*',
+    who: 'LinkedIn',
+    life: 'Up to 2 years',
+    why: 'Attributes a conversion back to a LinkedIn ad. Only set after you accept.',
+  },
+];
+
+const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
+---
+
+<Prose
+  title="Privacy — E2E Apps"
+  description="What E2E Apps collects, which tools it uses, how long it keeps things, and how to make it stop."
+  path="/privacy"
+  heading="Privacy"
+  updated="20 August 2026"
+>
+  <p>
+    We run a measurement consultancy, so it would be a poor look to be vague about our own. This
+    page describes exactly what this website collects, which third parties see it, and how long it
+    is kept. No generic template, no "we may collect certain information".
+  </p>
+  <p>
+    <strong>The short version.</strong> If you reject cookies, nothing about your visit leaves this
+    site. If you accept, Google Analytics and Google Ads can see that you visited. If you submit the
+    form or book a call, we get what you typed plus the ad click you arrived on.
+  </p>
+
+  <h2>Who we are</h2>
+  <p>
+    E2E Apps. Contact <a href="mailto:hello@e2eapps.com" class="link">hello@e2eapps.com</a> for
+    anything on this page, including a request to delete your data. A person reads that address.
+  </p>
+
+  <h2>What we collect, and when</h2>
+
+  <h3>If you just read the page and reject cookies</h3>
+  <p>
+    Nothing is sent anywhere. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
+    across the board, so no analytics or advertising cookie is written and no hit is transmitted.
+    One first-party cookie is set to remember your rejection so we do not ask again.
+  </p>
+
+  <h3>If you accept cookies</h3>
+  <p>
+    Google Analytics 4 records the pages you view, how far you scroll, which sections you reach, and
+    how you use the payback calculator &#8212; which model you pick, the values you set, and the
+    breakeven it returns. That last one exists because the numbers someone puts into the calculator
+    tell us more about whether we can help them than any form field does. It is not linked to your
+    name unless you also contact us.
+  </p>
+  <p>
+    We do not collect precise location, we do not fingerprint devices, we do not buy or enrich data
+    about you, and we do not sell anything to anyone.
+  </p>
+
+  <h3>If you arrived from an advert</h3>
+  <p>
+    Advertising platforms append a click identifier to the link. We read these from the address bar
+    and keep them in a first-party cookie for 90 days:
+  </p>
+  <ul>
+    {clickIds.map((id) => <li><code>{id}</code></li>)}
+  </ul>
+  <p>
+    If you later submit the form, that identifier is attached, which is how we tell which advert
+    produced an enquiry. This is the same mechanic we build for clients; it seemed dishonest to sell
+    it without running it. The identifier is stored whatever your cookie choice, because it is a
+    first-party cookie on our own domain that nothing reads until you choose to contact us. It is
+    transmitted only at that point.
+  </p>
+
+  <h3>If you submit the form or book a call</h3>
+  <p>
+    We receive your name, work email, app store URL if you gave one, the ad-spend band you picked,
+    your message, the stored click identifiers, the page you submitted from, and the country your
+    request came from. Two spam checks run: a hidden field that people never see, and a check that
+    the form was not completed impossibly fast. There is no CAPTCHA &#8212; they cost conversions
+    and we would rather filter the few bots that get through by hand.
+  </p>
+  <p>
+    Booking a call sends your name, email and chosen slot to Calendly. The Calendly widget loads
+    only when you scroll to it, so if you never reach that part of the page it never runs.
+  </p>
+
+  <h2>Who else sees it</h2>
+  <div class="prose__scroll">
+    <table>
+      <thead>
+        <tr><th>Processor</th><th>What they get</th><th>Why</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Google (Analytics 4, Ads, Tag Manager)</td><td>Page views, calculator interactions, conversion events, a hashed email on conversion</td><td>Traffic analytics and ad measurement</td></tr>
+        <tr><td>Cloudflare (Workers)</td><td>The form submission in transit, your IP address</td><td>Runs the form endpoint; GitHub Pages cannot execute server code</td></tr>
+        <tr><td>Resend</td><td>The contents of your form submission</td><td>Delivers it to our inbox</td></tr>
+        <tr><td>Calendly</td><td>Name, email, chosen time</td><td>Books the call</td></tr>
+        <tr><td>Meta</td><td>A hashed email and the conversion event</td><td>Ad measurement, only if you accepted</td></tr>
+        <tr><td>LinkedIn</td><td>A hashed email and the conversion event</td><td>Ad measurement, only if you accepted</td></tr>
+        <tr><td>GitHub (Pages)</td><td>Standard web server logs including your IP</td><td>Serves the site</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Where we send your email address to an advertising platform, we send a SHA-256 hash of it, not
+    the address. The hash lets them match you to an account they already have; it does not let them
+    learn an address they did not.
+  </p>
+
+  <h2>Cookies</h2>
+  <div class="prose__scroll">
+    <table>
+      <thead>
+        <tr><th>Cookie</th><th>Set by</th><th>Lifetime</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        {
+          cookies.map((c) => (
+            <tr>
+              <td><code>{c.name}</code></td>
+              <td>{c.who}</td>
+              <td>{c.life}</td>
+              <td>{c.why}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>How long we keep things</h2>
+  <ul>
+    <li><strong>Analytics data in GA4:</strong> 14 months, then deleted automatically.</li>
+    <li><strong>Advertising click identifiers:</strong> 90 days in your browser.</li>
+    <li><strong>Your consent choice:</strong> 180 days in your browser.</li>
+    <li>
+      <strong>Form submissions:</strong> kept in our email for 24 months, so we can pick up a
+      conversation that went quiet. Ask and we delete yours sooner.
+    </li>
+    <li>
+      <strong>Closed deals:</strong> if you become a client, the original click identifier is
+      uploaded to Google Ads against the deal value, so the platform learns which adverts produce
+      real business. That upload contains the click identifier and an amount &#8212; not your name,
+      not your email.
+    </li>
+  </ul>
+
+  <h2>Legal basis</h2>
+  <ul>
+    <li>
+      <strong>Consent</strong> for analytics and advertising cookies. Given through the banner,
+      withdrawable at any time by clearing cookies for this site, which brings the banner back.
+    </li>
+    <li>
+      <strong>Legitimate interest</strong> for the first-party attribution cookie and for the spam
+      checks &#8212; both are necessary to run a contact form that works and to know which adverts
+      pay for themselves, and neither reveals anything about you until you choose to write to us.
+    </li>
+    <li>
+      <strong>Contract</strong> for handling an enquiry you send us.
+    </li>
+  </ul>
+
+  <h2>Your rights</h2>
+  <p>
+    If you are in the UK or EU you can ask for a copy of what we hold, ask us to correct or delete
+    it, object to processing, or complain to your data protection authority (in the UK, the ICO).
+    Email <a href="mailto:hello@e2eapps.com" class="link">hello@e2eapps.com</a>. We will reply
+    within 30 days, and usually a lot sooner &#8212; there is not much to look through.
+  </p>
+
+  <h2>Changes</h2>
+  <p>
+    If the tracking changes, this page changes in the same commit. The date at the top is the last
+    time that happened.
+  </p>
+
+  <p><a href={`${base}/`} class="link">Back to the homepage</a></p>
+</Prose>

@@ -1,0 +1,95 @@
+---
+import Prose from '../layouts/Prose.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Prose
+  title="Terms — E2E Apps"
+  description="Terms of use for the E2E Apps website, including what the payback calculator is and is not."
+  path="/terms"
+  heading="Terms"
+  updated="20 August 2026"
+>
+  <p>
+    Terms of use for this website. Engagement terms are a separate document and are agreed in
+    writing before any work starts &#8212; nothing here creates a contract to do work.
+  </p>
+
+  <h2>The calculator is a model, not a measurement</h2>
+  <p>
+    The payback model on the homepage says so on its face, and it is worth repeating here. It
+    projects a cumulative return per install from the assumptions you type into it. It is not
+    connected to your app, it has never seen your data, and it does not know your actual retention.
+  </p>
+  <p>It assumes, among other things:</p>
+  <ul>
+    <li>Geometric per-cycle retention &#8212; a constant renewal rate every billing cycle.</li>
+    <li>Constant ARPDAU across tenure.</li>
+    <li>No seasonality in eCPM.</li>
+    <li>No organic uplift from paid spend.</li>
+    <li>No involuntary-churn recovery.</li>
+    <li>A steady state &#8212; no cohort-size or price changes over the horizon.</li>
+  </ul>
+  <p>
+    Real retention is not perfectly geometric: month one churns harder and then the curve flattens,
+    which makes the model slightly pessimistic past month six. Do not commit a budget on the
+    strength of it. It exists to show the shape of a problem &#8212; that a campaign can look dead
+    at day 7 and be profitable at day 277 &#8212; not to price your media plan.
+  </p>
+
+  <h2>The figures in "Three findings"</h2>
+  <p>
+    Those are real findings from real audits, with client names withheld under the confidentiality
+    terms of those engagements. They describe what we found in specific accounts. They are not a
+    forecast of what we would find in yours, and they are not a promise of a result.
+  </p>
+
+  <h2>Contacting us</h2>
+  <p>
+    Send accurate information. The form goes to a person, and the more accurate it is, the more
+    useful the reply. Do not send confidential material through it &#8212; it is a contact form, not
+    a secure channel. If you need to share account access or data, we will agree how before you do.
+  </p>
+  <p>
+    Sending an enquiry does not create a client relationship or any obligation on either side. We
+    may decline work, and frequently do when the problem is not one we would improve.
+  </p>
+
+  <h2>Content</h2>
+  <p>
+    The text, design and code of this site belong to E2E Apps. Quote it with attribution; do not
+    republish it wholesale. Product and company names mentioned &#8212; AppsFlyer, Adjust, Singular,
+    Branch, RevenueCat, Adapty, Google, Apple, Meta, TikTok, LinkedIn and others &#8212; belong to
+    their owners and are named descriptively. No affiliation or endorsement is implied in either
+    direction.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    Booking runs on Calendly and is subject to Calendly's terms. The contact form is processed by
+    Cloudflare and delivered by Resend. What each of them receives is set out on the
+    <a href={`${base}/privacy`} class="link">privacy page</a>.
+  </p>
+
+  <h2>Availability and liability</h2>
+  <p>
+    The site is provided as it is. We do not guarantee it will be available, or that the calculator
+    is free of error. To the extent the law allows, we are not liable for any loss arising from
+    relying on anything published here, including the calculator's output. Nothing here limits
+    liability for death, personal injury or fraud, because it cannot.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>
+    These terms are governed by the laws of England and Wales, and its courts have exclusive
+    jurisdiction.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    <a href="mailto:hello@e2eapps.com" class="link">hello@e2eapps.com</a>
+  </p>
+
+  <p><a href={`${base}/`} class="link">Back to the homepage</a></p>
+</Prose>

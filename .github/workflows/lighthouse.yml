@@ -1,0 +1,51 @@
+name: Lighthouse
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+# Mobile, not desktop — Lighthouse's default form factor, and desktop scores
+# flatter in exactly the places that matter here. Targets from the brief:
+# LCP < 2.0s, CLS < 0.05, TBT < 150ms, performance 95+. Those four are hard
+# failures.
+#
+# Accessibility, SEO and best-practices are warnings for now, not because they
+# do not matter but because two known exceptions would otherwise fail every PR
+# for a reason nobody can fix in that PR:
+#   - the amber-on-white pairings fail WCAG AA and are a signed-off design
+#     decision awaiting a call (NOTES.md);
+#   - 404.html is deliberately noindex, which the SEO category penalises.
+# Promote both to `error` once the palette question is answered.
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Built at the site root so the audit is not measuring a base path that
+      # production will not have.
+      - run: npm run build
+        env:
+          SITE_URL: https://e2eapps.com
+          SITE_BASE: /
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.15.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+          retention-days: 14

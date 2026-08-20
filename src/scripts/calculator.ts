@@ -5,8 +5,21 @@
  * single `render(view)` pass. The maths itself is untouched — see calc-model.ts.
  */
 import { INITIAL_STATE, computeView, type CalcState, type CalcView } from './calc-model';
+import { track, debounce } from './analytics';
 
 type Bindable = keyof CalcView;
+
+/**
+ * Calculator telemetry.
+ *
+ * This is lead intelligence, not vanity. Someone who sets CPI to $4 against a
+ * $99 annual plan is a very different prospect from someone at $0.30 weekly,
+ * and the settings they land on say more than any form field.
+ *
+ * Slider events are debounced 800ms so a drag is one event at the value the
+ * user settled on, not eighty describing the journey.
+ */
+const DEBOUNCE_MS = 800;
 
 export function initCalculator(): void {
   const root = document.querySelector<HTMLElement>('.calc');
@@ -78,9 +91,19 @@ export function initCalculator(): void {
 
     /* Controls. Never write back to the element the user is currently
        operating — doing so fights a slider mid-drag and moves the caret in the
-       number field. */
+       number field. `aria-valuetext` is the exception: it has to update on the
+       focused slider, because that is the whole point of it. */
     const active = document.activeElement;
     for (const s of sliders) {
+      // Without this a screen reader announces "8" where the page shows
+      // "8.0%", and "1.2" where it shows "$1.20". The visible readout and the
+      // announced one are the same string.
+      const readout = s.dataset.readout;
+      if (readout) {
+        const text = String(v[readout as Bindable]);
+        if (s.getAttribute('aria-valuetext') !== text) s.setAttribute('aria-valuetext', text);
+      }
+
       if (s === active) continue;
       const next = String(state[s.dataset.slider as keyof CalcState]);
       if (s.value !== next) s.value = next;
@@ -157,6 +180,27 @@ export function initCalculator(): void {
     refs.lblBe?.classList.toggle('is-flipped', Boolean(L.be.flip));
   }
 
+  /* --- telemetry ---------------------------------------------------------- */
+
+  /** The settings that describe the prospect, reported alongside the outcome. */
+  const shape = () => {
+    const v = computeView(state);
+    return {
+      calc_mode: state.mode,
+      breakeven_day: v.breakevenDay ?? 'never',
+      cpi: state.mode === 'sub' ? state.cpi : state.adCpi,
+      price: state.price,
+      billing_period: state.period,
+      ltv_per_install: Number(v.ltvPerInstall.toFixed(4)),
+    };
+  };
+
+  const reportBreakeven = debounce(() => track('calc_breakeven_computed', shape()), DEBOUNCE_MS);
+
+  const reportSlider = debounce((name: string, value: number) => {
+    track('calc_slider_change', { slider_name: name, slider_value: value, calc_mode: state.mode });
+  }, DEBOUNCE_MS);
+
   /* --- events ------------------------------------------------------------ */
 
   const num = (raw: string) => parseFloat(raw);
@@ -166,6 +210,8 @@ export function initCalculator(): void {
     const onMove = () => {
       (state[key] as number) = num(slider.value);
       render();
+      reportSlider(key, num(slider.value));
+      reportBreakeven();
     };
     slider.addEventListener('input', onMove);
     slider.addEventListener('change', onMove);
@@ -176,6 +222,8 @@ export function initCalculator(): void {
     toggle.addEventListener('change', () => {
       (state[key] as boolean) = toggle.checked;
       render();
+      track('calc_gap_toggle', { gap_name: key, gap_enabled: toggle.checked });
+      reportBreakeven();
     });
   }
 
@@ -185,6 +233,7 @@ export function initCalculator(): void {
       // `|| 0` matches the export: a cleared field reads as zero, not NaN.
       (state[key] as number) = num(field.value) || 0;
       render();
+      reportSlider(key, num(field.value) || 0);
     };
     field.addEventListener('input', onType);
     field.addEventListener('change', onType);
@@ -195,10 +244,16 @@ export function initCalculator(): void {
     const raw = button.dataset.value!;
     button.addEventListener('click', () => {
       const parsed = Number(raw);
+      const previous = state[key];
       (state[key] as string | number) = Number.isNaN(parsed) ? raw : parsed;
       // Picking the annual SKU pins the horizon to a full year, as in the export.
       if (key === 'period' && raw === 'annual') state.horizon = 365;
       render();
+
+      if (key === 'mode' && previous !== state.mode) {
+        track('calc_mode_switch', { calc_mode: state.mode });
+      }
+      reportBreakeven();
     });
   }
 
@@ -225,7 +280,7 @@ export function initCalculator(): void {
   measure();
   render();
 
-  if ('ResizeObserver' in window) {
+  if (typeof ResizeObserver !== 'undefined') {
     // Skip the observer's synchronous first callback; the initial render above
     // has already measured.
     let primed = false;

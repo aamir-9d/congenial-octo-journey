@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import Analytics from '../components/Analytics.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
 
 interface Props {
   title: string;
@@ -104,15 +106,27 @@ const LATIN =
       document.documentElement.classList.add('js');
     </script>
 
+    {/* Consent defaults, then the container. Must come before any tag. */}
+    <Analytics />
+
     <slot name="head" />
   </head>
 
   <body>
     <slot />
+    <ConsentBanner />
 
     <script>
       import { initReveal } from '../scripts/reveal';
+      import { captureAttribution } from '../scripts/attribution';
+      import { initConsent } from '../scripts/consent';
+      import { initEngagement } from '../scripts/engagement';
+
+      // Capture click IDs first: everything downstream reads the cookie it writes.
+      captureAttribution();
+      initConsent();
       initReveal();
+      initEngagement();
     </script>
   </body>
 </html>

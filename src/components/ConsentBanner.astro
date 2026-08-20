@@ -1,0 +1,115 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/* Rendered hidden and revealed by consent.ts only when there is no stored
+   decision, so a returning visitor never sees it flash. */
+---
+
+<div id="consent-banner" class="consent" data-added="phase-3" role="dialog" aria-label="Cookie choices" aria-live="polite" hidden>
+  <div class="consent__inner">
+    <p class="consent__copy">
+      We use Google Analytics and Google Ads cookies to see which campaigns bring people here and
+      whether they convert. Nothing loads until you choose. Reject and the site works exactly the
+      same &#8212; we just stop counting.
+    </p>
+    <div class="consent__actions">
+      <button type="button" class="consent__btn consent__btn--ghost" data-consent="reject">
+        Reject
+      </button>
+      <button type="button" class="consent__btn consent__btn--amber" data-consent="accept">
+        Accept
+      </button>
+      <a href={`${base}/privacy`} class="consent__link">What we collect</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 16px;
+    z-index: 90;
+    display: flex;
+    justify-content: center;
+  }
+
+  .consent[hidden] {
+    display: none;
+  }
+
+  .consent__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--wrap);
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--r-12);
+    background: rgba(var(--rgb-ink-deep), 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(var(--rgb-white), 0.08);
+    box-shadow: var(--shadow-nav);
+  }
+
+  .consent__copy {
+    flex: 1 1 320px;
+    font-size: var(--fs-body-xs);
+    line-height: var(--lh-normal);
+    color: rgba(var(--rgb-paper), 0.72);
+  }
+
+  .consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+    align-items: center;
+  }
+
+  .consent__btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--fs-body-xs);
+    padding: var(--space-2xs) var(--space-md);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .consent__btn--amber {
+    background: var(--c-amber);
+    color: var(--c-ink);
+    border: 0;
+  }
+
+  .consent__btn--amber:hover {
+    background: var(--c-amber-hover);
+  }
+
+  .consent__btn--ghost {
+    background: transparent;
+    color: var(--c-paper);
+    border: 1px solid rgba(var(--rgb-paper), 0.28);
+  }
+
+  .consent__btn--ghost:hover {
+    border-color: var(--c-paper);
+  }
+
+  .consent__link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: rgba(var(--rgb-paper), 0.65);
+    white-space: nowrap;
+    transition: color 0.15s ease;
+  }
+
+  .consent__link:hover {
+    color: var(--c-amber);
+  }
+</style>

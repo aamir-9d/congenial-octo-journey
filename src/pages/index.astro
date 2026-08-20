@@ -8,7 +8,9 @@ import Stack from '../components/Stack.astro';
 import Proof from '../components/Proof.astro';
 import Founders from '../components/Founders.astro';
 import CTA from '../components/CTA.astro';
+import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
+import Schema from '../components/Schema.astro';
 
 const title = 'E2E Apps — Mobile growth and measurement for subscription apps';
 const description =
@@ -16,6 +18,7 @@ const description =
 ---
 
 <Base title={title} description={description} path="/">
+  <Schema slot="head" />
   <div class="page">
     <Nav />
     <Hero />
@@ -25,6 +28,7 @@ const description =
     <Proof />
     <Founders />
     <CTA />
+    <Contact />
     <Footer />
   </div>
 </Base>
