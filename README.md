@@ -98,6 +98,10 @@ renders, so local builds stay clean.
 
 ## Environment
 
+**[docs/credentials.md](docs/credentials.md) is the setup runbook** — every key
+the site needs, where to get it, where it goes, and what it unblocks. Start
+there.
+
 Copy `.env.example` to `.env`. `PUBLIC_*` values are inlined into the page and
 are safe to expose; everything else is a Worker secret and belongs in
 `wrangler secret put`, never in the repo.
