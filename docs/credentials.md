@@ -45,11 +45,36 @@ you will use a handful.
    npx wrangler login      # opens a browser, click Allow
    npx wrangler deploy
    ```
-3. It prints a URL like
-   `https://e2e-apps-forms.<your-subdomain>.workers.dev`. **Save it.**
+3. **The first deploy asks you to pick a workers.dev subdomain. This one
+   catches everybody.**
+
+   > `What would you like your workers.dev subdomain to be?`
+
+   It is **not** a yes/no question, despite following one. It wants a *name* —
+   typing `y` or `yes` registers those as your subdomain, and both were claimed
+   years ago, so you get `Subdomain is unavailable` and the prompt loops.
+
+   Type something unique instead: `e2eapps`, or `e2e-apps` / `aamir-e2eapps` /
+   `e2eapps-growth` if that is gone. Lowercase, letters, numbers and hyphens.
+   It is a global namespace shared by every Cloudflare customer, so short words
+   are long gone — longer and more specific is likelier to be free.
+
+   This is **account-wide and one-time**: every Worker you ever deploy sits
+   under it. Changeable later in the dashboard, but it rewrites every Worker
+   URL, so pick one you will still want.
+
+   `Ctrl+C` is safe at this prompt — nothing has deployed yet, and re-running
+   `npx wrangler deploy` resumes.
+
+4. It prints a URL combining the Worker name from `wrangler.toml` with your
+   subdomain: `https://e2e-apps-forms.<your-subdomain>.workers.dev`. **Save it.**
 
 **Gives you:** the value for `PUBLIC_FORM_ENDPOINT`, which is that URL with
-`/submit` on the end.
+`/submit` on the end. It goes in `.env` and in the `env:` block of
+`.github/workflows/deploy.yml`.
+
+The deploy succeeds without a Resend key, but submitting the form then returns
+502 — do step 2 next.
 
 ---
 
