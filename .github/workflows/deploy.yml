@@ -18,6 +18,19 @@ env:
   SITE_URL: https://aamir-9d.github.io
   SITE_BASE: /congenial-octo-journey
 
+  # Not a secret: the browser posts here, so it is visible in any network tab.
+  # The Worker is what holds the keys. Deployed from worker/ — see
+  # docs/credentials.md.
+  PUBLIC_FORM_ENDPOINT: https://e2e-apps-forms.e2eapps.workers.dev/submit
+
+  # Fill these in as you create them; each stays dormant while blank.
+  # PUBLIC_CALENDLY_URL: https://calendly.com/<handle>/30min
+  # PUBLIC_GTM_ID: GTM-XXXXXXX
+  # PUBLIC_GA4_MEASUREMENT_ID: G-XXXXXXXXXX
+  # PUBLIC_GOOGLE_ADS_CONVERSION_ID: AW-XXXXXXXXX
+  # PUBLIC_GOOGLE_ADS_FORM_LABEL: xxxxxxxxxxxxxxxxx
+  # PUBLIC_GOOGLE_ADS_BOOKING_LABEL: xxxxxxxxxxxxxxxxx
+
 jobs:
   build:
     runs-on: ubuntu-latest
