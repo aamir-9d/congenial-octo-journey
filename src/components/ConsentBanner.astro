@@ -2,9 +2,16 @@
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /* Rendered hidden and revealed by consent.ts only when there is no stored
-   decision, so a returning visitor never sees it flash. */
+   decision, so a returning visitor never sees it flash.
+
+   Gated on the same PUBLIC_GTM_ID as Analytics.astro. With no container
+   configured, nothing sets an analytics or advertising cookie — and a banner
+   asking permission for cookies that do not exist is a false statement, not a
+   harmless default. */
+const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 ---
 
+{enabled && (
 <div id="consent-banner" class="consent" data-added="phase-3" role="dialog" aria-label="Cookie choices" aria-live="polite" hidden>
   <div class="consent__inner">
     <p class="consent__copy">
@@ -23,6 +30,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </div>
   </div>
 </div>
+)}
 
 <style>
   .consent {
