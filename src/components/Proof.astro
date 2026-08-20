@@ -1,0 +1,88 @@
+---
+/** "Three findings, from real audits." Dark section, three stat columns. */
+
+const findings = [
+  {
+    stat: '11% → 17%',
+    body: 'A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.',
+  },
+  {
+    stat: '~5%',
+    body: 'Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.',
+  },
+  {
+    stat: 'Most of the budget',
+    body: 'At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.',
+  },
+];
+---
+
+<section class="proof section">
+  <div class="wrap">
+    <div data-reveal="1" class="proof__intro">
+      <div class="eyebrow eyebrow--amber">WHAT THE AUDITS TURN UP</div>
+      <h2 class="proof__head">Three findings, from real audits.</h2>
+    </div>
+
+    <div class="proof__grid">
+      {
+        findings.map((f) => (
+          <div data-reveal="1" class="proof__item">
+            <div class="proof__stat">{f.stat}</div>
+            <p class="proof__body">{f.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="proof__note">Client names withheld. Details available on a call.</p>
+  </div>
+</section>
+
+<style>
+  .proof {
+    background: var(--c-ink);
+  }
+
+  .proof__intro {
+    max-width: var(--measure-cta-head);
+  }
+
+  .proof__head {
+    font-size: var(--fs-h2-dark);
+    color: var(--c-paper);
+  }
+
+  .proof__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .proof__item {
+    border-top: 2px solid var(--c-amber);
+    padding-top: var(--space-md);
+  }
+
+  .proof__stat {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-stat);
+    letter-spacing: var(--ls-stat);
+    color: var(--c-paper);
+  }
+
+  .proof__body {
+    margin-top: var(--space-xs);
+    font-size: var(--fs-body-sm);
+    color: rgba(var(--rgb-paper), 0.7);
+  }
+
+  .proof__note {
+    margin-top: var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-ink-soft);
+  }
+</style>

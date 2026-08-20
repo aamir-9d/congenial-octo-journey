@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Allow one concurrent deployment, and let a new push supersede a running one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  # Flip these two to move to the custom domain (and add public/CNAME).
+  #   SITE_URL: https://e2eapps.com
+  #   SITE_BASE: /
+  SITE_URL: https://aamir-9d.github.io
+  SITE_BASE: /congenial-octo-journey
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      # Copy parity, the calculator's golden values and the "no DCLogic left"
+      # checks all read from dist/, so they run after the build.
+      - run: npm test
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    # Pages has no native PR previews; PRs build and test only. The artifact
+    # from the build job is downloadable from the run summary for review.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

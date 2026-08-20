@@ -1,0 +1,257 @@
+---
+/**
+ * "The Full Loop" — four stations around a cycle.
+ *
+ * The export rendered two entirely separate markup trees and chose between
+ * them from JS (`window.innerWidth >= 1024`). Here both live in the DOM and a
+ * `@media (min-width: 1024px)` query picks one — same breakpoint, no JS, and
+ * no layout shift while the script boots.
+ */
+
+const stations = [
+  {
+    n: '01',
+    title: 'Instrument',
+    body: 'Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.',
+    outcome:
+      'Outcome: Events fire when they should, named what they should be, carrying what they should carry.',
+  },
+  {
+    n: '02',
+    title: 'Attribute',
+    body: 'Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.',
+    outcome: 'Outcome: Every install and every dollar traceable to the click that caused it.',
+  },
+  {
+    n: '03',
+    title: 'Decide',
+    body: 'Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.',
+    outcome:
+      'Outcome: A defensible number for what you can afford to pay for a user — market by market.',
+  },
+  {
+    n: '04',
+    title: 'Deploy',
+    body: 'Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.',
+    outcome:
+      'Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.',
+  },
+];
+
+/* Grid placement for the wide layout: 01 and 04 on the left, 02 and 03 on the
+   right, so reading order runs clockwise around the cycle. */
+const cell = ['a', 'b', 'c', 'd'];
+---
+
+<section id="loop" class="loop section">
+  <div class="wrap">
+    <div data-reveal="1" class="loop__intro">
+      <div class="eyebrow">HOW THE WORK IS SEQUENCED</div>
+      <h2 class="loop__head">The Full Loop</h2>
+      <p class="section-lead">
+        Four stations. The output of the last one is the input to the first. That's the point.
+      </p>
+    </div>
+
+    <div class="loop__wide">
+      <svg viewBox="0 0 1000 660" preserveAspectRatio="none" class="loop__path" aria-hidden="true">
+        <path
+          d="M 500 150 L 560 150 A 60 60 0 0 1 620 210 L 620 450 A 60 60 0 0 1 560 510 L 440 510 A 60 60 0 0 1 380 450 L 380 210 A 60 60 0 0 1 440 150 Z"
+          fill="none"
+          stroke="#D6D3CB"
+          stroke-width="1.5"></path>
+        <polygon points="524,150 512,144 512,156" fill="#E39A1F"></polygon>
+        <polygon points="620,336 614,324 626,324" fill="#E39A1F"></polygon>
+        <polygon points="476,510 488,516 488,504" fill="#E39A1F"></polygon>
+        <polygon points="380,324 386,336 374,336" fill="#E39A1F"></polygon>
+      </svg>
+
+      {
+        stations.map((s, i) => (
+          <div class={`loop__card loop__card--${cell[i]}`}>
+            <div class="loop__station">STATION {s.n}</div>
+            <h3 class="loop__title">{s.title}</h3>
+            <p class="loop__body">{s.body}</p>
+            <p class="loop__outcome">{s.outcome}</p>
+          </div>
+        ))
+      }
+
+      <div class="loop__hub">THE<br />FULL<br />LOOP</div>
+    </div>
+
+    <div class="loop__narrow">
+      {
+        stations.map((s) => (
+          <div class="loop__card loop__card--stacked">
+            <div class="loop__station">STATION {s.n}</div>
+            <h3 class="loop__title loop__title--narrow">{s.title}</h3>
+            <p class="loop__body">{s.body}</p>
+            <p class="loop__outcome">{s.outcome}</p>
+          </div>
+        ))
+      }
+      <div class="loop__back">
+        <svg width="40" height="28" viewBox="0 0 40 28" aria-hidden="true" class="loop__back-icon">
+          <path d="M36 24 L14 24 A8 8 0 0 1 6 16 L6 9" fill="none" stroke="#E39A1F" stroke-width="1.5"
+          ></path>
+          <polygon points="6,2 2.5,9 9.5,9" fill="#E39A1F"></polygon>
+        </svg>back to 01
+      </div>
+    </div>
+
+    <p data-reveal="1" class="pull">
+      Most consultants stop after Station 02. The loop only closes when the same person walks all
+      four.
+    </p>
+  </div>
+</section>
+
+<style>
+  .loop {
+    background: var(--c-paper);
+  }
+
+  .loop__intro {
+    max-width: var(--measure-hero-lead);
+  }
+
+  .loop__head {
+    font-size: var(--fs-h2);
+    color: var(--c-ink);
+  }
+
+  /* --- shared card ------------------------------------------------------ */
+
+  .loop__card {
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    box-shadow: var(--shadow-card);
+  }
+
+  .loop__station {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-eyebrow-sm);
+    color: var(--c-amber);
+    margin-bottom: var(--space-2xs);
+  }
+
+  .loop__title {
+    font-size: var(--fs-h-lg);
+    color: var(--c-ink);
+  }
+
+  .loop__body {
+    margin-top: var(--space-2xs);
+    font-size: var(--fs-body-xs);
+    color: var(--c-ink-muted);
+  }
+
+  .loop__outcome {
+    margin-top: var(--space-xs);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    line-height: var(--lh-outcome);
+    color: var(--c-teal);
+  }
+
+  /* --- wide (>= 1024px) -------------------------------------------------- */
+
+  .loop__wide {
+    display: none;
+  }
+
+  .loop__path {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .loop__hub {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-eyebrow-md);
+    color: var(--c-ink-soft);
+  }
+
+  /* --- narrow (< 1024px) ------------------------------------------------- */
+
+  .loop__narrow {
+    display: grid;
+    gap: var(--space-xs);
+    margin-top: var(--space-lg);
+    position: relative;
+    padding-left: var(--space-md);
+    border-left: 2px solid var(--c-line-strong);
+  }
+
+  .loop__card--stacked {
+    padding: var(--space-sm);
+    box-shadow: none;
+  }
+
+  .loop__title--narrow {
+    font-size: var(--fs-h-md);
+  }
+
+  .loop__back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    color: var(--c-amber);
+  }
+
+  .loop__back-icon {
+    flex: none;
+  }
+
+  @media (min-width: 1024px) {
+    .loop__narrow {
+      display: none;
+    }
+
+    .loop__wide {
+      display: grid;
+      position: relative;
+      width: min(var(--wrap-loop), 100%);
+      margin: var(--space-xl) auto 0;
+      grid-template-columns: min(355px, 37%) 1fr min(355px, 37%);
+      row-gap: var(--space-xl);
+      align-items: start;
+    }
+
+    .loop__wide .loop__card {
+      padding: var(--space-md);
+    }
+
+    .loop__card--a {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .loop__card--b {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    .loop__card--c {
+      grid-column: 3;
+      grid-row: 2;
+    }
+    .loop__card--d {
+      grid-column: 1;
+      grid-row: 2;
+    }
+  }
+</style>

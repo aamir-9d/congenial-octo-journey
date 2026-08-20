@@ -1,0 +1,1020 @@
+---
+import Slider from './Slider.astro';
+import { computeView, INITIAL_STATE, type CalcState, type CalcView } from '../scripts/calc-model';
+
+/**
+ * The payback model card — the only genuinely stateful part of the page.
+ *
+ * Behaviour lives in src/scripts/calculator.ts, the maths in calc-model.ts,
+ * ported verbatim from the export.
+ *
+ * `data-bind` marks a text destination, `data-when` a block whose visibility
+ * follows a boolean on the view, and `data-set`/`data-slider`/`data-toggle`
+ * mark controls. Every one of them is also filled here at build time, so the
+ * card is complete and correct before any JS runs — the chart draws, the tiles
+ * read their real figures, and nothing flashes empty.
+ */
+
+const st: CalcState = INITIAL_STATE;
+const view = computeView(st);
+const v = <K extends keyof CalcView>(k: K) => view[k];
+
+const periods = [
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'annual', label: 'Annual' },
+] as const;
+
+/* The absolute-positioned chart labels are placed from these, both now and on
+   every later render. */
+const L = view.labels;
+const chartVars = [
+  `--y-lbl-w:${L.yLabelWidth}px`,
+  `--lbl-zero-top:${L.zero.top}px`,
+  `--lbl-ymax-top:${L.yMax.top}px`,
+  `--lbl-ymin-top:${L.yMin.top}px`,
+  `--lbl-t-top:${L.t0.top}px`,
+  `--lbl-t0-left:${L.t0.left}px`,
+  `--lbl-tmid-left:${L.tMid.left}px`,
+  `--lbl-tend-left:${L.tEnd.left}px`,
+  `--lbl-day7-left:${L.day7.left}px`,
+  `--lbl-day7-top:${L.day7.top}px`,
+  `--lbl-be-top:${L.be.top}px`,
+  `--lbl-be-left:${L.be.left}px`,
+  `--lbl-be-opacity:${L.be.opacity}`,
+].join(';');
+
+const subSliders = [
+  { id: 's-i2t', label: 'Install → trial start', key: 'i2t', bind: 'i2tLabel', min: 1, max: 25, step: 0.5 },
+  { id: 's-t2p', label: 'Trial → paid', key: 't2p', bind: 't2pLabel', min: 10, max: 60, step: 1 },
+  { id: 's-price', label: 'Plan price', key: 'price', bind: 'priceLabel', min: 1.99, max: 99.99, step: 1 },
+];
+
+const subSliders2 = [
+  { id: 's-ret', label: 'Renewal retention per cycle', key: 'retention', bind: 'retLabel', min: 50, max: 98, step: 0.5 },
+];
+
+const subSliders3 = [
+  { id: 's-ref', label: 'Refund rate', key: 'refund', bind: 'refundLabel', min: 0, max: 10, step: 0.5 },
+  { id: 's-cpi', label: 'Cost per install', key: 'cpi', bind: 'cpiLabel', min: 0.2, max: 8, step: 0.05 },
+];
+
+const adSliders = [
+  { id: 's-arp', label: 'ARPDAU', key: 'arpdau', bind: 'arpdauLabel', min: 0.005, max: 0.5, step: 0.005 },
+  { id: 's-d1', label: 'D1 retention', key: 'd1', bind: 'd1Label', min: 10, max: 60, step: 1 },
+  { id: 's-d30', label: 'D30 retention', key: 'd30', bind: 'd30Label', min: 1, max: 25, step: 1 },
+  { id: 's-acpi', label: 'Cost per install', key: 'adCpi', bind: 'adCpiLabel', min: 0.05, max: 3, step: 0.05 },
+];
+
+const derived = [
+  { label: 'Install → paid', bind: 'i2pLabel' },
+  { label: 'Net per payment', bind: 'netPaymentLabel' },
+  { label: 'LTV per payer', bind: 'ltvPayerLabel' },
+  { label: 'LTV per install', bind: 'ltvInstallLabel' },
+];
+
+const assumptions = [
+  'Geometric per-cycle retention — a constant renewal rate every billing cycle.',
+  'Constant ARPDAU across tenure.',
+  'No seasonality in eCPM.',
+  'No organic uplift from paid spend.',
+  'No involuntary-churn recovery (failed payments never retried).',
+  'Steady-state approximation — no cohort-size or price changes over the horizon.',
+];
+---
+
+<div class="calc">
+  {/* --- header: title + mode toggle ------------------------------------- */}
+  <div class="calc__head">
+    <div>
+      <div class="calc__kicker">CUMULATIVE NET PER INSTALL</div>
+      <div class="calc__title">Payback model</div>
+    </div>
+    <div class="calc__modes" role="group" aria-label="Monetisation model">
+      <button type="button" class="calc__mode" data-set="mode" data-value="sub" aria-pressed={String(st.mode === 'sub')}>
+        Subscription
+      </button>
+      <button type="button" class="calc__mode" data-set="mode" data-value="ad" aria-pressed={String(st.mode === 'ad')}>
+        Ad-monetised
+      </button>
+    </div>
+  </div>
+
+  <div>
+    {/* --- chart --------------------------------------------------------- */}
+    <div class="calc__chart-pane">
+      <div class="calc__chart-bar">
+        <div class="calc__horizons" role="group" aria-label="Time horizon">
+          {
+            [90, 180, 365].map((h) => (
+              <button
+                type="button"
+                class="calc__horizon"
+                data-set="horizon"
+                data-value={h}
+                aria-pressed={String(st.horizon === h)}
+              >
+                {h}d
+              </button>
+            ))
+          }
+        </div>
+        <div class="calc__breakeven" data-bind="breakevenLabel">{v('breakevenLabel')}</div>
+      </div>
+
+      <div id="chart-wrap" class="chart" style={chartVars}>
+        <svg
+          id="chart-svg"
+          viewBox={v('vb')}
+          width="100%"
+          role="img"
+          class="chart__svg"
+          aria-labelledby="chartTitle chartDesc"
+        >
+          <title id="chartTitle">
+            Cumulative net revenue per install, true versus dashboard-measured
+          </title>
+          <desc id="chartDesc" data-bind="chartSummary">{v('chartSummary')}</desc>
+          <g stroke="#E2E0DA" stroke-width="1">
+            <line id="ax-y" x1={v('axLeft')} y1={v('plotTop')} x2={v('axLeft')} y2={v('axBottom')}></line>
+            <line id="ax-x" x1={v('axLeft')} y1={v('axBottom')} x2={v('axRight')} y2={v('axBottom')}></line>
+          </g>
+          <path id="p-gap" d={v('gapPath')} fill="#E39A1F" opacity={v('gapOpacity')} class="areafade"></path>
+          <line id="zero-line" x1={v('axLeft')} y1={v('zeroY')} x2={v('axRight')} y2={v('zeroY')} stroke="#5C6779" stroke-width="1"></line>
+          {/* Invisible in the export too (opacity 0) — the visible "0" is the
+              HTML label overlay below. Carried across unchanged rather than
+              dropped, and harmless to AT because role="img" makes the SVG a
+              leaf node. */}
+          <text id="zero-text" x={v('zeroTextX')} y={v('zeroTextY')} text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="12" fill="#5C6779" opacity="0">0</text>
+          <line id="day7-line" x1={v('day7X')} y1={v('plotTop')} x2={v('day7X')} y2={v('axBottom')} stroke="#5C6779" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"></line>
+          <path id="p-meas" d={v('measPath')} fill="none" stroke="#5C6779" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"></path>
+          <path id="p-true" d={v('truePath')} fill="none" stroke="#0E6E63" stroke-width="2.6" stroke-linejoin="round" pathLength="1" class="drawn"></path>
+          <g id="cross-mark" opacity={v('crossOpacity')}>
+            <line id="cross-line" x1={v('crossX')} y1={v('crossMarkTop')} x2={v('crossX')} y2={v('zeroY')} stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="2 3"></line>
+            <circle id="cross-dot" cx={v('crossX')} cy={v('zeroY')} r="5.5" fill="#E39A1F" stroke="#FFFFFF" stroke-width="2"></circle>
+          </g>
+        </svg>
+        <div id="lbl-zero" class="chart__lbl chart__lbl--y">0</div>
+        <div id="lbl-ymax" class="chart__lbl chart__lbl--y" data-bind="yMaxLabel">{v('yMaxLabel')}</div>
+        <div id="lbl-ymin" class="chart__lbl chart__lbl--y" data-bind="yMinLabel">{v('yMinLabel')}</div>
+        <div id="lbl-t0" class="chart__lbl chart__lbl--t">day 0</div>
+        <div id="lbl-tmid" class="chart__lbl chart__lbl--t" data-bind="midTick">{v('midTick')}</div>
+        <div id="lbl-tend" class="chart__lbl chart__lbl--t" data-bind="endTick">{v('endTick')}</div>
+        <div id="lbl-day7" class="chart__lbl" data-bind="day7Label">{v('day7Label')}</div>
+        <div
+          id="lbl-be"
+          class:list={['chart__lbl', 'chart__lbl--be', { 'is-flipped': L.be.flip }]}
+          data-bind="breakevenLabel"
+        >
+          {v('breakevenLabel')}
+        </div>
+      </div>
+
+      <div class="calc__legend">
+        <span class="calc__legend-item"><span class="calc__swatch calc__swatch--true"></span>True revenue</span>
+        <span class="calc__legend-item" data-when="isSub" hidden={!view.isSub}>
+          <span class="calc__swatch calc__swatch--meas"></span>What your dashboard sees
+        </span>
+        <span class="calc__legend-item" data-when="isSub" hidden={!view.isSub}>
+          <span class="calc__swatch calc__swatch--gap"></span>Invisible to your dashboard
+        </span>
+      </div>
+
+      {/* --- assumptions ------------------------------------------------- */}
+      <div class="calc__assump">
+        <div class="calc__assump-bar">
+          <div class="calc__assump-title">A MODEL, NOT A MEASUREMENT.</div>
+          <button
+            type="button"
+            id="assump-toggle"
+            class="calc__assump-btn"
+            aria-expanded={String(st.assumpOpen)}
+            aria-controls="assump-panel"
+          >
+            Assumptions <span data-bind="assumpIcon">{st.assumpOpen ? '−' : '+'}</span>
+          </button>
+        </div>
+        <div id="assump-panel" class="calc__assump-panel" data-when="assumpOpen" hidden={!st.assumpOpen}>
+          <ul class="calc__assump-list">
+            {assumptions.map((a) => <li>{a}</li>)}
+          </ul>
+          <p class="calc__assump-note">
+            Real retention isn't perfectly geometric &#8212; month one churns harder, then the curve
+            flattens. This model will be slightly pessimistic past month six.
+          </p>
+        </div>
+      </div>
+
+      {/* --- tiles ------------------------------------------------------- */}
+      <div class="calc__tiles">
+        <div class="calc__tile">
+          <div class="calc__tile-label">TRUE BREAKEVEN</div>
+          <div class="calc__tile-val calc__tile-val--teal" data-bind="tileTrue">{v('tileTrue')}</div>
+        </div>
+        <div class="calc__tile">
+          <div class="calc__tile-label">YOUR DASHBOARD REPORTS</div>
+          <div class="calc__tile-val calc__tile-val--red" data-bind="tileDash">{v('tileDash')}</div>
+        </div>
+        <div class="calc__tile">
+          <div class="calc__tile-label">INVISIBLE / 1,000 INSTALLS</div>
+          <div class="calc__tile-val" data-bind="tileInvisible">{v('tileInvisible')}</div>
+        </div>
+        <div class="calc__tile">
+          <div class="calc__tile-label" data-bind="roasTileLabel">{v('roasTileLabel')}</div>
+          <div class="calc__tile-val" data-bind="tileRoas">{v('tileRoas')}</div>
+        </div>
+      </div>
+
+      {/* --- verdict ----------------------------------------------------- */}
+      <p class="calc__verdict" data-when="isSub" hidden={!view.isSub}>
+        On the numbers your dashboard reports, you would pause this campaign. On the real numbers it
+        returns <span class="calc__verdict-fig" data-bind="lifeRoas">{v('lifeRoas')}</span> over the
+        subscription's life. That decision is what the gap costs.
+      </p>
+      <p class="calc__verdict" data-when="isAd" hidden={!view.isAd}>
+        At this ARPDAU and this decay, an install returns
+        <span class="calc__verdict-fig" data-bind="adHorizonRoas">{v('adHorizonRoas')}</span> by day
+        <span data-bind="horizon">{v('horizon')}</span>. Everything after that is the part nobody
+        waits for.
+      </p>
+
+      <p aria-live="polite" class="calc__summary" data-bind="chartSummary">{v('chartSummary')}</p>
+    </div>
+
+    {/* --- controls ------------------------------------------------------ */}
+    <div class="calc__controls">
+      {/* subscription */}
+      <div data-when="isSub" hidden={!view.isSub}>
+        <div class="calc__grid">
+          {subSliders.map((f) => <Slider {...f} />)}
+
+          <div class="calc__field calc__field--group">
+            <div class="calc__group-label" id="lbl-period">Billing period</div>
+            <div class="calc__segmented" role="group" aria-labelledby="lbl-period">
+              {
+                periods.map((p) => (
+                  <button
+                    type="button"
+                    class="calc__seg"
+                    data-set="period"
+                    data-value={p.value}
+                    aria-pressed={String(st.period === p.value)}
+                  >
+                    {p.label}
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="calc__field calc__field--group">
+            <div class="calc__group-label" id="lbl-trial">Trial length</div>
+            <div class="calc__segmented" role="group" aria-labelledby="lbl-trial">
+              {
+                [3, 7, 14, 30].map((d) => (
+                  <button
+                    type="button"
+                    class="calc__seg"
+                    data-set="trialDays"
+                    data-value={d}
+                    aria-pressed={String(st.trialDays === d)}
+                  >
+                    {d}d
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          {subSliders2.map((f) => <Slider {...f} />)}
+
+          <div class="calc__field calc__field--group">
+            <div class="calc__group-label" id="lbl-comm">Store commission</div>
+            <div class="calc__segmented" role="group" aria-labelledby="lbl-comm">
+              {
+                [15, 30].map((c) => (
+                  <button
+                    type="button"
+                    class="calc__seg"
+                    data-set="commission"
+                    data-value={c}
+                    aria-pressed={String(st.commission === c)}
+                  >
+                    {c}%
+                  </button>
+                ))
+              }
+            </div>
+          </div>
+
+          {subSliders3.map((f) => <Slider {...f} />)}
+        </div>
+
+        <div class="calc__derived">
+          {
+            derived.map((d) => (
+              <div>
+                {d.label}
+                <div class="calc__derived-val" data-bind={d.bind}>
+                  {view[d.bind as keyof typeof view]}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+
+        <p class="calc__warn" data-when="isAnnual" hidden={!view.isAnnual}>
+          Annual SKU: one payment at trial end, then nothing until day 365. The whole bet rides on a
+          single charge and one renewal decision a year later.
+        </p>
+
+        <div class="calc__gaps">
+          <div class="calc__gaps-title">WHAT YOUR DASHBOARD CURRENTLY SEES</div>
+          <div class="calc__gaps-grid">
+            <label for="c-renew" class="calc__check">
+              <input
+                id="c-renew"
+                type="checkbox"
+                data-toggle="renewalCapture"
+                checked={st.renewalCapture}
+                class="calc__box"
+              />
+              <span>
+                Server-side renewal capture
+                <span class="calc__check-note">Off: only the first payment is ever visible.</span>
+              </span>
+            </label>
+
+            <div class="calc__check-stack">
+              <label for="c-skan" class="calc__check">
+                <input
+                  id="c-skan"
+                  type="checkbox"
+                  data-toggle="skanMapped"
+                  checked={st.skanMapped}
+                  class="calc__box"
+                />
+                <span>
+                  SKAN schema mapped to revenue
+                  <span class="calc__check-note">Off: null conversion values report zero revenue.</span>
+                </span>
+              </label>
+              <Slider
+                id="s-skan"
+                label="Share of iOS installs with null CV"
+                key="skanNull"
+                bind="skanNullLabel"
+                min={0}
+                max={80}
+                step={1}
+                small
+              />
+            </div>
+
+            <div class="calc__check-stack">
+              <label for="c-web" class="calc__check">
+                <input
+                  id="c-web"
+                  type="checkbox"
+                  data-toggle="webStitched"
+                  checked={st.webStitched}
+                  class="calc__box"
+                />
+                <span>
+                  Web-to-app click stitching
+                  <span class="calc__check-note">Off: paid installs get miscredited to organic.</span>
+                </span>
+              </label>
+              <Slider
+                id="s-web"
+                label="Share miscredited to organic"
+                key="webLoss"
+                bind="webLossLabel"
+                min={0}
+                max={60}
+                step={1}
+                small
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ad-monetised */}
+      <div data-when="isAd" hidden={!view.isAd}>
+        <div class="calc__grid">
+          {adSliders.map((f) => <Slider {...f} />)}
+        </div>
+
+        <div class="calc__crosscheck">
+          <div class="calc__gaps-title">D7 CROSS-CHECK</div>
+          <div class="calc__crosscheck-row">
+            <div class="calc__crosscheck-cell">
+              Model predicts D7
+              <div class="calc__crosscheck-val" data-bind="predD7Label">{v('predD7Label')}</div>
+            </div>
+            <div class="calc__crosscheck-input">
+              <label for="i-d7">Your actual D7 (%)</label>
+              <input
+                id="i-d7"
+                type="number"
+                min="0"
+                max="60"
+                step="0.1"
+                value={st.realD7}
+                data-number="realD7"
+                class="calc__number"
+              />
+            </div>
+          </div>
+          <div class="calc__crosscheck-note">
+            Fitted decay exponent b = <span data-bind="bLabel">{v('bLabel')}</span> &#183; cumulative
+            active days by D30 = <span data-bind="activeD30Label">{v('activeD30Label')}</span>
+          </div>
+          <p class="calc__warn calc__warn--tight" data-when="d7Mismatch" hidden={!view.d7Mismatch}>
+            Your curve isn't a power law. That usually means a broken onboarding step, not a bad
+            model.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initCalculator } from '../scripts/calculator';
+  initCalculator();
+</script>
+
+<style>
+  .calc {
+    flex: 1 1 100%;
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  /* --- header ------------------------------------------------------------ */
+
+  .calc__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+    border-bottom: 1px solid var(--c-line);
+    background: var(--c-paper-raised);
+  }
+
+  .calc__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-eyebrow-md);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__title {
+    margin-top: var(--space-3xs);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-h-xs);
+    letter-spacing: var(--ls-slight);
+    color: var(--c-ink);
+  }
+
+  .calc__modes {
+    display: flex;
+    gap: var(--space-3xs);
+    padding: var(--space-3xs);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-line);
+    background: var(--c-white);
+  }
+
+  .calc__mode {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: var(--r-pill);
+    border: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    background: transparent;
+    color: var(--c-ink-muted);
+  }
+
+  .calc__mode[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-paper);
+  }
+
+  /* --- chart pane -------------------------------------------------------- */
+
+  .calc__chart-pane {
+    padding: var(--space-md);
+  }
+
+  .calc__chart-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-2xs);
+  }
+
+  .calc__horizons {
+    display: flex;
+    gap: var(--space-3xs);
+  }
+
+  .calc__horizon {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    padding: var(--space-3xs) var(--space-xs);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    white-space: nowrap;
+    border: 1px solid var(--c-line);
+    background: transparent;
+    color: var(--c-ink-muted);
+  }
+
+  .calc__horizon[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-paper);
+  }
+
+  .calc__breakeven {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-amber);
+  }
+
+  /* --- chart ------------------------------------------------------------- */
+
+  .chart {
+    position: relative;
+  }
+
+  .chart__svg {
+    display: block;
+    overflow: visible;
+  }
+
+  .chart__lbl {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    line-height: var(--lh-flat);
+    color: var(--c-ink-soft);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .chart__lbl--y {
+    left: 0;
+    width: var(--y-lbl-w);
+    text-align: right;
+  }
+
+  #lbl-zero {
+    top: var(--lbl-zero-top);
+  }
+  #lbl-ymax {
+    top: var(--lbl-ymax-top);
+  }
+  #lbl-ymin {
+    top: var(--lbl-ymin-top);
+  }
+
+  .chart__lbl--t {
+    top: var(--lbl-t-top);
+  }
+
+  #lbl-t0 {
+    left: var(--lbl-t0-left);
+  }
+  #lbl-tmid {
+    left: var(--lbl-tmid-left);
+    transform: translateX(-50%);
+  }
+  #lbl-tend {
+    left: var(--lbl-tend-left);
+    transform: translateX(-100%);
+  }
+  #lbl-day7 {
+    left: var(--lbl-day7-left);
+    top: var(--lbl-day7-top);
+  }
+
+  .chart__lbl--be {
+    font-size: var(--fs-mono-lg);
+    color: var(--c-ink);
+    top: var(--lbl-be-top);
+    left: var(--lbl-be-left);
+    opacity: var(--lbl-be-opacity);
+    margin-left: var(--space-2xs);
+  }
+
+  /* Flipped to the left of its marker once the breakeven day sits in the
+     right-hand 45% of the plot, so the label never runs off the card. */
+  .chart__lbl--be.is-flipped {
+    margin-left: 0;
+    transform: translateX(calc(-100% - 8px));
+  }
+
+  /* --- legend ------------------------------------------------------------ */
+
+  .calc__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-3xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-2xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .calc__swatch--true {
+    width: 18px;
+    height: 3px;
+    background: var(--c-teal);
+    border-radius: var(--r-2);
+  }
+
+  .calc__swatch--meas {
+    width: 18px;
+    height: 0;
+    border-top: 2px dashed var(--c-ink-soft);
+  }
+
+  .calc__swatch--gap {
+    width: 14px;
+    height: 10px;
+    background: var(--c-amber);
+    opacity: 0.28;
+    border-radius: var(--r-2);
+  }
+
+  /* --- assumptions ------------------------------------------------------- */
+
+  .calc__assump {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .calc__assump-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .calc__assump-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-mono-md);
+    color: var(--c-ink);
+  }
+
+  .calc__assump-btn {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-teal);
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .calc__assump-panel {
+    margin-top: var(--space-xs);
+    background: var(--c-paper-raised);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-8);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .calc__assump-list {
+    margin: 0;
+    padding-left: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-list);
+    color: var(--c-ink-muted);
+  }
+
+  .calc__assump-note {
+    margin-top: var(--space-xs);
+    font-size: var(--fs-body-xs);
+    color: var(--c-ink-muted);
+  }
+
+  /* --- tiles ------------------------------------------------------------- */
+
+  .calc__tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 45%), 1fr));
+    gap: var(--space-3xs);
+    margin-top: var(--space-sm);
+    background: var(--c-line);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-8);
+    overflow: hidden;
+  }
+
+  .calc__tile {
+    background: var(--c-white);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .calc__tile-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-3xs);
+    letter-spacing: var(--ls-mono-lg);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__tile-val {
+    margin-top: var(--space-3xs);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-h-lg);
+    letter-spacing: var(--ls-tight);
+    color: var(--c-ink);
+  }
+
+  .calc__tile-val--teal {
+    color: var(--c-teal);
+  }
+
+  .calc__tile-val--red {
+    color: var(--c-red);
+  }
+
+  /* --- verdict ----------------------------------------------------------- */
+
+  .calc__verdict {
+    margin-top: var(--space-sm);
+    max-width: var(--measure-verdict);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-verdict);
+    line-height: var(--lh-verdict);
+    letter-spacing: var(--ls-snug);
+    color: var(--c-ink);
+  }
+
+  .calc__verdict-fig {
+    color: var(--c-teal);
+  }
+
+  .calc__summary {
+    margin-top: var(--space-xs);
+    max-width: var(--measure-summary);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-body);
+    color: var(--c-ink-soft);
+  }
+
+  /* --- controls ---------------------------------------------------------- */
+
+  .calc__controls {
+    padding: var(--space-md);
+    background: var(--c-paper-raised);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .calc__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-sm) var(--space-md);
+    align-items: start;
+  }
+
+  .calc__field {
+    display: grid;
+    gap: var(--space-3xs);
+    align-content: start;
+  }
+
+  .calc__field--group {
+    gap: var(--space-2xs);
+  }
+
+  .calc__field-head,
+  .calc__sub-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__sub-head {
+    font-size: var(--fs-mono-2xs);
+  }
+
+  .calc__field-val {
+    color: var(--c-ink);
+  }
+
+  .calc__range {
+    width: 100%;
+    height: 20px;
+  }
+
+  .calc__range--sm {
+    height: 18px;
+  }
+
+  .calc__group-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__segmented {
+    display: flex;
+    gap: var(--space-3xs);
+  }
+
+  .calc__seg {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    padding: var(--space-2xs) var(--space-3xs);
+    border-radius: var(--r-8);
+    cursor: pointer;
+    border: 1px solid var(--c-line);
+    background: var(--c-white);
+    color: var(--c-ink-muted);
+  }
+
+  .calc__seg[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-paper);
+  }
+
+  .calc__derived {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--c-line);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 45%), 1fr));
+    gap: var(--space-sm) var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__derived-val {
+    color: var(--c-ink);
+    font-size: var(--fs-body-xs);
+    margin-top: var(--space-3xs);
+  }
+
+  .calc__warn {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-relaxed);
+    color: var(--c-red);
+    background: rgba(var(--rgb-red), 0.08);
+    border-radius: var(--r-8);
+    padding: var(--space-2xs) var(--space-xs);
+  }
+
+  .calc__warn--tight {
+    margin-top: var(--space-xs);
+  }
+
+  /* --- attribution gaps -------------------------------------------------- */
+
+  .calc__gaps {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .calc__gaps-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-mono-lg);
+    color: var(--c-ink);
+  }
+
+  .calc__gaps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-xs) var(--space-md);
+    margin-top: var(--space-xs);
+    align-items: start;
+  }
+
+  .calc__check {
+    display: flex;
+    gap: var(--space-2xs);
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: var(--fs-body-xs);
+    color: var(--c-ink-muted);
+  }
+
+  .calc__check-stack {
+    display: grid;
+    gap: var(--space-2xs);
+  }
+
+  .calc__box {
+    margin-top: var(--space-3xs);
+    width: 16px;
+    height: 16px;
+    accent-color: var(--c-teal);
+    flex: none;
+  }
+
+  .calc__check-note {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-xs);
+    color: var(--c-ink-soft);
+    margin-top: var(--space-3xs);
+  }
+
+  .calc__sub-field {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-left: var(--space-md);
+  }
+
+  /* --- D7 cross-check ---------------------------------------------------- */
+
+  .calc__crosscheck {
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .calc__crosscheck-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    align-items: flex-end;
+    margin-top: var(--space-xs);
+  }
+
+  .calc__crosscheck-cell {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__crosscheck-val {
+    color: var(--c-ink);
+    font-size: var(--fs-body-2xl);
+    margin-top: var(--space-3xs);
+  }
+
+  .calc__crosscheck-input {
+    display: grid;
+    gap: var(--space-3xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .calc__number {
+    width: 96px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-xs);
+    padding: var(--space-2xs);
+    border-radius: var(--r-8);
+    border: 1px solid var(--c-line-input);
+    background: var(--c-white);
+    color: var(--c-ink);
+  }
+
+  .calc__crosscheck-note {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-relaxed);
+    color: var(--c-ink-soft);
+  }
+</style>

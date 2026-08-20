@@ -1,0 +1,30 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment — never commit real keys
+.env
+.env.production
+.env.local
+.env.*.local
+
+# local pixel-parity harness (see NOTES.md)
+compare.html
+
+# macOS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# cloudflare worker local state
+worker/.wrangler/

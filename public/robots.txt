@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aamir-9d.github.io/congenial-octo-journey/sitemap.xml

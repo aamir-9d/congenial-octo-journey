@@ -1,0 +1,118 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/* The export pointed Privacy and Terms at `#`, since neither page existed.
+   They exist now, so the links resolve. */
+const links = [
+  { href: '#services', label: 'Services' },
+  { href: '#loop', label: 'The Loop' },
+  { href: '#approach', label: 'Approach' },
+  { href: 'mailto:hello@e2eapps.com', label: 'hello@e2eapps.com' },
+];
+---
+
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <div class="footer__logo">E2E Apps</div>
+      <p class="footer__tagline">
+        One specialist owns the entire growth loop &#8212; a second owns the infrastructure it runs
+        on.
+      </p>
+    </div>
+    <div class="footer__links">
+      {links.map((l) => <a href={l.href} class="footer__link">{l.label}</a>)}
+      <a
+        href="https://www.linkedin.com/in/aamir-jan-khan/"
+        target="_blank"
+        rel="noopener"
+        class="footer__link">LinkedIn</a
+      >
+    </div>
+  </div>
+
+  <div class="footer__legal">
+    <span>&#169; 2026 E2E Apps &#183; e2eapps.com</span>
+    <span class="footer__legal-links">
+      <a href={`${base}/privacy`} class="footer__link footer__link--dim">Privacy</a>
+      <a href={`${base}/terms`} class="footer__link footer__link--dim">Terms</a>
+    </span>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-ink-deep);
+    border-top: 1px solid rgba(var(--rgb-paper), 0.1);
+    padding: var(--space-lg) var(--gutter);
+  }
+
+  .footer__top {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .footer__brand {
+    max-width: var(--measure-pull);
+  }
+
+  .footer__logo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-body-2xl);
+    color: var(--c-paper);
+  }
+
+  .footer__tagline {
+    margin-top: var(--space-2xs);
+    font-size: var(--fs-body-xs);
+    color: rgba(var(--rgb-paper), 0.55);
+  }
+
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+  }
+
+  .footer__link {
+    color: rgba(var(--rgb-paper), 0.65);
+    border: 0;
+    transition: color 0.15s ease;
+  }
+
+  /* Declared with `style-hover` in the export, which no runtime implemented. */
+  .footer__link:hover {
+    color: var(--c-amber);
+  }
+
+  .footer__link--dim {
+    color: var(--c-ink-soft);
+  }
+
+  .footer__legal {
+    max-width: var(--wrap);
+    margin: var(--space-lg) auto 0;
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(var(--rgb-paper), 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .footer__legal-links {
+    display: flex;
+    gap: var(--space-sm);
+  }
+</style>

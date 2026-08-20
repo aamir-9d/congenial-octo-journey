@@ -1,0 +1,187 @@
+---
+import Calculator from './Calculator.astro';
+import { computeView, INITIAL_STATE } from '../scripts/calc-model';
+
+/* Render the defaults into the markup rather than leaving the bind targets
+   empty for the client to fill. The figures are correct before any JS runs, so
+   there is no flash of blank tiles and the page still reads without script. */
+const view = computeView(INITIAL_STATE);
+
+/* The summary card mirrors six figures out of the calculator below it. */
+const summaryRows = [
+  { label: 'Model', bind: 'modeLabel', tone: '' },
+  { label: 'Cost per install', bind: 'cpiActiveLabel', tone: '' },
+  { label: 'Value per install', bind: 'ltvActiveLabel', tone: '' },
+  { label: 'True breakeven', bind: 'tileTrue', tone: 'hero__val--teal' },
+  { label: 'Dashboard reports', bind: 'tileDash', tone: 'hero__val--red' },
+  { label: 'Invisible / 1,000', bind: 'tileInvisible', tone: '' },
+];
+---
+
+<section id="top" class="hero">
+  <div class="hero__row">
+    <div class="hero__lede">
+      <div class="hero__eyebrow">MOBILE GROWTH &amp; MEASUREMENT</div>
+      <h1 class="hero__h1">
+        Your dashboard says the campaign is losing money.<br />
+        <span class="hero__h1-teal">It broke even in month nine &#8212; you killed it in week one.</span>
+      </h1>
+      <p class="hero__lead">
+        Most apps judge a campaign on day-7 revenue and kill the ones that would have paid back on
+        day 60. The problem isn't the campaign. It's that the measurement stops before the money
+        arrives. I fix the measurement, then run the spend on top of it.
+      </p>
+      <div class="hero__actions">
+        <a href="#contact" class="btn-amber hero__cta">Find what your stack is missing</a>
+        <a href="#loop" class="btn-ghost hero__cta">See how it works</a>
+      </div>
+    </div>
+
+    <div class="hero__aside">
+      <div class="hero__summary">
+        <div class="hero__summary-title">THE COHORT BELOW, IN NUMBERS</div>
+        <div class="hero__summary-rows">
+          {
+            summaryRows.map((r) => (
+              <div class="hero__summary-row">
+                <span class="hero__key">{r.label}</span>
+                <span class:list={['hero__val', r.tone]} data-bind={r.bind}>
+                  {view[r.bind as keyof typeof view]}
+                </span>
+              </div>
+            ))
+          }
+        </div>
+        <p class="hero__summary-note">Live from the model below. Move a slider and these move.</p>
+      </div>
+    </div>
+
+    <Calculator />
+  </div>
+</section>
+
+<style>
+  .hero {
+    max-width: var(--wrap);
+    margin: 0 auto;
+    /* The +48px clears the fixed nav. */
+    padding: calc(var(--space-2xl) + 48px) var(--gutter) var(--space-2xl);
+  }
+
+  .hero__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    align-items: flex-start;
+  }
+
+  .hero__lede {
+    flex: 1 1 460px;
+    max-width: var(--measure-hero-lead);
+  }
+
+  .hero__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    letter-spacing: var(--ls-eyebrow-lg);
+    color: var(--c-ink-soft);
+    margin-bottom: var(--space-md);
+  }
+
+  /* `font-stretch: 118%` is the whole reason Archivo has to be the variable
+     font with its `wdth` axis intact — a static instance drops this silently
+     and the headline reflows. */
+  .hero__h1 {
+    font-family: var(--font-display);
+    font-stretch: 118%;
+    font-size: var(--fs-hero);
+    line-height: var(--lh-hero);
+    letter-spacing: var(--ls-hero);
+    color: var(--c-ink);
+    max-width: var(--measure-hero-h1);
+  }
+
+  .hero__h1-teal {
+    color: var(--c-teal);
+  }
+
+  .hero__lead {
+    margin-top: var(--space-md);
+    font-size: var(--fs-hero-lead);
+    color: var(--c-ink-muted);
+    max-width: var(--measure-hero-lead);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-lg);
+  }
+
+  .hero__cta {
+    font-size: 15.5px;
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .hero__aside {
+    flex: 0 1 320px;
+    min-width: min(100%, 280px);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .hero__summary {
+    width: 100%;
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .hero__summary-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-2xs);
+    letter-spacing: var(--ls-eyebrow-md);
+    color: var(--c-ink-soft);
+  }
+
+  .hero__summary-rows {
+    display: grid;
+    margin-top: var(--space-xs);
+  }
+
+  .hero__summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    padding: var(--space-2xs) 0;
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+  }
+
+  .hero__key {
+    color: var(--c-ink-soft);
+  }
+
+  .hero__val {
+    color: var(--c-ink);
+  }
+
+  .hero__val--teal {
+    color: var(--c-teal);
+  }
+
+  .hero__val--red {
+    color: var(--c-red);
+  }
+
+  .hero__summary-note {
+    margin-top: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-xs);
+    line-height: var(--lh-normal);
+    color: var(--c-ink-soft);
+  }
+</style>

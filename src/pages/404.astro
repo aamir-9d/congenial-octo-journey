@@ -1,0 +1,22 @@
+---
+import Prose from '../layouts/Prose.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Prose
+  title="Page not found — E2E Apps"
+  description="That page does not exist."
+  path="/404"
+  heading="That page isn't here."
+  noindex
+>
+  <p>
+    Nothing at this address. It was either moved, or the link was wrong to begin with &#8212; which
+    is, in fairness, the same class of problem as the rest of this site.
+  </p>
+  <p>
+    <a href={`${base}/`} class="link">Back to the homepage</a> &#183;
+    <a href="mailto:hello@e2eapps.com" class="link">hello@e2eapps.com</a>
+  </p>
+</Prose>

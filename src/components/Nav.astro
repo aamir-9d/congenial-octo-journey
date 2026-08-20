@@ -1,0 +1,88 @@
+---
+/** Fixed pill nav. Hero clears it with `padding-top: calc(var(--space-2xl) + 48px)`. */
+---
+
+<nav class="nav">
+  <div class="nav__bar">
+    <a href="#top" class="nav__logo">E2E Apps</a>
+    <div id="nav-links" class="nav__links">
+      <a href="#services" class="nav__link">Services</a>
+      <a href="#loop" class="nav__link">The Loop</a>
+      <a href="#approach" class="nav__link">Approach</a>
+      <a href="#contact" class="nav__link">Contact</a>
+    </div>
+    <a href="#contact" class="btn-amber nav__cta">Book a call</a>
+  </div>
+</nav>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 16px;
+    left: 0;
+    right: 0;
+    z-index: 80;
+    display: flex;
+    justify-content: center;
+    padding: 0 var(--gutter);
+    pointer-events: none;
+  }
+
+  .nav__bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 3vw, 36px);
+    max-width: var(--wrap);
+    width: 100%;
+    padding: var(--space-2xs) var(--space-2xs) var(--space-2xs) var(--space-md);
+    border-radius: var(--r-pill);
+    background: rgba(var(--rgb-ink-deep), 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(var(--rgb-white), 0.08);
+    box-shadow: var(--shadow-nav);
+  }
+
+  .nav__logo {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-body-xl);
+    letter-spacing: var(--ls-slight);
+    color: var(--c-paper);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  /* `margin-left: auto` here is what right-aligns the group. Below 480px the
+     links are hidden (see global.css) and that auto margin goes with them, so
+     the CTA sits beside the logo — the export's own behaviour, kept. */
+  .nav__links {
+    display: flex;
+    gap: clamp(10px, 2.2vw, 26px);
+    margin-left: auto;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .nav__link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    letter-spacing: var(--ls-mono-sm);
+    color: rgba(var(--rgb-paper), 0.72);
+    border: 0;
+    white-space: nowrap;
+  }
+
+  .nav__cta {
+    font-size: var(--fs-body-xs);
+    padding: var(--space-2xs) var(--space-sm);
+  }
+
+  /* The export declared this via `style-hover`, which no runtime implements. */
+  .nav__cta:hover {
+    background: var(--c-amber-hover);
+    color: var(--c-ink-deep);
+  }
+</style>

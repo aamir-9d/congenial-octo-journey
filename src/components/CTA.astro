@@ -1,0 +1,60 @@
+---
+/**
+ * Closing call to action.
+ *
+ * Phase 1 keeps the export exactly as signed off: a mailto CTA and the address
+ * beneath it. Phase 2 adds the inline Calendly embed and the contact form
+ * below this block.
+ */
+---
+
+<section id="contact" class="cta section">
+  <div class="cta__inner">
+    <h2 class="cta__head">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+    <p class="cta__lead">
+      A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is likely
+      costing. If there's nothing wrong, I'll tell you that too &#8212; it's the fastest way for both
+      of us to find out whether this is worth a conversation.
+    </p>
+    <a href="mailto:hello@e2eapps.com" class="btn-amber cta__btn">Book a call</a>
+    <div class="cta__email">hello@e2eapps.com</div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    background: var(--c-ink-deep);
+  }
+
+  .cta__inner {
+    max-width: var(--wrap-cta);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .cta__head {
+    font-size: var(--fs-h2-cta);
+    color: var(--c-paper);
+  }
+
+  .cta__lead {
+    margin: var(--space-md) auto 0;
+    max-width: var(--measure-cta-lead);
+    font-size: var(--fs-body-xl);
+    color: rgba(var(--rgb-paper), 0.68);
+    font-style: italic;
+  }
+
+  .cta__btn {
+    margin-top: var(--space-lg);
+    font-size: var(--fs-body-md);
+    padding: var(--space-sm) var(--space-lg);
+  }
+
+  .cta__email {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-ink-soft);
+  }
+</style>

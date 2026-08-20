@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --space-3xs: clamp(4px, 0.5vw, 6px);
+    --space-2xs: clamp(6px, 0.8vw, 10px);
+    --space-xs:  clamp(10px, 1.2vw, 14px);
+    --space-sm:  clamp(14px, 1.8vw, 20px);
+    --space-md:  clamp(18px, 2.4vw, 28px);
+    --space-lg:  clamp(24px, 3.5vw, 48px);
+    --space-xl:  clamp(40px, 6vw, 88px);
+    --space-2xl: clamp(56px, 9vw, 128px);
+    --gutter:    clamp(16px, 4vw, 32px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { overflow-x: hidden; max-width: 100%; }
+  img, svg, video, table { max-width: 100%; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:#F7F6F3; color:#101725; font-family:'IBM Plex Sans',system-ui,sans-serif; font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  h1,h2,h3,h4 { margin:0; font-family:'Archivo',system-ui,sans-serif; font-weight:700; letter-spacing:-0.02em; line-height:1.05; }
+  p { margin:0; text-wrap:pretty; }
+  a { color:#0E6E63; text-decoration:none; border-bottom:1px solid rgba(14,110,99,0.35); transition:color .15s ease, border-color .15s ease; }
+  a:hover { color:#E39A1F; border-bottom-color:rgba(227,154,31,0.55); }
+  :focus-visible { outline:2px solid #E39A1F; outline-offset:3px; border-radius:3px; }
+  input[type=range] { accent-color:#E39A1F; }
+  ::selection { background:rgba(227,154,31,0.28); }
+  @media (max-width: 480px) {
+    #nav-links { display: none; }
+  }
+  @media (max-width: 767px) {
+    input[type=range] { height: 44px; }
+    input[type=checkbox] { width: 22px; height: 22px; }
+  }
+  @keyframes drawline { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+  @keyframes fadearea { from { opacity:0; } to { opacity:1; } }
+  .drawn { stroke-dasharray:1; animation:drawline 1.2s cubic-bezier(.22,.61,.36,1) forwards; }
+  .areafade { animation:fadearea .9s ease .5s both; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior:auto; }
+    .drawn { animation:none; stroke-dasharray:none; }
+    .areafade { animation:none; opacity:1; }
+  }
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div style="min-height:100vh;background:#F7F6F3;overflow-x:hidden">
+
+<nav style="position:fixed;top:16px;left:0;right:0;z-index:80;display:flex;justify-content:center;padding:0 var(--gutter);pointer-events:none">
+  <div style="pointer-events:auto;display:flex;align-items:center;gap:clamp(12px,3vw,36px);max-width:1200px;width:100%;padding:var(--space-2xs) var(--space-2xs) var(--space-2xs) var(--space-md);border-radius:999px;background:rgba(10,15,26,0.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.08);box-shadow:0 8px 30px rgba(16,23,37,0.18)">
+    <a href="#top" style="font-family:'Archivo',sans-serif;font-weight:700;font-size:17px;letter-spacing:-0.01em;color:#F7F6F3;border:0;white-space:nowrap">E2E Apps</a>
+    <div id="nav-links" style="display:flex;gap:clamp(10px,2.2vw,26px);margin-left:auto;align-items:center;flex-wrap:nowrap;overflow:hidden">
+      <a href="#services" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;color:rgba(247,246,243,0.72);border:0;white-space:nowrap">Services</a>
+      <a href="#loop" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;color:rgba(247,246,243,0.72);border:0;white-space:nowrap">The Loop</a>
+      <a href="#approach" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;color:rgba(247,246,243,0.72);border:0;white-space:nowrap">Approach</a>
+      <a href="#contact" style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.04em;color:rgba(247,246,243,0.72);border:0;white-space:nowrap">Contact</a>
+    </div>
+    <a href="#contact" style="background:#E39A1F;color:#101725;font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:15px;padding:var(--space-2xs) var(--space-sm);border-radius:999px;border:0;white-space:nowrap" style-hover="background:#F0AB33;color:#0A0F1A">Book a call</a>
+  </div>
+</nav>
+
+<section id="top" style="max-width:1200px;margin:0 auto;padding:calc(var(--space-2xl) + 48px) var(--gutter) var(--space-2xl)">
+  <div style="display:flex;flex-wrap:wrap;gap:var(--space-lg);align-items:flex-start">
+    <div style="flex:1 1 460px;max-width:34em">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#5C6779;margin-bottom:var(--space-md)">MOBILE GROWTH &amp; MEASUREMENT</div>
+      <h1 style="font-family:'Archivo',sans-serif;font-stretch:118%;font-size:clamp(34px,5.1vw,58px);line-height:1.04;letter-spacing:-0.025em;color:#101725;max-width:16em">Your dashboard says the campaign is losing money.<br><span style="color:#0E6E63">It broke even in month nine — you killed it in week one.</span></h1>
+      <p style="margin-top:var(--space-md);font-size:clamp(16px,1.3vw,18.5px);color:#3A4354;max-width:34em">Most apps judge a campaign on day-7 revenue and kill the ones that would have paid back on day 60. The problem isn't the campaign. It's that the measurement stops before the money arrives. I fix the measurement, then run the spend on top of it.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-xs);margin-top:var(--space-lg)">
+        <a href="#contact" style="background:#E39A1F;color:#101725;font-weight:600;font-size:15.5px;padding:var(--space-sm) var(--space-md);border-radius:999px;border:0" style-hover="background:#F0AB33">Find what your stack is missing</a>
+        <a href="#loop" style="background:transparent;color:#101725;font-weight:600;font-size:15.5px;padding:var(--space-sm) var(--space-md);border-radius:999px;border:1px solid #C9C6BE" style-hover="border-color:#101725;background:rgba(16,23,37,0.04)">See how it works</a>
+      </div>
+    </div>
+
+    <div style="flex:0 1 320px;min-width:min(100%,280px);display:flex;align-items:flex-end">
+      <div style="width:100%;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-sm) var(--space-md)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;color:#5C6779">THE COHORT BELOW, IN NUMBERS</div>
+        <div style="display:grid;margin-top:var(--space-xs)">
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">Model</span><span style="color:#101725">{{ modeLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">Cost per install</span><span style="color:#101725">{{ cpiActiveLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">Value per install</span><span style="color:#101725">{{ ltvActiveLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">True breakeven</span><span style="color:#0E6E63">{{ tileTrue }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">Dashboard reports</span><span style="color:#C4432B">{{ tileDash }}</span></div>
+          <div style="display:flex;justify-content:space-between;gap:var(--space-xs);padding:var(--space-2xs) 0;border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12.5px"><span style="color:#5C6779">Invisible / 1,000</span><span style="color:#101725">{{ tileInvisible }}</span></div>
+        </div>
+        <p style="margin-top:var(--space-xs);font-family:'IBM Plex Mono',monospace;font-size:15px;line-height:1.6;color:#5C6779">Live from the model below. Move a slider and these move.</p>
+      </div>
+    </div>
+
+    <div style="flex:1 1 100%;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;box-shadow:0 2px 14px rgba(16,23,37,0.05);overflow:hidden">
+
+      <div style="display:flex;flex-wrap:wrap;gap:var(--space-xs);align-items:center;justify-content:space-between;padding:var(--space-sm) var(--space-md);border-bottom:1px solid #E2E0DA;background:#FBFAF8">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;color:#5C6779">CUMULATIVE NET PER INSTALL</div>
+          <div style="margin-top:var(--space-3xs);font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Payback model</div>
+        </div>
+        <div style="display:flex;gap:var(--space-3xs);padding:var(--space-3xs);border-radius:999px;border:1px solid #E2E0DA;background:#FFFFFF">
+          <button type="button" onClick="{{ setSub }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:var(--space-2xs) var(--space-sm);border-radius:999px;border:0;cursor:pointer;white-space:nowrap;background:{{ mSubBg }};color:{{ mSubFg }}">Subscription</button>
+          <button type="button" onClick="{{ setAd }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:var(--space-2xs) var(--space-sm);border-radius:999px;border:0;cursor:pointer;white-space:nowrap;background:{{ mAdBg }};color:{{ mAdFg }}">Ad-monetised</button>
+        </div>
+      </div>
+
+      <div>
+
+        <div style="padding:var(--space-md) var(--space-md) var(--space-md)">
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-2xs);align-items:center;justify-content:space-between;margin-bottom:var(--space-2xs)">
+            <div style="display:flex;gap:var(--space-3xs)">
+              <button type="button" onClick="{{ setH90 }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-3xs) var(--space-xs);border-radius:999px;cursor:pointer;white-space:nowrap;border:1px solid #E2E0DA;background:{{ h90Bg }};color:{{ h90Fg }}">90d</button>
+              <button type="button" onClick="{{ setH180 }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-3xs) var(--space-xs);border-radius:999px;cursor:pointer;white-space:nowrap;border:1px solid #E2E0DA;background:{{ h180Bg }};color:{{ h180Fg }}">180d</button>
+              <button type="button" onClick="{{ setH365 }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-3xs) var(--space-xs);border-radius:999px;cursor:pointer;white-space:nowrap;border:1px solid #E2E0DA;background:{{ h365Bg }};color:{{ h365Fg }}">365d</button>
+            </div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#E39A1F">{{ breakevenLabel }}</div>
+          </div>
+
+          <div id="chart-wrap" style="position:relative">
+          <svg viewBox="{{ vb }}" width="100%" role="img" style="display:block;overflow:visible" aria-labelledby="chartTitle chartDesc">
+            <title id="chartTitle">Cumulative net revenue per install, true versus dashboard-measured</title>
+            <desc id="chartDesc">{{ chartSummary }}</desc>
+            <g stroke="#E2E0DA" stroke-width="1">
+              <line x1="{{ axLeft }}" y1="{{ plotTop }}" x2="{{ axLeft }}" y2="{{ axBottom }}"></line>
+              <line x1="{{ axLeft }}" y1="{{ axBottom }}" x2="{{ axRight }}" y2="{{ axBottom }}"></line>
+            </g>
+            <path d="{{ gapPath }}" fill="#E39A1F" opacity="{{ gapOpacity }}" class="areafade"></path>
+            <line x1="{{ axLeft }}" y1="{{ zeroY }}" x2="{{ axRight }}" y2="{{ zeroY }}" stroke="#5C6779" stroke-width="1"></line>
+            <text x="{{ zeroTextX }}" y="{{ zeroTextY }}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="12" fill="#5C6779" opacity="0">0</text>
+            <line x1="{{ day7X }}" y1="{{ plotTop }}" x2="{{ day7X }}" y2="{{ axBottom }}" stroke="#5C6779" stroke-width="1" stroke-dasharray="3 4" opacity="0.7"></line>
+            <path d="{{ measPath }}" fill="none" stroke="#5C6779" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"></path>
+            <path d="{{ truePath }}" fill="none" stroke="#0E6E63" stroke-width="2.6" stroke-linejoin="round" pathLength="1" class="drawn"></path>
+            <g opacity="{{ crossOpacity }}">
+              <line x1="{{ crossX }}" y1="{{ crossMarkTop }}" x2="{{ crossX }}" y2="{{ zeroY }}" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="2 3"></line>
+              <circle cx="{{ crossX }}" cy="{{ zeroY }}" r="5.5" fill="#E39A1F" stroke="#FFFFFF" stroke-width="2"></circle>
+            </g>
+          </svg>
+          <div style="{{ lblZero }}">0</div>
+          <div style="{{ lblYMax }}">{{ yMaxLabel }}</div>
+          <div style="{{ lblYMin }}">{{ yMinLabel }}</div>
+          <div style="{{ lblT0 }}">day 0</div>
+          <div style="{{ lblTMid }}">{{ midTick }}</div>
+          <div style="{{ lblTEnd }}">{{ endTick }}</div>
+          <div style="{{ lblDay7 }}">{{ day7Label }}</div>
+          <div style="{{ lblBe }}">{{ breakevenLabel }}</div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-sm);margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5C6779">
+            <span style="display:flex;align-items:center;gap:var(--space-2xs)"><span style="width:18px;height:3px;background:#0E6E63;border-radius:2px"></span>True revenue</span>
+            <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+              <span style="display:flex;align-items:center;gap:var(--space-2xs)"><span style="width:18px;height:0;border-top:2px dashed #5C6779"></span>What your dashboard sees</span>
+              <span style="display:flex;align-items:center;gap:var(--space-2xs)"><span style="width:14px;height:10px;background:#E39A1F;opacity:0.28;border-radius:2px"></span>Invisible to your dashboard</span>
+            </sc-if>
+          </div>
+
+          <div style="margin-top:var(--space-sm);padding-top:var(--space-xs);border-top:1px solid #E2E0DA">
+            <div style="display:flex;flex-wrap:wrap;gap:var(--space-2xs);align-items:baseline;justify-content:space-between">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.06em;color:#101725">A MODEL, NOT A MEASUREMENT.</div>
+              <button type="button" onClick="{{ toggleAssump }}" style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#0E6E63;background:transparent;border:0;padding:0;cursor:pointer;text-decoration:underline">Assumptions {{ assumpIcon }}</button>
+            </div>
+            <sc-if value="{{ assumpOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:var(--space-xs);background:#FBFAF8;border:1px solid #E2E0DA;border-radius:8px;padding:var(--space-xs) var(--space-sm)">
+                <ul style="margin:0;padding-left:var(--space-sm);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.9;color:#3A4354">
+                  <li>Geometric per-cycle retention — a constant renewal rate every billing cycle.</li>
+                  <li>Constant ARPDAU across tenure.</li>
+                  <li>No seasonality in eCPM.</li>
+                  <li>No organic uplift from paid spend.</li>
+                  <li>No involuntary-churn recovery (failed payments never retried).</li>
+                  <li>Steady-state approximation — no cohort-size or price changes over the horizon.</li>
+                </ul>
+                <p style="margin-top:var(--space-xs);font-size:15px;color:#3A4354">Real retention isn't perfectly geometric — month one churns harder, then the curve flattens. This model will be slightly pessimistic past month six.</p>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,45%),1fr));gap:var(--space-3xs);margin-top:var(--space-sm);background:#E2E0DA;border:1px solid #E2E0DA;border-radius:8px;overflow:hidden">
+            <div style="background:#FFFFFF;padding:var(--space-xs) var(--space-sm)">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#5C6779">TRUE BREAKEVEN</div>
+              <div style="margin-top:var(--space-3xs);font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.02em;color:#0E6E63">{{ tileTrue }}</div>
+            </div>
+            <div style="background:#FFFFFF;padding:var(--space-xs) var(--space-sm)">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#5C6779">YOUR DASHBOARD REPORTS</div>
+              <div style="margin-top:var(--space-3xs);font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.02em;color:#C4432B">{{ tileDash }}</div>
+            </div>
+            <div style="background:#FFFFFF;padding:var(--space-xs) var(--space-sm)">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#5C6779">INVISIBLE / 1,000 INSTALLS</div>
+              <div style="margin-top:var(--space-3xs);font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.02em;color:#101725">{{ tileInvisible }}</div>
+            </div>
+            <div style="background:#FFFFFF;padding:var(--space-xs) var(--space-sm)">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.08em;color:#5C6779">{{ roasTileLabel }}</div>
+              <div style="margin-top:var(--space-3xs);font-family:'Archivo',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.02em;color:#101725">{{ tileRoas }}</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+            <p style="margin-top:var(--space-sm);max-width:64ch;font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(17px,1.6vw,21px);line-height:1.35;letter-spacing:-0.015em;color:#101725">On the numbers your dashboard reports, you would pause this campaign. On the real numbers it returns <span style="color:#0E6E63">{{ lifeRoas }}</span> over the subscription's life. That decision is what the gap costs.</p>
+          </sc-if>
+          <sc-if value="{{ isAd }}" hint-placeholder-val="{{ false }}">
+            <p style="margin-top:var(--space-sm);max-width:64ch;font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(17px,1.6vw,21px);line-height:1.35;letter-spacing:-0.015em;color:#101725">At this ARPDAU and this decay, an install returns <span style="color:#0E6E63">{{ adHorizonRoas }}</span> by day {{ horizon }}. Everything after that is the part nobody waits for.</p>
+          </sc-if>
+
+          <p aria-live="polite" style="margin-top:var(--space-xs);max-width:72ch;font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.65;color:#5C6779">{{ chartSummary }}</p>
+        </div>
+
+        <div style="padding:var(--space-md) var(--space-md) var(--space-md);background:#FBFAF8;border-top:1px solid #E2E0DA">
+
+          <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-sm) var(--space-md);align-items:start">
+              <div style="display:grid;gap:var(--space-3xs);align-content:start">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-i2t">Install → trial start</label><span style="color:#101725">{{ i2tLabel }}</span></div>
+                <input id="s-i2t" type="range" min="1" max="25" step="0.5" value="{{ i2t }}" onChange="{{ onI2t }}" onInput="{{ onI2t }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-t2p">Trial → paid</label><span style="color:#101725">{{ t2pLabel }}</span></div>
+                <input id="s-t2p" type="range" min="10" max="60" step="1" value="{{ t2p }}" onChange="{{ onT2p }}" onInput="{{ onT2p }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-price">Plan price</label><span style="color:#101725">{{ priceLabel }}</span></div>
+                <input id="s-price" type="range" min="1.99" max="99.99" step="1" value="{{ price }}" onChange="{{ onPrice }}" onInput="{{ onPrice }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-2xs)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">Billing period</div>
+                <div style="display:flex;gap:var(--space-3xs)">
+                  <button type="button" onClick="{{ setWeekly }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ pWBg }};color:{{ pWFg }}">Weekly</button>
+                  <button type="button" onClick="{{ setMonthly }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ pMBg }};color:{{ pMFg }}">Monthly</button>
+                  <button type="button" onClick="{{ setAnnual }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ pABg }};color:{{ pAFg }}">Annual</button>
+                </div>
+              </div>
+              <div style="display:grid;gap:var(--space-2xs)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">Trial length</div>
+                <div style="display:flex;gap:var(--space-3xs)">
+                  <button type="button" onClick="{{ setT3 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ t3Bg }};color:{{ t3Fg }}">3d</button>
+                  <button type="button" onClick="{{ setT7 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ t7Bg }};color:{{ t7Fg }}">7d</button>
+                  <button type="button" onClick="{{ setT14 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ t14Bg }};color:{{ t14Fg }}">14d</button>
+                  <button type="button" onClick="{{ setT30 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ t30Bg }};color:{{ t30Fg }}">30d</button>
+                </div>
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-ret">Renewal retention per cycle</label><span style="color:#101725">{{ retLabel }}</span></div>
+                <input id="s-ret" type="range" min="50" max="98" step="0.5" value="{{ retention }}" onChange="{{ onRet }}" onInput="{{ onRet }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-2xs)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">Store commission</div>
+                <div style="display:flex;gap:var(--space-3xs)">
+                  <button type="button" onClick="{{ setC15 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ c15Bg }};color:{{ c15Fg }}">15%</button>
+                  <button type="button" onClick="{{ setC30 }}" style="flex:1;font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:var(--space-2xs) var(--space-3xs);border-radius:8px;cursor:pointer;border:1px solid #E2E0DA;background:{{ c30Bg }};color:{{ c30Fg }}">30%</button>
+                </div>
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-ref">Refund rate</label><span style="color:#101725">{{ refundLabel }}</span></div>
+                <input id="s-ref" type="range" min="0" max="10" step="0.5" value="{{ refund }}" onChange="{{ onRefund }}" onInput="{{ onRefund }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-cpi">Cost per install</label><span style="color:#101725">{{ cpiLabel }}</span></div>
+                <input id="s-cpi" type="range" min="0.2" max="8" step="0.05" value="{{ cpi }}" onChange="{{ onCpi }}" onInput="{{ onCpi }}" style="width:100%;height:20px">
+              </div>
+            </div>
+
+            <div style="margin-top:var(--space-md);padding-top:var(--space-sm);border-top:1px solid #E2E0DA;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,45%),1fr));gap:var(--space-sm) var(--space-md);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">
+              <div>Install → paid<div style="color:#101725;font-size:15px;margin-top:var(--space-3xs)">{{ i2pLabel }}</div></div>
+              <div>Net per payment<div style="color:#101725;font-size:15px;margin-top:var(--space-3xs)">{{ netPaymentLabel }}</div></div>
+              <div>LTV per payer<div style="color:#101725;font-size:15px;margin-top:var(--space-3xs)">{{ ltvPayerLabel }}</div></div>
+              <div>LTV per install<div style="color:#101725;font-size:15px;margin-top:var(--space-3xs)">{{ ltvInstallLabel }}</div></div>
+            </div>
+
+            <sc-if value="{{ isAnnual }}" hint-placeholder-val="{{ false }}">
+              <p style="margin-top:var(--space-sm);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.7;color:#C4432B;background:rgba(196,67,43,0.08);border-radius:8px;padding:var(--space-2xs) var(--space-xs)">Annual SKU: one payment at trial end, then nothing until day 365. The whole bet rides on a single charge and one renewal decision a year later.</p>
+            </sc-if>
+
+            <div style="margin-top:var(--space-md);padding-top:var(--space-sm);border-top:1px solid #E2E0DA">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;color:#101725">WHAT YOUR DASHBOARD CURRENTLY SEES</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-xs) var(--space-md);margin-top:var(--space-xs);align-items:start">
+                <label for="c-renew" style="display:flex;gap:var(--space-2xs);align-items:flex-start;cursor:pointer;font-size:15px;color:#3A4354">
+                  <input id="c-renew" type="checkbox" checked="{{ renewalCapture }}" onChange="{{ onRenewal }}" style="margin-top:var(--space-3xs);width:16px;height:16px;accent-color:#0E6E63;flex:none">
+                  <span>Server-side renewal capture<span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779;margin-top:var(--space-3xs)">Off: only the first payment is ever visible.</span></span>
+                </label>
+                <div style="display:grid;gap:var(--space-2xs)">
+                  <label for="c-skan" style="display:flex;gap:var(--space-2xs);align-items:flex-start;cursor:pointer;font-size:15px;color:#3A4354">
+                    <input id="c-skan" type="checkbox" checked="{{ skanMapped }}" onChange="{{ onSkan }}" style="margin-top:var(--space-3xs);width:16px;height:16px;accent-color:#0E6E63;flex:none">
+                    <span>SKAN schema mapped to revenue<span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779;margin-top:var(--space-3xs)">Off: null conversion values report zero revenue.</span></span>
+                  </label>
+                  <div style="display:grid;gap:var(--space-3xs);padding-left:var(--space-md)">
+                    <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5C6779"><label for="s-skan">Share of iOS installs with null CV</label><span style="color:#101725">{{ skanNullLabel }}</span></div>
+                    <input id="s-skan" type="range" min="0" max="80" step="1" value="{{ skanNull }}" onChange="{{ onSkanNull }}" onInput="{{ onSkanNull }}" style="width:100%;height:18px">
+                  </div>
+                </div>
+                <div style="display:grid;gap:var(--space-2xs)">
+                  <label for="c-web" style="display:flex;gap:var(--space-2xs);align-items:flex-start;cursor:pointer;font-size:15px;color:#3A4354">
+                    <input id="c-web" type="checkbox" checked="{{ webStitched }}" onChange="{{ onWeb }}" style="margin-top:var(--space-3xs);width:16px;height:16px;accent-color:#0E6E63;flex:none">
+                    <span>Web-to-app click stitching<span style="display:block;font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779;margin-top:var(--space-3xs)">Off: paid installs get miscredited to organic.</span></span>
+                  </label>
+                  <div style="display:grid;gap:var(--space-3xs);padding-left:var(--space-md)">
+                    <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#5C6779"><label for="s-web">Share miscredited to organic</label><span style="color:#101725">{{ webLossLabel }}</span></div>
+                    <input id="s-web" type="range" min="0" max="60" step="1" value="{{ webLoss }}" onChange="{{ onWebLoss }}" onInput="{{ onWebLoss }}" style="width:100%;height:18px">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isAd }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-sm) var(--space-md);align-items:start">
+              <div style="display:grid;gap:var(--space-3xs);align-content:start">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-arp">ARPDAU</label><span style="color:#101725">{{ arpdauLabel }}</span></div>
+                <input id="s-arp" type="range" min="0.005" max="0.5" step="0.005" value="{{ arpdau }}" onChange="{{ onArpdau }}" onInput="{{ onArpdau }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-d1">D1 retention</label><span style="color:#101725">{{ d1Label }}</span></div>
+                <input id="s-d1" type="range" min="10" max="60" step="1" value="{{ d1 }}" onChange="{{ onD1 }}" onInput="{{ onD1 }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-d30">D30 retention</label><span style="color:#101725">{{ d30Label }}</span></div>
+                <input id="s-d30" type="range" min="1" max="25" step="1" value="{{ d30 }}" onChange="{{ onD30 }}" onInput="{{ onD30 }}" style="width:100%;height:20px">
+              </div>
+              <div style="display:grid;gap:var(--space-3xs)">
+                <div style="display:flex;justify-content:space-between;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="s-acpi">Cost per install</label><span style="color:#101725">{{ adCpiLabel }}</span></div>
+                <input id="s-acpi" type="range" min="0.05" max="3" step="0.05" value="{{ adCpi }}" onChange="{{ onAdCpi }}" onInput="{{ onAdCpi }}" style="width:100%;height:20px">
+              </div>
+            </div>
+
+            <div style="margin-top:var(--space-sm);padding-top:var(--space-sm);border-top:1px solid #E2E0DA">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;color:#101725">D7 CROSS-CHECK</div>
+              <div style="display:flex;flex-wrap:wrap;gap:var(--space-xs);align-items:flex-end;margin-top:var(--space-xs)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">Model predicts D7<div style="color:#101725;font-size:18px;margin-top:var(--space-3xs)">{{ predD7Label }}</div></div>
+                <div style="display:grid;gap:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779"><label for="i-d7">Your actual D7 (%)</label>
+                  <input id="i-d7" type="number" min="0" max="60" step="0.1" value="{{ realD7 }}" onChange="{{ onRealD7 }}" onInput="{{ onRealD7 }}" style="width:96px;font-family:'IBM Plex Mono',monospace;font-size:15px;padding:var(--space-2xs) var(--space-2xs);border-radius:8px;border:1px solid #C9C6BE;background:#FFFFFF;color:#101725">
+                </div>
+              </div>
+              <div style="margin-top:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.7;color:#5C6779">Fitted decay exponent b = {{ bLabel }} · cumulative active days by D30 = {{ activeD30Label }}</div>
+              <sc-if value="{{ d7Mismatch }}" hint-placeholder-val="{{ false }}">
+                <p style="margin-top:var(--space-xs);font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.7;color:#C4432B;background:rgba(196,67,43,0.08);border-radius:8px;padding:var(--space-2xs) var(--space-xs)">Your curve isn't a power law. That usually means a broken onboarding step, not a bad model.</p>
+              </sc-if>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" style="background:#101725;padding:var(--space-2xl) var(--gutter)">
+  <div style="max-width:1200px;margin:0 auto">
+    <div data-reveal="1">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#E39A1F;margin-bottom:var(--space-sm)">WHY YOUR NUMBERS DON'T RECONCILE</div>
+      <h2 style="font-size:clamp(28px,3.6vw,44px);color:#F7F6F3;max-width:20em">Three places the money goes missing. And one place it was never there.</h2>
+      <p style="margin-top:var(--space-sm);font-size:16.5px;color:rgba(247,246,243,0.6);font-style:italic;max-width:40em">The first isn't a measurement failure, and no amount of attribution accuracy will save you from it. The other three are — the revenue exists and you can't see it.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-sm);margin-top:var(--space-xl)">
+      <div data-reveal="1" style="background:rgba(247,246,243,0.045);border:1px solid rgba(227,154,31,0.32);border-radius:12px;padding:var(--space-md) var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#E39A1F">01 · NOT A MEASUREMENT PROBLEM</div>
+        <h3 style="font-size:20px;color:#F7F6F3;letter-spacing:-0.01em">Retention nobody watches past D7.</h3>
+        <p style="font-size:15.5px;color:rgba(247,246,243,0.7);flex:1">Every LTV model is retention multiplied by monetisation. If the retention curve dies before the payback horizon, the campaign cannot break even at any CPI — the money was never going to be there. Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that's gone by week three never gets there.</p>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.5;color:#C4432B;background:rgba(196,67,43,0.1);border-radius:6px;padding:var(--space-2xs) var(--space-2xs)">d1 0.32 → d7 0.11 → d30 0.03 · curve dies before payback</div>
+      </div>
+      <div data-reveal="1" style="background:rgba(247,246,243,0.045);border:1px solid rgba(247,246,243,0.1);border-radius:12px;padding:var(--space-md) var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">02</div>
+        <h3 style="font-size:20px;color:#F7F6F3;letter-spacing:-0.01em">Renewals nobody counted.</h3>
+        <p style="font-size:15.5px;color:rgba(247,246,243,0.7);flex:1">Subscription renewals happen on Apple's servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.</p>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.5;color:#C4432B;background:rgba(196,67,43,0.1);border-radius:6px;padding:var(--space-2xs) var(--space-2xs)">revenue_dashboard ≠ mmp_reported · gap grows monthly</div>
+      </div>
+      <div data-reveal="1" style="background:rgba(247,246,243,0.045);border:1px solid rgba(247,246,243,0.1);border-radius:12px;padding:var(--space-md) var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">03</div>
+        <h3 style="font-size:20px;color:#F7F6F3;letter-spacing:-0.01em">A conversion schema built for nothing in particular.</h3>
+        <p style="font-size:15.5px;color:rgba(247,246,243,0.7);flex:1">SKAdNetwork gives you a handful of bits and one short window. Most schemas were set up once, copied from a blog post, and never mapped to the events that actually predict revenue for this app.</p>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.5;color:#C4432B;background:rgba(196,67,43,0.1);border-radius:6px;padding:var(--space-2xs) var(--space-2xs)">skan_cv: null · 71% of postbacks</div>
+      </div>
+      <div data-reveal="1" style="background:rgba(247,246,243,0.045);border:1px solid rgba(247,246,243,0.1);border-radius:12px;padding:var(--space-md) var(--space-md);display:flex;flex-direction:column;gap:var(--space-xs)">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">04</div>
+        <h3 style="font-size:20px;color:#F7F6F3;letter-spacing:-0.01em">The web-to-app gap.</h3>
+        <p style="font-size:15.5px;color:rgba(247,246,243,0.7);flex:1">Someone clicks a Google ad on your website, installs later, subscribes a week after that. Without <span style="font-family:'IBM Plex Mono',monospace;font-size:15px">gclid</span>/<span style="font-family:'IBM Plex Mono',monospace;font-size:15px">gbraid</span>/<span style="font-family:'IBM Plex Mono',monospace;font-size:15px">wbraid</span> capture and a conversion sent back, Google never learns which click earned the money — so it optimises toward the wrong people.</p>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:1.5;color:#C4432B;background:rgba(196,67,43,0.1);border-radius:6px;padding:var(--space-2xs) var(--space-2xs)">web_click → install → ??? → subscription</div>
+      </div>
+    </div>
+    <p data-reveal="1" style="margin-top:var(--space-xl);font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(19px,2vw,25px);line-height:1.3;letter-spacing:-0.015em;color:#F7F6F3;max-width:26em">Three of these are fixable in weeks. The first is a product problem, and we'll tell you if that's the one you have.</p>
+  </div>
+</section>
+
+<section id="loop" style="padding:var(--space-2xl) var(--gutter);background:#F7F6F3">
+  <div style="max-width:1200px;margin:0 auto">
+    <div data-reveal="1" style="max-width:34em">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#5C6779;margin-bottom:var(--space-sm)">HOW THE WORK IS SEQUENCED</div>
+      <h2 style="font-size:clamp(30px,4vw,48px);color:#101725">The Full Loop</h2>
+      <p style="margin-top:var(--space-sm);font-size:17px;color:#5C6779;font-style:italic">Four stations. The output of the last one is the input to the first. That's the point.</p>
+    </div>
+
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <div style="position:relative;width:min(1000px,100%);margin:var(--space-xl) auto 0;display:grid;grid-template-columns:min(355px,37%) 1fr min(355px,37%);row-gap:var(--space-xl);align-items:start">
+        <svg viewBox="0 0 1000 660" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" aria-hidden="true">
+          <path d="M 500 150 L 560 150 A 60 60 0 0 1 620 210 L 620 450 A 60 60 0 0 1 560 510 L 440 510 A 60 60 0 0 1 380 450 L 380 210 A 60 60 0 0 1 440 150 Z" fill="none" stroke="#D6D3CB" stroke-width="1.5"></path>
+          <polygon points="524,150 512,144 512,156" fill="#E39A1F"></polygon>
+          <polygon points="620,336 614,324 626,324" fill="#E39A1F"></polygon>
+          <polygon points="476,510 488,516 488,504" fill="#E39A1F"></polygon>
+          <polygon points="380,324 386,336 374,336" fill="#E39A1F"></polygon>
+        </svg>
+
+        <div style="grid-column:1;grid-row:1;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-md);box-shadow:0 2px 14px rgba(16,23,37,0.05)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 01</div>
+          <h3 style="font-size:22px;color:#101725">Instrument</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;line-height:1.6;color:#3A4354">Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Events fire when they should, named what they should be, carrying what they should carry.</p>
+        </div>
+        <div style="grid-column:3;grid-row:1;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-md);box-shadow:0 2px 14px rgba(16,23,37,0.05)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 02</div>
+          <h3 style="font-size:22px;color:#101725">Attribute</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;line-height:1.6;color:#3A4354">Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Every install and every dollar traceable to the click that caused it.</p>
+        </div>
+        <div style="grid-column:3;grid-row:2;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-md);box-shadow:0 2px 14px rgba(16,23,37,0.05)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 03</div>
+          <h3 style="font-size:22px;color:#101725">Decide</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;line-height:1.6;color:#3A4354">Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: A defensible number for what you can afford to pay for a user — market by market.</p>
+        </div>
+        <div style="grid-column:1;grid-row:2;background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-md);box-shadow:0 2px 14px rgba(16,23,37,0.05)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 04</div>
+          <h3 style="font-size:22px;color:#101725">Deploy</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;line-height:1.6;color:#3A4354">Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.</p>
+        </div>
+        <div style="grid-column:2;grid-row:1 / span 2;align-self:center;justify-self:center;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.12em;color:#5C6779">THE<br>FULL<br>LOOP</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;gap:var(--space-xs);margin-top:var(--space-lg);position:relative;padding-left:var(--space-md);border-left:2px solid #D6D3CB">
+        <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-sm)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 01</div>
+          <h3 style="font-size:21px;color:#101725">Instrument</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;color:#3A4354">Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Events fire when they should, named what they should be, carrying what they should carry.</p>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-sm)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 02</div>
+          <h3 style="font-size:21px;color:#101725">Attribute</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;color:#3A4354">Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Every install and every dollar traceable to the click that caused it.</p>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-sm)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 03</div>
+          <h3 style="font-size:21px;color:#101725">Decide</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;color:#3A4354">Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: A defensible number for what you can afford to pay for a user — market by market.</p>
+        </div>
+        <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;padding:var(--space-sm)">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;color:#E39A1F;margin-bottom:var(--space-2xs)">STATION 04</div>
+          <h3 style="font-size:21px;color:#101725">Deploy</h3>
+          <p style="margin-top:var(--space-2xs);font-size:15px;color:#3A4354">Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.</p>
+          <p style="margin-top:var(--space-xs);padding-top:var(--space-xs);border-top:1px solid #E2E0DA;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.55;color:#0E6E63">Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F"><svg width="40" height="28" viewBox="0 0 40 28" aria-hidden="true" style="flex:none"><path d="M36 24 L14 24 A8 8 0 0 1 6 16 L6 9" fill="none" stroke="#E39A1F" stroke-width="1.5"></path><polygon points="6,2 2.5,9 9.5,9" fill="#E39A1F"></polygon></svg>back to 01</div>
+      </div>
+    </sc-if>
+
+    <p data-reveal="1" style="margin-top:var(--space-xl);font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(19px,2vw,25px);line-height:1.3;letter-spacing:-0.015em;color:#101725;max-width:26em">Most consultants stop after Station 02. The loop only closes when the same person walks all four.</p>
+  </div>
+</section>
+
+<section id="approach" style="padding:var(--space-2xl) var(--gutter);background:#EFEDE7;border-top:1px solid #E2E0DA;border-bottom:1px solid #E2E0DA">
+  <div style="max-width:1200px;margin:0 auto">
+    <div data-reveal="1" style="max-width:36em">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#5C6779;margin-bottom:var(--space-sm)">WHAT'S UNDER THE HOOD</div>
+      <h2 style="font-size:clamp(30px,4vw,48px);color:#101725">The full stack, in bundles.</h2>
+      <p style="margin-top:var(--space-sm);font-size:17px;color:#5C6779;font-style:italic">Named, so you can check whether the thing you need is on the list.</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:var(--space-2xs);margin-top:var(--space-lg)">
+      <button type="button" onClick="{{ filterAll }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:var(--space-2xs) var(--space-sm);border-radius:999px;cursor:pointer;white-space:nowrap;background:{{ fAllBg }};color:{{ fAllFg }};border:1px solid {{ fAllBd }}">ALL 10</button>
+      <button type="button" onClick="{{ filterMeas }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:var(--space-2xs) var(--space-sm);border-radius:999px;cursor:pointer;white-space:nowrap;background:{{ fMeasBg }};color:{{ fMeasFg }};border:1px solid {{ fMeasBd }}">MEASUREMENT</button>
+      <button type="button" onClick="{{ filterMedia }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:var(--space-2xs) var(--space-sm);border-radius:999px;cursor:pointer;white-space:nowrap;background:{{ fMediaBg }};color:{{ fMediaFg }};border:1px solid {{ fMediaBd }}">MEDIA &amp; STORE</button>
+      <button type="button" onClick="{{ filterInfra }}" style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:var(--space-2xs) var(--space-sm);border-radius:999px;cursor:pointer;white-space:nowrap;background:{{ fInfraBg }};color:{{ fInfraFg }};border:1px solid {{ fInfraBd }}">INFRASTRUCTURE</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--space-xs);margin-top:var(--space-sm);align-items:start">
+
+      <sc-if value="{{ v0 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t0 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">01</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Attribution &amp; MMP</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">AppsFlyer · Adjust · Singular · Branch</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i0 }}</span>
+        </button>
+        <sc-if value="{{ o0 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">SDK integration &amp; upgrade (incl. Adjust SDK v5) · full-stack MMP audits · attribution window alignment · postback mapping · deferred deep linking · server-to-server events · Google On-Device Measurement (ODM) &amp; Install Conversion Measurement (ICM) enablement · Adjust First Session Delay · fraud and validation rules</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v1 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E39A1F;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t1 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FDF8EF">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">02</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Backend &amp; Infrastructure</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">Led by Muhammad Faisal Khan</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i1 }}</span>
+        </button>
+        <sc-if value="{{ o1 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">Server-side event forwarding and validation · webhook receivers for App Store Server Notifications V2 and Google Play RTDN · conversion API relays to ad platforms · scheduled pipelines and job monitoring · cloud hosting, uptime and alerting · data handling, access control and security review</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v2 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t2 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">03</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">iOS Privacy &amp; SKAN</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">SKAdNetwork 4.0 · AdAttributionKit · ATT</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i2 }}</span>
+        </button>
+        <sc-if value="{{ o2 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">SKAdNetwork 4.0 conversion value schema design · AdAttributionKit migration · ATT prompt sequencing and consent flow · privacy manifests and nutrition labels · null-postback diagnosis · modelled vs deterministic reconciliation</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v3 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t3 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">04</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Event Tracking Plans</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">Taxonomy · Firebase · GA4 · BigQuery</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i3 }}</span>
+        </button>
+        <sc-if value="{{ o3 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">Event taxonomy and naming conventions · parameter schemas · written tracking plan specs for developers · in-app event mapping to MMP and every ad network · Firebase and GA4 event architecture · QA checklists and test matrices · sandbox and debug validation · BigQuery validation queries</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v4 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t4 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">05</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Subscription &amp; Revenue</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">RevenueCat · Adapty · ASSN V2 · RTDN</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i4 }}</span>
+        </button>
+        <sc-if value="{{ o4 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">RevenueCat · Adapty · App Store Server Notifications V2 → backend → RevenueCat and GA4 Measurement Protocol relay · background renewal capture · Google Play Real-time Developer Notifications · trial-to-paid cohort analysis · retention decay and LTV curves · CAC payback modelling · offer codes and promotional pricing</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v5 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t5 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">06</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Google Ads for Apps</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">UAC · tCPA · tROAS · web-to-app · OCI</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i5 }}</span>
+        </button>
+        <sc-if value="{{ o5 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">App campaigns (UAC) · tCPA and tROAS bid strategy · iOS App campaigns with SKAN · web-to-app campaigns · Offline Conversion Import (OCI) · budget automation via Apps Script · geo and market allocation · creative and asset group structure</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v6 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t6 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">07</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Apple Ads (Apple Search Ads)</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">Search Match · Discovery · Exact · brand defence</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i6 }}</span>
+        </button>
+        <sc-if value="{{ o6 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">Campaign structure across Search Match, Discovery, Exact and brand defence · negative keyword architecture · country and localisation strategy · Campaign Management API v5 automation · LTV:CAC bid scoring · competitor keyword mining</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v7 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t7 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">08</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Meta, TikTok &amp; Multi-Channel</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">CAPI · Events API · event parity</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i7 }}</span>
+        </button>
+        <sc-if value="{{ o7 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">Meta Ads and Conversions API (fbclid / fbpid) · RevenueCat → Meta CAPI · Aggregated Event Measurement · TikTok Events API · Snapchat CAPI · X and LinkedIn Conversions API (li_fat_id) · cross-channel event parity</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v8 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t8 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">09</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">Web-to-App Attribution</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">gclid / gbraid / wbraid · OneLink · Smart Scripts</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i8 }}</span>
+        </button>
+        <sc-if value="{{ o8 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">gclid / gbraid / wbraid capture · Adjust Smart Scripts · AppsFlyer OneLink · Singular links · landing page to install to subscription stitching · conversions returned to the originating platform</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ v9 }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#FFFFFF;border:1px solid #E2E0DA;border-radius:12px;overflow:hidden">
+        <button type="button" onClick="{{ t9 }}" style="width:100%;text-align:left;background:transparent;border:0;padding:var(--space-md);cursor:pointer;font-family:inherit;display:flex;gap:var(--space-xs);align-items:flex-start" style-hover="background:#FAF9F6">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#E39A1F;padding-top:var(--space-3xs)">10</span>
+          <span style="flex:1"><span style="display:block;font-family:'Archivo',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;color:#101725">ASO, Monetisation &amp; Store</span><span style="display:block;margin-top:var(--space-3xs);font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5C6779">Metadata · CPP · In-App Events · mediation</span></span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:15px;color:#5C6779">{{ i9 }}</span>
+        </button>
+        <sc-if value="{{ o9 }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 var(--space-md) var(--space-md) var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;line-height:1.85;color:#3A4354">Keyword research and metadata (title, subtitle, keyword field) · Custom Product Pages · In-App Events · localisation and country prioritisation · competitor metadata teardowns · paywall teardowns and pricing architecture · IAP A/B test design · AdMob and AppLovin MAX mediation · impression-level ad revenue into the MMP · App Store submission and rejection remediation</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+</section>
+
+<section style="padding:var(--space-2xl) var(--gutter);background:#101725">
+  <div style="max-width:1200px;margin:0 auto">
+    <div data-reveal="1" style="max-width:32em">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.14em;color:#E39A1F;margin-bottom:var(--space-sm)">WHAT THE AUDITS TURN UP</div>
+      <h2 style="font-size:clamp(28px,3.6vw,44px);color:#F7F6F3">Three findings, from real audits.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--space-sm);margin-top:var(--space-xl)">
+      <div data-reveal="1" style="border-top:2px solid #E39A1F;padding-top:var(--space-md)">
+        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(30px,3.4vw,40px);letter-spacing:-0.03em;color:#F7F6F3">11% → 17%</div>
+        <p style="margin-top:var(--space-xs);font-size:15.5px;color:rgba(247,246,243,0.7)">A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.</p>
+      </div>
+      <div data-reveal="1" style="border-top:2px solid #E39A1F;padding-top:var(--space-md)">
+        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(30px,3.4vw,40px);letter-spacing:-0.03em;color:#F7F6F3">~5%</div>
+        <p style="margin-top:var(--space-xs);font-size:15.5px;color:rgba(247,246,243,0.7)">Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.</p>
+      </div>
+      <div data-reveal="1" style="border-top:2px solid #E39A1F;padding-top:var(--space-md)">
+        <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(30px,3.4vw,40px);letter-spacing:-0.03em;color:#F7F6F3">Most of the budget</div>
+        <p style="margin-top:var(--space-xs);font-size:15.5px;color:rgba(247,246,243,0.7)">At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.</p>
+      </div>
+    </div>
+    <p style="margin-top:var(--space-lg);font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#5C6779">Client names withheld. Details available on a call.</p>
+  </div>
+</section>
+
+<section style="padding:var(--space-2xl) var(--gutter);background:#F7F6F3">
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:var(--space-lg)">
+      <div data-reveal="1">
+        <div style="aspect-ratio:4/3;border-radius:12px;overflow:hidden">
+          <image-slot id="founder-aamir" shape="rounded" radius="12" placeholder="Drop Aamir's photo"></image-slot>
+        </div>
+        <h3 style="margin-top:var(--space-md);font-size:clamp(22px,2.4vw,28px);color:#101725">Aamir Jan Khan</h3>
+        <div style="margin-top:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;color:#E39A1F">MEASUREMENT &amp; GROWTH</div>
+        <div style="display:grid;gap:var(--space-sm);margin-top:var(--space-sm);font-size:16px;color:#3A4354">
+          <p>I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. I did it last week and I'll do it next week.</p>
+          <p>Five years across the full mobile growth stack: measurement platforms, ad platforms, app stores, subscription analytics. I'm logged into 48 AppsFlyer accounts. I've shipped server-side subscription pipelines, per-country profitability models, and web-to-app attribution loops that close.</p>
+          <p>Most people in this field pick a side — the technical plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task. That turns out to be the useful part.</p>
+        </div>
+        <a href="https://www.linkedin.com/in/aamir-jan-khan/" target="_blank" rel="noopener" style="display:inline-block;margin-top:var(--space-sm);font-family:'IBM Plex Mono',monospace;font-size:12.5px">LinkedIn ↗</a>
+      </div>
+      <div data-reveal="1">
+        <div style="aspect-ratio:4/3;border-radius:12px;overflow:hidden">
+          <image-slot id="founder-faisal" shape="rounded" radius="12" placeholder="Drop Faisal's photo"></image-slot>
+        </div>
+        <h3 style="margin-top:var(--space-md);font-size:clamp(22px,2.4vw,28px);color:#101725">Muhammad Faisal Khan</h3>
+        <div style="margin-top:var(--space-2xs);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;color:#E39A1F">INFRASTRUCTURE &amp; OPERATIONS</div>
+        <div style="display:grid;gap:var(--space-sm);margin-top:var(--space-sm);font-size:16px;color:#3A4354">
+          <p>Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery and support across Cisco, Nokia and Ericsson. LTE and 5G core nodes, routing, security, network operations. The systems underneath the phone in your hand.</p>
+          <p>A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything — renewal notifications from Apple, conversion events to ad platforms, pipelines that run every day whether anyone is watching or not. That's the half I own.</p>
+          <p>Aamir works at the app layer of mobile. I've spent two decades at the network layer underneath it. Between us there isn't much of a mobile stack we haven't had to keep running.</p>
+        </div>
+        <a href="https://www.linkedin.com/in/muhammad-faisal-khan-3606365/" target="_blank" rel="noopener" style="display:inline-block;margin-top:var(--space-sm);font-family:'IBM Plex Mono',monospace;font-size:12.5px">LinkedIn ↗</a>
+      </div>
+    </div>
+    <p data-reveal="1" style="margin-top:var(--space-xl);padding-top:var(--space-md);border-top:1px solid #E2E0DA;font-family:'Archivo',sans-serif;font-weight:700;font-size:clamp(19px,2vw,25px);line-height:1.3;letter-spacing:-0.015em;color:#101725;max-width:24em">Nothing gets handed off. You talk to the two people doing the work.</p>
+  </div>
+</section>
+
+<section id="contact" style="background:#0A0F1A;padding:var(--space-2xl) var(--gutter)">
+  <div style="max-width:840px;margin:0 auto;text-align:center">
+    <h2 style="font-size:clamp(28px,4vw,50px);color:#F7F6F3">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+    <p style="margin:var(--space-md) auto 0;max-width:44em;font-size:17px;color:rgba(247,246,243,0.68);font-style:italic">A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is likely costing. If there's nothing wrong, I'll tell you that too — it's the fastest way for both of us to find out whether this is worth a conversation.</p>
+    <a href="mailto:hello@e2eapps.com" style="display:inline-block;margin-top:var(--space-lg);background:#E39A1F;color:#101725;font-weight:600;font-size:16px;padding:var(--space-sm) var(--space-lg);border-radius:999px;border:0" style-hover="background:#F0AB33">Book a call</a>
+    <div style="margin-top:var(--space-sm);font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:#5C6779">hello@e2eapps.com</div>
+  </div>
+</section>
+
+<footer style="background:#0A0F1A;border-top:1px solid rgba(247,246,243,0.1);padding:var(--space-lg) var(--gutter)">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:var(--space-md);justify-content:space-between;align-items:flex-start">
+    <div style="max-width:26em">
+      <div style="font-family:'Archivo',sans-serif;font-weight:700;font-size:18px;color:#F7F6F3">E2E Apps</div>
+      <p style="margin-top:var(--space-2xs);font-size:15px;color:rgba(247,246,243,0.55)">One specialist owns the entire growth loop — a second owns the infrastructure it runs on.</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:var(--space-md);font-family:'IBM Plex Mono',monospace;font-size:12.5px">
+      <a href="#services" style="color:rgba(247,246,243,0.65);border:0" style-hover="color:#E39A1F">Services</a>
+      <a href="#loop" style="color:rgba(247,246,243,0.65);border:0" style-hover="color:#E39A1F">The Loop</a>
+      <a href="#approach" style="color:rgba(247,246,243,0.65);border:0" style-hover="color:#E39A1F">Approach</a>
+      <a href="mailto:hello@e2eapps.com" style="color:rgba(247,246,243,0.65);border:0" style-hover="color:#E39A1F">hello@e2eapps.com</a>
+      <a href="https://www.linkedin.com/in/aamir-jan-khan/" target="_blank" rel="noopener" style="color:rgba(247,246,243,0.65);border:0" style-hover="color:#E39A1F">LinkedIn</a>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:var(--space-lg) auto 0;padding-top:var(--space-sm);border-top:1px solid rgba(247,246,243,0.08);display:flex;flex-wrap:wrap;gap:var(--space-sm);justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#5C6779">
+    <span>© 2026 E2E Apps · e2eapps.com</span>
+    <span style="display:flex;gap:var(--space-sm)"><a href="#" style="color:#5C6779;border:0" style-hover="color:#E39A1F">Privacy</a><a href="#" style="color:#5C6779;border:0" style-hover="color:#E39A1F">Terms</a></span>
+  </div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = {
+    mode: 'sub', horizon: 365, assumpOpen: false,
+    i2t: 8, t2p: 35, price: 9.99, period: 'monthly', trialDays: 7, retention: 85, commission: 15, refund: 3, cpi: 1.2,
+    arpdau: 0.045, d1: 32, d30: 6, adCpi: 0.35, realD7: 12.3,
+    renewalCapture: false, skanMapped: false, webStitched: false, skanNull: 35, webLoss: 20,
+    wide: true, chartPx: 1120, open: {}, filter: 'all'
+  };
+
+  componentDidMount() {
+    this.onResize = () => {
+      const w = window.innerWidth >= 1024;
+      const el = document.getElementById('chart-wrap');
+      const px = el && el.clientWidth ? Math.round(el.clientWidth) : this.state.chartPx;
+      const next = {};
+      if (w !== this.state.wide) next.wide = w;
+      if (Math.abs(px - this.state.chartPx) > 4) next.chartPx = px;
+      if (Object.keys(next).length) this.setState(next);
+    };
+    this.onResize();
+    window.addEventListener('resize', this.onResize);
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const nodes = document.querySelectorAll('[data-reveal]');
+    if (reduce || !('IntersectionObserver' in window)) return;
+    nodes.forEach(n => {
+      n.style.opacity = '0';
+      n.style.transform = 'translateY(16px)';
+      n.style.transition = 'opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1)';
+    });
+    this.io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          this.io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    nodes.forEach(n => this.io.observe(n));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    if (this.io) this.io.disconnect();
+  }
+
+  cycleDays() { const p = this.state.period; return p === 'weekly' ? 7 : p === 'annual' ? 365 : 30; }
+
+  subModel() {
+    const s = this.state;
+    const r = s.retention / 100;
+    const cd = this.cycleDays();
+    const i2p = (s.i2t / 100) * (s.t2p / 100);
+    const netPayment = s.price * (1 - s.commission / 100) * (1 - s.refund / 100);
+    const cycles = d => d < s.trialDays ? 0 : Math.floor((d - s.trialDays) / cd) + 1;
+    const paymentsBy = n => n === 0 ? 0 : (1 - Math.pow(r, n)) / (1 - r);
+    const signal = (s.skanMapped ? 1 : 1 - s.skanNull / 100) * (s.webStitched ? 1 : 1 - s.webLoss / 100);
+    const trueRev = d => i2p * netPayment * paymentsBy(cycles(d));
+    const measRev = d => i2p * netPayment * (s.renewalCapture ? paymentsBy(cycles(d)) : Math.min(1, cycles(d))) * signal;
+    const ltvPayer = netPayment / (1 - r);
+    const beDay = fn => {
+      for (let n = 1; n <= 900; n++) {
+        const d = s.trialDays + (n - 1) * cd;
+        if (fn(d) >= s.cpi) return d;
+      }
+      return null;
+    };
+    return { i2p, netPayment, cd, cycles, paymentsBy, trueRev, measRev, signal, ltvPayer,
+      ltvInstall: i2p * ltvPayer, cpi: s.cpi, beTrue: beDay(trueRev), beMeas: beDay(measRev) };
+  }
+
+  adModel() {
+    const s = this.state;
+    const a = s.d1 / 100;
+    const b = Math.max(0.01, Math.log((s.d1 / 100) / (s.d30 / 100)) / Math.log(30));
+    const ret = d => a * Math.pow(d, -b);
+    const cache = [1];
+    const activeDays = D => {
+      const n = Math.max(0, Math.round(D));
+      for (let d = cache.length; d <= n; d++) cache[d] = cache[d - 1] + ret(d);
+      return cache[n];
+    };
+    const rev = D => s.arpdau * activeDays(D);
+    let be = null;
+    for (let d = 1; d <= 3650; d++) { if (rev(d) >= s.adCpi) { be = d; break; } }
+    return { a, b, ret, activeDays, rev, be, cpi: s.adCpi, predD7: ret(7) };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isSub = s.mode === 'sub';
+    const sub = this.subModel(), ad = this.adModel();
+    const H = isSub && s.period === 'annual' ? 365 : s.horizon;
+    const VW = Math.max(280, s.chartPx);
+    const VH = Math.max(300, Math.min(420, VW * 0.36));
+    const compact = VW < 520;
+    const X0 = compact ? 52 : 76, X1 = VW - 16, Y0 = 30, Y1 = VH - 70;
+    const cpi = isSub ? sub.cpi : ad.cpi;
+    const trueFn = isSub ? sub.trueRev : ad.rev;
+
+    const xs = [];
+    for (let d = 0; d <= H; d++) xs.push(d);
+    const tv = xs.map(d => trueFn(d) - cpi);
+    const mv = isSub ? xs.map(d => sub.measRev(d) - cpi) : [];
+
+    const all = tv.concat(mv, [0, -cpi]);
+    const rawMin = Math.min.apply(null, all), rawMax = Math.max.apply(null, all);
+    const pad = Math.max((rawMax - rawMin) * 0.12, 0.05);
+    const yMin = rawMin - pad, yMax = rawMax + pad;
+    const sx = d => X0 + (d / H) * (X1 - X0);
+    const sy = v => Y1 - ((v - yMin) / (yMax - yMin)) * (Y1 - Y0);
+
+    const stepPath = vals => {
+      let p = 'M' + sx(0).toFixed(1) + ' ' + sy(vals[0]).toFixed(1);
+      for (let i = 1; i < xs.length; i++) {
+        const x = sx(xs[i]).toFixed(1);
+        p += ' L' + x + ' ' + sy(vals[i - 1]).toFixed(1) + ' L' + x + ' ' + sy(vals[i]).toFixed(1);
+      }
+      return p;
+    };
+    const smoothPath = vals => xs.map((d, i) => (i ? 'L' : 'M') + sx(d).toFixed(1) + ' ' + sy(vals[i]).toFixed(1)).join(' ');
+
+    const truePath = isSub ? stepPath(tv) : smoothPath(tv);
+    let measPath = '', gapPath = '';
+    if (isSub) {
+      measPath = stepPath(mv);
+      let g = truePath;
+      for (let i = xs.length - 1; i >= 0; i--) {
+        const x = sx(xs[i]).toFixed(1);
+        g += ' L' + x + ' ' + sy(mv[i]).toFixed(1);
+        if (i > 0) g += ' L' + x + ' ' + sy(mv[i - 1]).toFixed(1);
+      }
+      gapPath = g + ' Z';
+    }
+
+    const zeroY = sy(0);
+    const be = isSub ? sub.beTrue : ad.be;
+    const beX = be === null ? X1 : sx(Math.min(be, H));
+    const money = v => (v < 0 ? '−$' : '$') + Math.abs(v).toFixed(2);
+    const pct = v => v.toFixed(1) + '%';
+    const dayLabel = d => d === null ? 'never' : 'day ' + d;
+    const roas = v => v.toFixed(2) + '×';
+    const gapAtH = isSub ? (sub.trueRev(H) - sub.measRev(H)) : 0;
+    const predD7 = ad.predD7 * 100;
+    const LBL = 'position:absolute;font-family:\'IBM Plex Mono\',monospace;font-size:12px;line-height:1;color:#5C6779;white-space:nowrap;pointer-events:none;';
+
+    const fBg = k => this.state.filter === k ? '#101725' : 'transparent';
+    const fFg = k => this.state.filter === k ? '#F7F6F3' : '#3A4354';
+    const fBd = k => this.state.filter === k ? '#101725' : '#C9C6BE';
+    const cats = ['meas', 'infra', 'meas', 'meas', 'meas', 'media', 'media', 'media', 'meas', 'media'];
+
+    const out = {
+      wide: this.state.wide,
+      narrow: !this.state.wide,
+      isSub: isSub, isAd: !isSub, isAnnual: isSub && s.period === 'annual',
+      horizon: H,
+      mSubBg: isSub ? '#101725' : 'transparent', mSubFg: isSub ? '#F7F6F3' : '#3A4354',
+      mAdBg: !isSub ? '#101725' : 'transparent', mAdFg: !isSub ? '#F7F6F3' : '#3A4354',
+      setSub: () => this.setState({ mode: 'sub' }),
+      setAd: () => this.setState({ mode: 'ad' }),
+      h90Bg: s.horizon === 90 ? '#101725' : 'transparent', h90Fg: s.horizon === 90 ? '#F7F6F3' : '#3A4354',
+      h180Bg: s.horizon === 180 ? '#101725' : 'transparent', h180Fg: s.horizon === 180 ? '#F7F6F3' : '#3A4354',
+      h365Bg: s.horizon === 365 ? '#101725' : 'transparent', h365Fg: s.horizon === 365 ? '#F7F6F3' : '#3A4354',
+      setH90: () => this.setState({ horizon: 90 }),
+      setH180: () => this.setState({ horizon: 180 }),
+      setH365: () => this.setState({ horizon: 365 }),
+      truePath, measPath, gapPath,
+      gapOpacity: isSub ? 0.2 : 0,
+      zeroY: zeroY.toFixed(1),
+      zeroTextY: (zeroY + 4).toFixed(1),
+      day7X: sx(Math.min(7, H)).toFixed(1),
+      day7LabelX: (sx(Math.min(7, H)) + 7).toFixed(1),
+      crossX: beX.toFixed(1),
+      crossOpacity: be !== null && be <= H ? 1 : 0,
+      crossMarkTop: Math.max(Y0, zeroY - 56).toFixed(1),
+      lblZero: LBL + 'left:0;width:' + (X0 - 8) + 'px;text-align:right;top:' + (zeroY - 6).toFixed(1) + 'px',
+      lblYMax: LBL + 'left:0;width:' + (X0 - 8) + 'px;text-align:right;top:' + (Y0 - 2) + 'px',
+      lblYMin: LBL + 'left:0;width:' + (X0 - 8) + 'px;text-align:right;top:' + (Y1 - 6).toFixed(1) + 'px',
+      lblT0: LBL + 'left:' + X0 + 'px;top:' + (Y1 + 12).toFixed(1) + 'px',
+      lblTMid: LBL + 'left:' + ((X0 + X1) / 2).toFixed(1) + 'px;top:' + (Y1 + 12).toFixed(1) + 'px;transform:translateX(-50%)',
+      lblTEnd: LBL + 'left:' + X1.toFixed(1) + 'px;top:' + (Y1 + 12).toFixed(1) + 'px;transform:translateX(-100%)',
+      lblDay7: LBL + 'left:' + (sx(Math.min(7, H)) + 6).toFixed(1) + 'px;top:' + (Y0 + 2) + 'px',
+      lblBe: LBL + 'font-size:13px;color:#101725;top:' + Math.max(Y0, zeroY - 74).toFixed(1) + 'px;left:' + beX.toFixed(1) + 'px;' + (beX > VW * 0.55 ? 'transform:translateX(calc(-100% - 8px));' : 'margin-left:var(--space-2xs);') + 'opacity:' + (be !== null && be <= H ? 1 : 0),
+      vb: '0 0 ' + VW.toFixed(0) + ' ' + VH.toFixed(0),
+      axLeft: X0, axRight: X1.toFixed(1), axBottom: Y1.toFixed(1), plotTop: Y0,
+      zeroTextX: X0 - 8, tickY: (Y1 + 24).toFixed(1), midTickX: ((X0 + X1) / 2).toFixed(1),
+      yTopLabY: Y0 + 6,
+      day7LabelY: Y0 + 14,
+      day7Label: compact ? 'day 7' : 'Where most teams stop looking',
+      breakevenLabel: be === null ? 'Never breaks even' : 'Breakeven: day ' + be,
+      midTick: 'day ' + Math.round(H / 2),
+      endTick: 'day ' + H,
+      yMaxLabel: money(yMax),
+      yMinLabel: money(yMin),
+      tileTrue: dayLabel(be),
+      tileDash: isSub ? dayLabel(sub.beMeas) : '—',
+      tileInvisible: isSub ? '$' + (gapAtH * 1000).toFixed(0) : '—',
+      modeLabel: isSub ? 'Subscription' : 'Ad-monetised',
+      cpiActiveLabel: '$' + cpi.toFixed(2),
+      ltvActiveLabel: isSub ? '$' + sub.ltvInstall.toFixed(2) : '$' + ad.rev(H).toFixed(2),
+      roasTileLabel: isSub ? 'ROAS AT D30 · MEASURED → TRUE' : 'ROAS AT D30',
+      tileRoas: isSub
+        ? roas(sub.measRev(30) / cpi) + ' → ' + roas(sub.trueRev(30) / cpi)
+        : roas(ad.rev(30) / cpi),
+      lifeRoas: roas(sub.ltvInstall / sub.cpi),
+      adHorizonRoas: roas(ad.rev(H) / ad.cpi),
+      i2t: s.i2t, t2p: s.t2p, price: s.price, retention: s.retention, refund: s.refund, cpi: s.cpi,
+      i2tLabel: pct(s.i2t), t2pLabel: pct(s.t2p), priceLabel: '$' + s.price.toFixed(2),
+      retLabel: pct(s.retention), refundLabel: pct(s.refund), cpiLabel: '$' + s.cpi.toFixed(2),
+      i2pLabel: (sub.i2p * 100).toFixed(2) + '%',
+      netPaymentLabel: '$' + sub.netPayment.toFixed(2),
+      ltvPayerLabel: '$' + sub.ltvPayer.toFixed(2),
+      ltvInstallLabel: '$' + sub.ltvInstall.toFixed(2),
+      onI2t: e => this.setState({ i2t: parseFloat(e.target.value) }),
+      onT2p: e => this.setState({ t2p: parseFloat(e.target.value) }),
+      onPrice: e => this.setState({ price: parseFloat(e.target.value) }),
+      onRet: e => this.setState({ retention: parseFloat(e.target.value) }),
+      onRefund: e => this.setState({ refund: parseFloat(e.target.value) }),
+      onCpi: e => this.setState({ cpi: parseFloat(e.target.value) }),
+      setWeekly: () => this.setState({ period: 'weekly' }),
+      setMonthly: () => this.setState({ period: 'monthly' }),
+      setAnnual: () => this.setState({ period: 'annual', horizon: 365 }),
+      pWBg: s.period === 'weekly' ? '#101725' : '#FFFFFF', pWFg: s.period === 'weekly' ? '#F7F6F3' : '#3A4354',
+      pMBg: s.period === 'monthly' ? '#101725' : '#FFFFFF', pMFg: s.period === 'monthly' ? '#F7F6F3' : '#3A4354',
+      pABg: s.period === 'annual' ? '#101725' : '#FFFFFF', pAFg: s.period === 'annual' ? '#F7F6F3' : '#3A4354',
+      setT3: () => this.setState({ trialDays: 3 }),
+      setT7: () => this.setState({ trialDays: 7 }),
+      setT14: () => this.setState({ trialDays: 14 }),
+      setT30: () => this.setState({ trialDays: 30 }),
+      t3Bg: s.trialDays === 3 ? '#101725' : '#FFFFFF', t3Fg: s.trialDays === 3 ? '#F7F6F3' : '#3A4354',
+      t7Bg: s.trialDays === 7 ? '#101725' : '#FFFFFF', t7Fg: s.trialDays === 7 ? '#F7F6F3' : '#3A4354',
+      t14Bg: s.trialDays === 14 ? '#101725' : '#FFFFFF', t14Fg: s.trialDays === 14 ? '#F7F6F3' : '#3A4354',
+      t30Bg: s.trialDays === 30 ? '#101725' : '#FFFFFF', t30Fg: s.trialDays === 30 ? '#F7F6F3' : '#3A4354',
+      setC15: () => this.setState({ commission: 15 }),
+      setC30: () => this.setState({ commission: 30 }),
+      c15Bg: s.commission === 15 ? '#101725' : '#FFFFFF', c15Fg: s.commission === 15 ? '#F7F6F3' : '#3A4354',
+      c30Bg: s.commission === 30 ? '#101725' : '#FFFFFF', c30Fg: s.commission === 30 ? '#F7F6F3' : '#3A4354',
+      renewalCapture: s.renewalCapture, skanMapped: s.skanMapped, webStitched: s.webStitched,
+      skanNull: s.skanNull, webLoss: s.webLoss,
+      skanNullLabel: s.skanNull.toFixed(0) + '%', webLossLabel: s.webLoss.toFixed(0) + '%',
+      onRenewal: e => this.setState({ renewalCapture: e.target.checked }),
+      onSkan: e => this.setState({ skanMapped: e.target.checked }),
+      onWeb: e => this.setState({ webStitched: e.target.checked }),
+      onSkanNull: e => this.setState({ skanNull: parseFloat(e.target.value) }),
+      onWebLoss: e => this.setState({ webLoss: parseFloat(e.target.value) }),
+      arpdau: s.arpdau, d1: s.d1, d30: s.d30, adCpi: s.adCpi, realD7: s.realD7,
+      arpdauLabel: '$' + s.arpdau.toFixed(3), d1Label: s.d1.toFixed(0) + '%', d30Label: s.d30.toFixed(0) + '%',
+      adCpiLabel: '$' + s.adCpi.toFixed(2),
+      onArpdau: e => this.setState({ arpdau: parseFloat(e.target.value) }),
+      onD1: e => this.setState({ d1: parseFloat(e.target.value) }),
+      onD30: e => this.setState({ d30: parseFloat(e.target.value) }),
+      onAdCpi: e => this.setState({ adCpi: parseFloat(e.target.value) }),
+      onRealD7: e => this.setState({ realD7: parseFloat(e.target.value) || 0 }),
+      bLabel: ad.b.toFixed(3),
+      predD7Label: predD7.toFixed(1) + '%',
+      activeD30Label: ad.activeDays(30).toFixed(2) + ' days',
+      d7Mismatch: !isSub && Math.abs(s.realD7 - predD7) > Math.max(2, predD7 * 0.25),
+      assumpOpen: s.assumpOpen,
+      assumpIcon: s.assumpOpen ? '−' : '+',
+      toggleAssump: () => this.setState(st => ({ assumpOpen: !st.assumpOpen })),
+      chartSummary: isSub
+        ? 'Subscription model. ' + (sub.i2p * 100).toFixed(2) + '% of installs become payers at ' + money(sub.netPayment) + ' net per payment, so lifetime value is ' + money(sub.ltvInstall) + ' per install against ' + money(sub.cpi) + ' cost per install. True cumulative net per install is ' + money(sub.trueRev(H) - sub.cpi) + ' by day ' + H + ', breaking even ' + (be === null ? 'never' : 'on day ' + be) + '. What the dashboard measures reaches ' + money(sub.measRev(H) - sub.cpi) + ' and breaks even ' + (sub.beMeas === null ? 'never' : 'on day ' + sub.beMeas) + '. The gap invisible to the dashboard is ' + money(gapAtH * 1000) + ' per thousand installs.'
+        : 'Ad-monetised model. Fitted decay exponent b is ' + ad.b.toFixed(3) + ' from D1 ' + s.d1 + '% and D30 ' + s.d30 + '%, predicting D7 of ' + predD7.toFixed(1) + '% and ' + ad.activeDays(30).toFixed(2) + ' cumulative active days by day 30. At ' + money(s.arpdau) + ' ARPDAU an install returns ' + money(ad.rev(H)) + ' by day ' + H + ' against ' + money(ad.cpi) + ' cost per install, breaking even ' + (ad.be === null ? 'never' : 'on day ' + ad.be) + '.',
+      filterAll: () => this.setState({ filter: 'all' }),
+      filterMeas: () => this.setState({ filter: 'meas' }),
+      filterMedia: () => this.setState({ filter: 'media' }),
+      filterInfra: () => this.setState({ filter: 'infra' }),
+      fAllBg: fBg('all'), fAllFg: fFg('all'), fAllBd: fBd('all'),
+      fMeasBg: fBg('meas'), fMeasFg: fFg('meas'), fMeasBd: fBd('meas'),
+      fMediaBg: fBg('media'), fMediaFg: fFg('media'), fMediaBd: fBd('media'),
+      fInfraBg: fBg('infra'), fInfraFg: fFg('infra'), fInfraBd: fBd('infra')
+    };
+
+    for (let i = 0; i < 10; i++) {
+      const key = 'b' + i;
+      out['o' + i] = !!this.state.open[key];
+      out['i' + i] = this.state.open[key] ? '−' : '+';
+      out['v' + i] = this.state.filter === 'all' || this.state.filter === cats[i];
+      out['t' + i] = () => this.setState(s => ({ open: Object.assign({}, s.open, { [key]: !s.open[key] }) }));
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+---
+/**
+ * "The full stack, in bundles." Ten filterable accordions.
+ *
+ * The export drove open/closed from component state and rendered the body only
+ * when open. Here each bundle is a <details>, so the ten accordions need no JS
+ * at all and their content stays in the DOM for search engines. The +/− glyph
+ * comes from CSS on [open].
+ *
+ * Only the four filter chips carry script.
+ */
+
+const bundles = [
+  {
+    n: '01',
+    cat: 'meas',
+    title: 'Attribution & MMP',
+    meta: 'AppsFlyer · Adjust · Singular · Branch',
+    body: 'SDK integration & upgrade (incl. Adjust SDK v5) · full-stack MMP audits · attribution window alignment · postback mapping · deferred deep linking · server-to-server events · Google On-Device Measurement (ODM) & Install Conversion Measurement (ICM) enablement · Adjust First Session Delay · fraud and validation rules',
+  },
+  {
+    n: '02',
+    cat: 'infra',
+    title: 'Backend & Infrastructure',
+    meta: 'Led by Muhammad Faisal Khan',
+    body: 'Server-side event forwarding and validation · webhook receivers for App Store Server Notifications V2 and Google Play RTDN · conversion API relays to ad platforms · scheduled pipelines and job monitoring · cloud hosting, uptime and alerting · data handling, access control and security review',
+  },
+  {
+    n: '03',
+    cat: 'meas',
+    title: 'iOS Privacy & SKAN',
+    meta: 'SKAdNetwork 4.0 · AdAttributionKit · ATT',
+    body: 'SKAdNetwork 4.0 conversion value schema design · AdAttributionKit migration · ATT prompt sequencing and consent flow · privacy manifests and nutrition labels · null-postback diagnosis · modelled vs deterministic reconciliation',
+  },
+  {
+    n: '04',
+    cat: 'meas',
+    title: 'Event Tracking Plans',
+    meta: 'Taxonomy · Firebase · GA4 · BigQuery',
+    body: 'Event taxonomy and naming conventions · parameter schemas · written tracking plan specs for developers · in-app event mapping to MMP and every ad network · Firebase and GA4 event architecture · QA checklists and test matrices · sandbox and debug validation · BigQuery validation queries',
+  },
+  {
+    n: '05',
+    cat: 'meas',
+    title: 'Subscription & Revenue',
+    meta: 'RevenueCat · Adapty · ASSN V2 · RTDN',
+    body: 'RevenueCat · Adapty · App Store Server Notifications V2 → backend → RevenueCat and GA4 Measurement Protocol relay · background renewal capture · Google Play Real-time Developer Notifications · trial-to-paid cohort analysis · retention decay and LTV curves · CAC payback modelling · offer codes and promotional pricing',
+  },
+  {
+    n: '06',
+    cat: 'media',
+    title: 'Google Ads for Apps',
+    meta: 'UAC · tCPA · tROAS · web-to-app · OCI',
+    body: 'App campaigns (UAC) · tCPA and tROAS bid strategy · iOS App campaigns with SKAN · web-to-app campaigns · Offline Conversion Import (OCI) · budget automation via Apps Script · geo and market allocation · creative and asset group structure',
+  },
+  {
+    n: '07',
+    cat: 'media',
+    title: 'Apple Ads (Apple Search Ads)',
+    meta: 'Search Match · Discovery · Exact · brand defence',
+    body: 'Campaign structure across Search Match, Discovery, Exact and brand defence · negative keyword architecture · country and localisation strategy · Campaign Management API v5 automation · LTV:CAC bid scoring · competitor keyword mining',
+  },
+  {
+    n: '08',
+    cat: 'media',
+    title: 'Meta, TikTok & Multi-Channel',
+    meta: 'CAPI · Events API · event parity',
+    body: 'Meta Ads and Conversions API (fbclid / fbpid) · RevenueCat → Meta CAPI · Aggregated Event Measurement · TikTok Events API · Snapchat CAPI · X and LinkedIn Conversions API (li_fat_id) · cross-channel event parity',
+  },
+  {
+    n: '09',
+    cat: 'meas',
+    title: 'Web-to-App Attribution',
+    meta: 'gclid / gbraid / wbraid · OneLink · Smart Scripts',
+    body: 'gclid / gbraid / wbraid capture · Adjust Smart Scripts · AppsFlyer OneLink · Singular links · landing page to install to subscription stitching · conversions returned to the originating platform',
+  },
+  {
+    n: '10',
+    cat: 'media',
+    title: 'ASO, Monetisation & Store',
+    meta: 'Metadata · CPP · In-App Events · mediation',
+    body: 'Keyword research and metadata (title, subtitle, keyword field) · Custom Product Pages · In-App Events · localisation and country prioritisation · competitor metadata teardowns · paywall teardowns and pricing architecture · IAP A/B test design · AdMob and AppLovin MAX mediation · impression-level ad revenue into the MMP · App Store submission and rejection remediation',
+  },
+];
+
+const filters = [
+  { key: 'all', label: 'ALL 10' },
+  { key: 'meas', label: 'MEASUREMENT' },
+  { key: 'media', label: 'MEDIA & STORE' },
+  { key: 'infra', label: 'INFRASTRUCTURE' },
+];
+---
+
+<section id="approach" class="stack section">
+  <div class="wrap">
+    <div data-reveal="1" class="stack__intro">
+      <div class="eyebrow">WHAT'S UNDER THE HOOD</div>
+      <h2 class="stack__head">The full stack, in bundles.</h2>
+      <p class="section-lead">Named, so you can check whether the thing you need is on the list.</p>
+    </div>
+
+    <div class="stack__filters" role="group" aria-label="Filter bundles by discipline">
+      {
+        filters.map((f) => (
+          <button
+            type="button"
+            class="stack__chip"
+            data-filter={f.key}
+            aria-pressed={f.key === 'all' ? 'true' : 'false'}
+          >
+            {f.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="stack__grid" id="stack-grid">
+      {
+        bundles.map((b) => (
+          <details class:list={['stack__item', { 'stack__item--lead': b.cat === 'infra' }]} data-cat={b.cat}>
+            <summary class="stack__summary">
+              <span class="stack__num">{b.n}</span>
+              <span class="stack__label">
+                <span class="stack__title">{b.title}</span>
+                <span class="stack__meta">{b.meta}</span>
+              </span>
+              <span class="stack__icon" aria-hidden="true" />
+            </summary>
+            <div class="stack__body">{b.body}</div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initStackFilters } from '../scripts/stack-filters';
+  initStackFilters();
+</script>
+
+<style>
+  .stack {
+    background: var(--c-paper-alt);
+    border-top: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .stack__intro {
+    max-width: var(--measure-section-lead);
+  }
+
+  .stack__head {
+    font-size: var(--fs-h2);
+    color: var(--c-ink);
+  }
+
+  /* --- filter chips ------------------------------------------------------ */
+
+  .stack__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    margin-top: var(--space-lg);
+  }
+
+  .stack__chip {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    letter-spacing: var(--ls-mono-md);
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    white-space: nowrap;
+    background: transparent;
+    color: var(--c-ink-muted);
+    border: 1px solid var(--c-line-input);
+  }
+
+  .stack__chip[aria-pressed='true'] {
+    background: var(--c-ink);
+    color: var(--c-paper);
+    border-color: var(--c-ink);
+  }
+
+  /* --- bundles ----------------------------------------------------------- */
+
+  .stack__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+    align-items: start;
+  }
+
+  .stack__item {
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    overflow: hidden;
+  }
+
+  /* Bundle 02 is ringed in amber — the infrastructure half of the practice. */
+  .stack__item--lead {
+    border-color: var(--c-amber);
+  }
+
+  .stack__item[hidden] {
+    display: none;
+  }
+
+  .stack__summary {
+    padding: var(--space-md);
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    gap: var(--space-xs);
+    align-items: flex-start;
+    list-style: none;
+  }
+
+  .stack__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* Declared with `style-hover` in the export, which no runtime implemented. */
+  .stack__summary:hover {
+    background: var(--c-paper-hover);
+  }
+
+  .stack__item--lead .stack__summary:hover {
+    background: var(--c-amber-tint);
+  }
+
+  .stack__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    color: var(--c-amber);
+    padding-top: var(--space-3xs);
+  }
+
+  .stack__label {
+    flex: 1;
+  }
+
+  .stack__title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-h-xs);
+    letter-spacing: var(--ls-slight);
+    color: var(--c-ink);
+  }
+
+  .stack__meta {
+    display: block;
+    margin-top: var(--space-3xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    color: var(--c-ink-soft);
+  }
+
+  .stack__icon {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-xs);
+    color: var(--c-ink-soft);
+  }
+
+  /* U+002B / U+2212 — the same two glyphs the export switched between. */
+  .stack__icon::before {
+    content: '+';
+  }
+
+  .stack__item[open] .stack__icon::before {
+    content: '\2212';
+  }
+
+  .stack__body {
+    padding: 0 var(--space-md) var(--space-md) var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-loose);
+    color: var(--c-ink-muted);
+  }
+</style>

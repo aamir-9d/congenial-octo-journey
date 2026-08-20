@@ -1,0 +1,161 @@
+---
+/**
+ * "Three places the money goes missing." Dark section, four cards.
+ *
+ * Every string is byte-identical to the export. Apostrophes are ASCII U+0027,
+ * not typographic — the export used no curly quotes anywhere, and swapping
+ * them would change the glyphs on screen.
+ */
+
+const problems = [
+  {
+    num: "01 · NOT A MEASUREMENT PROBLEM",
+    numAmber: true,
+    highlight: true,
+    title: "Retention nobody watches past D7.",
+    body: "Every LTV model is retention multiplied by monetisation. If the retention curve dies before the payback horizon, the campaign cannot break even at any CPI — the money was never going to be there. Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that's gone by week three never gets there.",
+    code: "d1 0.32 → d7 0.11 → d30 0.03 · curve dies before payback",
+  },
+  {
+    num: "02",
+    numAmber: false,
+    highlight: false,
+    title: "Renewals nobody counted.",
+    body: "Subscription renewals happen on Apple's servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.",
+    code: "revenue_dashboard ≠ mmp_reported · gap grows monthly",
+  },
+  {
+    num: "03",
+    numAmber: false,
+    highlight: false,
+    title: "A conversion schema built for nothing in particular.",
+    body: "SKAdNetwork gives you a handful of bits and one short window. Most schemas were set up once, copied from a blog post, and never mapped to the events that actually predict revenue for this app.",
+    code: "skan_cv: null · 71% of postbacks",
+  },
+];
+---
+
+<section id="services" class="problems section">
+  <div class="wrap">
+    <div data-reveal="1">
+      <div class="eyebrow eyebrow--amber">WHY YOUR NUMBERS DON'T RECONCILE</div>
+      <h2 class="problems__head">
+        Three places the money goes missing. And one place it was never there.
+      </h2>
+      <p class="problems__lead">
+        The first isn't a measurement failure, and no amount of attribution accuracy will save you
+        from it. The other three are &#8212; the revenue exists and you can't see it.
+      </p>
+    </div>
+
+    <div class="problems__grid">
+      {
+        problems.map((p) => (
+          <div data-reveal="1" class:list={['problems__card', { 'problems__card--lead': p.highlight }]}>
+            <div class:list={['problems__num', { 'problems__num--amber': p.numAmber }]}>{p.num}</div>
+            <h3 class="problems__title">{p.title}</h3>
+            <p class="problems__body">{p.body}</p>
+            <div class="problems__code">{p.code}</div>
+          </div>
+        ))
+      }
+
+      <div data-reveal="1" class="problems__card">
+        <div class="problems__num">04</div>
+        <h3 class="problems__title">The web-to-app gap.</h3>
+        <p class="problems__body">
+          Someone clicks a Google ad on your website, installs later, subscribes a week after that.
+          Without <span class="problems__token">gclid</span>/<span class="problems__token"
+            >gbraid</span
+          >/<span class="problems__token">wbraid</span> capture and a conversion sent back, Google
+          never learns which click earned the money &#8212; so it optimises toward the wrong people.
+        </p>
+        <div class="problems__code">web_click &#8594; install &#8594; ??? &#8594; subscription</div>
+      </div>
+    </div>
+
+    <p data-reveal="1" class="pull pull--light">
+      Three of these are fixable in weeks. The first is a product problem, and we'll tell you if
+      that's the one you have.
+    </p>
+  </div>
+</section>
+
+<style>
+  .problems {
+    background: var(--c-ink);
+  }
+
+  .problems__head {
+    font-size: var(--fs-h2-dark);
+    color: var(--c-paper);
+    max-width: var(--measure-heading);
+  }
+
+  .problems__lead {
+    margin-top: var(--space-sm);
+    font-size: var(--fs-body-lg);
+    color: rgba(var(--rgb-paper), 0.6);
+    font-style: italic;
+    max-width: var(--measure-italic);
+  }
+
+  .problems__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+  }
+
+  .problems__card {
+    background: rgba(var(--rgb-paper), 0.045);
+    border: 1px solid rgba(var(--rgb-paper), 0.1);
+    border-radius: var(--r-12);
+    padding: var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* Card 01 is ringed in amber — it is the one that is not a measurement fix. */
+  .problems__card--lead {
+    border-color: rgba(var(--rgb-amber), 0.32);
+  }
+
+  .problems__num {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    color: var(--c-ink-soft);
+  }
+
+  .problems__num--amber {
+    color: var(--c-amber);
+  }
+
+  .problems__title {
+    font-size: var(--fs-h-sm);
+    color: var(--c-paper);
+    letter-spacing: var(--ls-slight);
+  }
+
+  .problems__body {
+    font-size: var(--fs-body-sm);
+    color: rgba(var(--rgb-paper), 0.7);
+    flex: 1;
+  }
+
+  .problems__token {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-xs);
+  }
+
+  .problems__code {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    line-height: var(--lh-snug);
+    color: var(--c-red);
+    background: rgba(var(--rgb-red), 0.1);
+    border-radius: var(--r-6);
+    padding: var(--space-2xs);
+  }
+</style>

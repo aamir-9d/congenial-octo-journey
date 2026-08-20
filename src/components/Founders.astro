@@ -1,0 +1,174 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+/**
+ * The two founders.
+ *
+ * The export used <image-slot> placeholders carrying no image data. Those are
+ * resolved at build time: drop `aamir.jpg` / `faisal.jpg` into public/img/ and
+ * they render; until then a token-coloured box at the identical aspect ratio
+ * and radius holds the layout exactly, so nothing shifts when the photos land.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const publicDir = path.resolve(process.cwd(), 'public');
+
+const hasPhoto = (file: string) => fs.existsSync(path.join(publicDir, 'img', file));
+
+const founders = [
+  {
+    file: 'aamir.jpg',
+    name: 'Aamir Jan Khan',
+    role: 'MEASUREMENT & GROWTH',
+    alt: 'Aamir Jan Khan',
+    linkedin: 'https://www.linkedin.com/in/aamir-jan-khan/',
+    bio: [
+      "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. I did it last week and I'll do it next week.",
+      "Five years across the full mobile growth stack: measurement platforms, ad platforms, app stores, subscription analytics. I'm logged into 48 AppsFlyer accounts. I've shipped server-side subscription pipelines, per-country profitability models, and web-to-app attribution loops that close.",
+      "Most people in this field pick a side — the technical plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task. That turns out to be the useful part.",
+    ],
+  },
+  {
+    file: 'faisal.jpg',
+    name: 'Muhammad Faisal Khan',
+    role: 'INFRASTRUCTURE & OPERATIONS',
+    alt: 'Muhammad Faisal Khan',
+    linkedin: 'https://www.linkedin.com/in/muhammad-faisal-khan-3606365/',
+    bio: [
+      'Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery and support across Cisco, Nokia and Ericsson. LTE and 5G core nodes, routing, security, network operations. The systems underneath the phone in your hand.',
+      "A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything — renewal notifications from Apple, conversion events to ad platforms, pipelines that run every day whether anyone is watching or not. That's the half I own.",
+      "Aamir works at the app layer of mobile. I've spent two decades at the network layer underneath it. Between us there isn't much of a mobile stack we haven't had to keep running.",
+    ],
+  },
+];
+---
+
+<section class="founders section">
+  <div class="wrap">
+    <div class="founders__grid">
+      {
+        founders.map((f) => (
+          <div data-reveal="1">
+            <div class="founders__frame">
+              {
+                hasPhoto(f.file) ? (
+                  <img
+                    src={`${base}/img/${f.file}`}
+                    alt={f.alt}
+                    width="800"
+                    height="600"
+                    loading="lazy"
+                    decoding="async"
+                    class="founders__photo"
+                  />
+                ) : (
+                  <div class="founders__placeholder" role="presentation" />
+                )
+              }
+            </div>
+            <h3 class="founders__name">{f.name}</h3>
+            <div class="founders__role">{f.role}</div>
+            <div class="founders__bio">
+              {f.bio.map((para) => (
+                <p>{para}</p>
+              ))}
+            </div>
+            <a href={f.linkedin} target="_blank" rel="noopener" class="link founders__linkedin">
+              LinkedIn &#8599;
+            </a>
+          </div>
+        ))
+      }
+    </div>
+
+    <p data-reveal="1" class="founders__pull">
+      Nothing gets handed off. You talk to the two people doing the work.
+    </p>
+  </div>
+</section>
+
+<style>
+  .founders {
+    background: var(--c-paper);
+  }
+
+  .founders__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .founders__frame {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--r-12);
+    overflow: hidden;
+  }
+
+  .founders__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .founders__placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--c-paper-alt);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+  }
+
+  .founders__name {
+    margin-top: var(--space-md);
+    font-size: var(--fs-h3-founder);
+    color: var(--c-ink);
+  }
+
+  .founders__role {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-sm);
+    letter-spacing: var(--ls-eyebrow-sm);
+    color: var(--c-amber);
+  }
+
+  .founders__bio {
+    display: grid;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+    font-size: var(--fs-body-md);
+    color: var(--c-ink-muted);
+  }
+
+  .founders__linkedin {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+  }
+
+  .founders__pull {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-pull);
+    line-height: var(--lh-pull);
+    letter-spacing: var(--ls-snug);
+    color: var(--c-ink);
+    max-width: var(--measure-pull-narrow);
+  }
+
+  /* NOTE — reproduced faithfully, and it is a real defect.
+     `minmax(420px, 1fr)` has an inflexible 420px floor. At 375px the wrap is
+     343px wide, so the track overflows by ~77px and `overflow-x: hidden` on
+     <body> clips it: the right edge of the bio copy is cut off at 375, 390 and
+     414px. Every other grid in the design uses a 280px floor, so this looks
+     like an untested breakpoint rather than an intent.
+     The fix is one rule — `@media (max-width: 480px) { grid-template-columns:
+     1fr }` — but it changes the 375px render, and the brief is explicit that
+     things that look wrong get flagged rather than fixed. See NOTES.md. */
+</style>

@@ -1,0 +1,38 @@
+---
+import { computeView, INITIAL_STATE, type CalcState, type CalcView } from '../scripts/calc-model';
+
+interface Props {
+  id: string;
+  label: string;
+  /** State key this slider writes to. */
+  key: keyof CalcState;
+  /** View key holding its formatted readout. */
+  bind: keyof CalcView;
+  min: number;
+  max: number;
+  step: number;
+  /** The narrower variant used inside the attribution-gap checkboxes. */
+  small?: boolean;
+}
+
+const { id, label, key, bind, min, max, step, small = false } = Astro.props;
+
+const view = computeView(INITIAL_STATE);
+---
+
+<div class={small ? 'calc__sub-field' : 'calc__field'}>
+  <div class={small ? 'calc__sub-head' : 'calc__field-head'}>
+    <label for={id}>{label}</label>
+    <span class="calc__field-val" data-bind={bind}>{view[bind]}</span>
+  </div>
+  <input
+    id={id}
+    type="range"
+    min={min}
+    max={max}
+    step={step}
+    value={INITIAL_STATE[key]}
+    data-slider={key}
+    class:list={['calc__range', { 'calc__range--sm': small }]}
+  />
+</div>
