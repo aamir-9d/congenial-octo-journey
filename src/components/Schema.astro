@@ -1,6 +1,8 @@
 ---
+import { ALL_FAQ, toText } from '../data/faq';
+
 /**
- * JSON-LD: the business and the two people who are it.
+ * JSON-LD: the business, the two people who are it, and the FAQ.
  *
  * The LinkedIn URLs are the ones already in the design, used as `sameAs` so the
  * two Person entries are resolvable to real profiles rather than bare strings.
@@ -72,6 +74,22 @@ const graph = {
         'Carrier-grade mobile networks',
         'Cloud infrastructure and monitoring',
       ],
+    },
+    {
+      /* Text comes from the same array the section renders, with the inline
+         markers stripped. Structured data that does not match the visible text
+         is a manual-action risk, and the way to guarantee they match is to
+         never write them twice. */
+      '@type': 'FAQPage',
+      '@id': `${home}#faq`,
+      mainEntity: ALL_FAQ.map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: toText(item.a),
+        },
+      })),
     },
     {
       '@type': 'WebSite',

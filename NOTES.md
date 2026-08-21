@@ -135,6 +135,45 @@ The disclosure button labels are new UI text, so each button carries
 `data-added` and the copy-parity check lifts it out. The body copy inside stays
 in the comparison, unchanged.
 
+### FAQ section added (21 Aug)
+
+New section between the founders and the closing ask — objection handling
+belongs immediately before the booking. Nineteen questions in two groups:
+eight on working together (price, timeline, access, effort, risk) and eleven on
+technical scope.
+
+Native `details`/`summary` throughout, so it is keyboard-operable and
+screen-reader labelled with no JS, findable by Ctrl+F when expanded, and
+functional with scripting off. One row open per group.
+
+New design, so the section carries `data-added` and is excluded from the
+copy-parity comparison.
+
+**Question count: the brief caps the FAQ at 18 and specifies 19.** Group A lists
+7, Group B lists 11, and "the awkward one" — *Can you show me results from other
+clients?* — is specified separately with "include it". 7 + 11 + 1 = 19. All
+nineteen are built, because every answer is deliberate copy and choosing one to
+delete is a content decision, not a formatting one. If 18 is a hard limit, the
+weakest candidate for cutting is *Is SKAdNetwork being replaced by
+AdAttributionKit?* — it is the shortest answer, it proves the least, and its
+substance is already carried by the SKAdNetwork schema question above it.
+
+The client-results question went into Group A rather than Group B. It is an
+objection, not a capability question, and Group A is the group that opens — the
+brief's own argument is that answering it openly converts a suspicion into a
+demonstration of discretion, which a collapsed accordion would defeat.
+
+`{{FOUNDER_1}}` / `{{FOUNDER_2}}` resolve to first names, "Aamir" and "Faisal",
+matching how the founders section already refers to them in prose. Full names
+sit directly above in the same viewport.
+
+**JSON-LD and visible text come from one array.** `src/data/faq.ts` is the
+single source; the section renders it and `Schema.astro` builds the `FAQPage`
+node from the same objects with the inline markers stripped. Mismatched
+structured data is a manual-action risk, and the reliable way to keep them
+identical is never to write them twice. `tests/faq.test.ts` asserts every
+structured answer has a matching visible one in the built HTML.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five
