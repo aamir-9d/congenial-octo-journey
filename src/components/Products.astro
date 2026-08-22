@@ -1,0 +1,235 @@
+---
+import { PRODUCTS, megabytes } from '../data/products';
+
+/**
+ * NEW DESIGN. The signed-off export had no products section.
+ *
+ * Placed after the audit findings and before the founders: the page has just
+ * finished claiming these problems are findable, and this is the evidence that
+ * the tooling to find them actually exists. It sits above the FAQ, where "can
+ * you show me results from other clients" is answered — these are our own
+ * tools, so they carry no client data and can be shown in full.
+ *
+ * Card language is borrowed from the sections above rather than invented: the
+ * mono kicker of Problems, the white card and hairline of Loop, and the big
+ * Archivo figure of Proof. Every string comes from the PDF it opens.
+ *
+ * The whole card is one <a>. Not a card with a button inside it — that gives
+ * two tab stops and a small target for the same destination.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section id="products" class="products section" data-section="products" data-added="products">
+  <div class="wrap">
+    <div data-reveal="1">
+      <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
+      <h2 class="products__head">Three products, in detail.</h2>
+      <p class="section-lead">
+        Each one a full overview &#8212; what it does, how it works, and screenshots from the
+        running build.
+      </p>
+    </div>
+
+    <div class="products__grid">
+      {
+        PRODUCTS.map((p) => (
+          <a
+            class="products__card"
+            href={`${base}/pdf/${p.file}`}
+            target="_blank"
+            rel="noopener"
+            data-product={p.id}
+            aria-label={`${p.name} overview, PDF, ${p.pages} pages, opens in a new tab`}
+            data-reveal="1"
+          >
+            <div class="products__kicker">{p.kicker}</div>
+            <h3 class="products__name">{p.name}</h3>
+            <p class="products__headline">{p.headline}</p>
+            <p class="products__summary">{p.summary}</p>
+
+            <div class="products__stats">
+              {p.stats.map((s) => (
+                <div class="products__stat">
+                  <div class="products__stat-value">{s.value}</div>
+                  <div class="products__stat-label">{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div class="products__foot">
+              <span class="products__stack">{p.stack}</span>
+              <span class="products__open">
+                Read the overview &#8599;
+                <span class="products__meta">
+                  PDF &#183; {p.pages} pages &#183; {megabytes(p.bytes)}
+                </span>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .products {
+    background: var(--c-paper-alt);
+    border-top: 1px solid var(--c-line);
+    border-bottom: 1px solid var(--c-line);
+  }
+
+  .products__head {
+    font-size: var(--fs-h2);
+    color: var(--c-ink);
+  }
+
+  /* Same 280px floor every other grid on the page uses — deliberately not the
+     420px that broke the founders section below 480px. */
+  .products__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    align-items: stretch;
+  }
+
+  .products__card {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-white);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-12);
+    padding: var(--space-md);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s var(--ease-out-soft);
+  }
+
+  .products__card:hover {
+    border-color: var(--c-amber);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-2px);
+  }
+
+  .products__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-xs);
+    letter-spacing: var(--ls-mono-md);
+    line-height: var(--lh-snug);
+    color: var(--c-amber);
+  }
+
+  .products__name {
+    margin-top: var(--space-2xs);
+    font-size: var(--fs-h-lg);
+    letter-spacing: var(--ls-slight);
+    color: var(--c-ink);
+  }
+
+  .products__headline {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-body-md);
+    line-height: var(--lh-verdict);
+    letter-spacing: var(--ls-snug);
+    color: var(--c-teal);
+  }
+
+  .products__summary {
+    margin-top: var(--space-xs);
+    font-size: var(--fs-body-xs);
+    line-height: var(--lh-normal);
+    color: var(--c-ink-muted);
+    /* Pushes the stats and footer to the bottom, so the three cards line up
+       however differently the summaries wrap. */
+    flex: 1;
+  }
+
+  .products__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--c-line);
+  }
+
+  /* Each figure stays whole when the row wraps, rather than the value and its
+     label being squeezed apart. */
+  .products__stat {
+    flex: 0 0 auto;
+  }
+
+  .products__stat-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-h-xs);
+    letter-spacing: var(--ls-tight);
+    color: var(--c-ink);
+  }
+
+  .products__stat-label {
+    margin-top: var(--space-3xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-3xs);
+    letter-spacing: var(--ls-mono-md);
+    line-height: var(--lh-snug);
+    color: var(--c-ink-soft);
+  }
+
+  .products__foot {
+    margin-top: var(--space-md);
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--c-line);
+  }
+
+  .products__stack {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-2xs);
+    line-height: var(--lh-snug);
+    color: var(--c-ink-soft);
+  }
+
+  .products__open {
+    display: block;
+    margin-top: var(--space-2xs);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-teal);
+  }
+
+  .products__card:hover .products__open {
+    color: var(--c-amber);
+  }
+
+  .products__meta {
+    display: block;
+    margin-top: var(--space-3xs);
+    font-size: var(--fs-mono-2xs);
+    color: var(--c-ink-soft);
+  }
+
+  /* The card is the link, so the ring belongs on the whole card. */
+  .products__card:focus-visible {
+    outline: 2px solid var(--c-amber);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .products__card {
+      transition: none;
+    }
+
+    .products__card:hover {
+      transform: none;
+    }
+  }
+</style>

@@ -22,6 +22,7 @@ export type EventName =
   // Engagement
   | 'scroll_depth'
   | 'section_view'
+  | 'product_overview_open'
   // Conversions
   | 'generate_lead'
   | 'booking_complete'

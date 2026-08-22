@@ -174,6 +174,46 @@ structured data is a manual-action risk, and the reliable way to keep them
 identical is never to write them twice. `tests/faq.test.ts` asserts every
 structured answer has a matching visible one in the built HTML.
 
+### Products section added (22 Aug)
+
+Three cards between the audit findings and the founders, each opening its
+product overview PDF. The PDFs are served from `public/pdf/` (4.0 MB total), so
+they deploy with the site rather than depending on another host.
+
+Every string on the cards is lifted from the PDF it links to — kicker, headline,
+summary and figures are the documents' own words. The copy was read out of the
+files rather than written: Monetization Scout had an HTML source in its repo,
+and the two ASO overviews were decoded from the PDFs themselves (Chrome/Skia
+output, hex glyph ids against subset fonts, resolved through each font's
+ToUnicode CMap).
+
+Card language is borrowed from the sections above rather than invented: the mono
+kicker of Problems, the white card and hairline of Loop, the big Archivo figure
+of Proof, and the existing `.eyebrow` / `.section-lead` primitives for the
+header.
+
+The whole card is a single `<a>` — not a card containing a button, which would
+give two tab stops to one destination. Opens in a new tab, announced in the
+`aria-label`, with the page count and file size stated before the click.
+
+`tests/products.test.ts` asserts each card against the actual bytes in
+`public/pdf/`: the file exists, starts with `%PDF-`, and its real size and page
+count match what the card claims. Page counts are read from the PDFs, not
+trusted — the ASO Agent card was written as 6 pages and the file has 8.
+
+Opening an overview fires `product_overview_open` with the product id. It is the
+strongest intent signal on the page short of the form, and it would be strange
+for a site selling measurement to leave it to a generic outbound rule. The link
+is never intercepted: no `preventDefault`, so a blocked tag manager cannot stop
+the PDF opening.
+
+**One thing to decide.** The FAQ answers *Can you show me results from other
+clients?* with "Not yet as named case studies." That is still true — these are
+our own tools, not client work — but a reader who has just scrolled past three
+detailed product overviews may find the answer reads oddly. Adding a sentence
+pointing at this section would resolve it. Not changed, because it is signed-off
+copy from the FAQ brief.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five
