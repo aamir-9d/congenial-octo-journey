@@ -140,7 +140,7 @@ const assumptions = [
             <line id="ax-y" x1={v('axLeft')} y1={v('plotTop')} x2={v('axLeft')} y2={v('axBottom')}></line>
             <line id="ax-x" x1={v('axLeft')} y1={v('axBottom')} x2={v('axRight')} y2={v('axBottom')}></line>
           </g>
-          <path id="p-gap" d={v('gapPath')} fill="#E39A1F" opacity={v('gapOpacity')} class="areafade"></path>
+          <path id="p-gap" d={v('gapPath')} fill="#E39A1F" opacity={v('gapOpacity')}></path>
           <line id="zero-line" x1={v('axLeft')} y1={v('zeroY')} x2={v('axRight')} y2={v('zeroY')} stroke="#5C6779" stroke-width="1"></line>
           {/* Invisible in the export too (opacity 0) — the visible "0" is the
               HTML label overlay below. Carried across unchanged rather than

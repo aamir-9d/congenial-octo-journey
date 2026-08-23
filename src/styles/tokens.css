@@ -1,153 +1,276 @@
 /* ---------------------------------------------------------------------------
-   Design tokens — extracted verbatim from the Claude Design export.
+   Design tokens — the Bento redesign.
 
-   Every value here was a decision already made and signed off. Nothing in this
-   file is a judgement call: each token is a literal from the export, named.
-   If a value looks wrong, it is still what shipped — change the design, not
-   this file.
+   Every value is read off `design/E2E Apps - Bento.dc.html`, which is the
+   source of truth. Nothing here is a judgement call.
 
-   RGB triplets are carried alongside the hex for the roles that appear at
-   several alpha levels, so `rgba(var(--rgb-paper), 0.72)` stays traceable to
-   one source colour.
+   The old cream palette is gone. The compatibility aliases at the foot of this
+   file map the retired `--c-*` / `--fs-*` names onto these values so the site
+   stays coherent while sections are rebuilt one at a time. They are scaffolding
+   and get deleted as each section migrates — see the note there.
    --------------------------------------------------------------------------- */
 
 :root {
-  /* --- Colour: ink ------------------------------------------------------ */
-  --c-ink: #101725;              /* body text, dark section grounds          */
-  --c-ink-deep: #0A0F1A;         /* contact section, footer                  */
-  --c-ink-muted: #3A4354;        /* secondary body copy on light             */
-  --c-ink-soft: #5C6779;         /* mono labels, captions, axis text         */
-  --rgb-ink: 16, 23, 37;
-  --rgb-ink-deep: 10, 15, 26;
+  /* --- Ground and surfaces --------------------------------------------- */
+  --color-bg: #0e1014;
+  --color-surface: #16191f;
+  --color-surface-sunk: #1d2128;
+  --color-line: #23272e;
+  --color-line-soft: #1d2027;
+  /* Borders and rules that sit above --color-line in the design's own markup. */
+  --color-line-strong: #2c3138;
+  --color-line-hover: #3d444d;
+  /* The band the Loop, Stack, Blog and FAQ sections fade through. */
+  --color-band: #111318;
 
-  /* --- Colour: paper ---------------------------------------------------- */
-  --c-paper: #F7F6F3;            /* page ground, text on dark                */
-  --c-paper-raised: #FBFAF8;     /* card header, assumptions panel           */
-  --c-paper-hover: #FAF9F6;      /* accordion hover                          */
-  --c-paper-alt: #EFEDE7;        /* "the full stack" section ground          */
-  --c-white: #FFFFFF;
-  --rgb-paper: 247, 246, 243;
-  --rgb-white: 255, 255, 255;
+  /* --- Text — all four pass WCAG AA on --color-bg ----------------------- */
+  --color-text: #e8eaed; /* 16.8:1 */
+  --color-text-2: #a8aeb6; /*  8.6:1  body copy      */
+  --color-text-3: #8e959e; /*  6.3:1  secondary      */
+  --color-text-4: #7c838d; /*  5.0:1  labels, meta   */
 
-  /* --- Colour: lines ---------------------------------------------------- */
-  --c-line: #E2E0DA;             /* default border                           */
-  --c-line-strong: #D6D3CB;      /* loop diagram path, mobile rail           */
-  --c-line-input: #C9C6BE;       /* input borders, secondary button          */
+  /* --- Brand accent — carried over from the cream site ------------------ */
+  --color-accent: #e39a1f; /* 8.1:1 on --color-bg */
+  --color-accent-hover: #f0ab33;
+  --color-accent-dim: rgba(227, 154, 31, 0.12);
+  --color-ink: #101725; /* text on a filled accent button, 7.6:1 */
+  --rgb-accent: 227, 154, 31;
+  --rgb-text: 232, 234, 237;
 
-  /* --- Colour: accents -------------------------------------------------- */
-  --c-amber: #E39A1F;
-  --c-amber-hover: #F0AB33;
-  --c-amber-tint: #FDF8EF;       /* hover ground on the highlighted bundle   */
-  --c-teal: #0E6E63;             /* links, "true revenue" series             */
-  --c-red: #C4432B;              /* dashboard-reports figure, warnings       */
-  --rgb-amber: 227, 154, 31;
-  --rgb-teal: 14, 110, 99;
-  --rgb-red: 196, 67, 43;
+  /* --- Chart ------------------------------------------------------------ */
+  --chart-true: var(--color-accent);
+  --chart-measured: #5b626b;
+  --chart-axis: #2c3138;
+  --chart-rule: #4a515a;
+  --chart-bar-dim: #3a4048;
 
-  /* --- Space ------------------------------------------------------------
-     Carried across unchanged from the export's own :root.                  */
-  --space-3xs: clamp(4px, 0.5vw, 6px);
-  --space-2xs: clamp(6px, 0.8vw, 10px);
-  --space-xs:  clamp(10px, 1.2vw, 14px);
-  --space-sm:  clamp(14px, 1.8vw, 20px);
-  --space-md:  clamp(18px, 2.4vw, 28px);
-  --space-lg:  clamp(24px, 3.5vw, 48px);
-  --space-xl:  clamp(40px, 6vw, 88px);
-  --space-2xl: clamp(56px, 9vw, 128px);
-  --gutter:    clamp(16px, 4vw, 32px);
+  /* --- Type ------------------------------------------------------------- */
+  --font-heading: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-body: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 
-  /* --- Type: families --------------------------------------------------- */
-  --font-display: 'Archivo', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  /* Weights 400/500/600/700 only. */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
 
-  /* --- Type: fixed sizes ------------------------------------------------ */
-  --fs-mono-3xs: 10.5px;
-  --fs-mono-2xs: 11px;
-  --fs-mono-xs: 11.5px;
-  --fs-mono-sm: 12px;
-  --fs-mono-md: 12.5px;
-  --fs-mono-lg: 13px;
-  --fs-body-xs: 15px;
-  --fs-body-sm: 15.5px;
-  --fs-body-md: 16px;
-  --fs-body-lg: 16.5px;
-  --fs-body-xl: 17px;         /* also the <body> base                        */
-  --fs-body-2xl: 18px;
-  --fs-h-xs: 19px;
-  --fs-h-sm: 20px;
-  --fs-h-md: 21px;
-  --fs-h-lg: 22px;
+  /* --- Type scale ------------------------------------------------------- */
+  --t-h1: clamp(38px, 5.4vw, 68px);
+  --t-h2: clamp(30px, 3.4vw, 44px);
+  --t-h2-closing: clamp(30px, 3.8vw, 50px);
+  --t-h2-card: clamp(26px, 2.8vw, 36px);
+  --t-h3: 23px;
+  --t-h3-sm: 22px;
+  --t-h3-station: 21px;
+  --t-stat: clamp(28px, 3vw, 38px);
+  --t-pull: clamp(19px, 2vw, 25px);
+  --t-lead: clamp(16px, 1.35vw, 18.5px);
+  --t-section-lead: 17px;
+  --t-body: 16px;
+  --t-body-sm: 15px;
+  --t-card: 14.5px;
+  --t-card-sm: 14px;
+  --t-post-title: 19px;
+  --t-mono: 12.5px;
+  --t-mono-sm: 12px;
+  --t-mono-xs: 11.5px;
+  --t-mono-2xs: 11px;
+  --t-mono-3xs: 10.5px;
 
-  /* --- Type: fluid sizes ------------------------------------------------ */
-  --fs-hero: clamp(34px, 5.1vw, 58px);
-  --fs-hero-lead: clamp(16px, 1.3vw, 18.5px);
-  --fs-h2: clamp(30px, 4vw, 48px);
-  --fs-h2-dark: clamp(28px, 3.6vw, 44px);
-  --fs-h2-cta: clamp(28px, 4vw, 50px);
-  --fs-h3-founder: clamp(22px, 2.4vw, 28px);
-  --fs-pull: clamp(19px, 2vw, 25px);
-  --fs-stat: clamp(30px, 3.4vw, 40px);
-  --fs-verdict: clamp(17px, 1.6vw, 21px);
-
-  /* --- Type: tracking --------------------------------------------------- */
-  --ls-hero: -0.025em;
-  --ls-stat: -0.03em;
-  --ls-tight: -0.02em;
-  --ls-snug: -0.015em;
-  --ls-slight: -0.01em;
-  --ls-mono-sm: 0.04em;
-  --ls-mono-md: 0.06em;
-  --ls-mono-lg: 0.08em;
-  --ls-eyebrow-sm: 0.1em;
-  --ls-eyebrow-md: 0.12em;
-  --ls-eyebrow-lg: 0.14em;
-
-  /* --- Type: leading ---------------------------------------------------- */
-  --lh-flat: 1;
-  --lh-hero: 1.04;
-  --lh-display: 1.05;
+  /* --- Leading ---------------------------------------------------------- */
+  --lh-h1: 1.05;
+  --lh-h2: 1.08;
+  --lh-h2-closing: 1.06;
+  --lh-h3: 1.22;
   --lh-pull: 1.3;
-  --lh-verdict: 1.35;
-  --lh-snug: 1.5;
-  --lh-outcome: 1.55;
-  --lh-normal: 1.6;
-  --lh-body: 1.65;
-  --lh-relaxed: 1.7;
-  --lh-loose: 1.85;
-  --lh-list: 1.9;
+  --lh-tight: 1.35;
+  --lh-snug: 1.45;
+  --lh-card: 1.55;
+  --lh-body: 1.6;
+  --lh-prose: 1.65;
+  --lh-answer: 1.7;
+  --lh-mono: 1.85;
+  --lh-flat: 1;
+
+  /* --- Tracking --------------------------------------------------------- */
+  --ls-h1: -0.032em;
+  --ls-h2: -0.028em;
+  --ls-h2-card: -0.026em;
+  --ls-brand: -0.022em;
+  --ls-h3: -0.02em;
+  --ls-tight: -0.018em;
+  --ls-snug: -0.016em;
+  --ls-eyebrow: 0.14em;
+  --ls-kicker: 0.12em;
+  --ls-label: 0.1em;
+  --ls-pill: 0.09em;
+  --ls-chip: 0.08em;
+  --ls-meta: 0.06em;
+  --ls-disclosure: 0.05em;
+
+  /* --- Space ------------------------------------------------------------ */
+  --s2: 6px;
+  --s3: 9px;
+  --s4: 12px;
+  --s6: 18px;
+  --s8: 24px;
+  --s12: 34px;
+  --s16: 46px;
+  --section-pad: clamp(72px, 8vw, 124px);
+  --gutter: clamp(20px, 4vw, 44px);
+  --wrap: 1280px;
+  --wrap-form: 760px;
+  --wrap-loop: 1120px;
 
   /* --- Radius ----------------------------------------------------------- */
-  --r-2: 2px;
-  --r-3: 3px;
-  --r-6: 6px;
-  --r-8: 8px;
-  --r-12: 12px;
-  --r-pill: 999px;
+  --radius-sm: 8px;
+  --radius-md: 9px;
+  --radius-card: 12px;
+  --radius-lg: 14px;
+  --radius-panel: 16px;
+  --radius-pill: 999px;
 
   /* --- Elevation -------------------------------------------------------- */
-  --shadow-card: 0 2px 14px rgba(var(--rgb-ink), 0.05);
-  --shadow-nav: 0 8px 30px rgba(var(--rgb-ink), 0.18);
-
-  /* --- Measure ---------------------------------------------------------- */
-  --measure-hero-h1: 16em;
-  --measure-heading: 20em;
-  --measure-pull-narrow: 24em;
-  --measure-pull: 26em;
-  --measure-cta-head: 32em;
-  --measure-hero-lead: 34em;
-  --measure-section-lead: 36em;
-  --measure-italic: 40em;
-  --measure-cta-lead: 44em;
-  --measure-verdict: 64ch;
-  --measure-summary: 72ch;
+  --shadow-accent: 0 8px 30px -10px rgba(227, 154, 31, 0.7);
+  --shadow-accent-hover: 0 12px 40px -8px rgba(227, 154, 31, 0.9);
+  --shadow-accent-sm: 0 6px 24px -8px rgba(227, 154, 31, 0.8);
+  --shadow-card-hover: 0 18px 44px rgba(0, 0, 0, 0.5);
+  --ring: 0 0 0 1px var(--color-line);
+  --ring-accent: 0 0 0 1px rgba(227, 154, 31, 0.34);
 
   /* --- Motion ----------------------------------------------------------- */
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --t-link: color 0.15s ease, border-color 0.15s ease;
+}
 
-  /* --- Layout ----------------------------------------------------------- */
-  --wrap: 1200px;
-  --wrap-cta: 840px;
-  --wrap-loop: 1000px;
+/* ---------------------------------------------------------------------------
+   Compatibility aliases — SCAFFOLDING, DELETE AS SECTIONS MIGRATE.
+
+   The brief says to delete every `--c-*`, `--fs-*`, `--ls-*`, `--lh-*` and
+   `--measure-*` token outright. Doing that in one commit would leave the
+   preview unstyled and unreviewable until the last section landed, which
+   defeats the point of committing section by section.
+
+   So the retired names survive here, pointing at the new palette. The site goes
+   dark immediately and stays coherent at every commit; each section rebuild
+   removes the aliases it was using. When this block is empty, the migration is
+   done — and `tests/styles.test.ts` will fail on any class still reaching for a
+   name that has gone.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* colour */
+  --c-ink: var(--color-text);
+  --c-ink-deep: var(--color-bg);
+  --c-ink-muted: var(--color-text-2);
+  --c-ink-soft: var(--color-text-4);
+  --c-paper: var(--color-bg);
+  --c-paper-raised: var(--color-surface);
+  --c-paper-hover: var(--color-surface-sunk);
+  --c-paper-alt: var(--color-surface);
+  --c-white: var(--color-surface);
+  --c-line: var(--color-line);
+  --c-line-strong: var(--color-line-strong);
+  --c-line-input: var(--color-line-strong);
+  --c-amber: var(--color-accent);
+  --c-amber-hover: var(--color-accent-hover);
+  --c-amber-tint: var(--color-accent-dim);
+  --c-teal: var(--color-accent);
+  --c-red: #c4432b;
+  --rgb-ink: 14, 16, 20;
+  --rgb-ink-deep: 14, 16, 20;
+  --rgb-paper: var(--rgb-text);
+  --rgb-white: var(--rgb-text);
+  --rgb-amber: var(--rgb-accent);
+  --rgb-teal: var(--rgb-accent);
+  --rgb-red: 196, 67, 43;
+
+  /* type families */
+  --font-display: var(--font-heading);
+
+  /* type sizes */
+  --fs-mono-3xs: var(--t-mono-3xs);
+  --fs-mono-2xs: var(--t-mono-2xs);
+  --fs-mono-xs: var(--t-mono-xs);
+  --fs-mono-sm: var(--t-mono-sm);
+  --fs-mono-md: var(--t-mono);
+  --fs-mono-lg: var(--t-mono);
+  --fs-body-xs: var(--t-card);
+  --fs-body-sm: var(--t-body-sm);
+  --fs-body-md: var(--t-body);
+  --fs-body-lg: var(--t-section-lead);
+  --fs-body-xl: var(--t-section-lead);
+  --fs-body-2xl: var(--t-post-title);
+  --fs-h-xs: var(--t-post-title);
+  --fs-h-sm: var(--t-h3-station);
+  --fs-h-md: var(--t-h3-station);
+  --fs-h-lg: var(--t-h3-sm);
+  --fs-hero: var(--t-h1);
+  --fs-hero-lead: var(--t-lead);
+  --fs-h2: var(--t-h2);
+  --fs-h2-dark: var(--t-h2);
+  --fs-h2-cta: var(--t-h2-closing);
+  --fs-h3-founder: var(--t-h3);
+  --fs-pull: var(--t-pull);
+  --fs-stat: var(--t-stat);
+  --fs-verdict: var(--t-pull);
+
+  /* tracking */
+  --ls-hero: var(--ls-h1);
+  --ls-stat: var(--ls-h1);
+  --ls-slight: var(--ls-tight);
+  --ls-mono-sm: var(--ls-meta);
+  --ls-mono-md: var(--ls-meta);
+  --ls-mono-lg: var(--ls-chip);
+  --ls-eyebrow-sm: var(--ls-label);
+  --ls-eyebrow-md: var(--ls-kicker);
+  --ls-eyebrow-lg: var(--ls-eyebrow);
+
+  /* leading */
+  --lh-hero: var(--lh-h1);
+  --lh-display: var(--lh-h1);
+  --lh-verdict: var(--lh-tight);
+  --lh-outcome: var(--lh-card);
+  --lh-normal: var(--lh-body);
+  --lh-relaxed: var(--lh-prose);
+  --lh-loose: var(--lh-mono);
+  --lh-list: var(--lh-mono);
+
+  /* radius */
+  --r-2: 2px;
+  --r-3: 3px;
+  --r-6: var(--radius-sm);
+  --r-8: var(--radius-sm);
+  --r-12: var(--radius-card);
+  --r-pill: var(--radius-pill);
+
+  /* elevation */
+  --shadow-card: var(--ring);
+  --shadow-nav: var(--shadow-card-hover);
+
+  /* space — the old scale, expressed in the new one */
+  --space-3xs: var(--s2);
+  --space-2xs: var(--s3);
+  --space-xs: var(--s4);
+  --space-sm: var(--s6);
+  --space-md: var(--s8);
+  --space-lg: var(--s12);
+  --space-xl: var(--s16);
+  --space-2xl: var(--section-pad);
+
+  /* measure */
+  --measure-hero-h1: 19ch;
+  --measure-heading: 20em;
+  --measure-pull-narrow: 34ch;
+  --measure-pull: 34ch;
+  --measure-cta-head: 56ch;
+  --measure-hero-lead: 58ch;
+  --measure-section-lead: 62ch;
+  --measure-italic: 40em;
+  --measure-cta-lead: 56ch;
+  --measure-verdict: 64ch;
+  --measure-summary: 72ch;
+
+  /* layout */
+  --wrap-cta: var(--wrap-form);
 }

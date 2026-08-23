@@ -31,15 +31,19 @@ const ogImage = new URL(asset('/og-image.png'), Astro.site).href;
    Keeping them in step is what stops a preload from fetching a URL the CSS
    never asks for (which Chrome warns about and which wastes the round trip). */
 const FONTS = {
-  archivo: asset('/fonts/archivo-var-latin.woff2'),
-  sans: asset('/fonts/ibm-plex-sans-var-latin.woff2'),
+  body400: asset('/fonts/be-vietnam-pro-400-latin.woff2'),
+  body500: asset('/fonts/be-vietnam-pro-500-latin.woff2'),
+  body600: asset('/fonts/be-vietnam-pro-600-latin.woff2'),
+  body700: asset('/fonts/be-vietnam-pro-700-latin.woff2'),
   mono: asset('/fonts/ibm-plex-mono-400-latin.woff2'),
 };
 
-/* Google's `latin` subset range, verbatim. It deliberately excludes U+2192 (→),
-   U+2197 (↗) and U+2260 (≠), which the copy uses — those already fell back to a
-   system font on the original, and matching the range keeps that rendering
-   identical. Widening it would change pixels. See NOTES.md. */
+/* Google's `latin` subset range, verbatim — and identical to the range the
+   cream build used, so the `→ ↗ ≠` system-font fallback is unchanged.
+
+   Be Vietnam Pro has no variable version on Google Fonts, despite the brief
+   asking for one. Four static weights instead, 85KB for the set — still less
+   than the 135KB Archivo-variable plus Plex-Sans-variable pair it replaces. */
 const LATIN =
   'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD';
 ---
@@ -70,30 +74,43 @@ const LATIN =
 
     <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
 
-    {/* Archivo carries the h1; Plex Sans carries the hero paragraph. Both are
-        above the fold and on the LCP path. Plex Mono is above the fold too but
-        only on small eyebrow text, so it loads with the stylesheet rather than
-        spending a third preload slot against the LCP. */}
-    <link rel="preload" href={FONTS.archivo} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={FONTS.sans} as="font" type="font/woff2" crossorigin />
+    {/* 700 carries the h1, which is the LCP element; 400 carries the lead
+        paragraph beneath it. The other two weights and the mono face load with
+        the stylesheet rather than spending preload slots against the LCP. */}
+    <link rel="preload" href={FONTS.body700} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={FONTS.body400} as="font" type="font/woff2" crossorigin />
 
     <style is:inline set:html={`
 @font-face {
-  font-family: 'Archivo';
+  font-family: 'Be Vietnam Pro';
   font-style: normal;
-  font-weight: 400 700;
-  font-stretch: 62% 125%;
+  font-weight: 400;
   font-display: swap;
-  src: url('${FONTS.archivo}') format('woff2');
+  src: url('${FONTS.body400}') format('woff2');
   unicode-range: ${LATIN};
 }
 @font-face {
-  font-family: 'IBM Plex Sans';
+  font-family: 'Be Vietnam Pro';
   font-style: normal;
-  font-weight: 400 600;
-  font-stretch: 100%;
+  font-weight: 500;
   font-display: swap;
-  src: url('${FONTS.sans}') format('woff2');
+  src: url('${FONTS.body500}') format('woff2');
+  unicode-range: ${LATIN};
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('${FONTS.body600}') format('woff2');
+  unicode-range: ${LATIN};
+}
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('${FONTS.body700}') format('woff2');
   unicode-range: ${LATIN};
 }
 @font-face {
@@ -124,7 +141,6 @@ const LATIN =
     <ConsentBanner />
 
     <script>
-      import { initReveal } from '../scripts/reveal';
       import { captureAttribution } from '../scripts/attribution';
       import { initConsent } from '../scripts/consent';
       import { initEngagement } from '../scripts/engagement';
@@ -134,7 +150,6 @@ const LATIN =
       // Capture click IDs first: everything downstream reads the cookie it writes.
       captureAttribution();
       initConsent();
-      initReveal();
       initDisclose();
       initProducts();
       initEngagement();

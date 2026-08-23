@@ -1,0 +1,54 @@
+---
+import { ICON_PATHS, type IconName } from '../data/icons';
+
+/**
+ * A Phosphor icon, inlined.
+ *
+ * The design files load the @phosphor-icons/web font from unpkg. Two reasons
+ * not to: this repo forbids third-party hosts at runtime, and the regular
+ * weight is ~180KB for the 25 icons the design uses. The paths are vendored in
+ * src/data/icons.ts instead — same icons, 9.7KB, no network, no npm package.
+ *
+ * `currentColor` throughout, so an icon takes the colour of the text it sits
+ * beside and needs no per-instance fill.
+ *
+ * Decorative by default: aria-hidden, out of the accessibility tree. Pass a
+ * `title` only when the icon is the sole carrier of meaning — an icon next to
+ * a visible label is decoration, and announcing it repeats the label.
+ */
+
+interface Props {
+  name: IconName;
+  /** Rendered size in px. Phosphor's box is 256, scaled by the viewBox. */
+  size?: number | string;
+  /** Accessible name. Omit for decorative icons, which is nearly all of them. */
+  title?: string;
+  class?: string;
+}
+
+const { name, size = '1em', title, class: extra } = Astro.props;
+const path = ICON_PATHS[name];
+const px = typeof size === 'number' ? `${size}px` : size;
+---
+
+<svg
+  class:list={['icon', extra]}
+  width={px}
+  height={px}
+  viewBox="0 0 256 256"
+  fill="currentColor"
+  role={title ? 'img' : undefined}
+  aria-hidden={title ? undefined : 'true'}
+  aria-label={title}
+  set:html={path}
+/>
+
+<style>
+  .icon {
+    display: inline-block;
+    flex: none;
+    /* Sits on the text baseline rather than the line box, so an icon beside a
+       label lines up with the letters instead of hanging below them. */
+    vertical-align: -0.125em;
+  }
+</style>

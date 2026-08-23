@@ -3,11 +3,10 @@
 /* The @font-face declarations live in src/layouts/Base.astro, not here: the
    font URLs need `import.meta.env.BASE_URL` interpolated so they resolve on a
    GitHub Pages project path as well as on the apex domain, and the same
-   constant emits the matching <link rel="preload"> tags. See the comment there
-   for why the unicode-range must not be widened. */
+   constant emits the matching <link rel="preload"> tags. */
 
 /* ---------------------------------------------------------------------------
-   Base — carried across from the export's <style> block.
+   Base — from `design/E2E Apps - Bento.dc.html`.
    --------------------------------------------------------------------------- */
 
 *,
@@ -33,19 +32,19 @@ html {
   scroll-behavior: smooth;
 }
 
-/* The nav is fixed 16px from the top and ~64px tall. Without this, jumping to
-   an in-page anchor parks its heading underneath the pill. */
+/* The nav is a sticky 60px bar now, not a floating pill 16px from the top, so
+   the offset comes down from 96px. */
 :target,
 section[id] {
-  scroll-margin-top: 96px;
+  scroll-margin-top: 72px;
 }
 
 body {
   margin: 0;
-  background: var(--c-paper);
-  color: var(--c-ink);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-family: var(--font-body);
-  font-size: var(--fs-body-xl);
+  font-size: var(--t-body);
   line-height: var(--lh-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -53,73 +52,140 @@ body {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: var(--ls-tight);
-  line-height: var(--lh-display);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-h2);
+  line-height: var(--lh-h2);
 }
 
 p {
   margin: 0;
+  font-weight: var(--fw-regular);
   text-wrap: pretty;
 }
 
-/* The export styled every `a` teal-with-underline and amber-on-hover, but set
-   an inline `color` and `border:0` on nearly all of them — and an inline style
-   outranks a stylesheet rule. In practice that global treatment only ever
-   reached the two founder LinkedIn links. Rather than reproduce the accident
-   with specificity games, the treatment is opt-in via `.link`, which is
-   applied to exactly the links that received it originally. */
 a {
   color: inherit;
   text-decoration: none;
 }
 
+/* Opt-in link treatment, for prose links that need to look like links. */
 .link {
-  color: var(--c-teal);
-  border-bottom: 1px solid rgba(var(--rgb-teal), 0.35);
-  transition: var(--t-link);
+  color: var(--color-accent);
+  border-bottom: 1px solid rgba(var(--rgb-accent), 0.35);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .link:hover {
-  color: var(--c-amber);
-  border-bottom-color: rgba(var(--rgb-amber), 0.55);
+  color: var(--color-accent-hover);
+  border-bottom-color: rgba(var(--rgb-accent), 0.55);
+}
+
+/* Every disclosure in the design supplies its own caret. */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::marker {
+  content: '';
+}
+
+:focus {
+  outline: none;
 }
 
 :focus-visible {
-  outline: 2px solid var(--c-amber);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
-  border-radius: var(--r-3);
-}
-
-input[type='range'] {
-  accent-color: var(--c-amber);
+  border-radius: 4px;
 }
 
 ::selection {
-  background: rgba(var(--rgb-amber), 0.28);
+  background: rgba(var(--rgb-accent), 0.3);
 }
 
-@media (max-width: 480px) {
-  #nav-links {
-    display: none;
+/* Figures must not jitter as a slider moves. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Controls.
+
+   NOTES.md flagged item 3: the cream build carried inline `height:20px` on the
+   ranges and `width:16px;height:16px` on the checkboxes, which outranked the
+   media query meant to give them 44px touch targets, so that rule was inert.
+   Fixed at the source here rather than by escalating specificity — a 26px thumb
+   in a 44px track is a real target without a 44px-tall bar.
+   --------------------------------------------------------------------------- */
+
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 44px;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-line-strong);
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 3px solid var(--color-surface);
+  box-shadow: 0 0 12px -2px rgba(var(--rgb-accent), 0.9);
+}
+
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-line-strong);
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 3px solid var(--color-surface);
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* A larger thumb where the finger is the pointer. */
+@media (pointer: coarse) {
+  input[type='range']::-webkit-slider-thumb {
+    width: 26px;
+    height: 26px;
+    margin-top: -11px;
+    box-shadow: 0 0 14px -2px rgba(var(--rgb-accent), 0.9);
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 26px;
+    height: 26px;
   }
 }
 
-/* Authored in the export for mobile touch targets, but inert there: the
-   controls carried inline `height:20px` / `width:16px;height:16px`, and an
-   inline style outranks an element selector. Reproduced at the same
-   specificity so it stays inert and the 375px render matches the original
-   exactly. Flagged in NOTES.md — enabling it is a one-line change and is the
-   right call for the Phase 4 accessibility pass, but it is a visible
-   deviation, so it is the user's to make. */
+input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
 @media (max-width: 767px) {
-  input[type='range'] {
-    height: 44px;
-  }
-
   input[type='checkbox'] {
     width: 22px;
     height: 22px;
@@ -127,10 +193,126 @@ input[type='range'] {
 }
 
 /* ---------------------------------------------------------------------------
-   Chart motion.
+   Buttons. Filled, not outlined.
    --------------------------------------------------------------------------- */
 
-@keyframes drawline {
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 15.5px;
+  padding: 15px 26px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 0;
+  cursor: pointer;
+  box-shadow: var(--shadow-accent);
+  transition:
+    background 180ms var(--ease-out-soft),
+    box-shadow 180ms var(--ease-out-soft);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  box-shadow: var(--shadow-accent-hover);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: 15.5px;
+  padding: 15px 26px;
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  border: 1px solid var(--color-line-strong);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background 180ms var(--ease-out-soft),
+    border-color 180ms var(--ease-out-soft);
+}
+
+.btn-secondary:hover {
+  background: rgba(var(--rgb-text), 0.06);
+  border-color: var(--color-line-hover);
+}
+
+/* Retired names, still referenced by sections not yet rebuilt. Deleted with
+   the last of them — see the alias note in tokens.css. */
+.btn-amber,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  white-space: nowrap;
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background 180ms var(--ease-out-soft),
+    box-shadow 180ms var(--ease-out-soft),
+    border-color 180ms var(--ease-out-soft);
+}
+
+.btn-amber {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 0;
+  box-shadow: var(--shadow-accent);
+}
+
+.btn-amber:hover {
+  background: var(--color-accent-hover);
+  box-shadow: var(--shadow-accent-hover);
+}
+
+.btn-ghost {
+  color: var(--color-text);
+  border: 1px solid var(--color-line-strong);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: rgba(var(--rgb-text), 0.06);
+  border-color: var(--color-line-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. Opacity and transform only — nothing here can shift layout.
+   --------------------------------------------------------------------------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes draw {
   from {
     stroke-dashoffset: 1;
   }
@@ -139,44 +321,63 @@ input[type='range'] {
   }
 }
 
-@keyframes fadearea {
+@keyframes grow-y {
   from {
-    opacity: 0;
+    transform: scaleY(0);
   }
   to {
-    opacity: 1;
+    transform: scaleY(1);
   }
+}
+
+@keyframes drift-a {
+  0% {
+    transform: translate3d(-4%, 2%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(5%, -4%, 0) scale(1.14);
+  }
+  100% {
+    transform: translate3d(-4%, 2%, 0) scale(1);
+  }
+}
+
+@keyframes drift-b {
+  0% {
+    transform: translate3d(4%, -3%, 0) scale(1.12);
+  }
+  50% {
+    transform: translate3d(-6%, 4%, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(4%, -3%, 0) scale(1.12);
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-60%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+
+/* Scroll reveal, with no JS and no `.js` gate.
+
+   Where `animation-timeline` is unsupported the animation simply runs once on
+   load instead of on scroll, so content is never left hidden — the same
+   guarantee the old class gate provided, without the class. src/scripts/
+   reveal.ts is gone. */
+[data-reveal] {
+  animation: reveal-up 0.65s var(--ease-out-soft) both;
+  animation-timeline: view();
+  animation-range: entry 4% entry 55%;
 }
 
 .drawn {
   stroke-dasharray: 1;
-  animation: drawline 1.2s var(--ease-out-soft) forwards;
-}
-
-.areafade {
-  animation: fadearea 0.9s ease 0.5s both;
-}
-
-/* ---------------------------------------------------------------------------
-   Scroll reveal.
-
-   The export set opacity:0 from JS on mount, which flashes the content visible
-   and then hides it. Here the hidden state lives in CSS behind a `.js` class
-   that the inline head script sets, so there is no flash — and with JS off the
-   content simply stays visible.
-   --------------------------------------------------------------------------- */
-
-.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s var(--ease-out-soft);
-}
-
-.js [data-reveal].is-revealed {
-  opacity: 1;
-  transform: none;
+  animation: draw 1.2s var(--ease-out-soft) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -184,20 +385,17 @@ input[type='range'] {
     scroll-behavior: auto;
   }
 
-  .drawn {
-    animation: none;
-    stroke-dasharray: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
   }
 
-  .areafade {
-    animation: none;
-    opacity: 1;
-  }
-
-  .js [data-reveal] {
+  [data-reveal] {
     opacity: 1;
     transform: none;
-    transition: none;
   }
 }
 
@@ -211,101 +409,63 @@ input[type='range'] {
 }
 
 .section {
-  padding: var(--space-2xl) var(--gutter);
+  padding: var(--section-pad) var(--gutter);
 }
 
-/* Mono eyebrow above a section heading. */
+/* Every section header is centred — the old mix of left- and centre-aligned
+   headers is what made the page read as unaligned. */
+.section-head {
+  text-align: center;
+  margin: 0 auto;
+}
+
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: var(--fs-mono-sm);
-  letter-spacing: var(--ls-eyebrow-lg);
-  color: var(--c-ink-soft);
-  margin-bottom: var(--space-sm);
+  font-size: var(--t-mono-xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-4);
 }
 
 .eyebrow--amber {
-  color: var(--c-amber);
+  color: var(--color-accent);
 }
 
 .section-lead {
-  margin-top: var(--space-sm);
-  font-size: var(--fs-body-xl);
-  color: var(--c-ink-soft);
-  font-style: italic;
+  margin-top: var(--s6);
+  font-size: var(--t-section-lead);
+  line-height: var(--lh-body);
+  color: var(--color-text-2);
 }
 
-/* The bold Archivo statement that closes several sections. */
 .pull {
-  margin-top: var(--space-xl);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: var(--fs-pull);
+  margin-top: var(--s16);
+  font-family: var(--font-heading);
+  font-weight: var(--fw-semibold);
+  font-size: var(--t-pull);
   line-height: var(--lh-pull);
-  letter-spacing: var(--ls-snug);
-  color: var(--c-ink);
-  max-width: var(--measure-pull);
+  letter-spacing: var(--ls-h3);
+  color: var(--color-text);
+  max-width: 34ch;
 }
 
 .pull--light {
-  color: var(--c-paper);
+  color: var(--color-text);
 }
 
 .card {
-  background: var(--c-white);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-12);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--ring);
 }
 
 .card--raised {
-  box-shadow: var(--shadow-card);
-}
-
-/* Amber pill CTA. The export declared these hover states via a `style-hover`
-   attribute that no runtime file implements — they were inert. Reproduced here
-   as real CSS: the at-rest render is unchanged, so parity holds. */
-.btn-amber {
-  display: inline-block;
-  background: var(--c-amber);
-  color: var(--c-ink);
-  font-family: var(--font-body);
-  font-weight: 600;
-  border-radius: var(--r-pill);
-  border: 0;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.btn-amber:hover {
-  background: var(--c-amber-hover);
-  color: var(--c-ink);
-}
-
-.btn-ghost {
-  display: inline-block;
-  background: transparent;
-  color: var(--c-ink);
-  font-weight: 600;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--c-line-input);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.btn-ghost:hover {
-  border-color: var(--c-ink);
-  background: rgba(var(--rgb-ink), 0.04);
-  color: var(--c-ink);
+  box-shadow: var(--ring);
 }
 
 /* ---------------------------------------------------------------------------
-   Mobile disclosure.
-
-   Above 768px the toggle does not exist and the body is simply content. Below
-   it, and only once `.js` confirms scripting, the body collapses behind a tap
-   target. Gating on `.js` is what stops the content flashing open and then
-   shutting on load, and what keeps everything readable with scripting off.
+   Mobile disclosure. Added after the Bento brief was written, so it still uses
+   the `.js` gate — that is now the only remaining reason the class exists.
    --------------------------------------------------------------------------- */
 
 .disclose__toggle {
@@ -320,28 +480,26 @@ input[type='range'] {
   .js .disclose__toggle {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2xs);
-    margin-top: var(--space-2xs);
-    padding: var(--space-2xs) 0;
+    gap: var(--s3);
+    margin-top: var(--s3);
+    padding: var(--s3) 0;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    letter-spacing: var(--ls-mono-md);
-    color: var(--c-teal);
+    font-size: var(--t-mono);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-accent);
     background: transparent;
     border: 0;
     cursor: pointer;
-    /* 44px of vertical tap area without moving the text. */
     min-height: 44px;
   }
 
   .js .disclose__icon::before {
     content: '+';
-    font-size: var(--fs-body-md);
+    font-size: var(--t-body);
     line-height: 1;
   }
 
   .js .disclose.is-open .disclose__icon::before {
-    /* U+2212 minus, matching the stack accordion. */
     content: '\2212';
   }
 
@@ -350,16 +508,14 @@ input[type='range'] {
   }
 
   .js .disclose.is-open .disclose__body {
-    margin-top: var(--space-2xs);
+    margin-top: var(--s3);
   }
 }
 
-/* On a dark ground the teal is too low-contrast; the amber reads. */
 .disclose--on-dark .disclose__toggle {
-  color: var(--c-amber);
+  color: var(--color-accent);
 }
 
-/* Screen-reader-only, for the live regions the chart announces through. */
 .visually-hidden {
   position: absolute;
   width: 1px;
