@@ -132,6 +132,14 @@ const distExists = fs.existsSync(PORT);
  */
 const REPLACED: { text: string; why: string }[] = [
   {
+    text: 'd1 0.32 → d7 0.11 → d30 0.03 · curve dies before payback',
+    why: 'card 01 red code line replaced by the drawn retention curve, which says the same thing',
+  },
+  {
+    text: 'revenue_dashboard ≠ mmp_reported · gap grows monthly',
+    why: 'card 02 red code line replaced by the dashboard-versus-true bar pair',
+  },
+  {
     text: 'MOBILE GROWTH & MEASUREMENT',
     why: 'hero eyebrow replaced by the accent pill, "Attribution, fixed at the source"',
   },
@@ -153,6 +161,47 @@ const REPLACED: { text: string; why: string }[] = [
   },
 ];
 
+/**
+ * Paragraphs the redesign split across two elements.
+ *
+ * The bento cards show the opening sentences as a lead and put the remainder
+ * behind a "Why it happens" disclosure. Not a word changes, but the disclosure
+ * summary now sits between the two halves, so the paragraph is no longer one
+ * contiguous run and a whole-run search cannot find it.
+ *
+ * Both halves are asserted verbatim instead. Concatenating them reproduces the
+ * export's paragraph exactly — that is the check.
+ */
+const SPLIT: { lead: string; rest: string }[] = [
+  {
+    lead: 'Every LTV model is retention multiplied by monetisation. If the retention curve dies before the payback horizon, the campaign cannot break even at any CPI — the money was never going to be there.',
+    rest: "Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that's gone by week three never gets there.",
+  },
+  {
+    lead: "Subscription renewals happen on Apple's servers while your app is closed.",
+    rest: 'If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.',
+  },
+  {
+    lead: 'SKAdNetwork gives you a handful of bits and one short window.',
+    rest: 'Most schemas were set up once, copied from a blog post, and never mapped to the events that actually predict revenue for this app.',
+  },
+  {
+    lead: 'Someone clicks a Google ad on your website, installs later, subscribes a week after that.',
+    rest: 'Without gclid/gbraid/wbraid capture and a conversion sent back, Google never learns which click earned the money — so it optimises toward the wrong people.',
+  },
+];
+
+test('split paragraphs kept both halves, word for word', { skip: !distExists && 'run `npm run build` first' }, () => {
+  const squash = (t: string) => t.replace(/\s+/g, '');
+  const port = squash(textRuns(fs.readFileSync(PORT, 'utf8')).join(''));
+
+  const lost = SPLIT.flatMap(({ lead, rest }) =>
+    [lead, rest].filter((half) => !port.includes(squash(half))),
+  );
+
+  assert.deepEqual(lost, [], 'A half of a split paragraph is missing: ' + lost.join(' | '));
+});
+
 test('no signed-off copy was quietly rewritten', { skip: !distExists && 'run `npm run build` first' }, () => {
   const squash = (t: string) => t.replace(/\s+/g, '');
   const port = squash(textRuns(fs.readFileSync(PORT, 'utf8')).join(''));
@@ -166,6 +215,10 @@ test('no signed-off copy was quietly rewritten', { skip: !distExists && 'run `np
     // rewrites those by design; body copy is what must survive.
     if (needle.length < 40) continue;
     if (replaced.some((r) => r.includes(needle) || needle.includes(r))) continue;
+    // Split paragraphs are covered by their own test, half by half.
+    // The export breaks card 04's paragraph at its inline tokens, so its runs
+    // are fragments of the whole. Containment, not equality.
+    if (SPLIT.some((sp) => squash(sp.lead + sp.rest).includes(needle))) continue;
     if (!port.includes(needle)) missing.push(run.trim());
   }
 

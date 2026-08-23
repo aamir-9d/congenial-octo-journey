@@ -1,54 +1,128 @@
 ---
-import Disclose from './Disclose.astro';
+import Icon from './Icon.astro';
+import { decayCurve } from '../data/decay';
+import type { IconName } from '../data/icons';
 
 /**
- * "Three places the money goes missing." Dark section, four cards.
+ * The bento grid — the section that read as unbalanced.
  *
- * Below 768px each card's body collapses behind a tap target: the title and the
- * red code line carry the point, and four full paragraphs stacked is a wall on
- * a phone.
+ * Twelve columns: row one is span 7 + span 5, row two is three span 4. Every
+ * card has the same five parts in the same order, so the eye can move across a
+ * row without re-learning the layout: icon and kicker, title, lead, a
+ * disclosure, and a visual pinned to the bottom.
  *
- * Every string is byte-identical to the export. Apostrophes are ASCII U+0027,
- * not typographic — the export used no curly quotes anywhere, and swapping
- * them would change the glyphs on screen.
+ * The `min-height` values on the title and lead are load-bearing. They are what
+ * puts every card in a row at the same height with its disclosure trigger at
+ * the same offset — 1.22em / 6.4em in row one, 3.66em / 8em in row two. Change
+ * a lead's wording and the offsets need re-checking.
+ *
+ * COPY. The export's paragraphs are split at their own sentence breaks: the
+ * opening sentences become the lead, the remainder sits behind "Why it happens".
+ * Nothing is reworded. The design file abbreviates some of these; the brief is
+ * explicit that the disclosure holds the full signed-off paragraph, and that
+ * every string was written deliberately.
+ *
+ * Card 05 is the exception — new, and marked `data-added` for sign-off.
  */
 
-const problems = [
+const decay = decayCurve();
+
+/** Same inline convention as src/data/faq.ts: `code` becomes <code>. */
+const withCode = (t: string) =>
+  t
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/`([^`]+)`/g, '<code class="problems__token">$1</code>');
+
+type Visual = 'curve' | 'bars' | 'code' | 'chips';
+
+interface Card {
+  span: 7 | 5 | 4;
+  row: 1 | 2;
+  num: string;
+  numAmber?: boolean;
+  ring?: boolean;
+  icon: IconName;
+  title: string;
+  lead: string;
+  /** The rest of the export's paragraph. Backticks become <code>. */
+  body: string;
+  visual: Visual;
+  code?: string;
+  chips?: string[];
+  added?: boolean;
+}
+
+const cards: Card[] = [
   {
-    num: "01 · NOT A MEASUREMENT PROBLEM",
+    span: 7,
+    row: 1,
+    num: '01 · NOT A MEASUREMENT PROBLEM',
     numAmber: true,
-    highlight: true,
-    title: "Retention nobody watches past D7.",
-    body: "Every LTV model is retention multiplied by monetisation. If the retention curve dies before the payback horizon, the campaign cannot break even at any CPI — the money was never going to be there. Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that's gone by week three never gets there.",
-    code: "d1 0.32 → d7 0.11 → d30 0.03 · curve dies before payback",
+    ring: true,
+    icon: 'chart-line-down',
+    title: 'Retention nobody watches past D7.',
+    lead: 'Every LTV model is retention multiplied by monetisation. If the retention curve dies before the payback horizon, the campaign cannot break even at any CPI — the money was never going to be there.',
+    body: "Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that's gone by week three never gets there.",
+    visual: 'curve',
   },
   {
-    num: "02",
-    numAmber: false,
-    highlight: false,
-    title: "Renewals nobody counted.",
-    body: "Subscription renewals happen on Apple's servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.",
-    code: "revenue_dashboard ≠ mmp_reported · gap grows monthly",
+    span: 5,
+    row: 1,
+    num: '02',
+    icon: 'arrows-clockwise',
+    title: 'Renewals nobody counted.',
+    lead: "Subscription renewals happen on Apple's servers while your app is closed.",
+    body: 'If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.',
+    visual: 'bars',
   },
   {
-    num: "03",
-    numAmber: false,
-    highlight: false,
-    title: "A conversion schema built for nothing in particular.",
-    body: "SKAdNetwork gives you a handful of bits and one short window. Most schemas were set up once, copied from a blog post, and never mapped to the events that actually predict revenue for this app.",
-    code: "skan_cv: null · 71% of postbacks",
+    span: 4,
+    row: 2,
+    num: '03',
+    icon: 'git-branch',
+    title: 'A conversion schema built for nothing in particular.',
+    lead: 'SKAdNetwork gives you a handful of bits and one short window.',
+    body: 'Most schemas were set up once, copied from a blog post, and never mapped to the events that actually predict revenue for this app.',
+    visual: 'code',
+    code: 'skan_cv: null\n71% of postbacks',
+  },
+  {
+    span: 4,
+    row: 2,
+    num: '04',
+    icon: 'arrow-square-out',
+    title: 'The web-to-app gap.',
+    lead: 'Someone clicks a Google ad on your website, installs later, subscribes a week after that.',
+    body: 'Without `gclid`/`gbraid`/`wbraid` capture and a conversion sent back, Google never learns which click earned the money — so it optimises toward the wrong people.',
+    visual: 'code',
+    code: 'web_click → install → ??? → subscription',
+  },
+  {
+    span: 4,
+    row: 2,
+    num: 'AND WHERE IT GOES RIGHT',
+    numAmber: true,
+    icon: 'plugs-connected',
+    title: 'One stack, one person accountable.',
+    lead: 'Measurement, attribution and the media buying under one owner — so nobody can blame the other when the two disagree.',
+    body: 'Aamir owns measurement, attribution and the media. Faisal owns the server-side infrastructure: the webhook receivers, the relays, the pipelines that run unattended.',
+    visual: 'chips',
+    chips: ['AppsFlyer', 'Adjust', 'RevenueCat', 'ASSN V2', 'RTDN', 'GA4', 'OCI', 'CAPI'],
+    added: true,
   },
 ];
 ---
 
-<section id="services" class="problems section" data-section="problems">
+<section id="services" class="section" data-section="problems">
   <div class="wrap">
-    <div data-reveal="1">
-      <div class="eyebrow eyebrow--amber">WHY YOUR NUMBERS DON'T RECONCILE</div>
-      <h2 class="problems__head">
+    <div class="section-head problems__head" data-reveal="1">
+      <div class="eyebrow">WHY YOUR NUMBERS DON'T RECONCILE</div>
+      <h2 class="problems__h2">
         Three places the money goes missing. And one place it was never there.
       </h2>
-      <p class="problems__lead">
+      <p class="section-lead">
         The first isn't a measurement failure, and no amount of attribution accuracy will save you
         from it. The other three are &#8212; the revenue exists and you can't see it.
       </p>
@@ -56,35 +130,113 @@ const problems = [
 
     <div class="problems__grid">
       {
-        problems.map((p) => (
-          <div data-reveal="1" class:list={['problems__card', { 'problems__card--lead': p.highlight }]}>
-            <div class:list={['problems__num', { 'problems__num--amber': p.numAmber }]}>{p.num}</div>
-            <h3 class="problems__title">{p.title}</h3>
-            <Disclose label="Why it happens" describes={p.title} class="disclose--on-dark">
-              <p class="problems__body">{p.body}</p>
-            </Disclose>
-            <div class="problems__code">{p.code}</div>
+        cards.map((c) => (
+          <div
+            class:list={[
+              'problems__card',
+              `problems__card--span-${c.span}`,
+              `problems__card--row-${c.row}`,
+              { 'problems__card--ring': c.ring },
+            ]}
+            data-added={c.added ? 'bento' : undefined}
+            data-reveal="1"
+          >
+            <div class="problems__kicker">
+              <span class:list={['problems__icon', { 'problems__icon--amber': c.numAmber }]}>
+                <Icon name={c.icon} size={19} />
+              </span>
+              <span class:list={['problems__num', { 'problems__num--amber': c.numAmber }]}>
+                {c.num}
+              </span>
+            </div>
+
+            <h3 class="problems__title">{c.title}</h3>
+            <p class="problems__lead">{c.lead}</p>
+
+            <details class="problems__why">
+              <summary class="problems__why-summary">
+                <span>Why it happens</span>
+                <Icon name="caret-down" size={11} />
+              </summary>
+              <p class="problems__body" set:html={withCode(c.body)} />
+            </details>
+
+            <div class="problems__visual">
+              {
+                c.visual === 'curve' && (
+                  <svg
+                    class="problems__curve"
+                    viewBox={decay.viewBox}
+                    preserveAspectRatio="none"
+                    role="img"
+                    aria-label="Retention curve dying before the payback horizon"
+                  >
+                    <path d={decay.area} fill="var(--color-accent)" opacity="0.14" />
+                    <path
+                      d={decay.line}
+                      fill="none"
+                      stroke="var(--color-accent)"
+                      stroke-width="2.2"
+                      vector-effect="non-scaling-stroke"
+                      pathLength="1"
+                      class="drawn"
+                    />
+                    <line
+                      x1={decay.payX}
+                      y1="4"
+                      x2={decay.payX}
+                      y2="92"
+                      stroke="var(--chart-measured)"
+                      stroke-width="1"
+                      stroke-dasharray="3 4"
+                      vector-effect="non-scaling-stroke"
+                    />
+                    <text
+                      x={decay.payLabelX}
+                      y="16"
+                      font-family="IBM Plex Mono, monospace"
+                      font-size="10"
+                      fill="var(--color-text-4)"
+                    >
+                      payback horizon
+                    </text>
+                  </svg>
+                )
+              }
+
+              {
+                c.visual === 'bars' && (
+                  <div class="problems__bars">
+                    <div class="problems__bar-col">
+                      <div class="problems__bar problems__bar--dim" />
+                      <span class="problems__bar-label">DASHBOARD</span>
+                    </div>
+                    <div class="problems__bar-col">
+                      <div class="problems__bar problems__bar--true" />
+                      <span class="problems__bar-label problems__bar-label--amber">TRUE</span>
+                    </div>
+                  </div>
+                )
+              }
+
+              {c.visual === 'code' && <div class="problems__code">{c.code}</div>}
+
+              {
+                c.visual === 'chips' && (
+                  <div class="problems__chips">
+                    {c.chips!.map((k) => (
+                      <span class="problems__chip">{k}</span>
+                    ))}
+                  </div>
+                )
+              }
+            </div>
           </div>
         ))
       }
-
-      <div data-reveal="1" class="problems__card">
-        <div class="problems__num">04</div>
-        <h3 class="problems__title">The web-to-app gap.</h3>
-        <Disclose label="Why it happens" describes="The web-to-app gap" class="disclose--on-dark">
-        <p class="problems__body">
-          Someone clicks a Google ad on your website, installs later, subscribes a week after that.
-          Without <span class="problems__token">gclid</span>/<span class="problems__token"
-            >gbraid</span
-          >/<span class="problems__token">wbraid</span> capture and a conversion sent back, Google
-          never learns which click earned the money &#8212; so it optimises toward the wrong people.
-        </p>
-        </Disclose>
-        <div class="problems__code">web_click &#8594; install &#8594; ??? &#8594; subscription</div>
-      </div>
     </div>
 
-    <p data-reveal="1" class="pull pull--light">
+    <p data-reveal="1" class="pull problems__pull">
       Three of these are fixable in weeks. The first is a product problem, and we'll tell you if
       that's the one you have.
     </p>
@@ -92,80 +244,267 @@ const problems = [
 </section>
 
 <style>
-  .problems {
-    background: var(--c-ink);
-  }
-
   .problems__head {
-    font-size: var(--fs-h2-dark);
-    color: var(--c-paper);
-    max-width: var(--measure-heading);
+    max-width: 62ch;
   }
 
-  .problems__lead {
-    margin-top: var(--space-sm);
-    font-size: var(--fs-body-lg);
-    color: rgba(var(--rgb-paper), 0.6);
-    font-style: italic;
-    max-width: var(--measure-italic);
+  .problems__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
   }
 
   .problems__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-sm);
-    margin-top: var(--space-xl);
+    grid-template-columns: repeat(12, 1fr);
+    gap: 16px;
+    margin-top: clamp(40px, 4vw, 64px);
   }
 
   .problems__card {
-    background: rgba(var(--rgb-paper), 0.045);
-    border: 1px solid rgba(var(--rgb-paper), 0.1);
-    border-radius: var(--r-12);
-    padding: var(--space-md);
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    box-shadow: var(--ring);
   }
 
-  /* Card 01 is ringed in amber — it is the one that is not a measurement fix. */
-  .problems__card--lead {
-    border-color: rgba(var(--rgb-amber), 0.32);
+  /* Card 01 is the one that is not a measurement fix, so it is ringed. */
+  .problems__card--ring {
+    box-shadow: var(--ring-accent);
+  }
+
+  .problems__card--span-7 {
+    grid-column: span 7;
+  }
+  .problems__card--span-5 {
+    grid-column: span 5;
+  }
+  .problems__card--span-4 {
+    grid-column: span 4;
+  }
+
+  .problems__card--row-1 {
+    min-height: 360px;
+  }
+  .problems__card--row-2 {
+    min-height: 344px;
+  }
+
+  .problems__kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .problems__icon {
+    display: inline-flex;
+    color: var(--color-text-3);
+  }
+
+  .problems__icon--amber {
+    color: var(--color-accent);
   }
 
   .problems__num {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-3);
   }
 
   .problems__num--amber {
-    color: var(--c-amber);
+    color: var(--color-accent);
   }
 
+  /* The min-heights below are what hold a row level with its disclosure
+     triggers at a common offset. They are measured against these exact leads —
+     reword one and they need re-checking. */
   .problems__title {
-    font-size: var(--fs-h-sm);
-    color: var(--c-paper);
-    letter-spacing: var(--ls-slight);
+    margin-top: 16px;
+    font-size: var(--t-h3-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+  }
+
+  .problems__card--row-1 .problems__title {
+    min-height: 1.22em;
+  }
+  .problems__card--row-2 .problems__title {
+    min-height: 3.66em;
+  }
+
+  .problems__lead {
+    margin-top: 10px;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .problems__card--row-1 .problems__lead {
+    min-height: 6.4em;
+  }
+  .problems__card--row-2 .problems__lead {
+    min-height: 8em;
+  }
+
+  .problems__why {
+    margin-top: 2px;
+  }
+
+  .problems__why-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-accent);
+    padding: 6px 0;
+  }
+
+  .problems__why[open] .problems__why-summary :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  .problems__why-summary :global(svg) {
+    transition: transform 180ms ease;
   }
 
   .problems__body {
-    font-size: var(--fs-body-sm);
-    color: rgba(var(--rgb-paper), 0.7);
-    flex: 1;
+    margin-top: 8px;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-prose);
+    color: var(--color-text-3);
   }
 
-  .problems__token {
+  /* Inside set:html, so a scoped rule cannot reach it. */
+  .problems__body :global(.problems__token) {
     font-family: var(--font-mono);
-    font-size: var(--fs-body-xs);
+    font-size: 0.92em;
+    color: var(--color-text-2);
   }
 
+  /* Pins every visual to the bottom of its card, whatever the lead does. */
+  .problems__visual {
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
+  .problems__curve {
+    display: block;
+    width: 100%;
+    height: 96px;
+  }
+
+  .problems__bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    height: 96px;
+  }
+
+  .problems__bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .problems__bar {
+    width: 100%;
+    max-width: 52px;
+    border-radius: 4px 4px 0 0;
+    transform-origin: bottom;
+    animation: grow-y 0.7s var(--ease-out-soft) both;
+  }
+
+  .problems__bar--dim {
+    height: 26px;
+    background: var(--chart-bar-dim);
+    animation-delay: 0.2s;
+  }
+
+  .problems__bar--true {
+    height: 72px;
+    background: var(--color-accent);
+    animation-delay: 0.34s;
+  }
+
+  .problems__bar-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    color: var(--color-text-4);
+  }
+
+  .problems__bar-label--amber {
+    color: var(--color-accent);
+  }
+
+  /* pre-line, because the newline inside the string is the layout. */
   .problems__code {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    line-height: var(--lh-snug);
-    color: var(--c-red);
-    background: rgba(var(--rgb-red), 0.1);
-    border-radius: var(--r-6);
-    padding: var(--space-2xs);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-prose);
+    white-space: pre-line;
+    color: var(--color-text-3);
+    background: var(--color-surface-sunk);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+
+  .problems__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .problems__chip {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    white-space: nowrap;
+    color: var(--color-text-2);
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
+  }
+
+  .problems__pull {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  /* Below 900px the twelve-column grid collapses. The min-heights go with it:
+     nothing sits beside a card any more, so reserving space only adds gaps. */
+  @media (max-width: 900px) {
+    .problems__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .problems__card--span-7,
+    .problems__card--span-5,
+    .problems__card--span-4 {
+      grid-column: 1 / -1;
+    }
+
+    .problems__card--row-1,
+    .problems__card--row-2 {
+      min-height: 0;
+    }
+
+    .problems__card--row-1 .problems__title,
+    .problems__card--row-2 .problems__title,
+    .problems__card--row-1 .problems__lead,
+    .problems__card--row-2 .problems__lead {
+      min-height: 0;
+    }
   }
 </style>
