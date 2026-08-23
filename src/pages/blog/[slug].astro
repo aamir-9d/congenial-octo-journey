@@ -1,0 +1,204 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+/**
+ * A single post.
+ *
+ * Canonical points at this page, not at LinkedIn: the site should be able to
+ * rank for its own author's work. The original is credited visibly at the foot
+ * instead. If you would rather consolidate the signal onto LinkedIn, the change
+ * is one line in Base.astro's canonical — say so and I will flip it.
+ */
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<Base
+  title={`${post.data.title} — E2E Apps`}
+  description={post.data.kicker}
+  path={`/blog/${post.id}`}
+>
+  <div class="page">
+    <Nav />
+
+    <article class="section">
+      <div class="post">
+        <a class="post__back" href={`${base}/blog`}>&#8592; All posts</a>
+
+        <div class="post__meta">
+          <span class="post__tag">{post.data.tag}</span>
+          <time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt(post.data.date)}</time>
+        </div>
+
+        <h1 class="post__title">{post.data.title}</h1>
+        <p class="post__kicker">{post.data.kicker}</p>
+
+        <div class="post__body">
+          <Content />
+        </div>
+
+        {
+          post.data.source && (
+            <p class="post__source">
+              First published on{' '}
+              <a class="link" href={post.data.source} target="_blank" rel="noopener">
+                LinkedIn &#8599;
+              </a>
+            </p>
+          )
+        }
+      </div>
+    </article>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--c-paper);
+  }
+
+  .section {
+    padding-top: calc(var(--space-2xl) + 48px);
+  }
+
+  .post {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .post__back {
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-teal);
+    text-decoration: none;
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-ink-soft);
+  }
+
+  .post__tag {
+    letter-spacing: var(--ls-eyebrow-sm);
+    text-transform: uppercase;
+    color: var(--c-amber);
+  }
+
+  .post__title {
+    margin-top: var(--space-sm);
+    font-size: var(--fs-h2);
+    color: var(--c-ink);
+  }
+
+  .post__kicker {
+    margin-top: var(--space-md);
+    font-size: var(--fs-hero-lead);
+    line-height: var(--lh-normal);
+    color: var(--c-ink-muted);
+  }
+
+  /* The article body is rendered Markdown, so these have to reach elements
+     this component does not itself declare. */
+  .post__body {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--fs-body-md);
+    line-height: var(--lh-body);
+    color: var(--c-ink-muted);
+  }
+
+  .post__body :global(h2) {
+    margin-top: var(--space-xl);
+    font-size: var(--fs-h-md);
+    color: var(--c-ink);
+  }
+
+  .post__body :global(h3) {
+    margin-top: var(--space-lg);
+    font-size: var(--fs-h-xs);
+    color: var(--c-ink);
+  }
+
+  .post__body :global(p),
+  .post__body :global(ul),
+  .post__body :global(ol) {
+    margin-top: var(--space-sm);
+  }
+
+  .post__body :global(ul),
+  .post__body :global(ol) {
+    padding-left: var(--space-md);
+  }
+
+  .post__body :global(li) {
+    margin-top: var(--space-2xs);
+  }
+
+  .post__body :global(strong) {
+    color: var(--c-ink);
+  }
+
+  .post__body :global(a) {
+    color: var(--c-teal);
+    border-bottom: 1px solid rgba(var(--rgb-teal), 0.35);
+  }
+
+  /* Inline code. Fenced blocks are Shiki's <pre><code> and are handled below. */
+  .post__body :global(:not(pre) > code) {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--c-paper-alt);
+    border-radius: var(--r-3);
+    padding: 0.12em 0.35em;
+  }
+
+  .post__body :global(pre) {
+    margin-top: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--r-8);
+    border: 1px solid var(--c-line);
+    /* Long lines scroll inside the block rather than widening the page. */
+    overflow-x: auto;
+    font-size: var(--fs-mono-md);
+    line-height: var(--lh-relaxed);
+  }
+
+  .post__body :global(blockquote) {
+    margin-top: var(--space-sm);
+    padding-left: var(--space-sm);
+    border-left: 2px solid var(--c-amber);
+    color: var(--c-ink-soft);
+  }
+
+  .post__source {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--c-line);
+    font-family: var(--font-mono);
+    font-size: var(--fs-mono-md);
+    color: var(--c-ink-soft);
+  }
+</style>
