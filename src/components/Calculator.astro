@@ -92,7 +92,10 @@ const assumptions = [
       <div class="calc__kicker">CUMULATIVE NET PER INSTALL</div>
       <h2 class="calc__title">Payback model</h2>
       <p class="calc__lead" data-added="bento">
-        Pick the cohort that looks most like yours. Every assumption is underneath if you want it.
+        <span class="wide-only">
+          Pick the cohort that looks most like yours. Every assumption is underneath if you want it.
+        </span>
+        <span class="narrow-only">Pick the cohort that looks most like yours.</span>
       </p>
 
       <div class="calc__modes" role="group" aria-label="Monetisation model">
@@ -241,10 +244,17 @@ const assumptions = [
         </div>
 
       {/* --- verdict ----------------------------------------------------- */}
-      <p class="calc__verdict" data-when="isSub" hidden={!view.isSub}>
+      <p class="calc__verdict wide-only" data-when="isSub" hidden={!view.isSub}>
         On the numbers your dashboard reports, you would pause this campaign. On the real numbers it
         returns <span class="calc__verdict-fig" data-bind="lifeRoas">{v('lifeRoas')}</span> over the
         subscription's life. That decision is what the gap costs.
+      </p>
+      {/* The same claim in one line. Both carry the binding, so calculator.ts
+          keeps whichever is showing in step with the model. */}
+      <p class="calc__verdict narrow-only" data-when="isSub" hidden={!view.isSub}>
+        Your dashboard says pause. The real numbers return{' '}
+        <span class="calc__verdict-fig" data-bind="lifeRoas">{v('lifeRoas')}</span> over the
+        subscription's life.
       </p>
       <p class="calc__verdict" data-when="isAd" hidden={!view.isAd}>
         At this ARPDAU and this decay, an install returns

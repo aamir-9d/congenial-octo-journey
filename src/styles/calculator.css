@@ -818,10 +818,6 @@
     padding: 13px 15px;
   }
 
-  .calc__title {
-    font-size: 26px;
-  }
-
   .calc__lead {
     font-size: var(--t-card-sm);
   }

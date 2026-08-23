@@ -324,6 +324,54 @@ centred sub-header, per the design; the footer is on the new scale with its
 Blog link; and the phone layout landed for the hero, the bento cards and the
 calculator from `design/E2E Apps - Bento mobile.dc.html`.
 
+### The mobile build, from CLAUDE-MOBILE-PROMPT.md (23 Aug)
+
+The brief in `design/CLAUDE-MOBILE-PROMPT.md` is the mobile half that had been
+skipped, and it was accurate on every count. Working through it in its own order:
+
+**The six bugs.** All six were in the built page and all six passed every
+existing test. Root causes: `white-space: nowrap` on row *containers*, which
+stops the label wrapping so the row's intrinsic width exceeds the viewport; UA
+margins making a `width: 100%` range input 4px wider than its parent; labels
+too long for 402px; `.calc__summary` styled as visible body copy with no hiding
+rule at all; the breakeven annotation drawn on top of the day-7 tick; and a
+chart still carrying the cream palette as SVG presentation attributes.
+
+The sixth extended further than the brief guessed. `scripts/build-og-image.mjs`
+was not merely drifting -- the whole social card was still the cream design,
+ground, Archivo and all. It is what renders when anyone shares the site, nothing
+in the build depends on it, so it drifted completely unseen.
+
+**The Loop.** Rebuilt as a vertical rail below 768px. The rail markup lives
+inside each existing card, so the station content exists once and the
+accessibility tree stays clean -- "STATION 01" appears once in the built page.
+
+**Every other module.** Stack, Products, Founders, FAQ and the footer had no
+media query at all. That is the literal answer to "no mobile treatment": desktop
+layout, desktop type, rendered narrow.
+
+**The phone type scale is a token override, not fifteen rules.** The desktop
+clamps floor at 38px/30px and the phone design draws 32px/25px, so
+`tokens.css` redefines `--t-h1`, `--t-h2`, `--t-h2-closing`, `--t-h2-card` and
+`--t-h3` under `max-width: 640px`. Fifteen components read from them.
+
+**One deliberate departure.** The design draws footer link rows at 40px; they
+are built at 44px, because the brief's own acceptance test requires 44px and it
+is the accessibility floor rather than a stylistic choice.
+
+**What is NOT verified.** The brief's acceptance test is four console snippets
+that measure the real layout at 360/390/430, plus Lighthouse mobile. This repo
+has no browser and no headless DOM, by decision -- no new dependencies -- so
+none of that has been run. `tests/layout-402.test.ts` is the substitute: it
+asserts the absence of the *causes* of horizontal overflow rather than measuring
+its absence. That is weaker and should not be read as the same thing. The
+browser pass still needs doing by hand.
+
+Related: `global.css` still sets `overflow-x: hidden` on the page root. It is a
+reasonable last line of defence and it also *hides* what the console test
+measures -- it is what concealed the founder-bio clipping until a phone
+screenshot turned it up.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These

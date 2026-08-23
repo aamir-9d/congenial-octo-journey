@@ -154,3 +154,26 @@
    it to the new dark ground, putting nine pieces of text at 1.02:1.
 
    tests/tokens.test.ts fails the build if any of those names come back. */
+
+/* ---------------------------------------------------------------------------
+   Phone type scale.
+
+   From `design/E2E Apps - Bento mobile updated.dc.html`, which sets its own
+   sizes rather than letting the desktop clamps bottom out: the clamps floor at
+   38px/30px, and the phone design draws 32px/25px. Overriding the tokens hits
+   every section heading at once -- fifteen components read from them -- rather
+   than needing a rule per component that would drift apart.
+
+   640px, not 767px: this is phone type, and a tablet at 700px still has room
+   for the desktop scale.
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 640px) {
+  :root {
+    --t-h1: 32px;
+    --t-h2: 25px;
+    --t-h2-closing: 27px;
+    --t-h2-card: 25px;
+    --t-h3: 21px;
+  }
+}

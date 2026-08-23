@@ -2,7 +2,7 @@
  * Phone layout.
  *
  * `design/E2E Apps - Bento mobile.dc.html` is a separate signed-off design, not
- * a narrower rendering of the desktop one: the hero headline is 33px rather
+ * a narrower rendering of the desktop one: the hero headline is 32px rather
  * than a clamp bottoming out, the CTAs stack full width, the blog rows become
  * stacked blocks closing on a "Read" affordance, the Loop is a vertical rail
  * instead of a circle, and the calculator header is left-aligned where the
@@ -71,7 +71,10 @@ test('the phone breakpoint exists at all', { skip }, () => {
 test('the hero uses the mobile design, not a shrunken desktop one', { skip }, () => {
   const css = phoneCss(640);
 
-  assert.ok(has(css, '.hero__h1', 'font-size:33px'), 'hero headline is not the design 33px');
+  // The size comes from the --t-h1 token override, not a per-component rule,
+  // so every section heading moves together.
+  assert.match(css, /--t-h1:\s*32px/, 'the phone type scale is not applied');
+  assert.match(css, /--t-h2:\s*25px/, 'section headings are not the design 25px');
   assert.ok(has(css, '.hero__actions', 'display:grid'), 'CTAs do not stack');
   assert.ok(/min-height:52px/.test(css), 'stacked CTAs are not 52px tall');
   assert.ok(has(css, '.hero__lead', 'font-size:var(--t-body-sm)'), 'lead is not 15px');
