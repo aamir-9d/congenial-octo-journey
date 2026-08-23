@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# The redesign preview is a second full copy of this site, deployed from the
+# `redesign` branch. Every page in it is also noindex,nofollow; this is the
+# belt to that braces.
+Disallow: /congenial-octo-journey/next/
+
 Sitemap: https://aamir-9d.github.io/congenial-octo-journey/sitemap.xml

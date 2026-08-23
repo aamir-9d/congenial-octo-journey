@@ -14,6 +14,13 @@ interface Props {
 
 const { title, description, path = '/', noindex = false } = Astro.props;
 
+/* SITE_PREVIEW=1 marks a branch build served alongside the live site. Every
+   page in it is noindex,nofollow: a second full copy of the site competing in
+   search would be a real SEO problem, not a cosmetic one. Build-time only, so
+   process.env is the right read here. */
+const isPreview = process.env.SITE_PREVIEW === '1';
+const blockIndexing = noindex || isPreview;
+
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const asset = (p: string) => `${base}${p}`;
 
@@ -46,7 +53,7 @@ const LATIN =
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {blockIndexing && <meta name="robots" content={isPreview ? 'noindex, nofollow' : 'noindex, follow'} />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="E2E Apps" />

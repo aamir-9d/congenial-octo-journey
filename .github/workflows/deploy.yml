@@ -1,12 +1,28 @@
 name: Deploy to GitHub Pages
 
+# Two sites, one deployment.
+#
+# GitHub Pages allows exactly one deployment per repository, but that
+# deployment is just a static tree — so both sites live in it at different
+# paths:
+#
+#   /congenial-octo-journey/        main      the live site
+#   /congenial-octo-journey/next/   redesign  the Bento redesign, in progress
+#
+# This runs on a push to either branch and always rebuilds both, so whichever
+# one you touch, the deployed tree stays consistent. The workflow file is
+# identical on both branches — GitHub reads it from the branch you pushed.
+#
+# The live build's tests are enforced. The preview's are not: the redesign
+# deliberately breaks copy-parity and the class inventory while it is in
+# flight, and a failing preview must never be able to take the live site down.
+
 on:
   push:
-    branches: [main]
+    branches: [main, redesign]
   pull_request:
   workflow_dispatch:
 
-# Allow one concurrent deployment, and let a new push supersede a running one.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -24,6 +40,8 @@ env:
   PUBLIC_FORM_ENDPOINT: https://e2e-apps-forms.e2eapps.workers.dev/submit
 
   # Fill these in as you create them; each stays dormant while blank.
+  # Deliberately NOT set for the preview build below — a work-in-progress
+  # branch must not put test traffic into GA4 or fire ad conversions.
   # PUBLIC_CALENDLY_URL: https://calendly.com/<handle>/30min
   # PUBLIC_GTM_ID: GTM-XXXXXXX
   # PUBLIC_GA4_MEASUREMENT_ID: G-XXXXXXXXXX
@@ -35,36 +53,90 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
-      - run: npm ci
+      # --- the live site, always from main -------------------------------
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: live
 
-      - run: npm run build
+      - name: Install (live)
+        run: npm ci
+        working-directory: live
+
+      - name: Build (live)
+        run: npm run build
+        working-directory: live
 
       # Copy parity, the calculator's golden values and the "no DCLogic left"
-      # checks all read from dist/, so they run after the build.
-      - run: npm test
+      # checks all read from dist/, so they run after the build. Enforced:
+      # nothing ships to the live path with these red.
+      - name: Test (live)
+        run: npm test
+        working-directory: live
 
-      # Reported, not enforced: the amber-on-white pairings fail WCAG AA and
-      # that is a signed-off design decision (see NOTES.md). `|| true` keeps it
-      # visible in the log without blocking. Drop the `|| true` once the palette
-      # question is settled.
-      - name: Contrast audit
+      - name: Contrast audit (live)
         run: node scripts/check-contrast.mjs || true
+        working-directory: live
+
+      # --- the redesign preview, from the redesign branch ----------------
+      - name: Check out redesign
+        id: next
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: redesign
+          path: next
+
+      - name: Install (preview)
+        if: steps.next.outcome == 'success'
+        run: npm ci
+        working-directory: next
+
+      - name: Build (preview)
+        if: steps.next.outcome == 'success'
+        run: npm run build
+        working-directory: next
+        env:
+          SITE_BASE: /congenial-octo-journey/next
+          SITE_PREVIEW: '1'
+
+      # Reported, never enforced. The redesign breaks copy-parity and the class
+      # inventory on purpose until those tests are rewritten for it, and the
+      # live site must not be held hostage to a branch mid-rewrite.
+      - name: Test (preview, advisory)
+        if: steps.next.outcome == 'success'
+        run: npm test || echo "::warning::preview tests failing — expected while the redesign is in flight"
+        working-directory: next
+
+      # --- merge into one tree -------------------------------------------
+      - name: Assemble
+        run: |
+          mkdir -p out
+          cp -r live/dist/. out/
+          if [ -d next/dist ]; then
+            mkdir -p out/next
+            cp -r next/dist/. out/next/
+            echo "preview included at /next/"
+          else
+            echo "::notice::no redesign branch yet — deploying the live site only"
+          fi
+          find out -maxdepth 2 -name '*.html' | sort
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: out
 
   deploy:
     # Pages has no native PR previews; PRs build and test only. The artifact
     # from the build job is downloadable from the run summary for review.
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: >
+      github.event_name != 'pull_request' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/redesign')
     needs: build
     runs-on: ubuntu-latest
     permissions:
