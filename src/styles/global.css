@@ -580,3 +580,20 @@ button {
   white-space: nowrap;
   border: 0;
 }
+
+/* The signal travelling down the Loop's phone rail: each node lights in turn on
+   a 5.2s cycle, offset 1.3s apart, so the sequence reads as one thing moving
+   rather than four things blinking. */
+@keyframes loop-node {
+  0%,
+  68%,
+  100% {
+    background: var(--color-surface);
+    box-shadow: none;
+  }
+  10%,
+  38% {
+    background: rgba(var(--rgb-accent), 0.2);
+    box-shadow: 0 0 18px -2px rgba(var(--rgb-accent), 0.75);
+  }
+}

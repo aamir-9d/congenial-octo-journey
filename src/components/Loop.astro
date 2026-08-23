@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 /**
  * The Full Loop, as an actual cycle.
  *
@@ -23,12 +24,18 @@ const stations = [
     body: 'Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.',
     outcome:
       'Outcome: Events fire when they should, named what they should be, carrying what they should carry.',
+    lead: 'Event taxonomy, a written tracking plan, SDK integration and QA, consent and ATT sequencing.',
+    out: 'Events fire when they should, carrying what they should.',
+    delay: '0s',
   },
   {
     n: '02',
     title: 'Attribute',
     body: 'Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.',
     outcome: 'Outcome: Every install and every dollar traceable to the click that caused it.',
+    lead: 'MMP audit, SKAN and AdAttributionKit schemas, server-to-server events, web-to-app capture.',
+    out: 'Every dollar traceable to the click that caused it.',
+    delay: '1.3s',
   },
   {
     n: '03',
@@ -36,6 +43,9 @@ const stations = [
     body: 'Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.',
     outcome:
       'Outcome: A defensible number for what you can afford to pay for a user — market by market.',
+    lead: 'Cohort LTV, payback curves by channel and country, breakeven ceilings per market.',
+    out: 'A defensible number for what a user is worth.',
+    delay: '2.6s',
   },
   {
     n: '04',
@@ -43,6 +53,9 @@ const stations = [
     body: 'Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.',
     outcome:
       'Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.',
+    lead: 'Google, Apple Ads, Meta, TikTok, ASO and pricing — spent against those numbers.',
+    out: 'Budget where the arithmetic says it works.',
+    delay: '3.9s',
   },
 ];
 
@@ -76,14 +89,39 @@ const RING = 'M 150 38 A 112 112 0 1 1 149.9 38 Z';
         (['01', '02', '03', '04'] as const).map((n) => (
           <div class:list={['loop__cell', `loop__cell--${n}`]}>
             <div class="loop__card" data-reveal="1">
-              <div class="loop__station">STATION {byNumber[n]!.n}</div>
-              <h3 class="loop__title">{byNumber[n]!.title}</h3>
-              <p class="loop__body">{byNumber[n]!.body}</p>
-              <p class="loop__outcome">{byNumber[n]!.outcome}</p>
+              {/* The rail is the loop on a phone. It is inside the card rather
+                  than a second copy of the section, so the station content
+                  exists once and the accessibility tree stays clean. */}
+              <div class="loop__rail" aria-hidden="true">
+                <span class="loop__node" style={`--node-delay:${byNumber[n]!.delay}`}>
+                  {byNumber[n]!.n}
+                </span>
+                <span class="loop__line"></span>
+              </div>
+              <div class="loop__content">
+                <div class="loop__station">STATION {byNumber[n]!.n}</div>
+                <h3 class="loop__title">{byNumber[n]!.title}</h3>
+                <p class="loop__body wide-only">{byNumber[n]!.body}</p>
+                <p class="loop__lead narrow-only">{byNumber[n]!.lead}</p>
+                <p class="loop__outcome wide-only">{byNumber[n]!.outcome}</p>
+                <p class="loop__out narrow-only">{byNumber[n]!.out}</p>
+              </div>
             </div>
           </div>
         ))
       }
+
+      {/* The circle never showed the return on a phone. This does: the path
+          drops out of station 04 and turns back toward 01. */}
+      <div class="loop__return" data-reveal="1">
+        <svg viewBox="0 0 36 76" role="img" aria-label="The output of Station 04 returns to Station 01">
+          <path d="M18 0 L18 44 Q18 60 34 60" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.75"></path>
+        </svg>
+        <p class="loop__return-note">
+          <Icon name="arrow-u-left-up" size={17} />
+          <span>Fresh signal flows back into Station 01. That's the loop closing.</span>
+        </p>
+      </div>
 
       <div class="loop__cell loop__cell--ring">
         <svg
@@ -292,10 +330,142 @@ const RING = 'M 150 38 A 112 112 0 1 1 149.9 38 Z';
     }
   }
 
+  /* --- the phone: a rail, not a circle -------------------------------------
+
+     Below 768px the ring stops being a diagram and becomes decoration sitting
+     above four unrelated cards, so the animation and the content explain each
+     other to nobody. The rail replaces it: the stations sit ON the line, the
+     signal lights each node in turn, and the dashed return path closes it back
+     to 01. Same idea, legible at 402px.
+     ---------------------------------------------------------------------- */
+
+  .loop__rail,
+  .loop__return {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    /* One continuous line, so no gap between rows and no card ground. */
+    .loop__grid {
+      display: block;
+    }
+
+    .loop__cell--ring {
+      display: none;
+    }
+
+    .loop__card {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 14px;
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      text-align: left;
+    }
+
+    .loop__rail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .loop__node {
+      width: 36px;
+      height: 36px;
+      flex: none;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-accent);
+      background: var(--color-surface);
+      font-family: var(--font-mono);
+      font-size: var(--t-mono-sm);
+      color: var(--color-accent);
+      animation: loop-node 5.2s ease-in-out var(--node-delay) infinite;
+    }
+
+    .loop__line {
+      width: 2px;
+      flex: 1;
+      min-height: 20px;
+      background: linear-gradient(180deg, rgba(var(--rgb-accent), 0.5), var(--color-line));
+    }
+
+    .loop__content {
+      padding-bottom: var(--s8);
+    }
+
+    .loop__title {
+      margin-top: 0;
+      font-size: 21px;
+      line-height: 1.2;
+    }
+
+    .loop__lead {
+      margin-top: var(--s2);
+      font-size: 13.5px;
+      line-height: var(--lh-body);
+      color: var(--color-text-2);
+    }
+
+    .loop__out {
+      margin-top: var(--s3);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: var(--lh-body);
+      color: var(--color-accent);
+    }
+
+    /* The station kicker is redundant once the number is on the rail. */
+    .loop__station {
+      display: none;
+    }
+
+    .loop__return {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .loop__return svg {
+      width: 36px;
+      height: 76px;
+    }
+
+    .loop__return-note {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      align-self: center;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(var(--rgb-accent), 0.09);
+      box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.28);
+      font-size: 13.5px;
+      line-height: var(--lh-tight);
+      color: var(--color-text);
+    }
+
+    .loop__return-note svg {
+      flex: none;
+      color: var(--color-accent);
+    }
+
+    .loop__pull {
+      margin-top: var(--s8);
+      text-align: left;
+    }
+  }
+
   /* The travelling dot is the only continuous motion here. */
   @media (prefers-reduced-motion: reduce) {
     .loop__svg :global(animateMotion) {
       display: none;
+    }
+
+    .loop__node {
+      animation: none;
     }
   }
 </style>
