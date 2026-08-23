@@ -34,7 +34,7 @@ const findings = [
 
 <section class="section" data-section="proof">
   <div class="wrap">
-    <div class="section-head proof__head" data-reveal="1">
+    <div class="section-head" data-reveal="1">
       <div class="eyebrow eyebrow--amber">WHAT THE AUDITS TURN UP</div>
       <h2 class="proof__h2">Three findings, from real audits.</h2>
     </div>
@@ -58,9 +58,6 @@ const findings = [
 </section>
 
 <style>
-  .proof__head {
-    max-width: 52ch;
-  }
 
   .proof__h2 {
     margin-top: 16px;
@@ -95,11 +92,16 @@ const findings = [
     color: var(--color-text-4);
   }
 
+  /* 2.1em, not the design's 1.9em. "Most of the budget" wraps to two lines at
+     every column width the grid produces, and 1.9em reserves less than two
+     lines at line-height 1.05 — so that card's body started lower than the
+     other two and the row lost its baseline. Two lines is the real maximum
+     here; reserving for it is what keeps the three bodies level. */
   .proof__stat {
     margin-top: 14px;
     padding-top: 18px;
     border-top: 2px solid var(--color-accent);
-    min-height: 1.9em;
+    min-height: 2.1em;
     font-size: var(--t-stat);
     font-weight: var(--fw-bold);
     letter-spacing: var(--ls-h1);

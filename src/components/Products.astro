@@ -23,7 +23,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <section id="products" class="section" data-section="products" data-added="products">
   <div class="wrap">
-    <div data-reveal="1">
+    <div class="section-head" data-reveal="1">
       <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
       <h2 class="products__head">Three products, in detail.</h2>
       <p class="section-lead">
@@ -69,8 +69,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 
   .products__head {
-    font-size: var(--fs-h2);
-    color: var(--c-ink);
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
   }
 
   /* Same 280px floor every other grid on the page uses — deliberately not the

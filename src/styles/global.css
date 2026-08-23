@@ -413,10 +413,36 @@ input[type='checkbox'] {
 }
 
 /* Every section header is centred — the old mix of left- and centre-aligned
-   headers is what made the page read as unaligned. */
+   headers is what made the page read as unaligned.
+
+   The measure deliberately lives on the children, not here. `ch` resolves
+   against the element's own font-size, so a `max-width` in `ch` on this
+   container resolves at 16px while constraining a heading up to 44px — about
+   nineteen characters a line. That is what was breaking "Three findings, from
+   real audits." as "...from real / audits." The heading and the lead each get
+   a measure at their own size instead, where `ch` means what it says. */
 .section-head {
   text-align: center;
   margin: 0 auto;
+  max-width: min(100%, 78ch);
+}
+
+.section-head h2 {
+  max-width: 24ch;
+  margin-inline: auto;
+}
+
+.section-head .section-lead {
+  max-width: 62ch;
+  margin-inline: auto;
+}
+
+/* Evens the line lengths rather than leaving a one-word orphan on the last
+   line. Headings only — it is expensive on long text. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
 .eyebrow {
