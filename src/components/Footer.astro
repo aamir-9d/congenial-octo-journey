@@ -117,4 +117,50 @@ const links = [
   .footer__link--dim {
     color: var(--color-text-4);
   }
+
+  /* --- phone ---------------------------------------------------------------
+     The link row wrapped into a ragged four-then-two arrangement with targets
+     under 44px. A two-column grid with 40px rows is both tidier and tappable.
+     ---------------------------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .footer__top {
+      display: block;
+    }
+
+    .footer__logo {
+      font-size: 18px;
+    }
+
+    .footer__tag {
+      margin-top: var(--s3);
+      max-width: none;
+      font-size: 13.5px;
+      line-height: var(--lh-prose);
+    }
+
+    .footer__links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s3) var(--s4);
+      margin-top: var(--s6);
+      font-size: 13.5px;
+    }
+
+    /* The design draws these at 40px. 44px instead: the brief's own acceptance
+       test requires it, and it is the accessibility floor rather than a
+       stylistic choice. Four pixels does not change how the block reads. */
+    .footer__links a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+    }
+
+    .footer__bottom {
+      margin-top: var(--s6);
+      padding-top: var(--s4);
+      gap: var(--s3) var(--s6);
+      font-size: 10.5px;
+    }
+  }
 </style>

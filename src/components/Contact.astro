@@ -397,4 +397,90 @@ const spendOptions = [
     background: rgba(var(--rgb-accent), 0.18);
     border: 1px solid rgba(var(--rgb-accent), 0.5);
   }
+
+  /* --- phone ---------------------------------------------------------------
+     The form was the tallest thing on the page. Three things caused it: a
+     120px resizable textarea, labels at body size, and inputs sized by padding
+     rather than to a target height.
+     ---------------------------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .contact__close-h2 {
+      font-size: 27px;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .contact__close-lead {
+      margin-top: var(--s4);
+      font-size: var(--t-body-sm);
+      line-height: var(--lh-body);
+    }
+
+    /* One filled button, full width, with the address under it. */
+    .contact__close .btn-primary {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      min-height: 52px;
+      margin-top: var(--s8);
+    }
+
+    .contact__panel {
+      margin-left: 0;
+      margin-right: 0;
+      padding: var(--s8) var(--s6);
+      border-radius: var(--radius-lg);
+    }
+
+    .form__row {
+      grid-template-columns: 1fr;
+      gap: var(--s4);
+    }
+
+    /* 10.5px mono uppercase: at body size these read as content rather than
+       as field names, which is what made the form look oversized. */
+    .form__label {
+      font-size: 10.5px;
+      letter-spacing: var(--ls-meta);
+      text-transform: uppercase;
+      color: var(--color-text-3);
+    }
+
+    .form__field {
+      gap: 6px;
+    }
+
+    .form__input {
+      min-height: 46px;
+      padding: 10px 13px;
+      font-size: var(--t-body-sm);
+    }
+
+    /* Fixed and unresizable: a drag handle on a phone only ever gets caught by
+       accident while scrolling. */
+    .form__textarea {
+      height: 96px;
+      min-height: 0;
+      resize: none;
+    }
+
+    .form__actions {
+      display: grid;
+      gap: var(--s4);
+    }
+
+    .form__submit {
+      justify-content: center;
+      width: 100%;
+      min-height: 52px;
+      padding: 0;
+    }
+
+    .form__note {
+      text-align: center;
+      font-size: 10.5px;
+      line-height: var(--lh-answer);
+    }
+  }
 </style>

@@ -160,15 +160,32 @@ const fmt = (d: Date) =>
       line-height: 1.16;
     }
 
-    /* A link rather than a button: the section already shows every post there
-       is, so this is a way back to the index, not the primary action. */
+    /* Full width under the list, per the design — it is the only way on to
+       the index from here once the header stops being a row. */
     .blog__all {
+      order: 2;
+      justify-content: center;
+      width: 100%;
+      min-height: 50px;
       margin-top: var(--s6);
-      padding: 0;
-      border: 0;
-      background: none;
-      font-size: var(--t-card);
-      color: var(--color-accent);
+      font-size: var(--t-body-sm);
+    }
+
+    /* `display: contents` dissolves the header so its two children become
+       items of the section's own column. That is what lets the button sit
+       after the list, where the design puts it, without a second copy of it
+       in the markup. */
+    .blog__head {
+      display: contents;
+    }
+
+    .blog .wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog__list {
+      order: 2;
     }
 
     .blog__row {
@@ -200,7 +217,12 @@ const fmt = (d: Date) =>
       line-height: 1.3;
     }
 
-    .blog__kicker,
+    .blog__kicker {
+      margin-top: var(--s2);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
     .blog__arrow {
       display: none;
     }

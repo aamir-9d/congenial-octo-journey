@@ -192,4 +192,62 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       transform: none;
     }
   }
+
+  /* --- phone ------------------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .products__card {
+      padding: var(--s6);
+    }
+
+    .products__kicker {
+      font-size: 10px;
+      line-height: var(--lh-tight);
+    }
+
+    .products__name {
+      margin-top: var(--s3);
+      font-size: 21px;
+    }
+
+    .products__headline {
+      margin-top: var(--s2);
+      font-size: var(--t-body-sm);
+      line-height: 1.35;
+    }
+
+    .products__summary {
+      margin-top: var(--s3);
+      font-size: 13.5px;
+    }
+
+    .products__stack {
+      margin-top: var(--s6);
+      padding-top: var(--s3);
+      font-size: 10.5px;
+      line-height: var(--lh-tight);
+    }
+
+    /* The affordance and the file size share a line: the reader wants to know
+       what it costs them to tap before they tap it. */
+    .products__foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: var(--s3);
+    }
+
+    .products__open {
+      flex: 1;
+      min-width: 0;
+      font-size: 13.5px;
+    }
+
+    .products__meta {
+      flex: none;
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+  }
 </style>

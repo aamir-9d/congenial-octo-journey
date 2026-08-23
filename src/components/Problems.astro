@@ -97,7 +97,7 @@ const cards: Card[] = [
     lead: 'Someone clicks a Google ad on your website, installs later, subscribes a week after that.',
     body: 'Without `gclid`/`gbraid`/`wbraid` capture and a conversion sent back, Google never learns which click earned the money — so it optimises toward the wrong people.',
     visual: 'code',
-    code: 'web_click → install → ??? → subscription',
+    code: 'web_click → install\n→ ??? → subscription',
   },
   {
     span: 4,
@@ -451,6 +451,7 @@ const cards: Card[] = [
     font-size: var(--t-mono-xs);
     line-height: var(--lh-prose);
     white-space: pre-line;
+    overflow-wrap: anywhere;
     color: var(--color-text-3);
     background: var(--color-surface-sunk);
     border-radius: var(--radius-sm);

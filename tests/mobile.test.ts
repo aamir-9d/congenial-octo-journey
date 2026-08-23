@@ -3,9 +3,10 @@
  *
  * `design/E2E Apps - Bento mobile.dc.html` is a separate signed-off design, not
  * a narrower rendering of the desktop one: the hero headline is 33px rather
- * than a clamp bottoming out, the CTAs stack full width, the blog rows drop
- * their kicker for a "Read" affordance, and the calculator header is
- * left-aligned where the desktop one is centred.
+ * than a clamp bottoming out, the CTAs stack full width, the blog rows become
+ * stacked blocks closing on a "Read" affordance, the Loop is a vertical rail
+ * instead of a circle, and the calculator header is left-aligned where the
+ * desktop one is centred.
  *
  * None of that is visible to the rest of this suite, which reads the built page
  * as one document and never asks what a rule is gated behind. So a phone rule
@@ -86,12 +87,14 @@ test('bento cards get the phone padding and type', { skip }, () => {
   );
 });
 
-test('blog rows drop the kicker for a Read affordance', { skip }, () => {
+test('blog rows are stacked blocks closing on a Read affordance', { skip }, () => {
   const css = phoneCss(767);
 
   assert.ok(has(css, '.blog__title', 'font-size:17px'), 'post titles are not the design 17px');
   assert.ok(/\.blog__read[^{}]*\{[^{}]*display:inline-flex/.test(css), '"Read" never becomes visible');
-  assert.ok(/\.blog__kicker[^{}]*\{[^{}]*display:none/.test(css), 'kickers still render');
+  // The updated mobile design keeps the kicker -- an earlier pass dropped it.
+  assert.ok(!/\.blog__kicker[^{}]*\{[^{}]*display:none/.test(css), 'the kicker should stay on a phone');
+  assert.ok(/\.blog__all[^{}]*\{[^{}]*width:100%/.test(css), '"All posts" is not full width');
 
   // And it must be absent above the breakpoint, or it doubles the desktop row.
   const desktop = html.replace(/@media[^{]+\{(?:[^{}]|\{[^{}]*\})*\}/g, '');
@@ -110,13 +113,25 @@ test('the calculator becomes one column with 44px targets', { skip }, () => {
 test('no phone-width rule sets a touch target under 44px', { skip }, () => {
   // Not exhaustive — it cannot be, without a browser. It pins the values the
   // mobile design states outright, which is where the regressions have come from.
-  const css = phoneCss(640);
-  const heights = [...css.matchAll(/min-height:(\d+)px/g)].map((m) => Number(m[1]));
+  //
+  // Selector-aware, because a min-height is not automatically a touch target:
+  // the Loop rail's connector line carries one and nothing taps it.
+  const DECORATIVE = /\.loop__line|\.loop__node|\.hero__bloom/;
 
-  assert.ok(heights.length >= 2, 'no explicit touch-target heights survive at phone width');
-  assert.deepEqual(
-    heights.filter((h) => h < 44),
-    [],
-    'a phone-width rule sets a touch target under 44px',
-  );
+  const css = phoneCss(767);
+  const offenders: string[] = [];
+  let found = 0;
+
+  for (const m of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selector = m[1]!.trim();
+    const height = /min-height:\s*(\d+(?:\.\d+)?)px/.exec(m[2]!);
+    if (!height) continue;
+
+    found++;
+    if (DECORATIVE.test(selector)) continue;
+    if (Number(height[1]) < 44) offenders.push(`${selector} → ${height[1]}px`);
+  }
+
+  assert.ok(found >= 2, 'no explicit touch-target heights survive at phone width');
+  assert.deepEqual(offenders, [], 'these phone-width targets are under 44px:\n  ' + offenders.join('\n  '));
 });

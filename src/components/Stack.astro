@@ -303,4 +303,53 @@ const filters = [
     line-height: var(--lh-mono);
     color: var(--color-text-2);
   }
+
+  /* --- phone ---------------------------------------------------------------
+     The filter chips become one scrolling strip rather than three wrapped
+     rows, and the bundle bodies get `overflow-wrap: anywhere` because they are
+     long slash-separated tokens that will otherwise force the page sideways.
+     ---------------------------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .stack__filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      margin-left: calc(var(--gutter) * -1);
+      margin-right: calc(var(--gutter) * -1);
+      padding: 0 var(--gutter) var(--s2);
+    }
+
+    .stack__filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .stack__chip {
+      flex: none;
+      min-height: 44px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .stack__title {
+      font-size: 16.5px;
+      line-height: 1.25;
+    }
+
+    .stack__meta {
+      font-size: 10.5px;
+      line-height: var(--lh-tight);
+    }
+
+    .stack__body {
+      font-size: 11.5px;
+      line-height: var(--lh-mono);
+      overflow-wrap: anywhere;
+    }
+
+    .stack__summary {
+      min-height: 44px;
+    }
+  }
 </style>

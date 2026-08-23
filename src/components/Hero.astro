@@ -281,9 +281,12 @@ const chips: { label: string; icon: IconName }[] = [
       -webkit-mask-image: radial-gradient(ellipse 80% 56% at 50% 30%, #000 26%, transparent 76%);
     }
 
+    /* nowrap so the pill stays one line rather than breaking into two at
+       402px, which is what makes the top of the page look ragged. */
     .hero__pill {
-      font-size: var(--t-mono-3xs);
-      padding: 7px 13px;
+      font-size: 10px;
+      padding: 7px 12px;
+      white-space: nowrap;
     }
 
     .hero__h1 {
@@ -313,8 +316,33 @@ const chips: { label: string; icon: IconName }[] = [
       font-size: var(--t-body);
     }
 
+    /* Seven chips wrap into five ragged centred rows at this width. One
+       horizontally-scrolling strip instead: it reads as a deliberate row, and
+       the overflow is the user's to explore rather than the layout's problem.
+       The scrollbar is hidden; the fade at the right edge is what says there
+       is more. */
     .hero__chips {
       margin-top: var(--s8);
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      /* Bleed to the viewport edge so the strip reads as scrollable rather
+         than as a row that happens to be clipped. */
+      margin-left: calc(var(--gutter) * -1);
+      margin-right: calc(var(--gutter) * -1);
+      padding: 0 var(--gutter);
+      scroll-padding-left: var(--gutter);
+    }
+
+    .hero__chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hero__chip {
+      flex: none;
+      font-size: 11.5px;
     }
   }
 

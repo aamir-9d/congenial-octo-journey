@@ -18,16 +18,20 @@ const findings = [
     label: 'Trial-to-paid, misreported',
     stat: '11% → 17%',
     body: 'A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.',
+    short: 'Every budget decision had been built on the wrong number.',
   },
   {
     label: 'The paywall nobody reached',
     stat: '~5%',
     body: 'Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.',
+    short: 'Share of new users who ever saw a payment screen. Nobody had measured it.',
   },
   {
     label: 'Spend in markets that cannot pay back',
+    labelShort: 'Markets that cannot pay back',
     stat: 'Most of the budget',
     body: 'At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.',
+    short: 'Months of spend in countries that mathematically could not break even.',
   },
 ];
 ---
@@ -44,10 +48,18 @@ const findings = [
         findings.map((f) => (
           <div class="proof__card" data-reveal="1">
             <div class="proof__label" data-added="bento">
-              {f.label}
+              {'labelShort' in f ? (
+                <>
+                  <span class="wide-only">{f.label}</span>
+                  <span class="narrow-only">{(f as { labelShort: string }).labelShort}</span>
+                </>
+              ) : (
+                f.label
+              )}
             </div>
             <div class="proof__stat tabular">{f.stat}</div>
-            <p class="proof__body">{f.body}</p>
+            <p class="proof__body wide-only">{f.body}</p>
+            <p class="proof__body narrow-only">{f.short}</p>
           </div>
         ))
       }
@@ -123,10 +135,40 @@ const findings = [
     color: var(--color-text-4);
   }
 
+  /* On a phone the paragraph is replaced by one sentence — the card has to be
+     readable in a glance while scrolling, and the full account belongs on a
+     call anyway. */
   @media (max-width: 767px) {
     .proof__label,
     .proof__stat {
       min-height: 0;
+    }
+
+    .proof__card {
+      padding: var(--s6);
+    }
+
+    .proof__label {
+      font-size: 10px;
+      line-height: var(--lh-tight);
+    }
+
+    .proof__stat {
+      margin-top: var(--s3);
+      padding-top: var(--s4);
+      font-size: 28px;
+      letter-spacing: -0.032em;
+      line-height: 1.06;
+    }
+
+    .proof__body {
+      margin-top: var(--s3);
+      font-size: 13.5px;
+    }
+
+    .proof__note {
+      margin-top: var(--s6);
+      font-size: 11px;
     }
   }
 </style>

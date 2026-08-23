@@ -209,4 +209,54 @@ const founders = [
     margin-right: auto;
     text-align: center;
   }
+
+  /* --- phone ---------------------------------------------------------------
+     The photo shrinks and moves beside the name rather than above it, so the
+     card opens with who this is instead of with a 78px placeholder.
+     ---------------------------------------------------------------------- */
+
+  @media (max-width: 767px) {
+    .founders__card {
+      padding: var(--s6);
+    }
+
+    .founders__id {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .founders__photo,
+    .founders__slot {
+      width: 64px;
+      height: 64px;
+      flex: none;
+    }
+
+    .founders__name {
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .founders__role {
+      margin-top: 4px;
+      font-size: 10px;
+      line-height: var(--lh-tight);
+    }
+
+    .founders__bio {
+      margin-top: var(--s6);
+      font-size: 14px;
+      line-height: var(--lh-prose);
+    }
+
+    .founders__tag {
+      font-size: 10.5px;
+    }
+
+    .founders__linkedin {
+      min-height: 44px;
+      font-size: 13.5px;
+    }
+  }
 </style>
