@@ -1,5 +1,6 @@
 ---
 import Slider from './Slider.astro';
+import Icon from './Icon.astro';
 import { computeView, INITIAL_STATE, type CalcState, type CalcView } from '../scripts/calc-model';
 import { PRESETS, presetBreakeven } from '../data/presets';
 import '../styles/calculator.css';
@@ -84,38 +85,31 @@ const assumptions = [
   'Steady-state approximation — no cohort-size or price changes over the horizon.',
 ];
 ---
-
 <section id="payback" class="payback section" data-section="payback">
   <div class="calc">
-  {/* --- header: title + mode toggle ------------------------------------- */}
-  <div class="calc__head">
-    <div>
+    {/* --- header: centred, mode toggle beneath ------------------------- */}
+    <div class="calc__head">
       <div class="calc__kicker">CUMULATIVE NET PER INSTALL</div>
-      <div class="calc__title">Payback model</div>
-    </div>
-    <div class="calc__modes" role="group" aria-label="Monetisation model">
-      <button type="button" class="calc__mode" data-set="mode" data-value="sub" aria-pressed={String(st.mode === 'sub')}>
-        Subscription
-      </button>
-      <button type="button" class="calc__mode" data-set="mode" data-value="ad" aria-pressed={String(st.mode === 'ad')}>
-        Ad-monetised
-      </button>
-    </div>
-  </div>
+      <h2 class="calc__title">Payback model</h2>
+      <p class="calc__lead" data-added="bento">
+        Pick the cohort that looks most like yours. Every assumption is underneath if you want it.
+      </p>
 
-  <div>
-    {/* --- chart --------------------------------------------------------- */}
-    <div class="calc__chart-pane">
+      <div class="calc__modes" role="group" aria-label="Monetisation model">
+        <button type="button" class="calc__mode" data-set="mode" data-value="sub" aria-pressed={String(st.mode === 'sub')}>
+          Subscription
+        </button>
+        <button type="button" class="calc__mode" data-set="mode" data-value="ad" aria-pressed={String(st.mode === 'ad')}>
+          Ad-monetised
+        </button>
+      </div>
+    </div>
+
     {/* Subscription only: the ad model has no trial funnel to preset. */}
     <div class="calc__presets" data-when="isSub" data-added="bento" role="group" aria-label="Cohort preset">
       {
         PRESETS.map((p) => (
-          <button
-            type="button"
-            class="calc__preset"
-            data-preset={p.key}
-            aria-pressed={String(p.key === 'typical')}
-          >
+          <button type="button" class="calc__preset" data-preset={p.key} aria-pressed={String(p.key === 'typical')}>
             <span class="calc__preset-dot" aria-hidden="true" />
             <span class="calc__preset-body">
               <span class="calc__preset-top">
@@ -129,25 +123,23 @@ const assumptions = [
       }
     </div>
 
-      <div class="calc__chart-bar">
-        <div class="calc__horizons" role="group" aria-label="Time horizon">
-          {
-            [90, 180, 365].map((h) => (
-              <button
-                type="button"
-                class="calc__horizon"
-                data-set="horizon"
-                data-value={h}
-                aria-pressed={String(st.horizon === h)}
-              >
-                {h}d
-              </button>
-            ))
-          }
-        </div>
-        <div class="calc__breakeven" data-bind="breakevenLabel">{v('breakevenLabel')}</div>
+    <div class="calc__horizon-row">
+      <span class="calc__horizon-label">HORIZON</span>
+      <div class="calc__horizons" role="group" aria-label="Time horizon">
+        {
+          [90, 180, 365].map((h) => (
+            <button type="button" class="calc__horizon" data-set="horizon" data-value={h} aria-pressed={String(st.horizon === h)}>
+              {h}d
+            </button>
+          ))
+        }
       </div>
+      <span class="calc__breakeven tabular" data-bind="breakevenLabel">{v('breakevenLabel')}</span>
+    </div>
 
+    {/* --- the chart, beside what it means ------------------------------ */}
+    <div class="calc__main">
+      <div class="calc__chart-col">
       <div id="chart-wrap" class="chart" style={chartVars}>
         <svg
           id="chart-svg"
@@ -195,7 +187,6 @@ const assumptions = [
           {v('breakevenLabel')}
         </div>
       </div>
-
       <div class="calc__legend">
         <span class="calc__legend-item"><span class="calc__swatch--true"></span>True revenue</span>
         <span class="calc__legend-item" data-when="isSub" hidden={!view.isSub}>
@@ -205,51 +196,47 @@ const assumptions = [
           <span class="calc__swatch--gap"></span>Invisible to your dashboard
         </span>
       </div>
-
-      {/* --- assumptions ------------------------------------------------- */}
-      <div class="calc__assump">
-        <div class="calc__assump-bar">
-          <div class="calc__assump-title">A MODEL, NOT A MEASUREMENT.</div>
-          <button
-            type="button"
-            id="assump-toggle"
-            class="calc__assump-btn"
-            aria-expanded={String(st.assumpOpen)}
-            aria-controls="assump-panel"
-          >
-            Assumptions <span data-bind="assumpIcon">{st.assumpOpen ? '−' : '+'}</span>
-          </button>
-        </div>
-        <div id="assump-panel" class="calc__assump-panel" data-when="assumpOpen" hidden={!st.assumpOpen}>
-          <ul class="calc__assump-list">
-            {assumptions.map((a) => <li>{a}</li>)}
-          </ul>
-          <p class="calc__assump-note">
-            Real retention isn't perfectly geometric &#8212; month one churns harder, then the curve
-            flattens. This model will be slightly pessimistic past month six.
-          </p>
-        </div>
       </div>
 
-      {/* --- tiles ------------------------------------------------------- */}
-      <div class="calc__tiles">
-        <div class="calc__tile">
-          <div class="calc__tile-label">TRUE BREAKEVEN</div>
-          <div class="calc__tile-val calc__tile-val--teal" data-bind="tileTrue">{v('tileTrue')}</div>
+      <div class="calc__side">
+        <div class="calc__rows">
+          <div class="calc__row">
+            <span class="calc__row-label">True breakeven</span>
+            <span class="calc__row-val calc__row-val--accent tabular" data-bind="tileTrue">{v('tileTrue')}</span>
+          </div>
+          <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
+            <span class="calc__row-label">Dashboard reports</span>
+            <span class="calc__row-val calc__row-val--dim tabular" data-bind="tileDash">{v('tileDash')}</span>
+          </div>
+          <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
+            <span class="calc__row-label">Invisible / 1,000 installs</span>
+            <span class="calc__row-val tabular" data-bind="tileInvisible">{v('tileInvisible')}</span>
+          </div>
+          <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
+            <span class="calc__row-label">LTV per install</span>
+            <span class="calc__row-val tabular" data-bind="ltvInstallLabel">{v('ltvInstallLabel')}</span>
+          </div>
+          <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
+            <span class="calc__row-label">Lifetime ROAS</span>
+            <span class="calc__row-val tabular" data-bind="lifeRoas">{v('lifeRoas')}</span>
+          </div>
+          <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
+            <span class="calc__row-label">Decay exponent b</span>
+            <span class="calc__row-val tabular" data-bind="bLabel">{v('bLabel')}</span>
+          </div>
+          <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
+            <span class="calc__row-label">Model predicts D7</span>
+            <span class="calc__row-val tabular" data-bind="predD7Label">{v('predD7Label')}</span>
+          </div>
+          <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
+            <span class="calc__row-label">Active days by D30</span>
+            <span class="calc__row-val tabular" data-bind="activeD30Label">{v('activeD30Label')}</span>
+          </div>
+          <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
+            <span class="calc__row-label" data-bind="roasTileLabel">{v('roasTileLabel')}</span>
+            <span class="calc__row-val tabular" data-bind="tileRoas">{v('tileRoas')}</span>
+          </div>
         </div>
-        <div class="calc__tile">
-          <div class="calc__tile-label">YOUR DASHBOARD REPORTS</div>
-          <div class="calc__tile-val calc__tile-val--red" data-bind="tileDash">{v('tileDash')}</div>
-        </div>
-        <div class="calc__tile">
-          <div class="calc__tile-label">INVISIBLE / 1,000 INSTALLS</div>
-          <div class="calc__tile-val" data-bind="tileInvisible">{v('tileInvisible')}</div>
-        </div>
-        <div class="calc__tile">
-          <div class="calc__tile-label" data-bind="roasTileLabel">{v('roasTileLabel')}</div>
-          <div class="calc__tile-val" data-bind="tileRoas">{v('tileRoas')}</div>
-        </div>
-      </div>
 
       {/* --- verdict ----------------------------------------------------- */}
       <p class="calc__verdict" data-when="isSub" hidden={!view.isSub}>
@@ -265,8 +252,16 @@ const assumptions = [
       </p>
 
       <p aria-live="polite" class="calc__summary" data-bind="chartSummary">{v('chartSummary')}</p>
+      </div>
     </div>
 
+    {/* Every control, and the model's own caveats, behind one disclosure. */}
+    <details class="calc__adjust">
+      <summary class="calc__adjust-summary">
+        <span>Adjust the assumptions</span>
+        <Icon name="caret-down" size={14} />
+      </summary>
+      <div class="calc__adjust-panel">
     {/* --- controls ------------------------------------------------------ */}
     <div class="calc__controls">
       {/* subscription */}
@@ -464,12 +459,25 @@ const assumptions = [
         </div>
       </div>
     </div>
+      {/* The model's own caveats. No inner toggle: this already sits inside
+          "Adjust the assumptions", and a disclosure within a disclosure is
+          clutter rather than progressive disclosure. */}
+      <div class="calc__caveats">
+        <div class="calc__caveats-title">A MODEL, NOT A MEASUREMENT.</div>
+        <ul class="calc__caveats-list">
+          {assumptions.map((a) => <li>{a}</li>)}
+        </ul>
+        <p class="calc__caveats-note">
+          Real retention isn't perfectly geometric &#8212; month one churns harder, then the curve
+          flattens. This model will be slightly pessimistic past month six.
+        </p>
+      </div>
+      </div>
+    </details>
   </div>
-</div>
 </section>
 
 <script>
   import { initCalculator } from '../scripts/calculator';
   initCalculator();
 </script>
-

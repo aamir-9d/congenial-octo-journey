@@ -32,101 +32,7 @@
 
   /* --- header ------------------------------------------------------------ */
 
-  .calc__head {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-sm) var(--space-md);
-    border-bottom: 1px solid var(--c-line);
-    background: var(--c-paper-raised);
-  }
-
-  .calc__kicker {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-eyebrow-md);
-    color: var(--c-ink-soft);
-  }
-
-  .calc__title {
-    margin-top: var(--space-3xs);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-h-xs);
-    letter-spacing: var(--ls-slight);
-    color: var(--c-ink);
-  }
-
-  .calc__modes {
-    display: flex;
-    gap: var(--space-3xs);
-    padding: var(--space-3xs);
-    border-radius: var(--r-pill);
-    border: 1px solid var(--c-line);
-    background: var(--c-white);
-  }
-
-  .calc__mode {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    padding: var(--space-2xs) var(--space-sm);
-    border-radius: var(--r-pill);
-    border: 0;
-    cursor: pointer;
-    white-space: nowrap;
-    background: transparent;
-    color: var(--c-ink-muted);
-  }
-
-  .calc__mode[aria-pressed='true'] {
-    background: var(--c-ink);
-    color: var(--c-paper);
-  }
-
   /* --- chart pane -------------------------------------------------------- */
-
-  .calc__chart-pane {
-    padding: var(--space-md);
-  }
-
-  .calc__chart-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-2xs);
-  }
-
-  .calc__horizons {
-    display: flex;
-    gap: var(--space-3xs);
-  }
-
-  .calc__horizon {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    padding: var(--space-3xs) var(--space-xs);
-    border-radius: var(--r-pill);
-    cursor: pointer;
-    white-space: nowrap;
-    border: 1px solid var(--c-line);
-    background: transparent;
-    color: var(--c-ink-muted);
-  }
-
-  .calc__horizon[aria-pressed='true'] {
-    background: var(--c-ink);
-    color: var(--c-paper);
-  }
-
-  .calc__breakeven {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-amber);
-  }
 
   /* --- chart ------------------------------------------------------------- */
 
@@ -242,119 +148,9 @@
 
   /* --- assumptions ------------------------------------------------------- */
 
-  .calc__assump {
-    margin-top: var(--space-sm);
-    padding-top: var(--space-xs);
-    border-top: 1px solid var(--c-line);
-  }
-
-  .calc__assump-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs);
-    align-items: baseline;
-    justify-content: space-between;
-  }
-
-  .calc__assump-title {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-mono-md);
-    color: var(--c-ink);
-  }
-
-  .calc__assump-btn {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    color: var(--c-teal);
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-
-  .calc__assump-panel {
-    margin-top: var(--space-xs);
-    background: var(--c-paper-raised);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-8);
-    padding: var(--space-xs) var(--space-sm);
-  }
-
-  .calc__assump-list {
-    margin: 0;
-    padding-left: var(--space-sm);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    line-height: var(--lh-list);
-    color: var(--c-ink-muted);
-  }
-
-  .calc__assump-note {
-    margin-top: var(--space-xs);
-    font-size: var(--fs-body-xs);
-    color: var(--c-ink-muted);
-  }
-
   /* --- tiles ------------------------------------------------------------- */
 
-  .calc__tiles {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(180px, 45%), 1fr));
-    gap: var(--space-3xs);
-    margin-top: var(--space-sm);
-    background: var(--c-line);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-8);
-    overflow: hidden;
-  }
-
-  .calc__tile {
-    background: var(--c-white);
-    padding: var(--space-xs) var(--space-sm);
-  }
-
-  .calc__tile-label {
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-3xs);
-    letter-spacing: var(--ls-mono-lg);
-    color: var(--c-ink-soft);
-  }
-
-  .calc__tile-val {
-    margin-top: var(--space-3xs);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-h-lg);
-    letter-spacing: var(--ls-tight);
-    color: var(--c-ink);
-  }
-
-  .calc__tile-val--teal {
-    color: var(--c-teal);
-  }
-
-  .calc__tile-val--red {
-    color: var(--c-red);
-  }
-
   /* --- verdict ----------------------------------------------------------- */
-
-  .calc__verdict {
-    margin-top: var(--space-sm);
-    max-width: var(--measure-verdict);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-verdict);
-    line-height: var(--lh-verdict);
-    letter-spacing: var(--ls-snug);
-    color: var(--c-ink);
-  }
-
-  .calc__verdict-fig {
-    color: var(--c-teal);
-  }
 
   .calc__summary {
     margin-top: var(--space-xs);
@@ -685,4 +481,273 @@
     grid-template-columns: 1fr;
     padding: 0 var(--s6);
   }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Bento layout.
+
+   The card is one surface with four bands: a centred header, the presets, the
+   chart beside its readout, and everything else behind one disclosure. The
+   cream build stacked all of it in a single column, which is what made the
+   section feel long rather than dense.
+   --------------------------------------------------------------------------- */
+
+.payback {
+  padding: 0 var(--gutter) var(--section-pad);
+}
+
+.calc {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ring);
+  overflow: hidden;
+}
+
+.calc__head {
+  text-align: center;
+  padding: clamp(32px, 3.4vw, 48px) 26px 0;
+}
+
+.calc__kicker {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.calc__title {
+  margin-top: 14px;
+  font-size: var(--t-h2-card);
+  letter-spacing: var(--ls-h2-card);
+}
+
+.calc__lead {
+  margin: 14px auto 0;
+  max-width: 56ch;
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  color: var(--color-text-2);
+}
+
+/* --- segmented controls, one shape for all three -------------------------- */
+
+.calc__modes,
+.calc__horizons {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+}
+
+.calc__modes {
+  margin-top: 24px;
+}
+
+.calc__mode,
+.calc__horizon {
+  cursor: pointer;
+  white-space: nowrap;
+  background: transparent;
+  color: var(--color-text-2);
+  border: 0;
+  transition: background 160ms var(--ease-out-soft);
+}
+
+/* A hairline between segments, never before the first. */
+.calc__mode + .calc__mode,
+.calc__horizon + .calc__horizon {
+  border-left: 1px solid var(--color-line-strong);
+}
+
+.calc__mode {
+  padding: 11px 22px;
+  font-family: var(--font-heading);
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.calc__horizon {
+  padding: 9px 16px;
+  font-family: var(--font-mono);
+  font-size: var(--t-mono);
+}
+
+.calc__mode[aria-pressed='true'],
+.calc__horizon[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.calc__horizon-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 26px;
+  padding: 0 26px;
+}
+
+.calc__horizon-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.calc__breakeven {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono);
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+
+/* --- chart beside its readout --------------------------------------------- */
+
+.calc__main {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  gap: clamp(24px, 3vw, 44px);
+  align-items: center;
+  padding: clamp(28px, 3vw, 40px) 26px;
+}
+
+.calc__chart-col,
+.calc__side {
+  min-width: 0;
+}
+
+.calc__rows {
+  display: grid;
+}
+
+.calc__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 0;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono);
+  white-space: nowrap;
+}
+
+.calc__row--head {
+  border-top: 0;
+  color: var(--color-accent);
+  letter-spacing: var(--ls-label);
+}
+
+.calc__row-label {
+  color: var(--color-text-4);
+}
+
+.calc__row-val {
+  color: var(--color-text);
+}
+
+.calc__row-val--accent {
+  color: var(--color-accent);
+}
+
+.calc__row-val--dim {
+  color: var(--color-text-3);
+}
+
+.calc__verdict {
+  margin-top: 20px;
+  font-size: var(--t-body);
+  line-height: var(--lh-snug);
+  color: var(--color-text);
+}
+
+.calc__verdict-fig {
+  color: var(--color-accent);
+}
+
+/* --- the one disclosure --------------------------------------------------- */
+
+.calc__adjust {
+  margin: 0 26px 26px;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-sunk);
+  box-shadow: 0 0 0 1px var(--color-line-soft);
+  overflow: hidden;
+}
+
+.calc__adjust-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding: 0 22px;
+  cursor: pointer;
+  list-style: none;
+  font-size: var(--t-card);
+  font-weight: var(--fw-semibold);
+}
+
+.calc__adjust-summary svg {
+  color: var(--color-text-3);
+  transition: transform 180ms var(--ease-out-soft);
+}
+
+.calc__adjust[open] .calc__adjust-summary svg {
+  transform: rotate(180deg);
+}
+
+.calc__adjust-panel {
+  padding: 4px 22px 24px;
+}
+
+/* Below 1000px the readout goes under the chart rather than beside it — at a
+   narrower width the 1fr column is too tight for the mono figures. */
+@media (max-width: 1000px) {
+  .calc__main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calc__adjust-summary svg {
+    transition: none;
+  }
+}
+
+/* --- the model's caveats, at the foot of the panel ------------------------ */
+
+.calc__caveats {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line-soft);
+}
+
+.calc__caveats-title {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.calc__caveats-list {
+  margin: 10px 0 0;
+  padding-left: var(--s6);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-xs);
+  line-height: var(--lh-mono);
+  color: var(--color-text-3);
+}
+
+.calc__caveats-note {
+  margin-top: 10px;
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-body);
+  color: var(--color-text-3);
 }

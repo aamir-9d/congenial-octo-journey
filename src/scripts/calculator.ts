@@ -282,7 +282,6 @@ export function initCalculator(): void {
     });
   }
 
-  const assumpToggle = document.getElementById('assump-toggle');
   for (const button of presets) {
     button.addEventListener('click', () => {
       const preset = PRESETS.find((p) => p.key === button.dataset.preset);
@@ -296,12 +295,6 @@ export function initCalculator(): void {
       reportBreakeven();
     });
   }
-
-  assumpToggle?.addEventListener('click', () => {
-    state.assumpOpen = !state.assumpOpen;
-    assumpToggle.setAttribute('aria-expanded', String(state.assumpOpen));
-    render();
-  });
 
   /* The export re-measured #chart-wrap on window resize and re-rendered when
      the width moved more than 4px. ResizeObserver reports the same number
