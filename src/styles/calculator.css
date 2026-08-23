@@ -15,6 +15,12 @@
    rules in one shared, unscoped file is what stops it recurring.
    --------------------------------------------------------------------------- */
 
+  /* The card sits in its own section now. In the cream build it was a child of
+     the hero, alongside a summary card and a mini chart that are both gone. */
+  .payback {
+    padding: 0 var(--gutter) var(--section-pad);
+  }
+
   .calc {
     flex: 1 1 100%;
     background: var(--c-white);
