@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  body { margin: 0; background: #0A0C10; color: #E8EAED; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+  p, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 700; }
+  p { font-weight: 400; text-wrap: pretty; }
+  a { text-decoration: none; color: inherit; }
+  summary::-webkit-details-marker { display: none; }
+  summary::marker { content: ''; }
+  :focus-visible { outline: 2px solid #E39A1F; outline-offset: 2px; }
+  * { scrollbar-width: none; -ms-overflow-style: none; }
+  *::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none; }
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; height: 44px; width: 100%; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: #2C3138; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -11px; border-radius: 50%; background: #E39A1F; border: 3px solid #16191F; box-shadow: 0 0 14px -2px rgba(227,154,31,0.9); }
+  input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: #2C3138; }
+  input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 3px solid #16191F; border-radius: 50%; background: #E39A1F; }
+  @keyframes mRise { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+  @keyframes mSheet { from { opacity: 0; transform: translateY(-16px) } to { opacity: 1; transform: none } }
+  @keyframes mDraw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+  @keyframes mGrow { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+  @keyframes mDriftA { 0% { transform: translate3d(-4%,2%,0) scale(1) } 50% { transform: translate3d(6%,-4%,0) scale(1.16) } 100% { transform: translate3d(-4%,2%,0) scale(1) } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important } }
+</style>
+</helmet>
+
+<div style="--bg:#0E1014;--surf:#16191F;--surf2:#1D2128;--line:#23272E;--line2:#1D2027;--tx:#E8EAED;--tx2:#A8AEB6;--tx3:#8E959E;--tx4:#7C838D;--am:#E39A1F;--ink:#101725;--f:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(0.22,0.61,0.36,1);--s2:6px;--s3:9px;--s4:12px;--s6:18px;--s8:24px;--s12:34px;--s16:46px;font-family:var(--f);color:var(--tx);background:#0A0C10;min-height:100vh;padding:48px 40px 80px">
+
+  <div style="max-width:1560px;margin:0 auto">
+    <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">E2E Apps · Bento · mobile</div>
+    <h1 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em;line-height:1.08">The phone layout, three states.</h1>
+    <p style="margin-top:16px;max-width:74ch;font-size:16px;line-height:1.65;color:var(--tx2)">Same palette, same Be Vietnam Pro, same filled amber CTAs as the desktop build. A real nav below 480px, 44px targets on every control, and the payback model reduced to three presets with the full assumption set behind a reveal. Everything is live — tap the menu, switch presets, drag a slider.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:56px;margin-top:56px;align-items:flex-start">
+
+      <div>
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am);margin-bottom:14px">01 · Home</div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+          <div style="min-height:100%;background:var(--bg);font-family:var(--f);color:var(--tx);padding-bottom:40px;position:relative">
+            <div style="position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:var(--s4);padding:56px var(--s6) var(--s3);background:rgba(14,16,20,0.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)">
+              <span style="font-size:17px;font-weight:700;letter-spacing:-0.022em;white-space:nowrap;margin-right:auto">E2E Apps</span>
+              <a href="#" style="display:inline-flex;align-items:center;flex:none;white-space:nowrap;height:44px;padding:0 15px;font-size:14px;font-weight:600;border-radius:8px;background:var(--am);color:var(--ink);box-shadow:0 6px 22px -8px rgba(227,154,31,0.8)">Book a call</a>
+              <button type="button" onClick="{{ openMenu }}" aria-label="Open menu" style="width:44px;height:44px;flex:none;display:grid;place-items:center;background:transparent;border:1px solid #2C3138;border-radius:8px;color:var(--tx);cursor:pointer"><i class="ph ph-list" style="font-size:20px"></i></button>
+            </div>
+
+            <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;z-index:40;background:rgba(14,16,20,0.98);backdrop-filter:blur(20px);padding:var(--s6);display:flex;flex-direction:column;animation:mSheet 0.28s var(--ease) both">
+                <div style="display:flex;align-items:center;gap:var(--s4);padding-top:36px">
+                  <span style="font-size:17px;font-weight:700;letter-spacing:-0.022em;margin-right:auto">E2E Apps</span>
+                  <button type="button" onClick="{{ closeMenu }}" aria-label="Close menu" style="width:44px;height:44px;display:grid;place-items:center;background:transparent;border:1px solid #2C3138;border-radius:8px;color:var(--tx);cursor:pointer"><i class="ph ph-x" style="font-size:20px"></i></button>
+                </div>
+                <div style="display:grid;margin-top:var(--s12)">
+                  <sc-for list="{{ navLinks }}" as="l" hint-placeholder-count="6">
+                    <a href="#" onClick="{{ closeMenu }}" style="display:flex;align-items:center;gap:var(--s4);min-height:62px;border-bottom:1px solid var(--line2)">
+                      <i class="{{ l.icon }}" style="font-size:19px;flex:none;color:var(--am)"></i>
+                      <span style="flex:1"><span style="display:block;font-size:23px;font-weight:600;letter-spacing:-0.022em">{{ l.label }}</span><span style="display:block;margin-top:1px;font-size:12.5px;color:var(--tx4)">{{ l.note }}</span></span>
+                      <i class="ph ph-arrow-right" style="font-size:15px;flex:none;color:var(--tx4)"></i>
+                    </a>
+                  </sc-for>
+                </div>
+                <div style="margin-top:auto;display:grid;gap:var(--s4)">
+                  <a href="#" style="display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;font-size:16px;font-weight:600;border-radius:9px;background:var(--am);color:var(--ink);box-shadow:0 8px 30px -10px rgba(227,154,31,0.85)">Book a call<i class="ph ph-arrow-right" style="font-size:15px"></i></a>
+                  <span style="font-family:var(--fm);font-size:12px;color:var(--tx4);text-align:center">hello@e2eapps.com</span>
+                </div>
+              </div>
+            </sc-if>
+
+            <div style="position:relative;overflow:hidden;padding:var(--s16) var(--s6) var(--s12);text-align:center">
+              <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at center,rgba(232,234,237,0.05) 1px,transparent 1px);background-size:26px 26px;mask-image:radial-gradient(ellipse 80% 56% at 50% 30%,#000 26%,transparent 76%);-webkit-mask-image:radial-gradient(ellipse 80% 56% at 50% 30%,#000 26%,transparent 76%)"></div>
+              <div aria-hidden="true" style="position:absolute;top:-14%;left:6%;width:74%;height:56%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,154,31,0.24),rgba(227,154,31,0) 66%);filter:blur(38px);pointer-events:none;animation:mDriftA 26s ease-in-out infinite"></div>
+              <div style="position:relative">
+                <div style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap;font-size:10.5px;font-weight:500;letter-spacing:0.09em;text-transform:uppercase;color:var(--am);padding:7px 13px;border-radius:999px;background:rgba(227,154,31,0.12);box-shadow:inset 0 0 0 1px rgba(227,154,31,0.24);animation:mRise 0.5s var(--ease) both"><i class="ph ph-plugs-connected" style="font-size:13px"></i>Attribution, fixed at the source</div>
+                <h1 style="margin-top:var(--s6);font-size:33px;letter-spacing:-0.03em;line-height:1.08;animation:mRise 0.5s var(--ease) 0.07s both">Your dashboard says the campaign is losing money.</h1>
+                <p style="margin-top:var(--s4);font-size:15px;line-height:1.65;color:var(--tx2);animation:mRise 0.5s var(--ease) 0.14s both">It broke even in month nine — you killed it in week one. I fix the attribution, close the marketing gaps it was hiding, and grow the app on numbers you can defend.</p>
+                <div style="display:grid;gap:var(--s3);margin-top:var(--s8);animation:mRise 0.5s var(--ease) 0.21s both">
+                  <a href="#" style="display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;font-size:16px;font-weight:600;border-radius:9px;background:var(--am);color:var(--ink);box-shadow:0 8px 30px -10px rgba(227,154,31,0.8)">Find what's missing<i class="ph ph-arrow-right" style="font-size:15px"></i></a>
+                  <a href="#" style="display:flex;align-items:center;justify-content:center;min-height:52px;font-size:16px;font-weight:600;border-radius:9px;color:var(--tx);border:1px solid #2C3138">See how it works</a>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:8px;padding:0 var(--s6);justify-content:center">
+              <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;white-space:nowrap;color:var(--tx2);padding:7px 12px;border-radius:999px;background:var(--surf2);box-shadow:inset 0 0 0 1px var(--line)"><i class="{{ c.icon }}" style="font-size:12px;color:var(--am)"></i>{{ c.label }}</span>
+              </sc-for>
+            </div>
+
+            <div style="padding:var(--s16) var(--s6) 0;text-align:center">
+              <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Why your numbers don't reconcile</div>
+              <h2 style="margin-top:var(--s4);font-size:26px;letter-spacing:-0.026em;line-height:1.14">Three places the money goes missing.</h2>
+            </div>
+
+            <div style="display:grid;gap:var(--s4);padding:var(--s8) var(--s6) 0">
+              <sc-for list="{{ bento }}" as="b" hint-placeholder-count="4">
+                <div style="background:var(--surf);border-radius:12px;padding:var(--s6);box-shadow:0 0 0 1px {{ b.ring }}">
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <i class="{{ b.icon }}" style="font-size:17px;color:{{ b.iconColor }}"></i>
+                    <span style="font-family:var(--fm);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:{{ b.numColor }}">{{ b.num }}</span>
+                  </div>
+                  <h3 style="margin-top:var(--s4);font-size:19px;font-weight:600;letter-spacing:-0.02em;line-height:1.24">{{ b.title }}</h3>
+                  <p style="margin-top:var(--s2);font-size:14px;line-height:1.6;color:var(--tx2)">{{ b.lead }}</p>
+                  <sc-if value="{{ b.isBars }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:flex-end;gap:18px;height:84px;margin-top:var(--s6)">
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:100%;max-width:48px;height:22px;border-radius:4px 4px 0 0;background:#3A4048;transform-origin:bottom;animation:mGrow 0.7s var(--ease) 0.2s both"></div><span style="font-family:var(--fm);font-size:10px;color:var(--tx4)">DASHBOARD</span></div>
+                      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px"><div style="width:100%;max-width:48px;height:62px;border-radius:4px 4px 0 0;background:var(--am);transform-origin:bottom;animation:mGrow 0.7s var(--ease) 0.34s both"></div><span style="font-family:var(--fm);font-size:10px;color:var(--am)">TRUE</span></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ b.isCode }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:var(--s6);font-family:var(--fm);font-size:11px;line-height:1.7;white-space:pre-line;color:var(--tx3);background:var(--surf2);border-radius:8px;padding:11px 13px">{{ b.code }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="padding:var(--s16) var(--s6) 0">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4)">
+                <div>
+                  <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">From the blog</div>
+                  <h2 style="margin-top:var(--s3);font-size:24px;letter-spacing:-0.026em;line-height:1.16">What we're finding in live stacks</h2>
+                </div>
+              </div>
+              <div style="margin-top:var(--s8)">
+                <sc-for list="{{ posts }}" as="p" hint-placeholder-count="3">
+                  <a href="#" style="display:block;padding:var(--s6) 0;border-top:1px solid var(--line)">
+                    <span style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--fm);font-size:10.5px;color:var(--tx4)">{{ p.date }}</span><span style="font-family:var(--fm);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am)">{{ p.tag }}</span></span>
+                    <span style="display:block;margin-top:var(--s3);font-size:17px;font-weight:600;letter-spacing:-0.018em;line-height:1.3">{{ p.title }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:6px;margin-top:var(--s3);font-size:13px;font-weight:600;color:var(--am)">Read<i class="ph ph-arrow-right" style="font-size:12px"></i></span>
+                  </a>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </x-import>
+      </div>
+
+      <div>
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am);margin-bottom:14px">02 · Menu</div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+          <div style="min-height:100%;background:var(--bg);font-family:var(--f);color:var(--tx);position:relative;overflow:hidden">
+            <div aria-hidden="true" style="position:absolute;bottom:-12%;left:-18%;width:86%;height:44%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,154,31,0.2),rgba(227,154,31,0) 66%);filter:blur(38px);pointer-events:none"></div>
+            <div style="position:relative;padding:var(--s6);min-height:874px;display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;gap:var(--s4);padding-top:36px">
+                <span style="font-size:17px;font-weight:700;letter-spacing:-0.022em;margin-right:auto">E2E Apps</span>
+                <div style="width:44px;height:44px;display:grid;place-items:center;border:1px solid #2C3138;border-radius:8px"><i class="ph ph-x" style="font-size:20px"></i></div>
+              </div>
+              <div style="display:grid;margin-top:var(--s12)">
+                <sc-for list="{{ navLinks }}" as="l" hint-placeholder-count="6">
+                  <a href="#" style="display:flex;align-items:center;gap:var(--s4);min-height:62px;border-bottom:1px solid var(--line2)">
+                    <i class="{{ l.icon }}" style="font-size:19px;flex:none;color:var(--am)"></i>
+                    <span style="flex:1"><span style="display:block;font-size:23px;font-weight:600;letter-spacing:-0.022em">{{ l.label }}</span><span style="display:block;margin-top:1px;font-size:12.5px;color:var(--tx4)">{{ l.note }}</span></span>
+                    <i class="ph ph-arrow-right" style="font-size:15px;flex:none;color:var(--tx4)"></i>
+                  </a>
+                </sc-for>
+              </div>
+              <div style="margin-top:var(--s16);padding-top:var(--s8);border-top:1px solid var(--line2)">
+                <p style="font-size:14px;line-height:1.65;color:var(--tx3)">One specialist owns the entire growth loop — a second owns the infrastructure it runs on.</p>
+              </div>
+              <div style="margin-top:auto;display:grid;gap:var(--s4);padding-top:var(--s12)">
+                <a href="#" style="display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;font-size:16px;font-weight:600;border-radius:9px;background:var(--am);color:var(--ink);box-shadow:0 8px 30px -10px rgba(227,154,31,0.85)">Book a call<i class="ph ph-arrow-right" style="font-size:15px"></i></a>
+                <span style="font-family:var(--fm);font-size:12px;color:var(--tx4);text-align:center">hello@e2eapps.com</span>
+              </div>
+            </div>
+          </div>
+        </x-import>
+      </div>
+
+      <div>
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am);margin-bottom:14px">03 · Payback model</div>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+          <div style="min-height:100%;background:var(--bg);font-family:var(--f);color:var(--tx);padding:var(--s16) var(--s6) 40px">
+            <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Cumulative net per install</div>
+            <h2 style="margin-top:var(--s3);font-size:26px;letter-spacing:-0.026em">Payback model</h2>
+            <p style="margin-top:var(--s3);font-size:14px;line-height:1.6;color:var(--tx2)">Pick the cohort that looks most like yours. Every assumption is underneath.</p>
+
+            <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:9px;margin-top:var(--s6)">
+              <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+                <button type="button" onClick="{{ m.onClick }}" aria-pressed="{{ m.on }}" style="min-height:44px;padding:0 16px;font-family:var(--f);font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ m.bg }};color:{{ m.fg }};border:0;border-left:{{ m.sep }}">{{ m.label }}</button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;gap:var(--s2);margin-top:var(--s6)">
+                <sc-for list="{{ presets }}" as="p" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ p.onClick }}" aria-pressed="{{ p.on }}" style="display:flex;align-items:flex-start;gap:12px;width:100%;min-height:58px;padding:13px 15px;text-align:left;font-family:var(--f);cursor:pointer;background:{{ p.bg }};border:1px solid {{ p.bd }};border-radius:10px;color:var(--tx)">
+                    <span style="width:16px;height:16px;flex:none;margin-top:3px;border-radius:50%;border:1.5px solid {{ p.dotBd }};background:{{ p.dotBg }};box-shadow:{{ p.dotRing }}"></span>
+                    <span style="flex:1">
+                      <span style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15px;font-weight:600">{{ p.label }}</span><span style="font-family:var(--fm);font-size:12px;white-space:nowrap;color:{{ p.dayColor }}">{{ p.day }}</span></span>
+                      <span style="display:block;margin-top:2px;font-size:12px;line-height:1.5;color:var(--tx4)">{{ p.sub }}</span>
+                    </span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--s4);margin-top:var(--s6)">
+              <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+                <sc-for list="{{ horizons }}" as="h" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ h.onClick }}" aria-pressed="{{ h.on }}" style="min-height:44px;padding:0 14px;font-family:var(--fm);font-size:12.5px;cursor:pointer;background:{{ h.bg }};color:{{ h.fg }};border:0;border-left:{{ h.sep }}">{{ h.label }}</button>
+                </sc-for>
+              </div>
+              <span style="font-family:var(--fm);font-size:12px;white-space:nowrap;color:var(--am)">{{ breakevenLabel }}</span>
+            </div>
+
+            <div style="margin-top:var(--s6);background:var(--surf);border-radius:12px;padding:var(--s6);box-shadow:0 0 0 1px var(--line)">
+              <div style="display:flex;align-items:stretch">
+                <div aria-hidden="true" style="position:relative;flex:none;width:48px">
+                  <div style="position:absolute;right:8px;top:{{ pos.yMaxTop }};transform:translateY(-50%);font-family:var(--fm);font-size:11px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ yMaxLabel }}</div>
+                  <div style="position:absolute;right:8px;top:{{ pos.zeroTop }};transform:translateY(-50%);font-family:var(--fm);font-size:11px;line-height:1;color:var(--tx4)">0</div>
+                  <div style="position:absolute;right:8px;top:{{ pos.yMinTop }};transform:translateY(-50%);font-family:var(--fm);font-size:11px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ yMinLabel }}</div>
+                </div>
+                <div style="position:relative;flex:1;min-width:0">
+                  <svg viewBox="{{ vb }}" width="100%" role="img" aria-label="Payback curve, true versus dashboard-measured" style="display:block;overflow:visible">
+                    <path d="{{ gapPath }}" fill="#E39A1F" opacity="0.16"></path>
+                    <line x1="{{ axLeft }}" y1="{{ zeroY }}" x2="{{ axRight }}" y2="{{ zeroY }}" stroke="#4A515A" stroke-width="1"></line>
+                    <path d="{{ measPath }}" fill="none" stroke="#5B626B" stroke-width="2" stroke-dasharray="6 5"></path>
+                    <path d="{{ truePath }}" fill="none" stroke="#E39A1F" stroke-width="2.6" stroke-linejoin="round" pathLength="1" style="stroke-dasharray:1;animation:mDraw 1.2s var(--ease) 0.3s both"></path>
+                    <circle cx="{{ crossX }}" cy="{{ zeroY }}" r="6" fill="#E39A1F" opacity="{{ crossOpacity }}"></circle>
+                  </svg>
+                  <div aria-hidden="true" style="position:absolute;left:{{ pos.t0Left }};top:{{ pos.tTop }};font-family:var(--fm);font-size:11px;line-height:1;white-space:nowrap;color:var(--tx4)">day 0</div>
+                  <div aria-hidden="true" style="position:absolute;left:{{ pos.tEndLeft }};top:{{ pos.tTop }};transform:translateX(-100%);font-family:var(--fm);font-size:11px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ endTick }}</div>
+                </div>
+              </div>
+              <div style="display:grid;gap:1px;margin-top:var(--s4)">
+                <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+                  <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-family:var(--fm);font-size:12px;white-space:nowrap"><span style="color:var(--tx4)">{{ r.label }}</span><span style="color:{{ r.color }}">{{ r.value }}</span></div>
+                </sc-for>
+              </div>
+            </div>
+
+            <p style="margin-top:var(--s6);font-size:16px;line-height:1.5">{{ verdict }}</p>
+
+            <details open="{{ true }}" style="margin-top:var(--s8);border-radius:12px;background:var(--surf2);box-shadow:0 0 0 1px var(--line2);overflow:hidden">
+              <summary style="display:flex;align-items:center;justify-content:space-between;gap:var(--s4);min-height:52px;padding:0 var(--s6);cursor:pointer;list-style:none;font-size:14.5px;font-weight:600"><span>Adjust the assumptions</span><i class="ph ph-caret-down" style="font-size:14px;color:var(--tx3)"></i></summary>
+              <div style="padding:0 var(--s6) var(--s6)">
+                <div style="display:grid;gap:var(--s3);padding-top:var(--s4);border-top:1px solid var(--line2)">
+                  <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="6">
+                    <div>
+                      <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--fm);font-size:12px;color:var(--tx4)"><label for="{{ s.id }}">{{ s.label }}</label><span style="color:var(--tx)">{{ s.readout }}</span></div>
+                      <input id="{{ s.id }}" type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.value }}" onChange="{{ s.onChange }}" aria-valuetext="{{ s.readout }}" />
+                    </div>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:grid;gap:var(--s4);margin-top:var(--s4)">
+                    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+                      <div>
+                        <div style="font-family:var(--fm);font-size:12px;color:var(--tx4);margin-bottom:8px">{{ g.label }}</div>
+                        <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+                          <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+                            <button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="min-height:44px;padding:0 14px;font-family:var(--fm);font-size:12.5px;cursor:pointer;white-space:nowrap;background:{{ o.bg }};color:{{ o.fg }};border:0;border-left:{{ o.sep }}">{{ o.label }}</button>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s4);margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line2)">
+                  <sc-for list="{{ derived }}" as="d" hint-placeholder-count="4">
+                    <div><span style="font-family:var(--fm);font-size:11px;color:var(--tx4)">{{ d.label }}</span><div style="margin-top:3px;font-size:19px;font-weight:600;letter-spacing:-0.022em">{{ d.value }}</div></div>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ isAnnual }}" hint-placeholder-val="{{ false }}">
+                  <p style="margin-top:var(--s4);font-size:13px;line-height:1.6;color:var(--am);background:rgba(227,154,31,0.1);border-radius:8px;padding:11px 13px">{{ annualWarning }}</p>
+                </sc-if>
+
+                <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+                  <div>
+                    <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tx4);margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line2)">What your dashboard sees</div>
+                    <div style="display:grid;gap:var(--s4);margin-top:var(--s3)">
+                      <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="3">
+                        <div>
+                          <label style="display:flex;gap:12px;align-items:flex-start;min-height:44px;font-size:14px;color:var(--tx2);cursor:pointer">
+                            <input type="checkbox" checked="{{ g.checked }}" onChange="{{ g.onChange }}" style="width:22px;height:22px;flex:none;margin-top:1px;accent-color:#E39A1F;cursor:pointer" />
+                            <span>{{ g.label }}<span style="display:block;font-family:var(--fm);font-size:11px;line-height:1.6;color:var(--tx4);margin-top:3px">{{ g.note }}</span></span>
+                          </label>
+                          <sc-if value="{{ g.hasSlider }}" hint-placeholder-val="{{ false }}">
+                            <div style="padding-left:34px">
+                              <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--fm);font-size:11px;color:var(--tx4)"><label for="{{ g.sId }}">{{ g.sLabel }}</label><span style="color:var(--tx)">{{ g.sReadout }}</span></div>
+                              <input id="{{ g.sId }}" type="range" min="{{ g.sMin }}" max="{{ g.sMax }}" step="{{ g.sStep }}" value="{{ g.sValue }}" onChange="{{ g.sOnChange }}" aria-valuetext="{{ g.sReadout }}" />
+                            </div>
+                          </sc-if>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isAd }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:var(--s6);padding-top:var(--s4);border-top:1px solid var(--line2)">
+                    <label for="m-realD7" style="display:block;font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tx4);margin-bottom:8px">Your actual D7 (%)</label>
+                    <input id="m-realD7" type="number" min="0" max="60" step="0.1" value="{{ realD7 }}" onChange="{{ onRealD7 }}" style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--fm);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf);border:1px solid var(--line);border-radius:9px" />
+                    <sc-if value="{{ d7Mismatch }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin-top:var(--s3);font-size:13px;line-height:1.6;color:var(--am);background:rgba(227,154,31,0.1);border-radius:8px;padding:11px 13px">{{ d7MismatchNote }}</p>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </div>
+            </details>
+          </div>
+        </x-import>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PRESETS = [
+  { key: 'cons', label: 'Conservative', sub: 'Low trial take-up, thin retention', st: { i2t: 5, t2p: 25, price: 7.99, retention: 78, cpi: 1.6 } },
+  { key: 'typ', label: 'Typical', sub: 'The median subscription cohort', st: { i2t: 8, t2p: 35, price: 9.99, retention: 85, cpi: 1.2 } },
+  { key: 'agg', label: 'Aggressive', sub: 'Strong funnel, cheap installs', st: { i2t: 12, t2p: 45, price: 12.99, retention: 90, cpi: 0.9 } }
+];
+
+class Component extends DCLogic {
+  state = {
+    menuOpen: false, preset: 'typ', mode: 'sub', horizon: 365,
+    i2t: 8, t2p: 35, price: 9.99, period: 'monthly', trialDays: 7,
+    retention: 85, commission: 15, refund: 3, cpi: 1.2,
+    arpdau: 0.045, d1: 32, d30: 6, adCpi: 0.35, realD7: 12.3,
+    renewalCapture: false, skanMapped: false, webStitched: false,
+    skanNull: 35, webLoss: 20, chartPx: 300
+  };
+
+  set = (k, v) => this.setState({ [k]: v, preset: 'custom' });
+  plain = (k, v) => this.setState({ [k]: v });
+  applyPreset = key => this.setState(Object.assign({ preset: key }, PRESETS.find(x => x.key === key).st));
+
+  cycleDays(s) { return s.period === 'weekly' ? 7 : s.period === 'annual' ? 365 : 30; }
+
+  model(s) {
+    const r = s.retention / 100, cd = this.cycleDays(s);
+    const i2p = (s.i2t / 100) * (s.t2p / 100);
+    const net = s.price * (1 - s.commission / 100) * (1 - s.refund / 100);
+    const cycles = d => d < s.trialDays ? 0 : Math.floor((d - s.trialDays) / cd) + 1;
+    const paymentsBy = n => n === 0 ? 0 : (1 - Math.pow(r, n)) / (1 - r);
+    const signal = (s.skanMapped ? 1 : 1 - s.skanNull / 100) * (s.webStitched ? 1 : 1 - s.webLoss / 100);
+    const trueRev = d => i2p * net * paymentsBy(cycles(d));
+    const measRev = d => i2p * net * (s.renewalCapture ? paymentsBy(cycles(d)) : Math.min(1, cycles(d))) * signal;
+    const be = fn => { for (let n = 1; n <= 900; n++) { const d = s.trialDays + (n - 1) * cd; if (fn(d) >= s.cpi) return d; } return null; };
+    return { i2p, net, trueRev, measRev, ltvPayer: net / (1 - r), ltvInstall: i2p * (net / (1 - r)), cpi: s.cpi, beTrue: be(trueRev), beMeas: be(measRev) };
+  }
+
+  adModel(s) {
+    const a = s.d1 / 100;
+    const b = Math.max(0.01, Math.log(s.d1 / 100 / (s.d30 / 100)) / Math.log(30));
+    const ret = d => a * Math.pow(d, -b);
+    const cache = [1];
+    const activeDays = D => { const n = Math.max(0, Math.round(D)); for (let d = cache.length; d <= n; d++) cache[d] = cache[d - 1] + ret(d); return cache[n]; };
+    const rev = D => s.arpdau * activeDays(D);
+    let be = null;
+    for (let d = 1; d <= 3650; d++) { if (rev(d) >= s.adCpi) { be = d; break; } }
+    return { b, ret, activeDays, rev, be, cpi: s.adCpi, predD7: ret(7) };
+  }
+
+  chart(s) {
+    const isSub = s.mode === 'sub';
+    const m = this.model(s), ad = this.adModel(s);
+    const H = isSub && s.period === 'annual' ? 365 : s.horizon;
+    const cpi = isSub ? m.cpi : ad.cpi;
+    const trueFn = isSub ? m.trueRev : ad.rev;
+    const VW = s.chartPx, VH = 150, X0 = 4, X1 = VW - 4, Y0 = 14, Y1 = VH - 26;
+    const xs = []; for (let d = 0; d <= H; d++) xs.push(d);
+    const tv = xs.map(d => trueFn(d) - cpi);
+    const mv = isSub ? xs.map(d => m.measRev(d) - cpi) : [];
+    const all = tv.concat(mv, [0, -cpi]);
+    const lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+    const pad = Math.max((hi - lo) * 0.12, 0.05), yMin = lo - pad, yMax = hi + pad;
+    const fx = d => X0 + (d / H) * (X1 - X0);
+    const fy = v => Y1 - ((v - yMin) / (yMax - yMin)) * (Y1 - Y0);
+    const step = vals => { let p = 'M' + fx(0).toFixed(1) + ' ' + fy(vals[0]).toFixed(1); for (let i = 1; i < xs.length; i++) { const x = fx(xs[i]).toFixed(1); p += ' L' + x + ' ' + fy(vals[i - 1]).toFixed(1) + ' L' + x + ' ' + fy(vals[i]).toFixed(1); } return p; };
+    const smooth = vals => xs.map((d, i) => (i ? 'L' : 'M') + fx(d).toFixed(1) + ' ' + fy(vals[i]).toFixed(1)).join(' ');
+    const t = isSub ? step(tv) : smooth(tv);
+    let me = '', g = '';
+    if (isSub) {
+      me = step(mv);
+      g = t;
+      for (let i = xs.length - 1; i >= 0; i--) { const x = fx(xs[i]).toFixed(1); g += ' L' + x + ' ' + fy(mv[i]).toFixed(1); if (i > 0) g += ' L' + x + ' ' + fy(mv[i - 1]).toFixed(1); }
+      g += ' Z';
+    }
+    const be = isSub ? m.beTrue : ad.be, vis = be !== null && be <= H;
+    return { m, ad, isSub, cpi, H, VW, VH, X0, X1, Y0, Y1, truePath: t, measPath: me, gapPath: g, zeroY: fy(0), fx, yMin, yMax, be, vis, gapAtH: isSub ? m.trueRev(H) - m.measRev(H) : 0 };
+  }
+
+  renderVals() {
+    const s = this.state, c = this.chart(s);
+    const money = v => (v < 0 ? '\u2212$' : '$') + Math.abs(v).toFixed(2);
+    const roas = v => v.toFixed(2) + '\u00d7';
+    const dayLabel = d => d === null ? 'never' : 'day ' + d;
+    const isSub = c.isSub, ad = c.ad;
+    const active = PRESETS.find(x => x.key === s.preset);
+
+    const mk = defs => { defs.forEach(f => { f.onChange = e => this.set(f.key, parseFloat(e.target.value)); }); return defs; };
+    const seg = (key, list, plain) => list.map((o, i) => ({
+      label: o.label, on: String(s[key] === o.value),
+      fg: s[key] === o.value ? '#101725' : '#A8AEB6',
+      bg: s[key] === o.value ? '#E39A1F' : 'transparent',
+      sep: i === 0 ? '0' : '1px solid #2C3138',
+      onClick: () => (plain ? this.plain(key, o.value) : this.set(key, o.value))
+    }));
+
+    return {
+      menuOpen: s.menuOpen,
+      openMenu: () => this.setState({ menuOpen: true }),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      navLinks: [
+        { label: 'Services', note: 'Where the money goes missing', icon: 'ph ph-warning-diamond' },
+        { label: 'The Loop', note: 'Four stations, one cycle', icon: 'ph ph-arrows-clockwise' },
+        { label: 'Approach', note: 'The full stack, in bundles', icon: 'ph ph-stack' },
+        { label: 'Products', note: 'Tools built for this work', icon: 'ph ph-cube' },
+        { label: 'Blog', note: 'Findings from live stacks', icon: 'ph ph-article' },
+        { label: 'FAQ', note: 'Before you book', icon: 'ph ph-question' }
+      ],
+      chips: [
+        { label: 'AppsFlyer', icon: 'ph ph-broadcast' },
+        { label: 'Adjust', icon: 'ph ph-crosshair' },
+        { label: 'SKAdNetwork 4.0', icon: 'ph ph-shield-check' },
+        { label: 'RevenueCat', icon: 'ph ph-receipt' },
+        { label: 'Google Ads', icon: 'ph ph-cursor-click' }
+      ],
+
+      bento: [
+        { num: '01 \u00b7 Not a measurement problem', numColor: '#E39A1F', iconColor: '#E39A1F', ring: 'rgba(227,154,31,0.34)', icon: 'ph ph-chart-line-down', title: 'Retention nobody watches past D7.', lead: 'Every LTV model is retention multiplied by monetisation. If the curve dies before the payback horizon, the campaign cannot break even at any CPI.', isBars: false, isCode: false },
+        { num: '02', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-arrows-clockwise', title: 'Renewals nobody counted.', lead: 'Subscription renewals happen on Apple\u2019s servers while your app is closed. If nothing is listening server-side, that revenue never arrives.', isBars: true, isCode: false },
+        { num: '03', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-git-branch', title: 'A schema built for nothing in particular.', lead: 'A handful of bits, one short window \u2014 and a schema copied from a blog post that was never mapped to revenue.', isCode: true, code: 'skan_cv: null\n71% of postbacks', isBars: false },
+        { num: '04', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-arrow-square-out', title: 'The web-to-app gap.', lead: 'A Google ad clicked on your site, an install days later, a subscription a week after that. Google never learns which click paid.', isCode: true, code: 'web_click \u2192 install \u2192 ??? \u2192 subscription', isBars: false }
+      ],
+
+      posts: [
+        { date: '18 Aug 2026', tag: 'Google Ads', title: 'The conversion rule that reports zero for a thousand-dollar sale' },
+        { date: '04 Aug 2026', tag: 'SKAdNetwork', title: 'A subscription SKAN schema is not a game SKAN schema' },
+        { date: '21 Jul 2026', tag: 'Deep linking', title: 'Why your deferred deep links work for everyone except new installs' }
+      ],
+
+      isSub, isAd: !isSub, isAnnual: isSub && s.period === 'annual',
+      modes: seg('mode', [{ label: 'Subscription', value: 'sub' }, { label: 'Ad-monetised', value: 'ad' }], true),
+      horizons: seg('horizon', [{ label: '90d', value: 90 }, { label: '180d', value: 180 }, { label: '365d', value: 365 }], true),
+      groups: [
+        { label: 'Billing period', opts: seg('period', [{ label: 'Weekly', value: 'weekly' }, { label: 'Monthly', value: 'monthly' }, { label: 'Annual', value: 'annual' }]) },
+        { label: 'Trial length', opts: seg('trialDays', [3, 7, 14, 30].map(d => ({ label: d + 'd', value: d }))) },
+        { label: 'Store commission', opts: seg('commission', [15, 30].map(v => ({ label: v + '%', value: v }))) }
+      ],
+
+      presets: PRESETS.map(x => {
+        const on = s.preset === x.key;
+        const be = this.chart(Object.assign({}, s, x.st)).be;
+        return {
+          on: String(on), label: x.label, sub: x.sub, day: dayLabel(be),
+          dayColor: on ? '#E39A1F' : '#7C838D',
+          bg: on ? 'rgba(227,154,31,0.1)' : 'transparent',
+          bd: on ? '#E39A1F' : '#23272E',
+          dotBd: on ? '#E39A1F' : '#3D444D',
+          dotBg: on ? '#E39A1F' : 'transparent',
+          dotRing: on ? 'inset 0 0 0 4px #16191F' : 'none',
+          onClick: () => this.applyPreset(x.key)
+        };
+      }),
+
+      vb: '0 0 ' + c.VW + ' ' + c.VH,
+      axLeft: c.X0, axRight: c.X1, truePath: c.truePath, measPath: c.measPath, gapPath: c.gapPath,
+      zeroY: c.zeroY.toFixed(1),
+      crossX: (c.be === null ? c.X1 : c.fx(Math.min(c.be, c.H))).toFixed(1),
+      crossOpacity: c.vis ? 1 : 0,
+      pos: {
+        yMaxTop: (c.Y0 / c.VH * 100).toFixed(2) + '%',
+        zeroTop: (c.zeroY / c.VH * 100).toFixed(2) + '%',
+        yMinTop: (c.Y1 / c.VH * 100).toFixed(2) + '%',
+        tTop: ((c.Y1 + 10) / c.VH * 100).toFixed(2) + '%',
+        t0Left: (c.X0 / c.VW * 100).toFixed(2) + '%',
+        tEndLeft: (c.X1 / c.VW * 100).toFixed(2) + '%'
+      },
+      yMaxLabel: money(c.yMax), yMinLabel: money(c.yMin), endTick: 'day ' + c.H,
+      breakevenLabel: c.be === null ? 'Never breaks even' : 'Breakeven: day ' + c.be,
+
+      rows: isSub ? [
+        { label: active ? active.label.toUpperCase() + ' COHORT' : 'YOUR NUMBERS', value: '', color: '#E39A1F' },
+        { label: 'True breakeven', value: dayLabel(c.m.beTrue), color: '#E39A1F' },
+        { label: 'Dashboard reports', value: dayLabel(c.m.beMeas), color: '#8E959E' },
+        { label: 'Invisible / 1,000', value: '$' + (c.gapAtH * 1000).toFixed(0), color: '#E8EAED' },
+        { label: 'Lifetime ROAS', value: roas(c.m.ltvInstall / c.m.cpi), color: '#E8EAED' }
+      ] : [
+        { label: 'AD-MONETISED', value: '', color: '#E39A1F' },
+        { label: 'True breakeven', value: dayLabel(ad.be), color: '#E39A1F' },
+        { label: 'Decay exponent b', value: ad.b.toFixed(3), color: '#E8EAED' },
+        { label: 'Model predicts D7', value: (ad.predD7 * 100).toFixed(1) + '%', color: '#E8EAED' },
+        { label: 'ROAS at day ' + c.H, value: roas(ad.rev(c.H) / ad.cpi), color: '#E8EAED' }
+      ],
+      verdict: isSub
+        ? 'On the numbers your dashboard reports, you would pause this campaign. On the real numbers it returns ' + roas(c.m.ltvInstall / c.m.cpi) + " over the subscription's life."
+        : 'At this ARPDAU and this decay, an install returns ' + roas(ad.rev(c.H) / ad.cpi) + ' by day ' + c.H + '.',
+      annualWarning: 'Annual SKU: one payment at trial end, then nothing until day 365. The whole bet rides on a single charge.',
+
+      sliders: mk(isSub ? [
+        { id: 'm-i2t', label: 'Install \u2192 trial start', key: 'i2t', min: 1, max: 25, step: 0.5, value: s.i2t, readout: s.i2t.toFixed(1) + '%' },
+        { id: 'm-t2p', label: 'Trial \u2192 paid', key: 't2p', min: 10, max: 60, step: 1, value: s.t2p, readout: s.t2p.toFixed(1) + '%' },
+        { id: 'm-price', label: 'Plan price', key: 'price', min: 1.99, max: 99.99, step: 1, value: s.price, readout: '$' + s.price.toFixed(2) },
+        { id: 'm-ret', label: 'Renewal retention per cycle', key: 'retention', min: 50, max: 98, step: 0.5, value: s.retention, readout: s.retention.toFixed(1) + '%' },
+        { id: 'm-ref', label: 'Refund rate', key: 'refund', min: 0, max: 10, step: 0.5, value: s.refund, readout: s.refund.toFixed(1) + '%' },
+        { id: 'm-cpi', label: 'Cost per install', key: 'cpi', min: 0.2, max: 8, step: 0.05, value: s.cpi, readout: '$' + s.cpi.toFixed(2) }
+      ] : [
+        { id: 'm-arp', label: 'ARPDAU', key: 'arpdau', min: 0.005, max: 0.5, step: 0.005, value: s.arpdau, readout: '$' + s.arpdau.toFixed(3) },
+        { id: 'm-d1', label: 'D1 retention', key: 'd1', min: 10, max: 60, step: 1, value: s.d1, readout: s.d1.toFixed(0) + '%' },
+        { id: 'm-d30', label: 'D30 retention', key: 'd30', min: 1, max: 25, step: 1, value: s.d30, readout: s.d30.toFixed(0) + '%' },
+        { id: 'm-acpi', label: 'Cost per install', key: 'adCpi', min: 0.05, max: 3, step: 0.05, value: s.adCpi, readout: '$' + s.adCpi.toFixed(2) }
+      ]),
+
+      derived: isSub ? [
+        { label: 'Install \u2192 paid', value: (c.m.i2p * 100).toFixed(2) + '%' },
+        { label: 'Net per payment', value: '$' + c.m.net.toFixed(2) },
+        { label: 'LTV per payer', value: '$' + c.m.ltvPayer.toFixed(2) },
+        { label: 'LTV per install', value: '$' + c.m.ltvInstall.toFixed(2) }
+      ] : [
+        { label: 'Decay exponent b', value: ad.b.toFixed(3) },
+        { label: 'Predicts D7', value: (ad.predD7 * 100).toFixed(1) + '%' },
+        { label: 'Active days by D30', value: ad.activeDays(30).toFixed(2) },
+        { label: 'Value per install', value: '$' + ad.rev(c.H).toFixed(2) }
+      ],
+
+      realD7: s.realD7,
+      onRealD7: e => this.set('realD7', parseFloat(e.target.value) || 0),
+      d7Mismatch: !isSub && Math.abs(s.realD7 - ad.predD7 * 100) > Math.max(2, ad.predD7 * 100 * 0.25),
+      d7MismatchNote: "Your curve isn't a power law. That usually means a broken onboarding step, not a bad model.",
+
+      gaps: [
+        { label: 'Server-side renewal capture', note: 'Off: only the first payment is ever visible.', checked: s.renewalCapture, hasSlider: false, onChange: e => this.set('renewalCapture', e.target.checked) },
+        { label: 'SKAN schema mapped to revenue', note: 'Off: null conversion values report zero revenue.', checked: s.skanMapped, onChange: e => this.set('skanMapped', e.target.checked), hasSlider: true, sId: 'm-skan', sLabel: 'Share of iOS installs with null CV', sMin: 0, sMax: 80, sStep: 1, sValue: s.skanNull, sReadout: s.skanNull.toFixed(0) + '%', sOnChange: e => this.set('skanNull', parseFloat(e.target.value)) },
+        { label: 'Web-to-app click stitching', note: 'Off: paid installs get miscredited to organic.', checked: s.webStitched, onChange: e => this.set('webStitched', e.target.checked), hasSlider: true, sId: 'm-web', sLabel: 'Share miscredited to organic', sMin: 0, sMax: 60, sStep: 1, sValue: s.webLoss, sReadout: s.webLoss.toFixed(0) + '%', sOnChange: e => this.set('webLoss', parseFloat(e.target.value)) }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

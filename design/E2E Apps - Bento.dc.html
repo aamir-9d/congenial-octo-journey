@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  body { margin: 0; background: #0E1014; color: #E8EAED; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+  p, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 700; }
+  p { font-weight: 400; text-wrap: pretty; }
+  a { text-decoration: none; color: inherit; }
+  a.btn { white-space: nowrap; }
+  summary::-webkit-details-marker { display: none; }
+  summary::marker { content: ''; }
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid #E39A1F; outline-offset: 3px; border-radius: 4px; }
+  ::selection { background: rgba(227,154,31,0.3); }
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; height: 44px; width: 100%; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: #2C3138; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: #E39A1F; border: 3px solid #16191F; box-shadow: 0 0 12px -2px rgba(227,154,31,0.9); }
+  input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: #2C3138; }
+  input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border: 3px solid #16191F; border-radius: 50%; background: #E39A1F; }
+  @keyframes bRise { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
+  @keyframes bFade { from { opacity: 0 } to { opacity: 1 } }
+  @keyframes bDraw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+  @keyframes bGrow { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+  @keyframes bDriftA { 0% { transform: translate3d(-4%,2%,0) scale(1) } 50% { transform: translate3d(5%,-4%,0) scale(1.14) } 100% { transform: translate3d(-4%,2%,0) scale(1) } }
+  @keyframes bDriftB { 0% { transform: translate3d(4%,-3%,0) scale(1.12) } 50% { transform: translate3d(-6%,4%,0) scale(1) } 100% { transform: translate3d(4%,-3%,0) scale(1.12) } }
+  @keyframes bScan { 0% { transform: translateX(-60%) } 100% { transform: translateX(160%) } }
+  @keyframes bSpin { to { transform: rotate(360deg) } }
+  @keyframes bReveal { from { opacity: 0; transform: translateY(22px) } to { opacity: 1; transform: none } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important }
+  }
+</style>
+</helmet>
+
+<div style="--bg:#0E1014;--surf:#16191F;--surf2:#1D2128;--line:#23272E;--line2:#1D2027;--tx:#E8EAED;--tx2:#A8AEB6;--tx3:#8E959E;--tx4:#7C838D;--am:#E39A1F;--amH:#F0AB33;--amDim:rgba(227,154,31,0.12);--ink:#101725;--f:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(0.22,0.61,0.36,1);--gut:clamp(20px,4vw,44px);--sec:clamp(72px,8vw,124px);--wrap:1280px;background:var(--bg);color:var(--tx);font-family:var(--f);font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden">
+
+  <nav style="position:sticky;top:0;z-index:90;background:rgba(14,16,20,0.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line2)">
+    <div style="display:flex;align-items:center;gap:clamp(16px,3vw,40px);max-width:var(--wrap);margin:0 auto;padding:14px var(--gut)">
+      <a href="#top" style="font-size:18px;font-weight:700;letter-spacing:-0.022em;white-space:nowrap">E2E Apps</a>
+      <div style="display:flex;gap:clamp(14px,2vw,26px);margin-left:auto;align-items:center;font-size:14px;white-space:nowrap;color:var(--tx2)">
+        <a href="#services" style-hover="color:#E39A1F">Services</a>
+        <a href="#loop" style-hover="color:#E39A1F">The Loop</a>
+        <a href="#approach" style-hover="color:#E39A1F">Approach</a>
+        <a href="#blog" style-hover="color:#E39A1F">Blog</a>
+        <a href="#faq" style-hover="color:#E39A1F">FAQ</a>
+      </div>
+      <a href="#contact" class="btn" style="display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;padding:10px 18px;border-radius:8px;background:var(--am);color:var(--ink);transition:background 160ms var(--ease),box-shadow 160ms var(--ease);box-shadow:0 0 0 0 rgba(227,154,31,0)" style-hover="background:#F0AB33;box-shadow:0 6px 24px -8px rgba(227,154,31,0.8)">Book a call<i class="ph ph-arrow-up-right" style="font-size:13px"></i></a>
+    </div>
+  </nav>
+
+  <section id="top" data-screen-label="Hero" style="position:relative;overflow:hidden;padding:clamp(72px,9vw,132px) var(--gut) clamp(56px,6vw,88px)">
+    <div aria-hidden="true" style="position:absolute;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(circle at center,rgba(232,234,237,0.055) 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(ellipse 78% 62% at 50% 34%,#000 30%,transparent 78%);-webkit-mask-image:radial-gradient(ellipse 78% 62% at 50% 34%,#000 30%,transparent 78%)"></div>
+    <sc-if value="{{ bloomOn }}" hint-placeholder-val="{{ true }}">
+      <div aria-hidden="true" style="position:absolute;inset:-25% -12% auto -12%;height:130%;z-index:0;pointer-events:none">
+        <div style="position:absolute;top:-6%;left:16%;width:50%;height:74%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,154,31,0.26),rgba(227,154,31,0) 66%);filter:blur(44px);animation:bDriftA 28s ease-in-out infinite"></div>
+        <div style="position:absolute;top:10%;right:8%;width:44%;height:66%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(64,86,140,0.34),rgba(64,86,140,0) 68%);filter:blur(50px);animation:bDriftB 36s ease-in-out infinite"></div>
+      </div>
+      <div aria-hidden="true" style="position:absolute;top:0;left:0;right:0;height:1px;z-index:1;overflow:hidden;pointer-events:none">
+        <div style="width:38%;height:1px;background:linear-gradient(to right,transparent,rgba(227,154,31,0.85),transparent);animation:bScan 11s linear 1.4s infinite"></div>
+      </div>
+    </sc-if>
+
+    <div style="position:relative;z-index:2;max-width:var(--wrap);margin:0 auto;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;letter-spacing:0.09em;text-transform:uppercase;color:var(--am);padding:7px 15px;border-radius:999px;background:var(--amDim);box-shadow:inset 0 0 0 1px rgba(227,154,31,0.24);animation:bRise 0.6s var(--ease) both"><i class="ph ph-plugs-connected" style="font-size:14px"></i>Attribution, fixed at the source</div>
+      <h1 style="margin:26px auto 0;font-size:clamp(38px,5.4vw,68px);font-weight:700;letter-spacing:-0.032em;line-height:1.05;max-width:19ch;animation:bRise 0.6s var(--ease) 0.08s both">Your dashboard says the campaign is losing money.</h1>
+      <p style="margin:20px auto 0;max-width:58ch;font-size:clamp(16px,1.35vw,18.5px);line-height:1.6;color:var(--tx2);animation:bRise 0.6s var(--ease) 0.16s both">It broke even in month nine — you killed it in week one. I fix the attribution, close the marketing gaps it was hiding, and grow the app on numbers you can defend.</p>
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:34px;animation:bRise 0.6s var(--ease) 0.24s both">
+        <a href="#contact" class="btn" style="display:inline-flex;align-items:center;gap:9px;font-size:15.5px;font-weight:600;padding:15px 26px;border-radius:9px;background:var(--am);color:var(--ink);transition:background 180ms var(--ease),box-shadow 180ms var(--ease);box-shadow:0 8px 30px -10px rgba(227,154,31,0.7)" style-hover="background:#F0AB33;box-shadow:0 12px 40px -8px rgba(227,154,31,0.9)">Find what your stack is missing<i class="ph ph-arrow-right" style="font-size:15px"></i></a>
+        <a href="#loop" class="btn" style="display:inline-flex;align-items:center;gap:9px;font-size:15.5px;font-weight:600;padding:15px 26px;border-radius:9px;color:var(--tx);border:1px solid #2C3138;transition:background 180ms var(--ease),border-color 180ms var(--ease)" style-hover="background:rgba(232,234,237,0.06);border-color:#3D444D">See how it works</a>
+      </div>
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:38px;animation:bRise 0.6s var(--ease) 0.32s both">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="7">
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;white-space:nowrap;color:var(--tx2);padding:7px 13px;border-radius:999px;background:var(--surf2);box-shadow:inset 0 0 0 1px var(--line)"><i class="{{ c.icon }}" style="font-size:13px;color:var(--am)"></i>{{ c.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" data-screen-label="Where the money goes missing" style="padding:var(--sec) var(--gut)">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:62ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Why your numbers don't reconcile</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em;line-height:1.08">Three places the money goes missing. And one place it was never there.</h2>
+        <p style="margin-top:18px;font-size:17px;line-height:1.6;color:var(--tx2)">Each card is one failure, what it costs, and the signature it leaves in your data.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:clamp(40px,4vw,64px)">
+        <sc-for list="{{ bento }}" as="b" hint-placeholder-count="5">
+          <div style="grid-column:span {{ b.span }};min-height:{{ b.minH }};display:flex;flex-direction:column;background:var(--surf);border-radius:14px;padding:26px;box-shadow:0 0 0 1px {{ b.ring }};animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 58%">
+            <div style="display:flex;align-items:center;gap:10px">
+              <i class="{{ b.icon }}" style="font-size:19px;color:{{ b.iconColor }}"></i>
+              <span style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:{{ b.numColor }}">{{ b.num }}</span>
+            </div>
+            <h3 style="margin-top:16px;font-size:22px;font-weight:600;letter-spacing:-0.02em;line-height:1.22;min-height:{{ b.titleH }}">{{ b.title }}</h3>
+            <p style="margin-top:10px;font-size:14.5px;line-height:1.6;color:var(--tx2);min-height:{{ b.leadH }}">{{ b.lead }}</p>
+            <details style="margin-top:2px">
+              <summary style="display:inline-flex;align-items:center;gap:7px;cursor:pointer;list-style:none;font-family:var(--fm);font-size:12px;letter-spacing:0.05em;color:var(--am);padding:6px 0"><span>Why it happens</span><i class="ph ph-caret-down" style="font-size:11px"></i></summary>
+              <p style="margin-top:8px;font-size:14px;line-height:1.65;color:var(--tx3)">{{ b.body }}</p>
+            </details>
+            <div style="margin-top:auto;padding-top:22px">{{ b.visualSlot }}
+              <sc-if value="{{ b.isChips }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  <sc-for list="{{ b.chips }}" as="k" hint-placeholder-count="4">
+                    <span style="font-family:var(--fm);font-size:11.5px;white-space:nowrap;color:var(--tx2);padding:6px 11px;border-radius:6px;background:var(--surf2)">{{ k }}</span>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ b.isBars }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:flex-end;gap:18px;height:96px">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:100%;max-width:52px;height:26px;border-radius:4px 4px 0 0;background:#3A4048;transform-origin:bottom;animation:bGrow 0.7s var(--ease) 0.2s both"></div><span style="font-family:var(--fm);font-size:10.5px;color:var(--tx4)">DASHBOARD</span></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px"><div style="width:100%;max-width:52px;height:72px;border-radius:4px 4px 0 0;background:var(--am);transform-origin:bottom;animation:bGrow 0.7s var(--ease) 0.34s both"></div><span style="font-family:var(--fm);font-size:10.5px;color:var(--am)">TRUE</span></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ b.isCode }}" hint-placeholder-val="{{ false }}">
+                <div style="font-family:var(--fm);font-size:11.5px;line-height:1.7;white-space:pre-line;color:var(--tx3);background:var(--surf2);border-radius:8px;padding:12px 14px">{{ b.code }}</div>
+              </sc-if>
+              <sc-if value="{{ b.isCurve }}" hint-placeholder-val="{{ false }}">
+                <svg viewBox="0 0 300 96" preserveAspectRatio="none" role="img" aria-label="Retention curve dying before payback" style="display:block;width:100%;height:96px">
+                  <path d="{{ decay.area }}" fill="#E39A1F" opacity="0.14"></path>
+                  <path d="{{ decay.line }}" fill="none" stroke="#E39A1F" stroke-width="2.2" vector-effect="non-scaling-stroke" pathLength="1" style="stroke-dasharray:1;animation:bDraw 1.2s var(--ease) 0.3s both"></path>
+                  <line x1="{{ decay.payX }}" y1="4" x2="{{ decay.payX }}" y2="92" stroke="#5B626B" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                  <text x="{{ decay.payLabelX }}" y="16" font-family="IBM Plex Mono, monospace" font-size="10" fill="#7C838D">payback horizon</text>
+                </svg>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Payback model" style="padding:0 var(--gut) var(--sec)">
+    <div style="max-width:var(--wrap);margin:0 auto;background:var(--surf);border-radius:16px;box-shadow:0 0 0 1px var(--line);overflow:hidden;animation:bReveal 0.7s var(--ease) both;animation-timeline:view();animation-range:entry 2% entry 42%">
+      <div style="text-align:center;padding:clamp(32px,3.4vw,48px) 26px 0">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Cumulative net per install</div>
+        <h2 style="margin-top:14px;font-size:clamp(26px,2.8vw,36px);letter-spacing:-0.026em">Payback model</h2>
+        <p style="margin:14px auto 0;max-width:56ch;font-size:16px;line-height:1.6;color:var(--tx2)">Pick the cohort that looks most like yours. Every assumption is underneath if you want it.</p>
+        <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:9px;margin-top:24px">
+          <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+            <button type="button" onClick="{{ m.onClick }}" aria-pressed="{{ m.on }}" style="padding:11px 22px;font-family:var(--f);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;background:{{ m.bg }};color:{{ m.fg }};border:0;border-left:{{ m.sep }};transition:background 160ms var(--ease)">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;max-width:820px;margin:28px auto 0;padding:0 26px">
+        <sc-for list="{{ presets }}" as="p" hint-placeholder-count="3">
+          <button type="button" onClick="{{ p.onClick }}" aria-pressed="{{ p.on }}" style="display:flex;align-items:flex-start;gap:12px;text-align:left;padding:16px;min-height:56px;cursor:pointer;font-family:var(--f);border-radius:10px;background:{{ p.bg }};border:1px solid {{ p.bd }};color:var(--tx);transition:background 160ms var(--ease),border-color 160ms var(--ease)">
+            <span style="width:16px;height:16px;flex:none;margin-top:3px;border-radius:50%;border:1.5px solid {{ p.dotBd }};background:{{ p.dotBg }};box-shadow:{{ p.dotRing }}"></span>
+            <span style="flex:1">
+              <span style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font-size:15px;font-weight:600">{{ p.label }}</span><span style="font-family:var(--fm);font-size:12px;white-space:nowrap;color:{{ p.dayColor }}">{{ p.day }}</span></span>
+              <span style="display:block;margin-top:3px;font-size:12.5px;line-height:1.5;color:var(--tx3)">{{ p.sub }}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px;margin-top:26px;padding:0 26px">
+        <span style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tx4)">Horizon</span>
+        <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+          <sc-for list="{{ horizons }}" as="h" hint-placeholder-count="3">
+            <button type="button" onClick="{{ h.onClick }}" aria-pressed="{{ h.on }}" style="padding:9px 16px;font-family:var(--fm);font-size:12.5px;cursor:pointer;background:{{ h.bg }};color:{{ h.fg }};border:0;border-left:{{ h.sep }};transition:background 160ms var(--ease)">{{ h.label }}</button>
+          </sc-for>
+        </div>
+        <span style="font-family:var(--fm);font-size:12.5px;color:var(--am);white-space:nowrap">{{ breakevenLabel }}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:clamp(24px,3vw,44px);align-items:center;padding:clamp(28px,3vw,40px) 26px">
+        <div>
+          <div style="display:flex;align-items:stretch">
+          <div aria-hidden="true" style="position:relative;flex:none;width:54px">
+            <div style="position:absolute;right:10px;top:{{ pos.yMaxTop }};transform:translateY(-50%);font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ yMaxLabel }}</div>
+            <div style="position:absolute;right:10px;top:{{ pos.zeroTop }};transform:translateY(-50%);font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">0</div>
+            <div style="position:absolute;right:10px;top:{{ pos.yMinTop }};transform:translateY(-50%);font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ yMinLabel }}</div>
+          </div>
+          <div style="position:relative;flex:1;min-width:0">
+          <svg viewBox="{{ vb }}" width="100%" role="img" aria-label="Payback curve, true versus dashboard-measured" style="display:block;overflow:visible">
+            <g stroke="#2C3138" stroke-width="1">
+              <line x1="{{ axLeft }}" y1="{{ plotTop }}" x2="{{ axLeft }}" y2="{{ axBottom }}"></line>
+              <line x1="{{ axLeft }}" y1="{{ axBottom }}" x2="{{ axRight }}" y2="{{ axBottom }}"></line>
+            </g>
+            <path d="{{ gapPath }}" fill="#E39A1F" opacity="0.16"></path>
+            <line x1="{{ axLeft }}" y1="{{ zeroY }}" x2="{{ axRight }}" y2="{{ zeroY }}" stroke="#4A515A" stroke-width="1"></line>
+            <line x1="{{ day7X }}" y1="{{ plotTop }}" x2="{{ day7X }}" y2="{{ axBottom }}" stroke="#4A515A" stroke-width="1" stroke-dasharray="3 4"></line>
+            <path d="{{ measPath }}" fill="none" stroke="#5B626B" stroke-width="2" stroke-dasharray="6 5" stroke-linejoin="round"></path>
+            <path d="{{ truePath }}" fill="none" stroke="#E39A1F" stroke-width="2.6" stroke-linejoin="round"></path>
+            <g opacity="{{ crossOpacity }}">
+              <line x1="{{ crossX }}" y1="{{ crossTop }}" x2="{{ crossX }}" y2="{{ zeroY }}" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="2 3"></line>
+              <circle cx="{{ crossX }}" cy="{{ zeroY }}" r="5" fill="#E39A1F"></circle>
+            </g>
+          </svg>
+          <!-- Axis labels are HTML over the SVG, not <text> inside it: the SVG
+               scales to its column, and text inside would shrink with it. Same
+               approach the shipped Calculator.astro uses. -->
+          <div aria-hidden="true" style="position:absolute;left:{{ pos.t0Left }};top:{{ pos.tTop }};font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">day 0</div>
+          <div aria-hidden="true" style="position:absolute;left:{{ pos.tMidLeft }};top:{{ pos.tTop }};transform:translateX(-50%);font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ midTick }}</div>
+          <div aria-hidden="true" style="position:absolute;left:{{ pos.tEndLeft }};top:{{ pos.tTop }};transform:translateX(-100%);font-family:var(--fm);font-size:12px;line-height:1;white-space:nowrap;color:var(--tx4)">{{ endTick }}</div>
+          <div aria-hidden="true" style="position:absolute;left:{{ pos.day7Left }};top:{{ pos.day7Top }};font-family:var(--fm);font-size:11px;line-height:1;white-space:nowrap;color:var(--tx4)">Where most teams stop looking</div>
+          </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:18px;margin-top:14px;font-family:var(--fm);font-size:11.5px;color:var(--tx4)">
+            <span style="display:flex;align-items:center;gap:7px"><span style="width:14px;height:2px;background:var(--am);border-radius:2px"></span>TRUE REVENUE</span>
+            <span style="display:flex;align-items:center;gap:7px"><span style="width:14px;height:0;border-top:2px dashed #5B626B"></span>WHAT YOUR DASHBOARD SEES</span>
+            <span style="display:flex;align-items:center;gap:7px"><span style="width:12px;height:8px;background:rgba(227,154,31,0.3);border-radius:2px"></span>INVISIBLE</span>
+          </div>
+        </div>
+        <div>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+            <div style="display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-top:1px solid var(--line);font-family:var(--fm);font-size:12.5px;white-space:nowrap"><span style="color:var(--tx4)">{{ r.label }}</span><span style="color:{{ r.color }}">{{ r.value }}</span></div>
+          </sc-for>
+          <p style="margin-top:20px;font-size:16px;line-height:1.5;color:var(--tx)">{{ verdict }}</p>
+        </div>
+      </div>
+
+      <details style="margin:0 26px 26px;border-radius:12px;background:var(--surf2);box-shadow:0 0 0 1px var(--line2);overflow:hidden">
+        <summary style="display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:52px;padding:0 22px;cursor:pointer;list-style:none;font-size:14.5px;font-weight:600"><span>Adjust the assumptions</span><i class="ph ph-caret-down" style="font-size:14px;color:var(--tx3)"></i></summary>
+        <div style="padding:4px 22px 24px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px 32px;padding-top:16px;border-top:1px solid var(--line2)">
+            <sc-for list="{{ sliders }}" as="s" hint-placeholder-count="6">
+              <div>
+                <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--fm);font-size:11.5px;color:var(--tx4)"><label for="{{ s.id }}">{{ s.label }}</label><span style="color:var(--tx)">{{ s.readout }}</span></div>
+                <input id="{{ s.id }}" type="range" min="{{ s.min }}" max="{{ s.max }}" step="{{ s.step }}" value="{{ s.value }}" onChange="{{ s.onChange }}" aria-valuetext="{{ s.readout }}" />
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="font-family:var(--fm);font-size:11.5px;color:var(--tx4);margin-bottom:8px">Billing period</div>
+                <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+                  <sc-for list="{{ periods }}" as="o" hint-placeholder-count="3">
+                    <button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="padding:10px 14px;font-family:var(--f);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;background:{{ o.bg }};color:{{ o.fg }};border:0;border-left:{{ o.sep }}">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="font-family:var(--fm);font-size:11.5px;color:var(--tx4);margin-bottom:8px">Trial length</div>
+                <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+                  <sc-for list="{{ trials }}" as="o" hint-placeholder-count="4">
+                    <button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="padding:10px 14px;font-family:var(--fm);font-size:12.5px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:0;border-left:{{ o.sep }}">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="font-family:var(--fm);font-size:11.5px;color:var(--tx4);margin-bottom:8px">Store commission</div>
+                <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px">
+                  <sc-for list="{{ commissions }}" as="o" hint-placeholder-count="2">
+                    <button type="button" onClick="{{ o.onClick }}" aria-pressed="{{ o.on }}" style="padding:10px 18px;font-family:var(--fm);font-size:12.5px;cursor:pointer;background:{{ o.bg }};color:{{ o.fg }};border:0;border-left:{{ o.sep }}">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:22px;padding-top:18px;border-top:1px solid var(--line2)">
+            <sc-for list="{{ derived }}" as="d" hint-placeholder-count="4">
+              <div><span style="font-family:var(--fm);font-size:11.5px;color:var(--tx4)">{{ d.label }}</span><div style="margin-top:4px;font-size:21px;font-weight:600;letter-spacing:-0.022em">{{ d.value }}</div></div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ isAnnual }}" hint-placeholder-val="{{ false }}">
+            <p style="margin-top:18px;font-size:13.5px;line-height:1.6;color:var(--am);background:rgba(227,154,31,0.1);border-radius:8px;padding:12px 14px">{{ annualWarning }}</p>
+          </sc-if>
+
+          <sc-if value="{{ isSub }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tx4);margin-top:22px;padding-top:18px;border-top:1px solid var(--line2)">What your dashboard currently sees</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:12px">
+                <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="3">
+                  <div>
+                    <label style="display:flex;gap:12px;align-items:flex-start;min-height:44px;font-size:14px;color:var(--tx2);cursor:pointer">
+                      <input type="checkbox" checked="{{ g.checked }}" onChange="{{ g.onChange }}" style="width:20px;height:20px;flex:none;margin-top:2px;accent-color:#E39A1F;cursor:pointer" />
+                      <span>{{ g.label }}<span style="display:block;font-family:var(--fm);font-size:11.5px;line-height:1.6;color:var(--tx4);margin-top:3px">{{ g.note }}</span></span>
+                    </label>
+                    <sc-if value="{{ g.hasSlider }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:6px;padding-left:32px">
+                        <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--fm);font-size:11px;color:var(--tx4)"><label for="{{ g.sId }}">{{ g.sLabel }}</label><span style="color:var(--tx)">{{ g.sReadout }}</span></div>
+                        <input id="{{ g.sId }}" type="range" min="{{ g.sMin }}" max="{{ g.sMax }}" step="{{ g.sStep }}" value="{{ g.sValue }}" onChange="{{ g.sOnChange }}" aria-valuetext="{{ g.sReadout }}" />
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isAd }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tx4);margin-top:22px;padding-top:18px;border-top:1px solid var(--line2)">D7 cross-check</div>
+              <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;margin-top:12px">
+                <div style="max-width:220px">
+                  <label for="b-realD7" style="display:block;font-family:var(--fm);font-size:11.5px;color:var(--tx4);margin-bottom:7px">Your actual D7 (%)</label>
+                  <input id="b-realD7" type="number" min="0" max="60" step="0.1" value="{{ realD7 }}" onChange="{{ onRealD7 }}" style="width:100%;min-height:44px;padding:10px 14px;font-family:var(--fm);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf);border:1px solid var(--line);border-radius:9px" />
+                </div>
+                <sc-if value="{{ d7Mismatch }}" hint-placeholder-val="{{ false }}">
+                  <p style="flex:1 1 260px;font-size:13.5px;line-height:1.6;color:var(--am);background:rgba(227,154,31,0.1);border-radius:8px;padding:12px 14px">{{ d7MismatchNote }}</p>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="loop" data-screen-label="The Loop" style="padding:var(--sec) var(--gut);background:linear-gradient(180deg,var(--bg),#111318 50%,var(--bg))">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:58ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">How the work is sequenced</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">The Full Loop</h2>
+        <p style="margin-top:18px;font-size:17px;line-height:1.6;color:var(--tx2)">Four stations. The output of the last one is the input to the first. That's the point.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px) minmax(0,1fr);grid-template-rows:auto auto auto;gap:clamp(16px,2vw,28px);margin:clamp(40px,4vw,64px) auto 0;max-width:1120px;align-items:center;justify-items:stretch">
+        <div style="grid-column:2;grid-row:1">
+          <sc-for list="{{ st1 }}" as="s" hint-placeholder-count="1">
+            <div style="background:var(--surf);border-radius:12px;padding:20px;box-shadow:0 0 0 1px var(--line);text-align:center">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Station {{ s.n }}</div>
+              <h3 style="margin-top:8px;font-size:21px;font-weight:600;letter-spacing:-0.02em">{{ s.title }}</h3>
+              <p style="margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--tx2)">{{ s.lead }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="grid-column:1;grid-row:2">
+          <sc-for list="{{ st4 }}" as="s" hint-placeholder-count="1">
+            <div style="background:var(--surf);border-radius:12px;padding:20px;box-shadow:0 0 0 1px var(--line);text-align:right">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Station {{ s.n }}</div>
+              <h3 style="margin-top:8px;font-size:21px;font-weight:600;letter-spacing:-0.02em">{{ s.title }}</h3>
+              <p style="margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--tx2)">{{ s.lead }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="grid-column:2;grid-row:2;display:grid;place-items:center;padding:clamp(8px,1.5vw,20px)">
+          <svg viewBox="0 0 300 300" role="img" aria-label="The loop: Instrument, Attribute, Decide, Deploy, feeding back to Instrument" style="width:100%;height:auto;overflow:visible">
+            <circle cx="150" cy="150" r="112" fill="none" stroke="#2C3138" stroke-width="1.5"></circle>
+            <circle r="5.5" fill="#E39A1F"><animateMotion dur="11s" repeatCount="indefinite" path="M 150 38 A 112 112 0 1 1 149.9 38 Z"></animateMotion></circle>
+            <circle r="11" fill="none" stroke="#E39A1F" stroke-width="1" opacity="0.35"><animateMotion dur="11s" repeatCount="indefinite" path="M 150 38 A 112 112 0 1 1 149.9 38 Z"></animateMotion></circle>
+            <sc-for list="{{ nodes }}" as="n" hint-placeholder-count="4">
+              <g>
+                <circle cx="{{ n.cx }}" cy="{{ n.cy }}" r="19" fill="#16191F" stroke="#E39A1F" stroke-width="1.5"></circle>
+                <text x="{{ n.cx }}" y="{{ n.ny }}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="500" fill="#E39A1F">{{ n.n }}</text>
+                <polygon points="{{ n.arrow }}" fill="#E39A1F"></polygon>
+              </g>
+            </sc-for>
+            <text x="150" y="144" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="#7C838D">SIGNAL IN</text>
+            <text x="150" y="163" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="#7C838D">SPEND OUT</text>
+          </svg>
+        </div>
+
+        <div style="grid-column:3;grid-row:2">
+          <sc-for list="{{ st2 }}" as="s" hint-placeholder-count="1">
+            <div style="background:var(--surf);border-radius:12px;padding:20px;box-shadow:0 0 0 1px var(--line)">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Station {{ s.n }}</div>
+              <h3 style="margin-top:8px;font-size:21px;font-weight:600;letter-spacing:-0.02em">{{ s.title }}</h3>
+              <p style="margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--tx2)">{{ s.lead }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="grid-column:2;grid-row:3">
+          <sc-for list="{{ st3 }}" as="s" hint-placeholder-count="1">
+            <div style="background:var(--surf);border-radius:12px;padding:20px;box-shadow:0 0 0 1px var(--line);text-align:center">
+              <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Station {{ s.n }}</div>
+              <h3 style="margin-top:8px;font-size:21px;font-weight:600;letter-spacing:-0.02em">{{ s.title }}</h3>
+              <p style="margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--tx2)">{{ s.lead }}</p>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <p style="max-width:34ch;margin:clamp(40px,4vw,64px) auto 0;text-align:center;font-size:clamp(19px,2vw,25px);font-weight:600;letter-spacing:-0.02em;line-height:1.3">Most consultants stop after Station 02. The loop only closes when the same person walks all four.</p>
+    </div>
+  </section>
+
+  <section data-screen-label="Proof" style="padding:var(--sec) var(--gut)">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:52ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--am)">What the audits turn up</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">Three findings, from real audits.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:clamp(40px,4vw,64px)">
+        <sc-for list="{{ findings }}" as="f" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;background:var(--surf);border-radius:14px;padding:26px;box-shadow:0 0 0 1px var(--line);animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 58%">
+            <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tx4);min-height:2.7em">{{ f.title }}</div>
+            <div style="margin-top:14px;padding-top:18px;border-top:2px solid var(--am);font-size:clamp(28px,3vw,38px);font-weight:700;letter-spacing:-0.032em;line-height:1.05;min-height:1.9em">{{ f.stat }}</div>
+            <p style="margin-top:14px;font-size:14.5px;line-height:1.6;color:var(--tx2)">{{ f.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin-top:32px;text-align:center;font-family:var(--fm);font-size:12.5px;color:var(--tx4)">Client names withheld. Details available on a call.</p>
+    </div>
+  </section>
+
+  <section id="approach" data-screen-label="The full stack" style="padding:var(--sec) var(--gut);background:linear-gradient(180deg,var(--bg),#111318 50%,var(--bg))">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:52ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">What's under the hood</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">The full stack, in bundles.</h2>
+        <p style="margin-top:18px;font-size:17px;line-height:1.6;color:var(--tx2)">Named, so you can check whether the thing you need is on the list.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:clamp(28px,3vw,40px)">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+          <button type="button" onClick="{{ f.onClick }}" aria-pressed="{{ f.on }}" style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;padding:9px 16px;border-radius:999px;cursor:pointer;white-space:nowrap;background:{{ f.bg }};color:{{ f.fg }};border:1px solid {{ f.bd }};transition:background 160ms var(--ease)">{{ f.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:24px;align-items:start">
+        <sc-for list="{{ bundles }}" as="b" hint-placeholder-count="10">
+          <details style="background:var(--surf);border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px {{ b.ring }}">
+            <summary style="padding:22px;cursor:pointer;display:flex;gap:14px;align-items:flex-start;list-style:none">
+              <span style="font-family:var(--fm);font-size:12px;color:var(--am);padding-top:3px">{{ b.n }}</span>
+              <span style="flex:1">
+                <span style="display:block;min-height:2.4em;font-size:18px;font-weight:600;letter-spacing:-0.018em;line-height:1.2">{{ b.title }}</span>
+                <span style="display:block;min-height:2.9em;margin-top:6px;font-family:var(--fm);font-size:11.5px;line-height:1.45;color:var(--tx4)">{{ b.meta }}</span>
+              </span>
+              <i class="ph ph-plus" style="font-size:13px;color:var(--tx4);margin-top:5px"></i>
+            </summary>
+            <div style="padding:0 22px 22px 48px;font-family:var(--fm);font-size:12px;line-height:1.85;color:var(--tx2)">{{ b.body }}</div>
+          </details>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="products" data-screen-label="Products" style="padding:var(--sec) var(--gut)">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:56ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Tools built for this work</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">Three products, in detail.</h2>
+        <p style="margin-top:18px;font-size:17px;line-height:1.6;color:var(--tx2)">Each one a full overview — what it does, how it works, and screenshots from the running build.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;margin-top:clamp(40px,4vw,64px);align-items:stretch">
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="3">
+          <a href="#" style="display:flex;flex-direction:column;background:var(--surf);border-radius:14px;padding:26px;color:inherit;box-shadow:0 0 0 1px var(--line);transition:box-shadow 200ms var(--ease),transform 200ms var(--ease);animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 58%" style-hover="box-shadow:0 0 0 1px #E39A1F,0 18px 44px rgba(0,0,0,0.5);transform:translateY(-3px)">
+            <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;line-height:1.55;color:var(--am);min-height:3.1em">{{ p.kicker }}</div>
+            <h3 style="margin-top:12px;font-size:23px;font-weight:600;letter-spacing:-0.022em">{{ p.name }}</h3>
+            <p style="margin-top:10px;font-size:16px;font-weight:600;line-height:1.35;letter-spacing:-0.016em;color:var(--tx);min-height:2.7em">{{ p.headline }}</p>
+            <p style="margin-top:12px;font-size:14.5px;line-height:1.65;color:var(--tx2);flex:1">{{ p.summary }}</p>
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--line)">
+              <span style="display:block;font-family:var(--fm);font-size:11px;line-height:1.5;color:var(--tx4)">{{ p.stack }}</span>
+              <span style="display:inline-flex;align-items:center;gap:7px;margin-top:10px;font-size:14px;font-weight:600;color:var(--am)">Read the overview<i class="ph ph-arrow-up-right" style="font-size:13px"></i></span>
+              <span style="display:block;margin-top:4px;font-family:var(--fm);font-size:11px;color:var(--tx4)">{{ p.meta }}</span>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="blog" data-screen-label="Blog" style="padding:var(--sec) var(--gut);background:linear-gradient(180deg,var(--bg),#111318 50%,var(--bg))">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div>
+          <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">From the blog</div>
+          <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">What we're finding in live stacks</h2>
+        </div>
+        <a href="#" class="btn" style="display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;padding:12px 20px;border-radius:9px;color:var(--tx);border:1px solid #2C3138;transition:background 180ms var(--ease),border-color 180ms var(--ease)" style-hover="background:rgba(232,234,237,0.06);border-color:#3D444D">All posts<i class="ph ph-arrow-right" style="font-size:14px"></i></a>
+      </div>
+      <div style="margin-top:clamp(32px,3.4vw,48px)">
+        <sc-for list="{{ posts }}" as="b" hint-placeholder-count="4">
+          <a href="#" style="display:grid;grid-template-columns:minmax(0,110px) minmax(0,1fr) minmax(0,190px) auto;gap:clamp(16px,2.5vw,32px);align-items:baseline;padding:22px 0;border-top:1px solid var(--line);transition:background 160ms var(--ease)" style-hover="background:rgba(232,234,237,0.03)">
+            <span style="font-family:var(--fm);font-size:11.5px;color:var(--tx4);white-space:nowrap">{{ b.date }}</span>
+            <span>
+              <span style="display:block;font-size:19px;font-weight:600;letter-spacing:-0.018em;line-height:1.3">{{ b.title }}</span>
+              <span style="display:block;margin-top:6px;font-size:14px;line-height:1.55;color:var(--tx2)">{{ b.kicker }}</span>
+            </span>
+            <span style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am)">{{ b.tag }}</span>
+            <i class="ph ph-arrow-up-right" style="font-size:15px;color:var(--tx4)"></i>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Founders" style="padding:var(--sec) var(--gut)">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:48ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Who you talk to</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">Nothing gets handed off.</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:16px;margin-top:clamp(40px,4vw,64px)">
+        <sc-for list="{{ founders }}" as="f" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;background:var(--surf);border-radius:14px;padding:26px;box-shadow:0 0 0 1px var(--line);animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 58%">
+            <div style="display:flex;align-items:center;gap:18px">
+              <div style="flex:none;width:78px;height:78px;border-radius:12px;background:repeating-linear-gradient(135deg,#1D2128 0 6px,#191C22 6px 12px);display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--line)"><i class="ph ph-user" style="font-size:24px;color:#3D444D"></i></div>
+              <div>
+                <h3 style="font-size:23px;font-weight:600;letter-spacing:-0.022em">{{ f.name }}</h3>
+                <div style="margin-top:5px;font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am)">{{ f.role }}</div>
+              </div>
+            </div>
+            <p style="margin-top:20px;font-size:15px;line-height:1.7;color:var(--tx2);flex:1">{{ f.bio }}</p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:20px">
+              <sc-for list="{{ f.tags }}" as="t" hint-placeholder-count="3">
+                <span style="font-family:var(--fm);font-size:11px;white-space:nowrap;color:var(--tx3);padding:6px 11px;border-radius:6px;background:var(--surf2)">{{ t }}</span>
+              </sc-for>
+            </div>
+            <a href="{{ f.linkedin }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin-top:20px;font-size:14px;font-weight:600;color:var(--am);align-self:flex-start">LinkedIn<i class="ph ph-arrow-up-right" style="font-size:13px"></i></a>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" data-screen-label="FAQ" style="padding:var(--sec) var(--gut);background:linear-gradient(180deg,var(--bg),#111318 50%,var(--bg))">
+    <div style="max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:52ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Before you book</div>
+        <h2 style="margin-top:16px;font-size:clamp(30px,3.4vw,44px);letter-spacing:-0.028em">Questions people ask before booking.</h2>
+        <p style="margin-top:18px;font-size:17px;line-height:1.6;color:var(--tx2)">Including the ones that are awkward to answer.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:0 clamp(28px,4vw,64px);margin-top:clamp(40px,4vw,64px)">
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am);padding-bottom:14px">Working together</div>
+          <sc-for list="{{ faqA }}" as="i" hint-placeholder-count="8">
+            <details style="border-top:1px solid var(--line)">
+              <summary style="display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 0;min-height:44px;cursor:pointer;font-size:16.5px;font-weight:600;line-height:1.4;list-style:none"><span>{{ i.q }}</span><i class="ph ph-caret-down" style="flex:none;font-size:13px;color:var(--tx4);margin-top:5px"></i></summary>
+              <p style="padding:0 0 20px;font-size:14.5px;line-height:1.7;color:var(--tx2)">{{ i.a }}</p>
+            </details>
+          </sc-for>
+        </div>
+        <div>
+          <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am);padding-bottom:14px">Technical scope</div>
+          <sc-for list="{{ faqB }}" as="i" hint-placeholder-count="11">
+            <details style="border-top:1px solid var(--line)">
+              <summary style="display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 0;min-height:44px;cursor:pointer;font-size:16.5px;font-weight:600;line-height:1.4;list-style:none"><span>{{ i.q }}</span><i class="ph ph-caret-down" style="flex:none;font-size:13px;color:var(--tx4);margin-top:5px"></i></summary>
+              <p style="padding:0 0 20px;font-size:14.5px;line-height:1.7;color:var(--tx2)">{{ i.a }}</p>
+            </details>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" data-screen-label="Closing CTA and form" style="position:relative;overflow:hidden;padding:var(--sec) var(--gut)">
+    <div aria-hidden="true" style="position:absolute;bottom:-40%;left:50%;transform:translateX(-50%);width:80%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,154,31,0.12),rgba(227,154,31,0) 66%);filter:blur(50px);pointer-events:none"></div>
+    <div style="position:relative;max-width:var(--wrap);margin:0 auto">
+      <div style="text-align:center;max-width:56ch;margin:0 auto;animation:bReveal 0.65s var(--ease) both;animation-timeline:view();animation-range:entry 4% entry 52%">
+        <h2 style="font-size:clamp(30px,3.8vw,50px);letter-spacing:-0.032em;line-height:1.06">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+        <p style="margin-top:20px;font-size:17px;line-height:1.6;color:var(--tx2)">A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is likely costing. If there's nothing wrong, I'll tell you that too.</p>
+      </div>
+
+      <div style="max-width:760px;margin:clamp(36px,4vw,56px) auto 0;background:var(--surf);border-radius:16px;padding:clamp(26px,3vw,40px);box-shadow:0 0 0 1px var(--line)">
+        <div style="text-align:center">
+          <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--am)">Or send it over</div>
+          <h3 style="margin-top:12px;font-size:clamp(22px,2.4vw,30px);letter-spacing:-0.024em">Tell me what you're running.</h3>
+          <p style="margin:12px auto 0;max-width:46ch;font-size:15px;line-height:1.6;color:var(--tx2)">The more specific you are about the setup, the more specific I can be about what's wrong with it.</p>
+        </div>
+        <div style="display:grid;gap:16px;margin-top:28px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:16px">
+            <div><label for="c-name" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">Name</label><input id="c-name" type="text" style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--f);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf2);border:1px solid var(--line);border-radius:9px" style-hover="border-color:#3D444D" /></div>
+            <div><label for="c-email" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">Work email</label><input id="c-email" type="email" style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--f);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf2);border:1px solid var(--line);border-radius:9px" style-hover="border-color:#3D444D" /></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:16px">
+            <div><label for="c-url" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">App store URL</label><input id="c-url" type="url" placeholder="https://apps.apple.com/..." style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--f);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf2);border:1px solid var(--line);border-radius:9px" style-hover="border-color:#3D444D" /></div>
+            <div><label for="c-spend" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">Monthly ad spend</label><select id="c-spend" style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--f);font-size:15px;color:var(--tx);background:var(--surf2);border:1px solid var(--line);border-radius:9px"><option>Select</option><option>Not spending yet</option><option>Under $10k / month</option><option>$10k – $50k / month</option><option>$50k – $250k / month</option><option>Over $250k / month</option></select></div>
+          </div>
+          <div><label for="c-msg" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">What's the problem?</label><textarea id="c-msg" rows="5" style="width:100%;min-height:130px;padding:12px 14px;font-family:var(--f);font-size:15px;line-height:1.6;color:var(--tx);caret-color:#E39A1F;background:var(--surf2);border:1px solid var(--line);border-radius:9px;resize:vertical"></textarea></div>
+          <button type="button" style="display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;font-family:var(--f);font-size:16px;font-weight:600;border-radius:9px;cursor:pointer;background:var(--am);color:var(--ink);border:0;transition:background 180ms var(--ease),box-shadow 180ms var(--ease);box-shadow:0 8px 30px -10px rgba(227,154,31,0.7)" style-hover="background:#F0AB33;box-shadow:0 12px 40px -8px rgba(227,154,31,0.9)">Send it<i class="ph ph-paper-plane-tilt" style="font-size:15px"></i></button>
+          <p style="text-align:center;font-family:var(--fm);font-size:11.5px;color:var(--tx4)">Goes straight to my inbox. No sequence, no CRM nurture, no newsletter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:clamp(44px,5vw,72px) var(--gut) 32px;background:#111318;border-top:1px solid var(--line2)">
+    <div style="max-width:var(--wrap);margin:0 auto;display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start">
+      <div style="max-width:38ch">
+        <div style="font-size:19px;font-weight:700;letter-spacing:-0.022em">E2E Apps</div>
+        <p style="margin-top:10px;font-size:14px;line-height:1.65;color:var(--tx3)">One specialist owns the entire growth loop — a second owns the infrastructure it runs on.</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(20px,3vw,40px);font-size:14px;color:var(--tx2)">
+        <a href="#services" style-hover="color:#E39A1F">Services</a>
+        <a href="#loop" style-hover="color:#E39A1F">The Loop</a>
+        <a href="#approach" style-hover="color:#E39A1F">Approach</a>
+        <a href="#blog" style-hover="color:#E39A1F">Blog</a>
+        <a href="mailto:hello@e2eapps.com" style-hover="color:#E39A1F">hello@e2eapps.com</a>
+      </div>
+    </div>
+    <div style="max-width:var(--wrap);margin:36px auto 0;padding-top:20px;border-top:1px solid var(--line2);display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;font-family:var(--fm);font-size:11.5px;color:var(--tx4)">
+      <span>© 2026 E2E Apps · e2eapps.com</span>
+      <span style="display:flex;gap:22px"><a href="#" style-hover="color:#E39A1F">Privacy</a><a href="#" style-hover="color:#E39A1F">Terms</a></span>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroBackdrop&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Bloom&quot;,&quot;None&quot;],&quot;default&quot;:&quot;Bloom&quot;,&quot;tsType&quot;:&quot;'Bloom' | 'None'&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const PRESETS = [
+  { key: 'cons', label: 'Conservative', sub: 'Low trial take-up, thin retention', st: { i2t: 5, t2p: 25, price: 7.99, retention: 78, cpi: 1.6 } },
+  { key: 'typ', label: 'Typical', sub: 'The median subscription cohort', st: { i2t: 8, t2p: 35, price: 9.99, retention: 85, cpi: 1.2 } },
+  { key: 'agg', label: 'Aggressive', sub: 'Strong funnel, cheap installs', st: { i2t: 12, t2p: 45, price: 12.99, retention: 90, cpi: 0.9 } }
+];
+
+class Component extends DCLogic {
+  /* Full control set, ported from src/scripts/calc-model.ts. Every number and
+     every expression is the repo's own — the six pinned figures reproduce. */
+  state = {
+    preset: 'typ', mode: 'sub', horizon: 365,
+    i2t: 8, t2p: 35, price: 9.99, period: 'monthly', trialDays: 7,
+    retention: 85, commission: 15, refund: 3, cpi: 1.2,
+    arpdau: 0.045, d1: 32, d30: 6, adCpi: 0.35, realD7: 12.3,
+    renewalCapture: false, skanMapped: false, webStitched: false,
+    skanNull: 35, webLoss: 20,
+    filter: 'all', chartPx: 1000
+  };
+
+  set = (k, v) => this.setState({ [k]: v, preset: 'custom' });
+  plain = (k, v) => this.setState({ [k]: v });
+  applyPreset = key => this.setState(Object.assign({ preset: key }, PRESETS.find(x => x.key === key).st));
+
+  cycleDays(s) { return s.period === 'weekly' ? 7 : s.period === 'annual' ? 365 : 30; }
+
+  model(s) {
+    const r = s.retention / 100, cd = this.cycleDays(s);
+    const i2p = (s.i2t / 100) * (s.t2p / 100);
+    const net = s.price * (1 - s.commission / 100) * (1 - s.refund / 100);
+    const cycles = d => d < s.trialDays ? 0 : Math.floor((d - s.trialDays) / cd) + 1;
+    const paymentsBy = n => n === 0 ? 0 : (1 - Math.pow(r, n)) / (1 - r);
+    const signal = (s.skanMapped ? 1 : 1 - s.skanNull / 100) * (s.webStitched ? 1 : 1 - s.webLoss / 100);
+    const trueRev = d => i2p * net * paymentsBy(cycles(d));
+    const measRev = d => i2p * net * (s.renewalCapture ? paymentsBy(cycles(d)) : Math.min(1, cycles(d))) * signal;
+    const be = fn => { for (let n = 1; n <= 900; n++) { const d = s.trialDays + (n - 1) * cd; if (fn(d) >= s.cpi) return d; } return null; };
+    return { i2p, net, cd, trueRev, measRev, ltvPayer: net / (1 - r), ltvInstall: i2p * (net / (1 - r)), cpi: s.cpi, beTrue: be(trueRev), beMeas: be(measRev) };
+  }
+
+  adModel(s) {
+    const a = s.d1 / 100;
+    const b = Math.max(0.01, Math.log(s.d1 / 100 / (s.d30 / 100)) / Math.log(30));
+    const ret = d => a * Math.pow(d, -b);
+    const cache = [1];
+    const activeDays = D => { const n = Math.max(0, Math.round(D)); for (let d = cache.length; d <= n; d++) cache[d] = cache[d - 1] + ret(d); return cache[n]; };
+    const rev = D => s.arpdau * activeDays(D);
+    let be = null;
+    for (let d = 1; d <= 3650; d++) { if (rev(d) >= s.adCpi) { be = d; break; } }
+    return { a, b, ret, activeDays, rev, be, cpi: s.adCpi, predD7: ret(7) };
+  }
+
+  chart(s) {
+    const isSub = s.mode === 'sub';
+    const m = this.model(s), ad = this.adModel(s);
+    const H = isSub && s.period === 'annual' ? 365 : s.horizon;
+    const cpi = isSub ? m.cpi : ad.cpi;
+    const trueFn = isSub ? m.trueRev : ad.rev;
+    const VW = Math.max(320, s.chartPx), VH = Math.max(280, Math.min(400, VW * 0.4));
+    /* X0 is a small inset only — the y-label gutter lives outside the viewBox
+       in HTML, so the plot can start at the SVG's own left edge. */
+    const X0 = 10, X1 = VW - 12, Y0 = 26, Y1 = VH - 46;
+    const xs = []; for (let d = 0; d <= H; d++) xs.push(d);
+    const tv = xs.map(d => trueFn(d) - cpi);
+    const mv = isSub ? xs.map(d => m.measRev(d) - cpi) : [];
+    const all = tv.concat(mv, [0, -cpi]);
+    const lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+    const pad = Math.max((hi - lo) * 0.12, 0.05), yMin = lo - pad, yMax = hi + pad;
+    const fx = d => X0 + (d / H) * (X1 - X0);
+    const fy = v => Y1 - ((v - yMin) / (yMax - yMin)) * (Y1 - Y0);
+    const step = vals => { let p = 'M' + fx(0).toFixed(1) + ' ' + fy(vals[0]).toFixed(1); for (let i = 1; i < xs.length; i++) { const x = fx(xs[i]).toFixed(1); p += ' L' + x + ' ' + fy(vals[i - 1]).toFixed(1) + ' L' + x + ' ' + fy(vals[i]).toFixed(1); } return p; };
+    const smooth = vals => xs.map((d, i) => (i ? 'L' : 'M') + fx(d).toFixed(1) + ' ' + fy(vals[i]).toFixed(1)).join(' ');
+    const t = isSub ? step(tv) : smooth(tv);
+    let me = '', g = '';
+    if (isSub) {
+      me = step(mv);
+      g = t;
+      for (let i = xs.length - 1; i >= 0; i--) { const x = fx(xs[i]).toFixed(1); g += ' L' + x + ' ' + fy(mv[i]).toFixed(1); if (i > 0) g += ' L' + x + ' ' + fy(mv[i - 1]).toFixed(1); }
+      g += ' Z';
+    }
+    const be = isSub ? m.beTrue : ad.be, vis = be !== null && be <= H;
+    return { m, ad, isSub, cpi, H, VW, VH, X0, X1, Y0, Y1, truePath: t, measPath: me, gapPath: g, zeroY: fy(0), fx, yMin, yMax, be, vis, gapAtH: isSub ? m.trueRev(H) - m.measRev(H) : 0 };
+  }
+
+  /* A dying retention curve for the first bento card — a * d^-b, drawn once at
+     a fixed box so it needs no measurement. */
+  decayCurve() {
+    const W = 300, Ht = 96, a = 0.32, b = Math.log(0.32 / 0.03) / Math.log(30);
+    const pts = [];
+    for (let d = 1; d <= 60; d++) pts.push([d, a * Math.pow(d, -b)]);
+    const fx = d => 2 + ((d - 1) / 59) * (W - 4);
+    const fy = v => Ht - 10 - (v / a) * (Ht - 26);
+    let line = 'M' + fx(1).toFixed(1) + ' ' + fy(pts[0][1]).toFixed(1);
+    pts.forEach((p, i) => { if (i) line += ' L' + fx(p[0]).toFixed(1) + ' ' + fy(p[1]).toFixed(1); });
+    const area = line + ' L' + fx(60).toFixed(1) + ' ' + (Ht - 10) + ' L' + fx(1).toFixed(1) + ' ' + (Ht - 10) + ' Z';
+    return { line, area, payX: fx(45).toFixed(1), payLabelX: (fx(45) - 96).toFixed(1) };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const c = this.chart(s);
+    const money = v => (v < 0 ? '\u2212$' : '$') + Math.abs(v).toFixed(2);
+    const roas = v => v.toFixed(2) + '\u00d7';
+    const dayLabel = d => d === null ? 'never' : 'day ' + d;
+    const active = PRESETS.find(x => x.key === s.preset);
+
+    const isSub = c.isSub, ad = c.ad;
+    const mk = defs => { defs.forEach(f => { f.onChange = e => this.set(f.key, parseFloat(e.target.value)); }); return defs; };
+    const seg = (key, val, list, plain) => list.map((o, i) => ({
+      label: o.label, on: String(s[key] === o.value),
+      fg: s[key] === o.value ? '#101725' : '#A8AEB6',
+      bg: s[key] === o.value ? '#E39A1F' : 'transparent',
+      sep: i === 0 ? '0' : '1px solid #2C3138',
+      onClick: () => (plain ? this.plain(key, o.value) : this.set(key, o.value))
+    }));
+
+    const sliderDefs = mk(isSub ? [
+      { id: 'b-i2t', label: 'Install \u2192 trial start', key: 'i2t', min: 1, max: 25, step: 0.5, value: s.i2t, readout: s.i2t.toFixed(1) + '%' },
+      { id: 'b-t2p', label: 'Trial \u2192 paid', key: 't2p', min: 10, max: 60, step: 1, value: s.t2p, readout: s.t2p.toFixed(1) + '%' },
+      { id: 'b-price', label: 'Plan price', key: 'price', min: 1.99, max: 99.99, step: 1, value: s.price, readout: '$' + s.price.toFixed(2) },
+      { id: 'b-ret', label: 'Renewal retention per cycle', key: 'retention', min: 50, max: 98, step: 0.5, value: s.retention, readout: s.retention.toFixed(1) + '%' },
+      { id: 'b-ref', label: 'Refund rate', key: 'refund', min: 0, max: 10, step: 0.5, value: s.refund, readout: s.refund.toFixed(1) + '%' },
+      { id: 'b-cpi', label: 'Cost per install', key: 'cpi', min: 0.2, max: 8, step: 0.05, value: s.cpi, readout: '$' + s.cpi.toFixed(2) }
+    ] : [
+      { id: 'b-arp', label: 'ARPDAU', key: 'arpdau', min: 0.005, max: 0.5, step: 0.005, value: s.arpdau, readout: '$' + s.arpdau.toFixed(3) },
+      { id: 'b-d1', label: 'D1 retention', key: 'd1', min: 10, max: 60, step: 1, value: s.d1, readout: s.d1.toFixed(0) + '%' },
+      { id: 'b-d30', label: 'D30 retention', key: 'd30', min: 1, max: 25, step: 1, value: s.d30, readout: s.d30.toFixed(0) + '%' },
+      { id: 'b-acpi', label: 'Cost per install', key: 'adCpi', min: 0.05, max: 3, step: 0.05, value: s.adCpi, readout: '$' + s.adCpi.toFixed(2) }
+    ]);
+
+    const bundles = [
+      { n: '01', cat: 'meas', title: 'Attribution & MMP', meta: 'AppsFlyer \u00b7 Adjust \u00b7 Singular \u00b7 Branch', body: 'SDK integration & upgrade (incl. Adjust SDK v5) \u00b7 full-stack MMP audits \u00b7 attribution window alignment \u00b7 postback mapping \u00b7 deferred deep linking \u00b7 server-to-server events \u00b7 Google On-Device Measurement (ODM) & Install Conversion Measurement (ICM) enablement \u00b7 Adjust First Session Delay \u00b7 fraud and validation rules' },
+      { n: '02', cat: 'infra', title: 'Backend & Infrastructure', meta: 'Led by Muhammad Faisal Khan', body: 'Server-side event forwarding and validation \u00b7 webhook receivers for App Store Server Notifications V2 and Google Play RTDN \u00b7 conversion API relays to ad platforms \u00b7 scheduled pipelines and job monitoring \u00b7 cloud hosting, uptime and alerting \u00b7 data handling, access control and security review' },
+      { n: '03', cat: 'meas', title: 'iOS Privacy & SKAN', meta: 'SKAdNetwork 4.0 \u00b7 AdAttributionKit \u00b7 ATT', body: 'SKAdNetwork 4.0 conversion value schema design \u00b7 AdAttributionKit migration \u00b7 ATT prompt sequencing and consent flow \u00b7 privacy manifests and nutrition labels \u00b7 null-postback diagnosis \u00b7 modelled vs deterministic reconciliation' },
+      { n: '04', cat: 'meas', title: 'Event Tracking Plans', meta: 'Taxonomy \u00b7 Firebase \u00b7 GA4 \u00b7 BigQuery', body: 'Event taxonomy and naming conventions \u00b7 parameter schemas \u00b7 written tracking plan specs for developers \u00b7 in-app event mapping to MMP and every ad network \u00b7 Firebase and GA4 event architecture \u00b7 QA checklists and test matrices \u00b7 sandbox and debug validation \u00b7 BigQuery validation queries' },
+      { n: '05', cat: 'meas', title: 'Subscription & Revenue', meta: 'RevenueCat \u00b7 Adapty \u00b7 ASSN V2 \u00b7 RTDN', body: 'RevenueCat \u00b7 Adapty \u00b7 App Store Server Notifications V2 \u2192 backend \u2192 RevenueCat and GA4 Measurement Protocol relay \u00b7 background renewal capture \u00b7 Google Play Real-time Developer Notifications \u00b7 trial-to-paid cohort analysis \u00b7 retention decay and LTV curves \u00b7 CAC payback modelling \u00b7 offer codes and promotional pricing' },
+      { n: '06', cat: 'media', title: 'Google Ads for Apps', meta: 'UAC \u00b7 tCPA \u00b7 tROAS \u00b7 web-to-app \u00b7 OCI', body: 'App campaigns (UAC) \u00b7 tCPA and tROAS bid strategy \u00b7 iOS App campaigns with SKAN \u00b7 web-to-app campaigns \u00b7 Offline Conversion Import (OCI) \u00b7 budget automation via Apps Script \u00b7 geo and market allocation \u00b7 creative and asset group structure' },
+      { n: '07', cat: 'media', title: 'Apple Ads (Apple Search Ads)', meta: 'Search Match \u00b7 Discovery \u00b7 Exact \u00b7 brand defence', body: 'Campaign structure across Search Match, Discovery, Exact and brand defence \u00b7 negative keyword architecture \u00b7 country and localisation strategy \u00b7 Campaign Management API v5 automation \u00b7 LTV:CAC bid scoring \u00b7 competitor keyword mining' },
+      { n: '08', cat: 'media', title: 'Meta, TikTok & Multi-Channel', meta: 'CAPI \u00b7 Events API \u00b7 event parity', body: 'Meta Ads and Conversions API (fbclid / fbpid) \u00b7 RevenueCat \u2192 Meta CAPI \u00b7 Aggregated Event Measurement \u00b7 TikTok Events API \u00b7 Snapchat CAPI \u00b7 X and LinkedIn Conversions API (li_fat_id) \u00b7 cross-channel event parity' },
+      { n: '09', cat: 'meas', title: 'Web-to-App Attribution', meta: 'gclid / gbraid / wbraid \u00b7 OneLink \u00b7 Smart Scripts', body: 'gclid / gbraid / wbraid capture \u00b7 Adjust Smart Scripts \u00b7 AppsFlyer OneLink \u00b7 Singular links \u00b7 landing page to install to subscription stitching \u00b7 conversions returned to the originating platform' },
+      { n: '10', cat: 'media', title: 'ASO, Monetisation & Store', meta: 'Metadata \u00b7 CPP \u00b7 In-App Events \u00b7 mediation', body: 'Keyword research and metadata (title, subtitle, keyword field) \u00b7 Custom Product Pages \u00b7 In-App Events \u00b7 localisation and country prioritisation \u00b7 competitor metadata teardowns \u00b7 paywall teardowns and pricing architecture \u00b7 IAP A/B test design \u00b7 AdMob and AppLovin MAX mediation \u00b7 impression-level ad revenue into the MMP \u00b7 App Store submission and rejection remediation' }
+    ];
+
+    /* Node geometry on a 112px circle, plus a small tangent arrowhead showing
+       the direction of travel just past each node. */
+    const nodes = [
+      { n: '01', cx: 150, cy: 38, ny: 43, arrow: '196,46 186,38 190,50' },
+      { n: '02', cx: 262, cy: 150, ny: 155, arrow: '254,196 262,186 250,190' },
+      { n: '03', cx: 150, cy: 262, ny: 267, arrow: '104,254 114,262 110,250' },
+      { n: '04', cx: 38, cy: 150, ny: 155, arrow: '46,104 38,114 50,110' }
+    ];
+
+    return {
+      bloomOn: (this.props.heroBackdrop ?? 'Bloom') !== 'None',
+      chips: [
+        { label: 'AppsFlyer', icon: 'ph ph-broadcast' },
+        { label: 'Adjust', icon: 'ph ph-crosshair' },
+        { label: 'SKAdNetwork 4.0', icon: 'ph ph-shield-check' },
+        { label: 'RevenueCat', icon: 'ph ph-receipt' },
+        { label: 'Google Ads', icon: 'ph ph-cursor-click' },
+        { label: 'Apple Ads', icon: 'ph ph-magnifying-glass' },
+        { label: 'GA4 & BigQuery', icon: 'ph ph-chart-line' }
+      ],
+
+      decay: this.decayCurve(),
+
+      /* Every card: an icon, a two-line title, a three-line lead, the full
+         signed-off paragraph behind a disclosure, and a visual pinned to the
+         bottom. Fixed row heights and min-heights are what keep the row level. */
+      bento: [
+        {
+          span: 7, minH: '360px', titleH: '1.22em', leadH: '6.4em', num: '01 \u00b7 Not a measurement problem', numColor: '#E39A1F', iconColor: '#E39A1F', ring: 'rgba(227,154,31,0.34)', icon: 'ph ph-chart-line-down',
+          title: 'Retention nobody watches past D7.',
+          lead: 'Every LTV model is retention multiplied by monetisation. If the curve dies before the payback horizon, the campaign cannot break even at any CPI.',
+          body: 'Most teams track D1, quote D7 in a deck, and never build the D30 curve that actually decides it. On a subscription app, payback lands somewhere around month nine. A cohort that\u2019s gone by week three never gets there.',
+          isCurve: true, isChips: false, isBars: false, isCode: false, visualSlot: ''
+        },
+        {
+          span: 5, minH: '360px', titleH: '1.22em', leadH: '6.4em', num: '02', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-arrows-clockwise',
+          title: 'Renewals nobody counted.',
+          lead: 'Subscription renewals happen on Apple\u2019s servers while your app is closed. If nothing is listening server-side, that revenue never arrives.',
+          body: 'It never reaches your MMP or your ad platforms \u2014 so every channel looks worse than it is, and you optimise against your own best cohorts.',
+          isBars: true, isChips: false, isCode: false, isCurve: false, visualSlot: ''
+        },
+        {
+          span: 4, minH: '344px', titleH: '3.66em', leadH: '8em', num: '03', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-git-branch',
+          title: 'A schema built for nothing in particular.',
+          lead: 'A handful of bits, one short window \u2014 and a schema copied from a blog post that was never mapped to revenue.',
+          body: 'SKAdNetwork gives you a handful of bits and one short window. Applying a subscription schema to a game wastes the signal completely, and it is a common mistake.',
+          isCode: true, code: 'skan_cv: null\n71% of postbacks', isChips: false, isBars: false, isCurve: false, visualSlot: ''
+        },
+        {
+          span: 4, minH: '344px', titleH: '3.66em', leadH: '8em', num: '04', numColor: '#8E959E', iconColor: '#8E959E', ring: '#23272E', icon: 'ph ph-arrow-square-out',
+          title: 'The web-to-app gap.',
+          lead: 'A Google ad clicked on your site, an install days later, a subscription a week after that. Google never learns which click paid.',
+          body: 'Without gclid/gbraid/wbraid capture and a conversion sent back through Offline Conversion Import, the platform optimises toward the wrong people \u2014 with your budget.',
+          isCode: true, code: 'web_click \u2192 install \u2192 ??? \u2192 subscription', isChips: false, isBars: false, isCurve: false, visualSlot: ''
+        },
+        {
+          span: 4, minH: '344px', titleH: '3.66em', leadH: '8em', num: 'And where it goes right', numColor: '#E39A1F', iconColor: '#E39A1F', ring: '#23272E', icon: 'ph ph-plugs-connected',
+          title: 'One stack, one person accountable.',
+          lead: 'Measurement, attribution and the media buying under one owner \u2014 so nobody can blame the other when the two disagree.',
+          body: 'Aamir owns measurement, attribution and the media. Faisal owns the server-side infrastructure: the webhook receivers, the relays, the pipelines that run unattended.',
+          isChips: true, chips: ['AppsFlyer', 'Adjust', 'RevenueCat', 'ASSN V2', 'RTDN', 'GA4', 'OCI', 'CAPI'], isBars: false, isCode: false, isCurve: false, visualSlot: ''
+        }
+      ],
+
+      presets: PRESETS.map(x => {
+        const on = s.preset === x.key;
+        const be = this.chart(Object.assign({}, s, x.st)).be;
+        return {
+          on: String(on), label: x.label, sub: x.sub, day: dayLabel(be),
+          dayColor: on ? '#E39A1F' : '#7C838D',
+          bg: on ? 'rgba(227,154,31,0.1)' : 'transparent',
+          bd: on ? '#E39A1F' : '#23272E',
+          dotBd: on ? '#E39A1F' : '#3D444D',
+          dotBg: on ? '#E39A1F' : 'transparent',
+          dotRing: on ? 'inset 0 0 0 4px #16191F' : 'none',
+          onClick: () => this.applyPreset(x.key)
+        };
+      }),
+
+      vb: '0 0 ' + c.VW.toFixed(0) + ' ' + c.VH.toFixed(0),
+      axLeft: c.X0, axRight: c.X1.toFixed(1), axBottom: c.Y1.toFixed(1), plotTop: c.Y0,
+      truePath: c.truePath, measPath: c.measPath, gapPath: c.gapPath,
+      zeroY: c.zeroY.toFixed(1), day7X: c.fx(7).toFixed(1),
+      crossX: (c.be === null ? c.X1 : c.fx(Math.min(c.be, c.H))).toFixed(1),
+      crossOpacity: c.vis ? 1 : 0, crossTop: Math.max(c.Y0, c.zeroY - 56).toFixed(1),
+      /* Percentages of the SVG box, so the HTML labels track the curve at any
+         rendered width while their type stays at real px. */
+      pos: {
+        yMaxTop: (c.Y0 / c.VH * 100).toFixed(2) + '%',
+        zeroTop: (c.zeroY / c.VH * 100).toFixed(2) + '%',
+        yMinTop: (c.Y1 / c.VH * 100).toFixed(2) + '%',
+        tTop: ((c.Y1 + 18) / c.VH * 100).toFixed(2) + '%',
+        t0Left: (c.X0 / c.VW * 100).toFixed(2) + '%',
+        tMidLeft: (((c.X0 + c.X1) / 2) / c.VW * 100).toFixed(2) + '%',
+        tEndLeft: (c.X1 / c.VW * 100).toFixed(2) + '%',
+        day7Left: ((c.fx(7) + 8) / c.VW * 100).toFixed(2) + '%',
+        day7Top: ((c.Y0 + 6) / c.VH * 100).toFixed(2) + '%'
+      },
+      yMaxLabel: money(c.yMax), yMinLabel: money(c.yMin),
+      midTick: 'day ' + Math.round(c.H / 2), endTick: 'day ' + c.H,
+
+      isSub, isAd: !isSub, isAnnual: isSub && s.period === 'annual',
+      modes: seg('mode', s.mode, [{ label: 'Subscription', value: 'sub' }, { label: 'Ad-monetised', value: 'ad' }], true),
+      horizons: seg('horizon', s.horizon, [{ label: '90d', value: 90 }, { label: '180d', value: 180 }, { label: '365d', value: 365 }], true),
+      periods: seg('period', s.period, [{ label: 'Weekly', value: 'weekly' }, { label: 'Monthly', value: 'monthly' }, { label: 'Annual', value: 'annual' }]),
+      trials: seg('trialDays', s.trialDays, [3, 7, 14, 30].map(d => ({ label: d + 'd', value: d }))),
+      commissions: seg('commission', s.commission, [15, 30].map(v => ({ label: v + '%', value: v }))),
+      breakevenLabel: c.be === null ? 'Never breaks even' : 'Breakeven: day ' + c.be,
+
+      rows: isSub ? [
+        { label: active ? active.label.toUpperCase() + ' COHORT' : 'YOUR NUMBERS', value: '', color: '#E39A1F' },
+        { label: 'True breakeven', value: dayLabel(c.m.beTrue), color: '#E39A1F' },
+        { label: 'Dashboard reports', value: dayLabel(c.m.beMeas), color: '#8E959E' },
+        { label: 'Invisible / 1,000 installs', value: '$' + (c.gapAtH * 1000).toFixed(0), color: '#E8EAED' },
+        { label: 'LTV per install', value: '$' + c.m.ltvInstall.toFixed(2), color: '#E8EAED' },
+        { label: 'Lifetime ROAS', value: roas(c.m.ltvInstall / c.m.cpi), color: '#E8EAED' }
+      ] : [
+        { label: 'AD-MONETISED', value: '', color: '#E39A1F' },
+        { label: 'True breakeven', value: dayLabel(ad.be), color: '#E39A1F' },
+        { label: 'Decay exponent b', value: ad.b.toFixed(3), color: '#E8EAED' },
+        { label: 'Model predicts D7', value: (ad.predD7 * 100).toFixed(1) + '%', color: '#E8EAED' },
+        { label: 'Active days by D30', value: ad.activeDays(30).toFixed(2), color: '#E8EAED' },
+        { label: 'ROAS at day ' + c.H, value: roas(ad.rev(c.H) / ad.cpi), color: '#E8EAED' }
+      ],
+      verdict: isSub
+        ? 'On the numbers your dashboard reports, you would pause this campaign. On the real numbers it returns ' + roas(c.m.ltvInstall / c.m.cpi) + " over the subscription's life. That decision is what the gap costs."
+        : 'At this ARPDAU and this decay, an install returns ' + roas(ad.rev(c.H) / ad.cpi) + ' by day ' + c.H + '. Everything after that is the part nobody waits for.',
+      annualWarning: 'Annual SKU: one payment at trial end, then nothing until day 365. The whole bet rides on a single charge and one renewal decision a year later.',
+
+      sliders: sliderDefs,
+      derived: isSub ? [
+        { label: 'Install \u2192 paid', value: (c.m.i2p * 100).toFixed(2) + '%' },
+        { label: 'Net per payment', value: '$' + c.m.net.toFixed(2) },
+        { label: 'LTV per payer', value: '$' + c.m.ltvPayer.toFixed(2) },
+        { label: 'LTV per install', value: '$' + c.m.ltvInstall.toFixed(2) }
+      ] : [
+        { label: 'Fitted decay exponent b', value: ad.b.toFixed(3) },
+        { label: 'Model predicts D7', value: (ad.predD7 * 100).toFixed(1) + '%' },
+        { label: 'Active days by D30', value: ad.activeDays(30).toFixed(2) + ' days' },
+        { label: 'Value per install', value: '$' + ad.rev(c.H).toFixed(2) }
+      ],
+      realD7: s.realD7,
+      onRealD7: e => this.set('realD7', parseFloat(e.target.value) || 0),
+      d7Mismatch: !isSub && Math.abs(s.realD7 - ad.predD7 * 100) > Math.max(2, ad.predD7 * 100 * 0.25),
+      d7MismatchNote: "Your curve isn't a power law. That usually means a broken onboarding step, not a bad model.",
+
+      gaps: [
+        { label: 'Server-side renewal capture', note: 'Off: only the first payment is ever visible.', checked: s.renewalCapture, hasSlider: false, onChange: e => this.set('renewalCapture', e.target.checked) },
+        {
+          label: 'SKAN schema mapped to revenue', note: 'Off: null conversion values report zero revenue.', checked: s.skanMapped,
+          onChange: e => this.set('skanMapped', e.target.checked),
+          hasSlider: true, sId: 'b-skan', sLabel: 'Share of iOS installs with null CV', sMin: 0, sMax: 80, sStep: 1, sValue: s.skanNull, sReadout: s.skanNull.toFixed(0) + '%',
+          sOnChange: e => this.set('skanNull', parseFloat(e.target.value))
+        },
+        {
+          label: 'Web-to-app click stitching', note: 'Off: paid installs get miscredited to organic.', checked: s.webStitched,
+          onChange: e => this.set('webStitched', e.target.checked),
+          hasSlider: true, sId: 'b-web', sLabel: 'Share miscredited to organic', sMin: 0, sMax: 60, sStep: 1, sValue: s.webLoss, sReadout: s.webLoss.toFixed(0) + '%',
+          sOnChange: e => this.set('webLoss', parseFloat(e.target.value))
+        }
+      ],
+
+      st1: [{ n: '01', title: 'Instrument', lead: 'Event taxonomy, a written tracking plan, SDK integration and QA, consent and ATT sequencing.' }],
+      st2: [{ n: '02', title: 'Attribute', lead: 'MMP audit, SKAN and AdAttributionKit schemas, server-to-server events, web-to-app capture.' }],
+      st3: [{ n: '03', title: 'Decide', lead: 'Cohort LTV, payback curves by channel and country, breakeven ceilings per market.' }],
+      st4: [{ n: '04', title: 'Deploy', lead: 'Google, Apple Ads, Meta, TikTok, ASO and pricing \u2014 spent against those numbers.' }],
+      nodes,
+
+      /* Each finding gets a label saying what it is, so the figure is not the
+         only thing carrying the point. New microcopy \u2014 flagged for sign-off. */
+      findings: [
+        { title: 'Trial-to-paid, misreported', stat: '11% \u2192 17%', body: 'A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.' },
+        { title: 'The paywall nobody reached', stat: '~5%', body: 'Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.' },
+        { title: 'Spend in markets that cannot pay back', stat: 'Most of the budget', body: 'At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.' }
+      ],
+
+      filters: [['all', 'All 10'], ['meas', 'Measurement'], ['media', 'Media & store'], ['infra', 'Infrastructure']].map(([k, label]) => {
+        const on = s.filter === k;
+        return { label, on: String(on), bg: on ? 'rgba(227,154,31,0.12)' : 'transparent', fg: on ? '#E39A1F' : '#A8AEB6', bd: on ? '#E39A1F' : '#2C3138', onClick: () => this.setState({ filter: k }) };
+      }),
+      bundles: bundles.filter(b => s.filter === 'all' || b.cat === s.filter).map(b => Object.assign({}, b, { ring: b.cat === 'infra' ? 'rgba(227,154,31,0.4)' : '#23272E' })),
+
+      products: [
+        { kicker: 'Competitor paywall intelligence \u00b7 country by country', name: 'Monetization Scout', headline: "Reverse-engineer any competitor's paywall \u2014 in every market, automatically.", summary: 'An autonomous agent that drives real Android devices through competitor apps to their paywalls \u2014 switching exit country per run, reading each screen with vision, and logging a structured teardown to a spreadsheet.', stack: 'Python \u00b7 real Android devices \u00b7 vision models', meta: 'PDF \u00b7 6 pages \u00b7 0.9 MB' },
+        { kicker: 'App Store Optimization \u00b7 built on Google Sheets', name: 'ASO Suite', headline: 'The entire ASO stack, running inside one spreadsheet.', summary: 'Keyword research, competitor scraping, AI metadata generation and bulk publishing to App Store Connect \u2014 for both the App Store and Google Play. No server, no subscription, no separate web app.', stack: 'Google Apps Script \u00b7 App Store Connect API \u00b7 Groq LLM', meta: 'PDF \u00b7 6 pages \u00b7 1.1 MB' },
+        { kicker: 'ASO Agent \u00b7 App Store Optimization platform', name: 'ASO Agent', headline: 'Research, write and track app store metadata \u2014 in one place.', summary: 'A production web platform for App Store Optimization. Score keywords against live store data, generate publish-ready metadata with AI, and track ranking movements daily \u2014 across both the Apple App Store and Google Play.', stack: 'Next.js \u00b7 React \u00b7 TypeScript \u00b7 Tailwind CSS', meta: 'PDF \u00b7 8 pages \u00b7 1.9 MB' }
+      ],
+
+      posts: [
+        { date: '18 Aug 2026', tag: 'Google Ads', title: 'The conversion rule that reports zero for a thousand-dollar sale', kicker: 'Auto-collected App Store events arrive without a value or currency, so "use Firebase, otherwise zero" quietly applies zero to almost everything.' },
+        { date: '04 Aug 2026', tag: 'SKAdNetwork', title: 'A subscription SKAN schema is not a game SKAN schema', kicker: 'One keys its fine values to funnel position, the other to revenue buckets. Applying the wrong one wastes the signal completely.' },
+        { date: '21 Jul 2026', tag: 'Deep linking', title: 'Why your deferred deep links work for everyone except new installs', kicker: 'Usually structural: a destination sitting as a sibling parameter instead of inside the deep link value, or intent filters carrying invalid schemes.' },
+        { date: '09 Jul 2026', tag: 'Subscriptions', title: 'Renewals happen while your app is closed. Nothing is listening.', kicker: 'The server-side path from App Store Server Notifications V2 through to your ad platforms, and what breaks at each hop.' }
+      ],
+
+      founders: [
+        { name: 'Aamir Jan Khan', role: 'Measurement & growth', linkedin: 'https://www.linkedin.com/in/aamir-jan-khan/', tags: ['48 AppsFlyer accounts', '50+ apps', 'Media buying'], bio: "I run growth for a portfolio of 50+ iOS and Android apps \u2014 which means I'm not describing this work from the outside. Five years across measurement platforms, ad platforms, app stores and subscription analytics. Most people in this field pick a side, the plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task." },
+        { name: 'Muhammad Faisal Khan', role: 'Infrastructure & operations', linkedin: 'https://www.linkedin.com/in/muhammad-faisal-khan-3606365/', tags: ['20 years', 'LTE & 5G core', 'Cisco / Nokia / Ericsson'], bio: "Twenty years as a solution architect on carrier-grade mobile networks \u2014 packet core delivery across Cisco, Nokia and Ericsson. A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything. That's the half I own." }
+      ],
+
+      faqA: [
+        { q: 'How much does this cost?', a: "Two shapes. A fixed-price audit \u2014 a full review of the measurement stack, the gaps ranked by what each is costing, and a written remediation plan. Or a monthly retainer where the fixes get implemented and the campaigns get run. The audit is the usual starting point because it tells both of us whether the retainer is worth anyone's money. Exact figures on the call, once the size of the stack is clear." },
+        { q: 'How long before I see anything?', a: "The audit is typically two weeks. Most of what it finds is fixable in the following four to six \u2014 configuration and server-side work, not a rebuild. What takes longer is the thing the fixes reveal: a subscription cohort's real payback often lands somewhere around month nine, so the honest answer is that clean data arrives in weeks and the decisions it unlocks compound over quarters." },
+        { q: 'Do you need access to our source code?', a: "Read access to the repository helps and shortens the audit, but it isn't required. Dashboard access to the MMP, ad accounts, Firebase or GA4, and the subscription platform covers most of it. For the server-side work there's usually a short window where a developer is needed \u2014 a webhook endpoint or an SDK initialisation order change. Everything is scoped in writing before any credential changes hands." },
+        { q: 'How much work is this for my engineers?', a: 'Deliberately little. The audit needs nothing from them. Implementation typically needs a few hours across a sprint, and it arrives as a written specification with exact code, not a ticket saying "fix attribution." Writing that specification so a developer can implement it without a meeting is a large part of the job.' },
+        { q: 'What if you find nothing wrong?', a: "Then that gets said plainly and the audit ends there. It has never happened on a live portfolio, but a report confirming the setup is sound is a legitimate outcome and worth what it costs \u2014 you stop wondering. What won't happen is a list of manufactured problems to justify a retainer." },
+        { q: 'We already have a UA team or an agency. Does this conflict?', a: 'No, and it usually works better with one. An in-house team owns the spending decisions; this work makes sure the numbers those decisions rest on are true. Agencies are often the ones who ask for it, because an agency judged on ROAS has a direct interest in the ROAS being measured correctly.' },
+        { q: 'Who actually does the work?', a: 'The two people on this page. There is no account manager, no ticket queue, and no junior doing the implementation. Aamir owns measurement, attribution and the media. Faisal owns the server-side infrastructure \u2014 the webhook receivers, the relays, the pipelines that have to run unattended.' },
+        { q: 'Can you show me results from other clients?', a: "Not yet as named case studies. The portfolio work behind the figures on this page was done under employment, and client data that isn't ours to publish won't be published \u2014 which is the same standard your data would get. On a call, anonymised examples, in detail. And this site's own measurement stack is live and built with exactly the tools that would be deployed for you; that dashboard can be screen-shared on the call." }
+      ],
+      faqB: [
+        { q: "Our numbers don't match across Google Ads, GA4, the MMP and RevenueCat. Can you reconcile them?", a: 'This is the single most common reason people get in touch, and there\u2019s almost always a specific mechanical cause rather than a vague "attribution is hard." A frequent one: auto-collected App Store events reach Google Ads without a value or currency attached, so a conversion rule that says use the value from Firebase, otherwise use zero silently applies zero to most conversions \u2014 a dashboard can report a few dozen dollars against conversions genuinely worth a thousand. Reconciliation starts by finding which of these is yours, not by averaging the four numbers.' },
+        { q: 'Do you set up attribution from scratch, or only repair existing setups?', a: "Both. Greenfield is faster because there's nothing to unpick. Most work is repair \u2014 an SDK integrated correctly two years ago against rules that have since changed." },
+        { q: 'Which measurement platforms do you work with?', a: "AppsFlyer, Adjust, Singular and Branch, on both iOS and Android, including SDK upgrades and migrations between them. Depth matters more than the list: knowing that Adjust's First Session Delay is what resolves an ODM-versus-ATT initialisation conflict, or that a shared event token behaves differently in a multi-device app, is the part that saves weeks." },
+        { q: 'Do you build SKAdNetwork conversion value schemas?', a: "Yes \u2014 and the schema looks nothing alike between a subscription app and a game. A subscription app keys its fine values to funnel position: trial start, trial converted, first renewal. A game keys them to revenue buckets, because a small share of players produces most of the revenue and the schema's job is identifying a high-value player inside the postback window. Applying a subscription schema to a game wastes the signal completely, and it's a common mistake." },
+        { q: 'Is SKAdNetwork being replaced by AdAttributionKit?', a: 'Yes, and schemas are worth designing with the migration in view rather than rebuilding twice. Anything built now should map cleanly onto both.' },
+        { q: 'Can you track behaviour from our website into the app?', a: "Yes \u2014 this is web-to-app attribution and it's the most commonly broken link in the chain. A visitor clicks a Google ad on your site, installs a few days later, subscribes a week after that. Without capturing gclid, gbraid and wbraid at the landing page, carrying them through the install, and posting the eventual subscription back through Offline Conversion Import, the ad platform never learns which click earned the money \u2014 and optimises toward the wrong audience with your budget." },
+        { q: 'Do you handle app-to-app attribution and deep linking?', a: 'Yes, including the case that breaks most often: deferred deep links that work for existing users and silently fail for first-time installers. That failure is usually structural \u2014 a malformed link where the destination sits as a sibling parameter instead of inside the deep link value, or intent filters carrying invalid schemes \u2014 not a bug in the SDK.' },
+        { q: 'Can you get subscription renewals into our ad platforms?', a: "Yes. Renewals happen on Apple's and Google's servers while the app is closed, so no client-side SDK sees them. It takes a server-side path \u2014 App Store Server Notifications V2 and Play Real-time Developer Notifications into a backend that validates and forwards to your subscription platform, analytics and ad networks. Without it, every channel looks worse than it is, and the best cohorts get optimised away." },
+        { q: 'Do you write tracking plans and event taxonomies?', a: 'Yes, as a written specification a developer can implement without a meeting: event names, parameters, types, trigger conditions, and a QA matrix for verifying each one fires correctly in sandbox before release.' },
+        { q: 'Do you run the campaigns, or only the measurement?', a: "Both, and that's the difference. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, plus ASO and paywall work. Most measurement consultants hand over a clean dashboard and leave the spending to someone else. When the same person does both, the measurement gets built for how the money is actually deployed \u2014 and there's nobody to blame when the two don't reconcile." },
+        { q: 'Do you work on ad-monetised apps or only subscriptions?', a: "Both, and they need different models. A subscription app's LTV is a renewal-survival curve. An ad-monetised app's is ARPDAU multiplied by cumulative expected active days, fitted to a retention decay curve. Using the wrong engine produces a confident number that's wrong \u2014 which is worse than no number at all." }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>
