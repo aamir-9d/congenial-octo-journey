@@ -7,6 +7,7 @@ const links = [
   { href: '#services', label: 'Services' },
   { href: '#loop', label: 'The Loop' },
   { href: '#approach', label: 'Approach' },
+  { href: `${base}/blog`, label: 'Blog' },
   { href: 'mailto:hello@e2eapps.com', label: 'hello@e2eapps.com' },
 ];
 ---
@@ -52,67 +53,68 @@ const links = [
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-md);
+    gap: 32px;
     justify-content: space-between;
     align-items: flex-start;
   }
 
   .footer__brand {
-    max-width: var(--measure-pull);
+    max-width: 38ch;
   }
 
+  /* Was `color: var(--color-text)`, which the compatibility shim resolved to the
+     page ground — 1.02:1 against the footer. Invisible, and only found by
+     auditing the shim rather than by looking at the page. */
   .footer__logo {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-body-2xl);
-    color: var(--c-paper);
+    font-size: 19px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-brand);
+    color: var(--color-text);
   }
 
   .footer__tagline {
-    margin-top: var(--space-2xs);
-    font-size: var(--fs-body-xs);
-    color: rgba(var(--rgb-paper), 0.55);
+    margin-top: 10px;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-prose);
+    color: var(--color-text-3);
   }
 
   .footer__links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-md);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    gap: clamp(20px, 3vw, 40px);
+    font-size: var(--t-card-sm);
+    color: var(--color-text-2);
   }
 
   .footer__link {
-    color: rgba(var(--rgb-paper), 0.65);
-    border: 0;
-    transition: color 0.15s ease;
+    transition: color 160ms var(--ease-out-soft);
   }
 
-  /* Declared with `style-hover` in the export, which no runtime implemented. */
   .footer__link:hover {
-    color: var(--c-amber);
-  }
-
-  .footer__link--dim {
-    color: var(--c-ink-soft);
+    color: var(--color-accent);
   }
 
   .footer__legal {
     max-width: var(--wrap);
-    margin: var(--space-lg) auto 0;
-    padding-top: var(--space-sm);
-    border-top: 1px solid rgba(var(--rgb-paper), 0.08);
+    margin: 36px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-line-soft);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm);
+    gap: 16px;
     justify-content: space-between;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono-xs);
+    color: var(--color-text-4);
   }
 
   .footer__legal-links {
     display: flex;
-    gap: var(--space-sm);
+    gap: 22px;
+  }
+
+  .footer__link--dim {
+    color: var(--color-text-4);
   }
 </style>

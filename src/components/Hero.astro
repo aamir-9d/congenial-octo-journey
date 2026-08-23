@@ -268,6 +268,56 @@ const chips: { label: string; icon: IconName }[] = [
   /* The blooms are the only continuous work on the page. Stopping them for
      anyone who asks for less motion is both the correct behaviour and the
      cheapest thing on a phone. */
+  /* From `design/E2E Apps - Bento mobile.dc.html`: a 33px headline, a 15px
+     lead, full-width stacked CTAs at 52px, and a tighter dot grid. */
+  @media (max-width: 640px) {
+    .hero {
+      padding: var(--s16) var(--gutter) var(--s12);
+    }
+
+    .hero__dots {
+      background-size: 26px 26px;
+      mask-image: radial-gradient(ellipse 80% 56% at 50% 30%, #000 26%, transparent 76%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 56% at 50% 30%, #000 26%, transparent 76%);
+    }
+
+    .hero__pill {
+      font-size: var(--t-mono-3xs);
+      padding: 7px 13px;
+    }
+
+    .hero__h1 {
+      margin-top: var(--s6);
+      font-size: 33px;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .hero__lead {
+      margin-top: var(--s4);
+      font-size: var(--t-body-sm);
+      line-height: var(--lh-prose);
+    }
+
+    /* Stacked and full width: two pills side by side at this width leaves
+       neither a comfortable target. */
+    .hero__actions {
+      display: grid;
+      gap: var(--s3);
+      margin-top: var(--s8);
+    }
+
+    .hero__actions > * {
+      justify-content: center;
+      min-height: 52px;
+      font-size: var(--t-body);
+    }
+
+    .hero__chips {
+      margin-top: var(--s8);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .hero__bloom,
     .hero__scan-line {

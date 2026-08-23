@@ -479,6 +479,23 @@ const cards: Card[] = [
     text-align: center;
   }
 
+  @media (max-width: 640px) {
+    .problems__card {
+      padding: var(--s6);
+    }
+
+    .problems__title {
+      margin-top: var(--s4);
+      font-size: var(--t-post-title);
+      line-height: 1.24;
+    }
+
+    .problems__lead {
+      margin-top: var(--s2);
+      font-size: var(--t-card-sm);
+    }
+  }
+
   /* Below 900px the twelve-column grid collapses. The min-heights go with it:
      nothing sits beside a card any more, so reserving space only adds gaps. */
   @media (max-width: 900px) {

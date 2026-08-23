@@ -290,6 +290,40 @@ carries the `mini` chart geometry the hero no longer uses — dead, but removing
 it means editing the one file the brief says not to touch, so it waits for a
 word from you.
 
+### The compatibility shim is gone, and it was hiding invisible text (23 Aug)
+
+The redesign shipped an alias block mapping the retired cream token names onto
+the new palette, so the site stayed coherent while sections were rebuilt one at
+a time. That was the right call for the migration and a liability the moment it
+outlived it.
+
+Two names changed meaning when the ground inverted. `--c-paper` was the light
+ground in the cream system and was used for *light text on the dark sections*;
+the alias resolved it to the new dark ground. Nine pieces of text were therefore
+rendering at **1.02:1** — the footer logo, the consent banner, and five places
+in the contact form. Invisible, and invisible to every check in the suite,
+because the markup was right, the copy was right and only the resolved colour
+was wrong.
+
+Found by auditing what still referenced the shim rather than by looking at the
+page: 311 alias references across eight files, which is also the honest answer
+to "this section was not restructured" — Footer, Contact, Stack, Products, the
+blog routes, the consent banner and calculator.css were never converted. They
+inherited the new palette through the shim and kept the old type scale, spacing
+and measures.
+
+All of it is converted and the block is deleted. `tests/tokens.test.ts` now
+fails the build on any reference to a retired name, on the block being
+redeclared, and on any `var()` in the output that resolves to nothing — which is
+the quiet failure mode removing the shim introduces. It caught a real leftover
+on its first run: an inline `var(--space-md)` built in calendly.ts, which no CSS
+sweep would have found.
+
+Also in this pass: the contact form sits in its own 760px surface card with a
+centred sub-header, per the design; the footer is on the new scale with its
+Blog link; and the phone layout landed for the hero, the bento cards and the
+calculator from `design/E2E Apps - Bento mobile.dc.html`.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five

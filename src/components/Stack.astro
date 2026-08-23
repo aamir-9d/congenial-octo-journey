@@ -197,15 +197,15 @@ const filters = [
   }
 
   .stack__item {
-    background: var(--c-white);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-12);
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
     overflow: hidden;
   }
 
   /* Bundle 02 is ringed in amber — the infrastructure half of the practice. */
   .stack__item--lead {
-    border-color: var(--c-amber);
+    border-color: var(--color-accent);
   }
 
   .stack__item[hidden] {
@@ -213,11 +213,11 @@ const filters = [
   }
 
   .stack__summary {
-    padding: var(--space-md);
+    padding: var(--s8);
     cursor: pointer;
     font-family: inherit;
     display: flex;
-    gap: var(--space-xs);
+    gap: var(--s4);
     align-items: flex-start;
     list-style: none;
   }
@@ -228,18 +228,18 @@ const filters = [
 
   /* Declared with `style-hover` in the export, which no runtime implemented. */
   .stack__summary:hover {
-    background: var(--c-paper-hover);
+    background: var(--color-surface-sunk);
   }
 
   .stack__item--lead .stack__summary:hover {
-    background: var(--c-amber-tint);
+    background: var(--color-accent-dim);
   }
 
   .stack__num {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    color: var(--c-amber);
-    padding-top: var(--space-3xs);
+    font-size: var(--t-mono-sm);
+    color: var(--color-accent);
+    padding-top: var(--s2);
   }
 
   .stack__label {
@@ -261,26 +261,26 @@ const filters = [
   .stack__title {
     display: block;
     min-height: calc(2 * 1.65em);
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-weight: 700;
-    font-size: var(--fs-h-xs);
-    letter-spacing: var(--ls-slight);
-    color: var(--c-ink);
+    font-size: var(--t-post-title);
+    letter-spacing: var(--ls-tight);
+    color: var(--color-text);
   }
 
   .stack__meta {
     display: block;
     min-height: calc(2 * 1.65em);
-    margin-top: var(--space-3xs);
+    margin-top: var(--s2);
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono-sm);
+    color: var(--color-text-4);
   }
 
   .stack__icon {
     font-family: var(--font-mono);
-    font-size: var(--fs-body-xs);
-    color: var(--c-ink-soft);
+    font-size: var(--t-card);
+    color: var(--color-text-4);
   }
 
   .stack__icon {
@@ -297,10 +297,10 @@ const filters = [
   }
 
   .stack__body {
-    padding: 0 var(--space-md) var(--space-md) var(--space-lg);
+    padding: 0 var(--s8) var(--s8) var(--s12);
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    line-height: var(--lh-loose);
-    color: var(--c-ink-muted);
+    font-size: var(--t-mono);
+    line-height: var(--lh-mono);
+    color: var(--color-text-2);
   }
 </style>

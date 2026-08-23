@@ -114,7 +114,7 @@ export function initCalendly(): void {
       .catch(() => {
         // If the widget cannot load, leave a link rather than an empty box.
         host.innerHTML =
-          '<p style="padding:var(--space-md)"><a class="link" target="_blank" rel="noopener" href="' +
+          '<p style="padding:var(--s8)"><a class="link" target="_blank" rel="noopener" href="' +
           url.replace(/"/g, '&quot;') +
           '">Open the booking calendar</a></p>';
       });

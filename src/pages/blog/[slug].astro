@@ -71,11 +71,11 @@ const fmt = (d: Date) =>
 <style>
   .page {
     min-height: 100vh;
-    background: var(--c-paper);
+    background: var(--color-bg);
   }
 
   .section {
-    padding-top: calc(var(--space-2xl) + 48px);
+    padding-top: calc(var(--section-pad) + 48px);
   }
 
   .post {
@@ -85,120 +85,120 @@ const fmt = (d: Date) =>
 
   .post__back {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-teal);
+    font-size: var(--t-mono);
+    color: var(--color-accent);
     text-decoration: none;
   }
 
   .post__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-top: var(--space-lg);
+    gap: var(--s6);
+    margin-top: var(--s12);
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
   }
 
   .post__tag {
-    letter-spacing: var(--ls-eyebrow-sm);
+    letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    color: var(--c-amber);
+    color: var(--color-accent);
   }
 
   .post__title {
-    margin-top: var(--space-sm);
-    font-size: var(--fs-h2);
-    color: var(--c-ink);
+    margin-top: var(--s6);
+    font-size: var(--t-h2);
+    color: var(--color-text);
   }
 
   .post__kicker {
-    margin-top: var(--space-md);
-    font-size: var(--fs-hero-lead);
-    line-height: var(--lh-normal);
-    color: var(--c-ink-muted);
+    margin-top: var(--s8);
+    font-size: var(--t-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
   /* The article body is rendered Markdown, so these have to reach elements
      this component does not itself declare. */
   .post__body {
-    margin-top: var(--space-xl);
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--c-line);
-    font-size: var(--fs-body-md);
+    margin-top: var(--s16);
+    padding-top: var(--s12);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-body);
     line-height: var(--lh-body);
-    color: var(--c-ink-muted);
+    color: var(--color-text-2);
   }
 
   .post__body :global(h2) {
-    margin-top: var(--space-xl);
-    font-size: var(--fs-h-md);
-    color: var(--c-ink);
+    margin-top: var(--s16);
+    font-size: var(--t-h3-station);
+    color: var(--color-text);
   }
 
   .post__body :global(h3) {
-    margin-top: var(--space-lg);
-    font-size: var(--fs-h-xs);
-    color: var(--c-ink);
+    margin-top: var(--s12);
+    font-size: var(--t-post-title);
+    color: var(--color-text);
   }
 
   .post__body :global(p),
   .post__body :global(ul),
   .post__body :global(ol) {
-    margin-top: var(--space-sm);
+    margin-top: var(--s6);
   }
 
   .post__body :global(ul),
   .post__body :global(ol) {
-    padding-left: var(--space-md);
+    padding-left: var(--s8);
   }
 
   .post__body :global(li) {
-    margin-top: var(--space-2xs);
+    margin-top: var(--s3);
   }
 
   .post__body :global(strong) {
-    color: var(--c-ink);
+    color: var(--color-text);
   }
 
   .post__body :global(a) {
-    color: var(--c-teal);
-    border-bottom: 1px solid rgba(var(--rgb-teal), 0.35);
+    color: var(--color-accent);
+    border-bottom: 1px solid rgba(var(--rgb-accent), 0.35);
   }
 
   /* Inline code. Fenced blocks are Shiki's <pre><code> and are handled below. */
   .post__body :global(:not(pre) > code) {
     font-family: var(--font-mono);
     font-size: 0.92em;
-    background: var(--c-paper-alt);
-    border-radius: var(--r-3);
+    background: var(--color-surface);
+    border-radius: 3px;
     padding: 0.12em 0.35em;
   }
 
   .post__body :global(pre) {
-    margin-top: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--r-8);
-    border: 1px solid var(--c-line);
+    margin-top: var(--s6);
+    padding: var(--s6) var(--s8);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line);
     /* Long lines scroll inside the block rather than widening the page. */
     overflow-x: auto;
-    font-size: var(--fs-mono-md);
-    line-height: var(--lh-relaxed);
+    font-size: var(--t-mono);
+    line-height: var(--lh-prose);
   }
 
   .post__body :global(blockquote) {
-    margin-top: var(--space-sm);
-    padding-left: var(--space-sm);
-    border-left: 2px solid var(--c-amber);
-    color: var(--c-ink-soft);
+    margin-top: var(--s6);
+    padding-left: var(--s6);
+    border-left: 2px solid var(--color-accent);
+    color: var(--color-text-4);
   }
 
   .post__source {
-    margin-top: var(--space-xl);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--c-line);
+    margin-top: var(--s16);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
   }
 </style>

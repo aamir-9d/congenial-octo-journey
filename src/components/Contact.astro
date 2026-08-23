@@ -66,13 +66,15 @@ const spendOptions = [
       )
     }
 
-    <div>
-      <div class="eyebrow eyebrow--amber">OR SEND IT OVER</div>
-      <h2 class="contact__head">Tell me what you're running.</h2>
-      <p class="contact__lead">
-        The more specific you are about the setup, the more specific I can be about what's wrong
-        with it.
-      </p>
+    <div class="contact__panel">
+      <div class="contact__panel-head">
+        <div class="eyebrow eyebrow--amber">OR SEND IT OVER</div>
+        <h2 class="contact__head">Tell me what you're running.</h2>
+        <p class="contact__lead">
+          The more specific you are about the setup, the more specific I can be about what's wrong
+          with it.
+        </p>
+      </div>
 
       <form id="contact-form" class="form" novalidate data-endpoint={FORM_ENDPOINT}>
         <div class="form__row">
@@ -191,49 +193,58 @@ const spendOptions = [
     color: var(--color-text-2);
   }
 
-  /* The form card: 760px, centred, with its own centred sub-header. */
-  .form,
+  /* The form card. 760px and centred, with its own centred sub-header — the
+     design's shape, and the fix for the form being left-aligned while its
+     neighbours were centred. */
   .contact__panel {
     max-width: var(--wrap-form);
-    margin-left: auto;
-    margin-right: auto;
+    margin: clamp(36px, 4vw, 56px) auto 0;
+    background: var(--color-surface);
+    border-radius: var(--radius-panel);
+    padding: clamp(26px, 3vw, 40px);
+    box-shadow: var(--ring);
+  }
+
+  .contact__panel-head {
+    text-align: center;
   }
 
   .contact {
-    background: var(--c-ink-deep);
-    border-top: 1px solid rgba(var(--rgb-paper), 0.1);
+    background: var(--color-bg);
+    border-top: 1px solid rgba(var(--rgb-text), 0.1);
   }
 
   .contact__inner {
     max-width: var(--wrap);
     margin: 0 auto;
     display: grid;
-    gap: var(--space-xl);
+    gap: var(--s16);
   }
 
   .contact__head {
-    font-size: var(--fs-h2-dark);
-    color: var(--c-paper);
-    max-width: var(--measure-heading);
+    margin-top: 12px;
+    font-size: var(--t-h2);
+    color: var(--color-text);
+    max-width: 20em;
   }
 
   .contact__lead {
-    margin-top: var(--space-sm);
-    max-width: var(--measure-italic);
-    font-size: var(--fs-body-lg);
-    color: rgba(var(--rgb-paper), 0.6);
+    margin-top: var(--s6);
+    max-width: 46ch;
+    font-size: var(--t-section-lead);
+    color: rgba(var(--rgb-text), 0.6);
     font-style: italic;
   }
 
   /* Calendly's own iframe sets the height; this reserves it up front so the
      widget arriving does not shift the page (and cost us the CLS budget). */
   .contact__calendly {
-    margin-top: var(--space-lg);
+    margin-top: var(--s12);
     min-height: 700px;
-    border-radius: var(--r-12);
+    border-radius: var(--radius-card);
     overflow: hidden;
-    background: rgba(var(--rgb-paper), 0.045);
-    border: 1px solid rgba(var(--rgb-paper), 0.1);
+    background: rgba(var(--rgb-text), 0.045);
+    border: 1px solid rgba(var(--rgb-text), 0.1);
   }
 
   @media (max-width: 767px) {
@@ -245,58 +256,57 @@ const spendOptions = [
   /* --- form -------------------------------------------------------------- */
 
   .form {
-    margin-top: var(--space-lg);
+    margin-top: 28px;
     display: grid;
-    gap: var(--space-sm);
-    max-width: 720px;
-  }
+    gap: 16px;
+      }
 
   .form__row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-    gap: var(--space-sm) var(--space-md);
+    gap: var(--s6) var(--s8);
   }
 
   .form__field {
     display: grid;
-    gap: var(--space-2xs);
+    gap: var(--s3);
   }
 
   .form__label {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-mono-md);
-    color: rgba(var(--rgb-paper), 0.72);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-meta);
+    color: rgba(var(--rgb-text), 0.72);
   }
 
   .form__input {
     width: 100%;
     font-family: var(--font-body);
-    font-size: var(--fs-body-md);
-    color: var(--c-paper);
-    background: rgba(var(--rgb-paper), 0.045);
-    border: 1px solid rgba(var(--rgb-paper), 0.16);
-    border-radius: var(--r-8);
-    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--t-body);
+    color: var(--color-text);
+    background: rgba(var(--rgb-text), 0.045);
+    border: 1px solid rgba(var(--rgb-text), 0.16);
+    border-radius: var(--radius-sm);
+    padding: var(--s3) var(--s4);
     transition: border-color 0.15s ease, background 0.15s ease;
   }
 
   .form__input::placeholder {
-    color: rgba(var(--rgb-paper), 0.32);
+    color: rgba(var(--rgb-text), 0.32);
   }
 
   .form__input:hover {
-    border-color: rgba(var(--rgb-paper), 0.28);
+    border-color: rgba(var(--rgb-text), 0.28);
   }
 
   .form__input:focus {
     outline: none;
-    border-color: var(--c-amber);
-    background: rgba(var(--rgb-paper), 0.07);
+    border-color: var(--color-accent);
+    background: rgba(var(--rgb-text), 0.07);
   }
 
   .form__input[aria-invalid='true'] {
-    border-color: var(--c-red);
+    border-color: var(--color-accent);
   }
 
   .form__input--select {
@@ -308,24 +318,24 @@ const spendOptions = [
     background-position: calc(100% - 18px) center, calc(100% - 13px) center;
     background-size: 5px 5px, 5px 5px;
     background-repeat: no-repeat;
-    padding-right: var(--space-lg);
+    padding-right: var(--s12);
   }
 
   .form__input--select option {
-    background: var(--c-ink-deep);
-    color: var(--c-paper);
+    background: var(--color-bg);
+    color: var(--color-text);
   }
 
   .form__textarea {
     resize: vertical;
     min-height: 120px;
-    line-height: var(--lh-normal);
+    line-height: var(--lh-body);
   }
 
   .form__error {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    color: var(--c-red);
+    font-size: var(--t-mono-xs);
+    color: var(--color-accent);
   }
 
   .form__error[hidden] {
@@ -343,14 +353,14 @@ const spendOptions = [
   .form__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-sm) var(--space-md);
+    gap: var(--s6) var(--s8);
     align-items: center;
-    margin-top: var(--space-2xs);
+    margin-top: var(--s3);
   }
 
   .form__submit {
-    font-size: var(--fs-body-md);
-    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--t-body);
+    padding: var(--s6) var(--s12);
   }
 
   .form__submit[disabled] {
@@ -361,15 +371,15 @@ const spendOptions = [
   .form__note {
     flex: 1 1 240px;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
   }
 
   .form__status {
-    font-size: var(--fs-body-md);
-    line-height: var(--lh-normal);
-    border-radius: var(--r-8);
-    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    border-radius: var(--radius-sm);
+    padding: var(--s4) var(--s6);
   }
 
   .form__status[hidden] {
@@ -377,14 +387,14 @@ const spendOptions = [
   }
 
   .form__status[data-tone='ok'] {
-    color: var(--c-paper);
-    background: rgba(var(--rgb-teal), 0.22);
-    border: 1px solid rgba(var(--rgb-teal), 0.55);
+    color: var(--color-text);
+    background: rgba(var(--rgb-accent), 0.22);
+    border: 1px solid rgba(var(--rgb-accent), 0.55);
   }
 
   .form__status[data-tone='error'] {
-    color: var(--c-paper);
-    background: rgba(var(--rgb-red), 0.18);
-    border: 1px solid rgba(var(--rgb-red), 0.5);
+    color: var(--color-text);
+    background: rgba(var(--rgb-accent), 0.18);
+    border: 1px solid rgba(var(--rgb-accent), 0.5);
   }
 </style>
