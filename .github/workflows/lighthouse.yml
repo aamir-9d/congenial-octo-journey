@@ -9,13 +9,14 @@ on:
 # LCP < 2.0s, CLS < 0.05, TBT < 150ms, performance 95+. Those four are hard
 # failures.
 #
-# Accessibility, SEO and best-practices are warnings for now, not because they
-# do not matter but because two known exceptions would otherwise fail every PR
-# for a reason nobody can fix in that PR:
-#   - the amber-on-white pairings fail WCAG AA and are a signed-off design
-#     decision awaiting a call (NOTES.md);
-#   - 404.html is deliberately noindex, which the SEO category penalises.
-# Promote both to `error` once the palette question is answered.
+# Accessibility is now an `error`. The exception it carried is gone: the seven
+# amber-on-white pairings that failed WCAG AA were resolved by inverting the
+# ground, and amber is 8.1:1 on #0E1014. `node scripts/check-contrast.mjs`
+# reports the palette independently and is down to a single finding, the
+# dashboard chart line at 2.85:1 — a design value awaiting a call (NOTES.md).
+#
+# SEO and best-practices stay warnings: 404.html is deliberately noindex, which
+# the SEO category penalises and which nobody can fix in a PR.
 jobs:
   lighthouse:
     runs-on: ubuntu-latest

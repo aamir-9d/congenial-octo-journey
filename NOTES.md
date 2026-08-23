@@ -214,6 +214,82 @@ detailed product overviews may find the answer reads oddly. Adding a sentence
 pointing at this section would resolve it. Not changed, because it is signed-off
 copy from the FAQ brief.
 
+### The Bento redesign (23 Aug)
+
+Dark ground, Be Vietnam Pro, Phosphor icons, and every section rebuilt from
+`design/E2E Apps - Bento.dc.html`. Built on the `redesign` branch and deployed
+alongside the live site at `/next/` — see the deployment note in README.
+
+**Three flagged items resolved by it.**
+
+*Item 1 — amber-on-light contrast.* Seven pairings failed WCAG AA on the cream
+ground. Inverting the ground resolves all of them: amber is 8.1:1 on `#0E1014`
+and all four text tokens pass. `scripts/check-contrast.mjs` is rewritten for the
+new palette and is down to a single finding — the dashboard chart line at
+2.85:1 against a 3:1 requirement. Left failing rather than reclassified: the
+dashed pattern does help distinguish it, but WCAG 1.4.11 covers graphics needed
+to understand content and a chart series qualifies. `#5F666F` clears it at
+3.03:1, and that is a design value, so it is your call. Lighthouse's
+accessibility assertion is promoted from `warn` to `error`.
+
+*Item 3 — 44px touch targets.* Fixed at the source rather than by escalating
+specificity. The inline `height:20px` on the ranges and `width:16px;height:16px`
+on the checkboxes are gone, and the controls are restyled: a 44px track with a
+22px thumb, going to 26px under `@media (pointer: coarse)`.
+
+*Item 4 — no navigation below 480px.* There is now a hamburger and a full-screen
+sheet: six rows with an icon, a label, a one-line description and a trailing
+arrow, with the CTA and email pinned to the bottom. Escape closes it, following
+a link closes it, and focus returns to the button that opened it. The button is
+hidden without JS, since the sheet could never open.
+
+**Structural changes.**
+
+- The payback model was a child of the hero, beside a summary card and a mini
+  chart. The Bento hero has neither, so it is its own `#payback` section and the
+  calculator's binding root narrowed from `#top` back to `.calc`. The
+  frozen-bindings bug those blocks caused cannot recur — the elements are gone.
+- CTA and Contact are one merged section. The form was left-aligned while its
+  neighbours were centred; that was the misalignment.
+- The Loop is a real cycle: a 3x3 grid with the ring in the centre cell and the
+  four stations at N/E/S/W, one layout at every width. That removed the "back to
+  01" marker, which was the contrast failure in item 1.
+- `src/scripts/reveal.ts` is deleted. Scroll-driven CSS does the same job, and
+  where `animation-timeline` is unsupported the animation runs once on load, so
+  content is never left hidden.
+
+**Copy.** `tests/copy-parity.test.ts` is rewritten. An ordered whole-page
+comparison was right while the port was meant to be pixel-identical; it is the
+wrong assertion for a deliberate redesign. It now asserts every substantial run
+from the export still appears somewhere in the port, with a `REPLACED` list
+recording each deliberate removal and its reason, a `SPLIT` list for paragraphs
+now divided across a lead and a disclosure, and a second test asserting
+everything listed as replaced really is gone — so the list cannot become a
+dumping ground.
+
+Where the design file abbreviates signed-off copy, the export's wording is kept:
+the bento disclosures hold the full paragraphs, the Loop stations keep their
+outcome lines, and card 03 keeps "A conversion schema built for nothing in
+particular".
+
+**New copy still awaiting sign-off**, all marked `data-added`:
+
+1. The hero lead paragraph.
+2. Bento card 05, "One stack, one person accountable."
+3. The three Proof labels.
+4. The two condensed founder bios.
+5. The mobile menu's six link descriptions.
+
+The blog posts are no longer placeholders — they are four real LinkedIn
+articles, republished in full.
+
+**Not done, and deliberate.** Be Vietnam Pro has no variable version on Google
+Fonts despite the brief asking for one; four static weights ship instead, and
+the set is smaller than what it replaced. `src/scripts/calc-model.ts` still
+carries the `mini` chart geometry the hero no longer uses — dead, but removing
+it means editing the one file the brief says not to touch, so it waits for a
+word from you.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These five

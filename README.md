@@ -108,7 +108,13 @@ are safe to expose; everything else is a Worker secret and belongs in
 
 ## Fonts
 
-Self-hosted in `public/fonts`, three files, 152KB. Archivo must stay the
-**variable** face — the h1 uses `font-stretch: 118%` and a static instance drops
-it silently. The `unicode-range` is Google's `latin` subset verbatim and must not
-be widened; see NOTES.md for why.
+Self-hosted in `public/fonts`, five files, 112KB: **Be Vietnam Pro** at 400,
+500, 600 and 700, plus **IBM Plex Mono** 400 for eyebrows, labels and figures.
+
+Be Vietnam Pro has no variable version on Google Fonts, so these are static
+instances. The Archivo variable-face constraint that used to live here is gone
+with Archivo itself — nothing now depends on `font-stretch`.
+
+The `unicode-range` is Google's `latin` subset verbatim and must not be widened.
+It deliberately excludes the arrow and not-equal glyphs the copy uses, so those
+fall back to a system font exactly as they did on the export; see NOTES.md.

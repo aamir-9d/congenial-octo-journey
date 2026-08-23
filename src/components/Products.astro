@@ -21,7 +21,7 @@ import { PRODUCTS, megabytes } from '../data/products';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<section id="products" class="products section" data-section="products" data-added="products">
+<section id="products" class="section" data-section="products" data-added="products">
   <div class="wrap">
     <div data-reveal="1">
       <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
@@ -49,15 +49,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
             <p class="products__headline">{p.headline}</p>
             <p class="products__summary">{p.summary}</p>
 
-            <div class="products__stats">
-              {p.stats.map((s) => (
-                <div class="products__stat">
-                  <div class="products__stat-value">{s.value}</div>
-                  <div class="products__stat-label">{s.label}</div>
-                </div>
-              ))}
-            </div>
-
             <div class="products__foot">
               <span class="products__stack">{p.stack}</span>
               <span class="products__open">
@@ -75,11 +66,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 </section>
 
 <style>
-  .products {
-    background: var(--c-paper-alt);
-    border-top: 1px solid var(--c-line);
-    border-bottom: 1px solid var(--c-line);
-  }
+
 
   .products__head {
     font-size: var(--fs-h2);
@@ -112,9 +99,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   .products__card:hover {
-    border-color: var(--c-amber);
-    box-shadow: var(--shadow-card);
-    transform: translateY(-2px);
+    box-shadow: var(--ring-accent), var(--shadow-card-hover);
+    transform: translateY(-3px);
   }
 
   .products__kicker {
@@ -132,14 +118,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     color: var(--c-ink);
   }
 
+  .products__kicker,
   .products__headline {
-    margin-top: var(--space-2xs);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-body-md);
-    line-height: var(--lh-verdict);
+    min-height: 3.1em;
+  }
+
+  .products__headline {
+    margin-top: 10px;
+    min-height: 2.7em;
+    font-weight: var(--fw-semibold);
+    font-size: var(--t-body);
+    line-height: var(--lh-tight);
     letter-spacing: var(--ls-snug);
-    color: var(--c-teal);
+    color: var(--color-text);
   }
 
   .products__summary {
@@ -150,38 +141,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     /* Pushes the stats and footer to the bottom, so the three cards line up
        however differently the summaries wrap. */
     flex: 1;
-  }
-
-  .products__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-    padding-top: var(--space-xs);
-    border-top: 1px solid var(--c-line);
-  }
-
-  /* Each figure stays whole when the row wraps, rather than the value and its
-     label being squeezed apart. */
-  .products__stat {
-    flex: 0 0 auto;
-  }
-
-  .products__stat-value {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-h-xs);
-    letter-spacing: var(--ls-tight);
-    color: var(--c-ink);
-  }
-
-  .products__stat-label {
-    margin-top: var(--space-3xs);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-3xs);
-    letter-spacing: var(--ls-mono-md);
-    line-height: var(--lh-snug);
-    color: var(--c-ink-soft);
   }
 
   .products__foot {

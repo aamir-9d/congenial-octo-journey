@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import type { IconName } from '../data/icons';
 
 /**
  * Sticky full-width bar, not a floating pill.
@@ -21,6 +22,18 @@ const links = [
   { href: `${base}/blog`, label: 'Blog' },
   { href: '#faq', label: 'FAQ' },
 ];
+
+/* The sheet rows carry a one-line description each. New copy, on the sign-off
+   list — a bare label list would have been cheaper, but on a phone the whole
+   nav is the sheet and the descriptions are what make it scannable. */
+const sheetLinks: { href: string; label: string; note: string; icon: IconName }[] = [
+  { href: '#services', label: 'Services', note: 'Where the money goes missing', icon: 'warning-diamond' },
+  { href: '#loop', label: 'The Loop', note: 'Four stations, one cycle', icon: 'arrows-clockwise' },
+  { href: '#approach', label: 'Approach', note: 'The full stack, in bundles', icon: 'stack' },
+  { href: '#products', label: 'Products', note: 'Tools built for this work', icon: 'cube' },
+  { href: `${base}/blog`, label: 'Blog', note: 'Findings from live stacks', icon: 'article' },
+  { href: '#faq', label: 'FAQ', note: 'Before you book', icon: 'question' },
+];
 ---
 
 <nav class="nav">
@@ -35,8 +48,56 @@ const links = [
       Book a call
       <Icon name="arrow-up-right" size={13} />
     </a>
+
+    <button type="button" class="nav__burger" data-menu-open aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu">
+      <Icon name="list" size={20} />
+    </button>
   </div>
 </nav>
+
+{/* A real element, shown and hidden by CSS. Rendered on every page so the
+    sheet works with scripting off as a plain hidden list rather than a
+    control that does nothing. */}
+<div id="nav-sheet" class="sheet" hidden data-added="bento">
+  <div class="sheet__bloom" aria-hidden="true"></div>
+
+  <div class="sheet__bar">
+    <span class="nav__logo">E2E Apps</span>
+    <button type="button" class="nav__burger" data-menu-close aria-label="Close menu">
+      <Icon name="x" size={20} />
+    </button>
+  </div>
+
+  <div class="sheet__links">
+    {
+      sheetLinks.map((l) => (
+        <a href={l.href} class="sheet__link">
+          <span class="sheet__icon">
+            <Icon name={l.icon} size={19} />
+          </span>
+          <span class="sheet__label">
+            <span class="sheet__title">{l.label}</span>
+            <span class="sheet__note">{l.note}</span>
+          </span>
+          <Icon name="arrow-right" size={15} />
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="sheet__foot">
+    <a href="#contact" class="btn-primary sheet__cta">
+      Book a call
+      <Icon name="arrow-right" size={15} />
+    </a>
+    <span class="sheet__email">hello@e2eapps.com</span>
+  </div>
+</div>
+
+<script>
+  import { initNavMenu } from '../scripts/nav-menu';
+  initNavMenu();
+</script>
 
 <style>
   .nav {
@@ -105,16 +166,160 @@ const links = [
     box-shadow: var(--shadow-accent-sm);
   }
 
-  /* Below 480px the links hide and the CTA takes the auto margin they leave
-     behind, so the bar does not collapse to the left. The hamburger and the
-     full-screen sheet land in the mobile commit. */
-  @media (max-width: 480px) {
+  /* --- the phone sheet --------------------------------------------------- */
+
+  .nav__burger {
+    display: none;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    place-items: center;
+    background: transparent;
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(14, 16, 20, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: var(--s6);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    animation: rise 0.28s var(--ease-out-soft) both;
+  }
+
+  .sheet[hidden] {
+    display: none;
+  }
+
+  .sheet__bloom {
+    position: absolute;
+    bottom: -12%;
+    left: -18%;
+    width: 86%;
+    height: 44%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(227, 154, 31, 0.2),
+      rgba(227, 154, 31, 0) 66%
+    );
+    filter: blur(38px);
+    pointer-events: none;
+  }
+
+  .sheet__bar,
+  .sheet__links,
+  .sheet__foot {
+    position: relative;
+  }
+
+  .sheet__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    padding-top: 8px;
+  }
+
+  .sheet__bar .nav__logo {
+    margin-right: auto;
+  }
+
+  .sheet__bar .nav__burger {
+    display: grid;
+  }
+
+  .sheet__links {
+    display: grid;
+    margin-top: var(--s12);
+  }
+
+  .sheet__link {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    min-height: 62px;
+    border-bottom: 1px solid var(--color-line-soft);
+    color: var(--color-text-4);
+  }
+
+  .sheet__icon {
+    display: inline-flex;
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  .sheet__label {
+    flex: 1;
+  }
+
+  .sheet__title {
+    display: block;
+    font-size: 23px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-brand);
+    color: var(--color-text);
+  }
+
+  .sheet__note {
+    display: block;
+    margin-top: 1px;
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+  }
+
+  .sheet__foot {
+    margin-top: auto;
+    display: grid;
+    gap: var(--s4);
+    padding-top: var(--s12);
+  }
+
+  .sheet__cta {
+    justify-content: center;
+    min-height: 52px;
+    font-size: var(--t-body);
+  }
+
+  .sheet__email {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--color-text-4);
+    text-align: center;
+  }
+
+  /* Below 640px the inline links give way to the sheet. The CTA stays in the
+     bar — it is the one thing that should never be a tap away. */
+  @media (max-width: 640px) {
     .nav__links {
       display: none;
     }
 
     .nav__cta {
       margin-left: auto;
+    }
+
+    .nav__burger {
+      display: grid;
+    }
+  }
+
+  /* With scripting off the sheet can never be opened, so the button that opens
+     it should not be there either. */
+  html:not(.js) .nav__burger[data-menu-open] {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sheet {
+      animation: none;
     }
   }
 </style>

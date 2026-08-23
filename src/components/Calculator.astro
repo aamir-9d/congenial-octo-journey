@@ -1,6 +1,7 @@
 ---
 import Slider from './Slider.astro';
 import { computeView, INITIAL_STATE, type CalcState, type CalcView } from '../scripts/calc-model';
+import { PRESETS, presetBreakeven } from '../data/presets';
 import '../styles/calculator.css';
 
 /**
@@ -105,6 +106,29 @@ const assumptions = [
   <div>
     {/* --- chart --------------------------------------------------------- */}
     <div class="calc__chart-pane">
+    {/* Subscription only: the ad model has no trial funnel to preset. */}
+    <div class="calc__presets" data-when="isSub" data-added="bento" role="group" aria-label="Cohort preset">
+      {
+        PRESETS.map((p) => (
+          <button
+            type="button"
+            class="calc__preset"
+            data-preset={p.key}
+            aria-pressed={String(p.key === 'typical')}
+          >
+            <span class="calc__preset-dot" aria-hidden="true" />
+            <span class="calc__preset-body">
+              <span class="calc__preset-top">
+                <span class="calc__preset-label">{p.label}</span>
+                <span class="calc__preset-day tabular">{presetBreakeven(p)}</span>
+              </span>
+              <span class="calc__preset-sub">{p.sub}</span>
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
       <div class="calc__chart-bar">
         <div class="calc__horizons" role="group" aria-label="Time horizon">
           {

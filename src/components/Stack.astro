@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 /**
  * "The full stack, in bundles." Ten filterable accordions.
  *
@@ -93,7 +94,7 @@ const filters = [
 
 <section id="approach" class="stack section" data-section="stack">
   <div class="wrap">
-    <div data-reveal="1" class="stack__intro">
+    <div data-reveal="1" class="section-head stack__intro">
       <div class="eyebrow">WHAT'S UNDER THE HOOD</div>
       <h2 class="stack__head">The full stack, in bundles.</h2>
       <p class="section-lead">Named, so you can check whether the thing you need is on the list.</p>
@@ -124,7 +125,7 @@ const filters = [
                 <span class="stack__title">{b.title}</span>
                 <span class="stack__meta">{b.meta}</span>
               </span>
-              <span class="stack__icon" aria-hidden="true" />
+              <span class="stack__icon"><Icon name="plus" size={13} /></span>
             </summary>
             <div class="stack__body">{b.body}</div>
           </details>
@@ -141,18 +142,17 @@ const filters = [
 
 <style>
   .stack {
-    background: var(--c-paper-alt);
-    border-top: 1px solid var(--c-line);
-    border-bottom: 1px solid var(--c-line);
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
   }
 
   .stack__intro {
-    max-width: var(--measure-section-lead);
+    max-width: 52ch;
   }
 
   .stack__head {
-    font-size: var(--fs-h2);
-    color: var(--c-ink);
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
   }
 
   /* --- filter chips ------------------------------------------------------ */
@@ -160,36 +160,42 @@ const filters = [
   .stack__filters {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs);
-    margin-top: var(--space-lg);
+    justify-content: center;
+    gap: 8px;
+    margin-top: clamp(28px, 3vw, 40px);
   }
 
   .stack__chip {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    letter-spacing: var(--ls-mono-md);
-    padding: var(--space-2xs) var(--space-sm);
-    border-radius: var(--r-pill);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    padding: 9px 16px;
+    border-radius: var(--radius-pill);
     cursor: pointer;
     white-space: nowrap;
     background: transparent;
-    color: var(--c-ink-muted);
-    border: 1px solid var(--c-line-input);
+    color: var(--color-text-2);
+    border: 1px solid var(--color-line-strong);
+    transition: background 160ms var(--ease-out-soft), border-color 160ms var(--ease-out-soft);
   }
 
+  /* Amber tint rather than a filled pill: four of these sitting solid would
+     compete with the CTA, which is the only thing on the page that should look
+     pressable at that weight. */
   .stack__chip[aria-pressed='true'] {
-    background: var(--c-ink);
-    color: var(--c-paper);
-    border-color: var(--c-ink);
+    background: var(--color-accent-dim);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
   }
 
   /* --- bundles ----------------------------------------------------------- */
 
   .stack__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: var(--space-xs);
-    margin-top: var(--space-sm);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+    margin-top: 24px;
     align-items: start;
   }
 
@@ -280,13 +286,17 @@ const filters = [
     color: var(--c-ink-soft);
   }
 
-  /* U+002B / U+2212 — the same two glyphs the export switched between. */
-  .stack__icon::before {
-    content: '+';
+  .stack__icon {
+    display: inline-flex;
+    margin-top: 5px;
+    color: var(--color-text-4);
+    transition: transform 180ms var(--ease-out-soft);
   }
 
-  .stack__item[open] .stack__icon::before {
-    content: '\2212';
+  /* Rotated rather than swapped for a minus: the same glyph turning into a
+     close mark reads as one control changing state. */
+  .stack__item[open] .stack__icon {
+    transform: rotate(45deg);
   }
 
   .stack__body {

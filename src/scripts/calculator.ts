@@ -6,6 +6,7 @@
  */
 import { INITIAL_STATE, computeView, type CalcState, type CalcView } from './calc-model';
 import { track, debounce } from './analytics';
+import { PRESETS } from '../data/presets';
 
 type Bindable = keyof CalcView;
 
@@ -56,6 +57,16 @@ export function initCalculator(): void {
   const toggles = Array.from(root.querySelectorAll<HTMLInputElement>('input[data-toggle]'));
   const numbers = Array.from(root.querySelectorAll<HTMLInputElement>('input[data-number]'));
   const setters = Array.from(root.querySelectorAll<HTMLButtonElement>('button[data-set]'));
+  const presets = Array.from(root.querySelectorAll<HTMLButtonElement>('button[data-preset]'));
+
+  /* Which preset the current numbers came from, or null once anything has been
+     touched. A preset must never stay lit against values it does not describe —
+     that would be the calculator asserting something untrue about itself, on a
+     page whose whole argument is that dashboards do exactly that. */
+  let activePreset: string | null = 'typical';
+  const clearPreset = () => {
+    activePreset = null;
+  };
 
   const svg = document.getElementById('chart-svg') as SVGSVGElement | null;
   const el = <T extends Element>(id: string) => document.getElementById(id) as unknown as T | null;
@@ -126,6 +137,9 @@ export function initCalculator(): void {
     for (const b of setters) {
       const current = state[b.dataset.set as keyof CalcState];
       b.setAttribute('aria-pressed', String(String(current) === b.dataset.value));
+    }
+    for (const b of presets) {
+      b.setAttribute('aria-pressed', String(b.dataset.preset === activePreset));
     }
 
     /* Chart geometry. */
@@ -220,12 +234,14 @@ export function initCalculator(): void {
       reportSlider(key, num(slider.value));
       reportBreakeven();
     };
+    slider.addEventListener('input', clearPreset);
     slider.addEventListener('input', onMove);
     slider.addEventListener('change', onMove);
   }
 
   for (const toggle of toggles) {
     const key = toggle.dataset.toggle as keyof CalcState;
+    toggle.addEventListener('change', clearPreset);
     toggle.addEventListener('change', () => {
       (state[key] as boolean) = toggle.checked;
       render();
@@ -242,6 +258,7 @@ export function initCalculator(): void {
       render();
       reportSlider(key, num(field.value) || 0);
     };
+    field.addEventListener('input', clearPreset);
     field.addEventListener('input', onType);
     field.addEventListener('change', onType);
   }
@@ -249,6 +266,7 @@ export function initCalculator(): void {
   for (const button of setters) {
     const key = button.dataset.set as keyof CalcState;
     const raw = button.dataset.value!;
+    button.addEventListener('click', clearPreset);
     button.addEventListener('click', () => {
       const parsed = Number(raw);
       const previous = state[key];
@@ -265,6 +283,20 @@ export function initCalculator(): void {
   }
 
   const assumpToggle = document.getElementById('assump-toggle');
+  for (const button of presets) {
+    button.addEventListener('click', () => {
+      const preset = PRESETS.find((p) => p.key === button.dataset.preset);
+      if (!preset) return;
+
+      Object.assign(state, preset.state);
+      activePreset = preset.key;
+      render();
+
+      track('calc_preset_select', { preset: preset.key, calc_mode: state.mode });
+      reportBreakeven();
+    });
+  }
+
   assumpToggle?.addEventListener('click', () => {
     state.assumpOpen = !state.assumpOpen;
     assumpToggle.setAttribute('aria-expanded', String(state.assumpOpen));

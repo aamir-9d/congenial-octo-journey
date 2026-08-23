@@ -1,45 +1,53 @@
 ---
-import Disclose from './Disclose.astro';
-
 /**
- * "Three findings, from real audits." Dark section, three stat columns.
+ * "Three findings, from real audits." Three cards, not three bare columns.
  *
- * The statistic is the argument; the paragraph explains it. Below 768px the
- * explanation collapses, so the section reads as three numbers you can take in
- * at a glance.
+ * Each figure gains a label above it. On its own "~5%" says nothing — the
+ * reader has to fall into the paragraph to learn what it counts. The label
+ * carries the claim and the figure lands it.
+ *
+ * The labels are NEW COPY awaiting sign-off, marked `data-added`. The bodies
+ * are the export's, verbatim.
+ *
+ * min-heights of 2.7em on the label and 1.9em on the figure are what keep the
+ * amber rules on one line across the three cards.
  */
 
 const findings = [
   {
+    label: 'Trial-to-paid, misreported',
     stat: '11% → 17%',
     body: 'A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.',
   },
   {
+    label: 'The paywall nobody reached',
     stat: '~5%',
     body: 'Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.',
   },
   {
+    label: 'Spend in markets that cannot pay back',
     stat: 'Most of the budget',
     body: 'At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.',
   },
 ];
 ---
 
-<section class="proof section" data-section="proof">
+<section class="section" data-section="proof">
   <div class="wrap">
-    <div data-reveal="1" class="proof__intro">
+    <div class="section-head proof__head" data-reveal="1">
       <div class="eyebrow eyebrow--amber">WHAT THE AUDITS TURN UP</div>
-      <h2 class="proof__head">Three findings, from real audits.</h2>
+      <h2 class="proof__h2">Three findings, from real audits.</h2>
     </div>
 
     <div class="proof__grid">
       {
         findings.map((f) => (
-          <div data-reveal="1" class="proof__item">
-            <div class="proof__stat">{f.stat}</div>
-            <Disclose label="What happened" describes={f.stat} class="disclose--on-dark">
-              <p class="proof__body">{f.body}</p>
-            </Disclose>
+          <div class="proof__card" data-reveal="1">
+            <div class="proof__label" data-added="bento">
+              {f.label}
+            </div>
+            <div class="proof__stat tabular">{f.stat}</div>
+            <p class="proof__body">{f.body}</p>
           </div>
         ))
       }
@@ -50,49 +58,73 @@ const findings = [
 </section>
 
 <style>
-  .proof {
-    background: var(--c-ink);
-  }
-
-  .proof__intro {
-    max-width: var(--measure-cta-head);
-  }
-
   .proof__head {
-    font-size: var(--fs-h2-dark);
-    color: var(--c-paper);
+    max-width: 52ch;
+  }
+
+  .proof__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
   }
 
   .proof__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-sm);
-    margin-top: var(--space-xl);
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+    gap: 16px;
+    margin-top: clamp(40px, 4vw, 64px);
   }
 
-  .proof__item {
-    border-top: 2px solid var(--c-amber);
-    padding-top: var(--space-md);
+  .proof__card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    box-shadow: var(--ring);
+  }
+
+  /* Reserved so the amber rules line up across the three cards however
+     differently the labels wrap. */
+  .proof__label {
+    min-height: 2.7em;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-4);
   }
 
   .proof__stat {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-stat);
-    letter-spacing: var(--ls-stat);
-    color: var(--c-paper);
+    margin-top: 14px;
+    padding-top: 18px;
+    border-top: 2px solid var(--color-accent);
+    min-height: 1.9em;
+    font-size: var(--t-stat);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: var(--lh-h1);
   }
 
   .proof__body {
-    margin-top: var(--space-xs);
-    font-size: var(--fs-body-sm);
-    color: rgba(var(--rgb-paper), 0.7);
+    margin-top: 14px;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
   .proof__note {
-    margin-top: var(--space-lg);
+    margin-top: 32px;
+    text-align: center;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
-    color: var(--c-ink-soft);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+  }
+
+  @media (max-width: 767px) {
+    .proof__label,
+    .proof__stat {
+      min-height: 0;
+    }
   }
 </style>

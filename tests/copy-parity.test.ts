@@ -132,6 +132,30 @@ const distExists = fs.existsSync(PORT);
  */
 const REPLACED: { text: string; why: string }[] = [
   {
+    text: "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. I did it last week and I'll do it next week.",
+    why: 'founder bio condensed from three paragraphs to one — new copy, awaiting sign-off',
+  },
+  {
+    text: "Five years across the full mobile growth stack: measurement platforms, ad platforms, app stores, subscription analytics. I'm logged into 48 AppsFlyer accounts. I've shipped server-side subscription pipelines, per-country profitability models, and web-to-app attribution loops that close.",
+    why: 'founder bio condensed — the AppsFlyer and portfolio figures survive as credential tags',
+  },
+  {
+    text: "Most people in this field pick a side — the technical plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task. That turns out to be the useful part.",
+    why: 'founder bio condensed — the first two sentences carry into the one-paragraph version',
+  },
+  {
+    text: 'Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery and support across Cisco, Nokia and Ericsson. LTE and 5G core nodes, routing, security, network operations. The systems underneath the phone in your hand.',
+    why: 'founder bio condensed — the years and the vendor list survive as credential tags',
+  },
+  {
+    text: "A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything — renewal notifications from Apple, conversion events to ad platforms, pipelines that run every day whether anyone is watching or not. That's the half I own.",
+    why: 'founder bio condensed — shortened, same claim',
+  },
+  {
+    text: "Aamir works at the app layer of mobile. I've spent two decades at the network layer underneath it. Between us there isn't much of a mobile stack we haven't had to keep running.",
+    why: 'founder bio condensed — dropped from the one-paragraph version',
+  },
+  {
     text: 'd1 0.32 → d7 0.11 → d30 0.03 · curve dies before payback',
     why: 'card 01 red code line replaced by the drawn retention curve, which says the same thing',
   },

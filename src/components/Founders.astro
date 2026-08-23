@@ -1,23 +1,26 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
-import Disclose from './Disclose.astro';
+import Icon from './Icon.astro';
 
 /**
  * The two founders.
  *
- * The export used <image-slot> placeholders carrying no image data. Resolved at
- * build time: drop `aamir.jpg` / `faisal.jpg` into public/img/ and the frame
- * renders. Until then there is no frame — a 4:3 grey void is most of a phone
- * screen showing nothing, which is worse than the absence.
+ * A 78px photo slot beside the name and role, then a single-paragraph bio, a
+ * row of credential tags, and the LinkedIn link.
  *
- * Below 768px the bios collapse behind a tap target and each founder reads as a
- * card. Three paragraphs each is right on a desktop and a wall on a phone.
+ * The bios are CONDENSED from the export's three paragraphs to one — new copy,
+ * marked `data-added` and awaiting sign-off. The full originals are still in
+ * git history if the condensed version does not land.
+ *
+ * The build-time `fs.existsSync` check stays: drop `aamir.jpg` / `faisal.jpg`
+ * into public/img/ and the photos render. Until then the slot shows a user glyph
+ * on a diagonal-stripe ground, which reads as deliberate rather than as a
+ * missing image.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const publicDir = path.resolve(process.cwd(), 'public');
-
 const hasPhoto = (file: string) => fs.existsSync(path.join(publicDir, 'img', file));
 
 const founders = [
@@ -27,11 +30,8 @@ const founders = [
     role: 'MEASUREMENT & GROWTH',
     alt: 'Aamir Jan Khan',
     linkedin: 'https://www.linkedin.com/in/aamir-jan-khan/',
-    bio: [
-      "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. I did it last week and I'll do it next week.",
-      "Five years across the full mobile growth stack: measurement platforms, ad platforms, app stores, subscription analytics. I'm logged into 48 AppsFlyer accounts. I've shipped server-side subscription pipelines, per-country profitability models, and web-to-app attribution loops that close.",
-      "Most people in this field pick a side — the technical plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task. That turns out to be the useful part.",
-    ],
+    tags: ['48 AppsFlyer accounts', '50+ apps', 'Media buying'],
+    bio: "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. Five years across measurement platforms, ad platforms, app stores and subscription analytics. Most people in this field pick a side, the plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task.",
   },
   {
     file: 'faisal.jpg',
@@ -39,85 +39,114 @@ const founders = [
     role: 'INFRASTRUCTURE & OPERATIONS',
     alt: 'Muhammad Faisal Khan',
     linkedin: 'https://www.linkedin.com/in/muhammad-faisal-khan-3606365/',
-    bio: [
-      'Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery and support across Cisco, Nokia and Ericsson. LTE and 5G core nodes, routing, security, network operations. The systems underneath the phone in your hand.',
-      "A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything — renewal notifications from Apple, conversion events to ad platforms, pipelines that run every day whether anyone is watching or not. That's the half I own.",
-      "Aamir works at the app layer of mobile. I've spent two decades at the network layer underneath it. Between us there isn't much of a mobile stack we haven't had to keep running.",
-    ],
+    tags: ['20 years', 'LTE & 5G core', 'Cisco / Nokia / Ericsson'],
+    bio: "Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery across Cisco, Nokia and Ericsson. A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything. That's the half I own.",
   },
 ];
 ---
 
-<section class="founders section" data-section="founders">
+<section class="section" data-section="founders">
   <div class="wrap">
+    <div class="section-head founders__head" data-reveal="1">
+      <div class="eyebrow">WHO YOU TALK TO</div>
+      <h2 class="founders__h2">Nothing gets handed off.</h2>
+    </div>
+
     <div class="founders__grid">
       {
         founders.map((f) => (
-          <div data-reveal="1" class="founders__card">
-            {
-              /* No frame at all until the photo exists. A 4:3 grey void is a
-                 whole screen of nothing on a phone, and worse than the absence.
-                 The moment the file lands in public/img/ this renders; that is a
-                 build-time change, so nothing shifts for a visitor. */
-              hasPhoto(f.file) && (
-                <div class="founders__frame">
-                  <img
-                    src={`${base}/img/${f.file}`}
-                    alt={f.alt}
-                    width="800"
-                    height="600"
-                    loading="lazy"
-                    decoding="async"
-                    class="founders__photo"
-                  />
-                </div>
-              )
-            }
-            <h3 class="founders__name">{f.name}</h3>
-            <div class="founders__role">{f.role}</div>
-            <Disclose label="Background" describes={f.name}>
-              <div class="founders__bio">
-                {f.bio.map((para) => (
-                  <p>{para}</p>
-                ))}
+          <div class="founders__card" data-reveal="1">
+            <div class="founders__id">
+              <div class="founders__slot">
+                {
+                  hasPhoto(f.file) ? (
+                    <img
+                      src={`${base}/img/${f.file}`}
+                      alt={f.alt}
+                      width="156"
+                      height="156"
+                      loading="lazy"
+                      decoding="async"
+                      class="founders__photo"
+                    />
+                  ) : (
+                    <Icon name="user" size={24} />
+                  )
+                }
               </div>
-            </Disclose>
-            <a href={f.linkedin} target="_blank" rel="noopener" class="link founders__linkedin">
-              LinkedIn &#8599;
+              <div>
+                <h3 class="founders__name">{f.name}</h3>
+                <div class="founders__role">{f.role}</div>
+              </div>
+            </div>
+
+            <p class="founders__bio" data-added="bento">{f.bio}</p>
+
+            <div class="founders__tags">
+              {f.tags.map((t) => <span class="founders__tag">{t}</span>)}
+            </div>
+
+            <a href={f.linkedin} target="_blank" rel="noopener" class="founders__linkedin">
+              LinkedIn
+              <Icon name="arrow-up-right" size={13} />
             </a>
           </div>
         ))
       }
     </div>
 
-    <p data-reveal="1" class="founders__pull">
+    <p data-reveal="1" class="pull founders__pull">
       Nothing gets handed off. You talk to the two people doing the work.
     </p>
   </div>
 </section>
 
 <style>
-  .founders {
-    background: var(--c-paper);
+  .founders__head {
+    max-width: 48ch;
   }
 
-  /* `min(420px, 100%)`, not a bare `420px`.
-     A bare 420px is an inflexible floor: at 375px the wrapper is 343px wide, so
-     the track overflowed by ~77px and `overflow-x: hidden` on <body> sliced the
-     bio copy mid-word. Wrapping the floor in `min()` keeps 420px wherever there
-     is room for it and collapses to the available width where there is not.
-     Previously flagged and left alone as a signed-off decision; cutting words in
-     half on every phone is a defect, not a decision. */
+  .founders__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
   .founders__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
-    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+    gap: 16px;
+    margin-top: clamp(40px, 4vw, 64px);
   }
 
-  .founders__frame {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--r-12);
+  .founders__card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    box-shadow: var(--ring);
+  }
+
+  .founders__id {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+
+  /* A deliberate placeholder, not a broken image: the stripes read as a frame
+     waiting for a photo. */
+  .founders__slot {
+    flex: none;
+    width: 78px;
+    height: 78px;
+    border-radius: var(--radius-card);
     overflow: hidden;
+    background: repeating-linear-gradient(135deg, #1d2128 0 6px, #191c22 6px 12px);
+    display: grid;
+    place-items: center;
+    color: var(--color-line-hover);
+    box-shadow: inset 0 0 0 1px var(--color-line);
   }
 
   .founders__photo {
@@ -127,60 +156,60 @@ const founders = [
     display: block;
   }
 
-  /* Below 768px each founder reads as a discrete card rather than two long
-     runs of text sharing one background. */
-  @media (max-width: 767px) {
-    .founders__card {
-      background: var(--c-white);
-      border: 1px solid var(--c-line);
-      border-radius: var(--r-12);
-      padding: var(--space-md);
-    }
-
-    .founders__name {
-      margin-top: 0;
-    }
-  }
-
   .founders__name {
-    margin-top: var(--space-md);
-    font-size: var(--fs-h3-founder);
-    color: var(--c-ink);
+    font-size: var(--t-h3);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-brand);
   }
 
   .founders__role {
-    margin-top: var(--space-2xs);
+    margin-top: 5px;
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    letter-spacing: var(--ls-eyebrow-sm);
-    color: var(--c-amber);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
   }
 
   .founders__bio {
-    display: grid;
-    gap: var(--space-sm);
-    margin-top: var(--space-sm);
-    font-size: var(--fs-body-md);
-    color: var(--c-ink-muted);
+    margin-top: 20px;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-answer);
+    color: var(--color-text-2);
+    flex: 1;
+  }
+
+  .founders__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .founders__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    white-space: nowrap;
+    color: var(--color-text-3);
+    padding: 6px 11px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
   }
 
   .founders__linkedin {
-    display: inline-block;
-    margin-top: var(--space-sm);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-md);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 20px;
+    align-self: flex-start;
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
   }
 
   .founders__pull {
-    margin-top: var(--space-xl);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--c-line);
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--fs-pull);
-    line-height: var(--lh-pull);
-    letter-spacing: var(--ls-snug);
-    color: var(--c-ink);
-    max-width: var(--measure-pull-narrow);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
   }
 </style>

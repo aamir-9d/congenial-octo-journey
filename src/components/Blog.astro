@@ -1,0 +1,167 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+
+/**
+ * The latest posts, on the homepage.
+ *
+ * Reads the same collection the /blog index does, so a new Markdown file
+ * appears in both without touching either. Four rows, newest first.
+ *
+ * Entirely new to the page, so the whole section is `data-added`.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 4);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+---
+
+<section id="blog" class="blog section" data-section="blog" data-added="bento">
+  <div class="wrap">
+    <div class="blog__head" data-reveal="1">
+      <div>
+        <div class="eyebrow">FROM THE BLOG</div>
+        <h2 class="blog__h2">What we're finding in live stacks</h2>
+      </div>
+      <a href={`${base}/blog`} class="btn-secondary blog__all">
+        All posts
+        <Icon name="arrow-right" size={14} />
+      </a>
+    </div>
+
+    <div class="blog__list">
+      {
+        posts.map((post) => (
+          <a class="blog__row" href={`${base}/blog/${post.id}`} data-post={post.id}>
+            <span class="blog__date">
+              <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                {fmt(post.data.date)}
+              </time>
+            </span>
+            <span class="blog__body">
+              <span class="blog__title">{post.data.title}</span>
+              <span class="blog__kicker">{post.data.kicker}</span>
+            </span>
+            <span class="blog__tag">{post.data.tag}</span>
+            <span class="blog__arrow">
+              <Icon name="arrow-up-right" size={15} />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .blog {
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
+  }
+
+  .blog__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .blog__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
+  .blog__all {
+    font-size: 14.5px;
+    padding: 12px 20px;
+  }
+
+  .blog__list {
+    margin-top: clamp(32px, 3.4vw, 48px);
+  }
+
+  .blog__row {
+    display: grid;
+    grid-template-columns: minmax(0, 110px) minmax(0, 1fr) minmax(0, 190px) auto;
+    gap: clamp(16px, 2.5vw, 32px);
+    align-items: baseline;
+    padding: 22px 0;
+    border-top: 1px solid var(--color-line);
+    transition: background 160ms var(--ease-out-soft);
+  }
+
+  .blog__row:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .blog__row:hover {
+    background: rgba(var(--rgb-text), 0.03);
+  }
+
+  .blog__date {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--color-text-4);
+    white-space: nowrap;
+  }
+
+  .blog__title {
+    display: block;
+    font-size: var(--t-post-title);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-tight);
+    line-height: var(--lh-pull);
+  }
+
+  .blog__kicker {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .blog__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .blog__arrow {
+    display: inline-flex;
+    color: var(--color-text-4);
+  }
+
+  @media (max-width: 767px) {
+    .blog__row {
+      grid-template-columns: 1fr auto;
+      gap: var(--s3) var(--s6);
+    }
+
+    .blog__body {
+      grid-column: 1 / -1;
+      order: 3;
+    }
+
+    .blog__date {
+      order: 1;
+    }
+
+    .blog__tag {
+      order: 2;
+      text-align: right;
+    }
+
+    .blog__arrow {
+      display: none;
+    }
+  }
+</style>

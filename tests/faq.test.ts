@@ -38,7 +38,7 @@ const faqNode = () => {
 
 /** Visible answer text, tags and entities resolved, for comparison. */
 const visibleAnswers = () =>
-  [...html.matchAll(/<div class="faq__a"[^>]*>([\s\S]*?)<\/div>/g)].map(([, inner]) =>
+  [...html.matchAll(/<p class="faq__a"[^>]*>([\s\S]*?)<\/p>/g)].map(([, inner]) =>
     inner!
       .replace(/<[^>]+>/g, '')
       .replace(/&amp;/g, '&')
@@ -106,11 +106,12 @@ test('exactly one row per group is open by default', { skip }, () => {
 test('the section sits between the founders and the closing ask', { skip }, () => {
   const founders = html.indexOf('data-section="founders"');
   const faq = html.indexOf('id="faq"');
-  const cta = html.indexOf('data-section="cta"');
+  // CTA and Contact are one merged section now.
+  const cta = html.indexOf('data-section="contact"');
 
   assert.ok(founders > -1 && faq > -1 && cta > -1, 'a section marker is missing');
   assert.ok(founders < faq, 'FAQ renders before the founders');
-  assert.ok(faq < cta, 'FAQ renders after the closing CTA — it is objection handling, so it goes first');
+  assert.ok(faq < cta, 'FAQ renders after the closing ask — it is objection handling, so it goes first');
 });
 
 test('the FAQPage JSON-LD carries exactly the text the page shows', { skip }, () => {

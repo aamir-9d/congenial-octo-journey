@@ -19,6 +19,7 @@ export type EventName =
   | 'calc_slider_change'
   | 'calc_gap_toggle'
   | 'calc_breakeven_computed'
+  | 'calc_preset_select'
   // Engagement
   | 'scroll_depth'
   | 'section_view'

@@ -22,18 +22,19 @@ function token(name) {
 }
 
 const C = {
-  ink: token('c-ink'),
-  inkDeep: token('c-ink-deep'),
-  inkMuted: token('c-ink-muted'),
-  inkSoft: token('c-ink-soft'),
-  paper: token('c-paper'),
-  paperRaised: token('c-paper-raised'),
-  paperAlt: token('c-paper-alt'),
-  white: token('c-white'),
-  amber: token('c-amber'),
-  teal: token('c-teal'),
-  red: token('c-red'),
-  line: token('c-line'),
+  bg: token('color-bg'),
+  surface: token('color-surface'),
+  sunk: token('color-surface-sunk'),
+  band: token('color-band'),
+  text: token('color-text'),
+  text2: token('color-text-2'),
+  text3: token('color-text-3'),
+  text4: token('color-text-4'),
+  accent: token('color-accent'),
+  ink: token('color-ink'),
+  line: token('color-line'),
+  lineStrong: token('color-line-strong'),
+  measured: token('chart-measured'),
 };
 
 const srgb = (v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
@@ -61,30 +62,48 @@ function ratio(a, b) {
  *                 quietly omitted.
  */
 const PAIRS = [
-  ['Body copy on paper', C.ink, C.paper, 'text'],
-  ['Secondary copy on paper', C.inkMuted, C.paper, 'text'],
-  ['Mono labels on paper', C.inkSoft, C.paper, 'text'],
-  ['Mono labels on white card', C.inkSoft, C.white, 'text'],
-  ['Mono labels on raised card', C.inkSoft, C.paperRaised, 'text'],
-  ['Body copy on alt ground', C.ink, C.paperAlt, 'text'],
-  ['Link teal on paper', C.teal, C.paper, 'text'],
-  ['Link teal on white card', C.teal, C.white, 'text'],
-  ['Dashboard-reports red on white', C.red, C.white, 'text'],
-  ['True-breakeven teal on white', C.teal, C.white, 'large'],
-  ['Paper text on ink section', C.paper, C.ink, 'text'],
-  ['Paper text on deep ink', C.paper, C.inkDeep, 'text'],
-  ['Amber eyebrow on ink section', C.amber, C.ink, 'text'],
-  ['Amber eyebrow on deep ink', C.amber, C.inkDeep, 'text'],
+  // Body and secondary copy, on each of the three grounds it sits on.
+  ['Body text on ground', C.text, C.bg, 'text'],
+  ['Body text on surface', C.text, C.surface, 'text'],
+  ['Body copy on ground', C.text2, C.bg, 'text'],
+  ['Body copy on surface', C.text2, C.surface, 'text'],
+  ['Body copy on band', C.text2, C.band, 'text'],
+  ['Secondary copy on ground', C.text3, C.bg, 'text'],
+  ['Secondary copy on surface', C.text3, C.surface, 'text'],
+  ['Labels and meta on ground', C.text4, C.bg, 'text'],
+  ['Labels and meta on surface', C.text4, C.surface, 'text'],
+  // Only text-2 and text-3 ever sit on the sunk surface — chips, tags and code
+  // blocks. Checking text-4 there would be auditing a pairing that does not
+  // exist, which is worse than not checking at all.
+  ['Chip label on sunk', C.text2, C.sunk, 'text'],
+  ['Code block on sunk', C.text3, C.sunk, 'text'],
 
-  // The pairing the brief singles out as the likeliest failure.
-  ['Amber breakeven label on white', C.amber, C.white, 'text'],
-  ['Amber station number on white', C.amber, C.white, 'text'],
-  ['Amber bundle number on white', C.amber, C.white, 'text'],
-  ['Amber founder role on paper', C.amber, C.paper, 'text'],
-  ['Amber "back to 01" on paper', C.amber, C.paper, 'text'],
-  ['Amber focus ring on paper', C.amber, C.paper, 'ui'],
-  ['Amber focus ring on white', C.amber, C.white, 'ui'],
-  ['Card border on paper', C.line, C.paper, 'decor'],
+  // The pairing that failed seven times on the cream ground. Inverting the
+  // ground is what resolved it — amber is 8.1:1 on #0E1014.
+  ['Amber eyebrow on ground', C.accent, C.bg, 'text'],
+  ['Amber kicker on surface', C.accent, C.surface, 'text'],
+  ['Amber station number on surface', C.accent, C.surface, 'text'],
+  ['Amber breakeven readout on surface', C.accent, C.surface, 'text'],
+  ['Amber outcome line on surface', C.accent, C.surface, 'text'],
+  ['Amber chip on sunk', C.accent, C.sunk, 'text'],
+
+  // Text on a filled accent button, which is the one light-on-dark inversion.
+  ['Button label on amber', C.ink, C.accent, 'text'],
+
+  // Chart series must be distinguishable from the ground they are drawn on.
+  ['True-revenue line on surface', C.accent, C.surface, 'ui'],
+  // 2.85:1 against a 3:1 requirement — the one pairing the dark ground did not
+  // fix. Left failing rather than reclassified: the dashed pattern does help
+  // distinguish it, but 1.4.11 covers graphics needed to understand content and
+  // a chart series qualifies. Nudging it to about #606871 clears the bar, and
+  // that is a design value, so it is the user's call. See NOTES.md.
+  ['Dashboard line on surface', C.measured, C.surface, 'ui'],
+
+  ['Amber focus ring on ground', C.accent, C.bg, 'ui'],
+  ['Amber focus ring on surface', C.accent, C.surface, 'ui'],
+
+  ['Card outline on ground', C.line, C.bg, 'decor'],
+  ['Control border on surface', C.lineStrong, C.surface, 'decor'],
 ];
 
 const NEED = { text: 4.5, large: 3, ui: 3, decor: 3 };
@@ -113,38 +132,49 @@ for (const row of rows) {
   );
 }
 
+const NL = String.fromCharCode(10);
+
 if (failures) {
-  console.log(`\n${failures} pairing(s) below the WCAG AA threshold.\n`);
+  console.log(NL + failures + ' pairing(s) below the WCAG AA threshold.' + NL);
 
-  // How far the amber has to darken to clear 4.5:1 on white. Scaling all three
-  // channels together keeps the hue, so the suggestion is the smallest change
-  // that works rather than a different colour.
-  const n = parseInt(C.amber.slice(1), 16);
-  const channels = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  /* The cream palette failed here seven times, all of them amber on a light
+     ground, and the fix was to invert the ground rather than retune the amber.
+     What is left is reported generically: for each failure, the nearest
+     same-hue colour that clears the bar, so the suggestion is the smallest
+     change that works rather than a new palette.
 
-  let suggestion = null;
-  for (let scale = 100; scale > 20; scale--) {
-    const hex =
-      '#' +
-      channels
-        .map((c) => Math.round(c * (scale / 100)).toString(16).padStart(2, '0'))
-        .join('')
-        .toUpperCase();
-    if (ratio(hex, C.white) >= 4.5) {
-      suggestion = hex;
-      break;
+     Nothing is changed automatically. These are design values. */
+  for (const row of rows.filter((r) => !r.pass && r.kind !== 'decor')) {
+    const n = parseInt(row.fg.slice(1), 16);
+    const channels = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    const bgLighter = luminance(row.bg) > luminance(row.fg);
+
+    let suggestion = null;
+    for (let step = 1; step <= 80; step++) {
+      const k = bgLighter ? 1 - step / 100 : 1 + step / 100;
+      const hex =
+        '#' +
+        channels
+          .map((c) => Math.min(255, Math.round(c * k)).toString(16).padStart(2, '0'))
+          .join('')
+          .toUpperCase();
+      if (ratio(hex, row.bg) >= row.need) {
+        suggestion = hex;
+        break;
+      }
     }
+
+    const head = '  ' + row.label + ': ' + row.fg + ' on ' + row.bg +
+      ' is ' + row.r.toFixed(2) + ':1, needs ' + row.need + ':1.';
+    const tail = suggestion
+      ? '    Nearest same-hue colour that clears it: ' + suggestion +
+        ' (' + ratio(suggestion, row.bg).toFixed(2) + ':1).'
+      : '    No same-hue adjustment clears it; the pairing needs rethinking.';
+
+    console.log(head + NL + tail);
   }
 
-  console.log(
-    `Amber (${C.amber}) reaches ${ratio(C.amber, C.white).toFixed(2)}:1 on white — it needs 4.5:1.\n` +
-      `The nearest same-hue amber that clears it is ${suggestion} ` +
-      `(${ratio(suggestion, C.white).toFixed(2)}:1).\n` +
-      `Amber on the dark grounds is fine (${ratio(C.amber, C.ink).toFixed(2)}:1), so a second\n` +
-      `token for amber-on-light would fix the text without touching the dark sections.\n` +
-      `This is a signed-off design decision — see NOTES.md. Not changed here.`,
-  );
-  process.exitCode = 1;
-} else {
-  console.log('\nAll audited pairings meet WCAG AA.');
+  console.log(NL + 'These are design values - see NOTES.md. Nothing changed here.' + NL);
 }
+
+process.exitCode = failures ? 1 : 0;

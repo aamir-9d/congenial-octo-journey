@@ -1,88 +1,52 @@
 ---
+import Icon from './Icon.astro';
 import { GROUP_A, GROUP_B, toHtml } from '../data/faq';
 
 /**
- * NEW DESIGN. The signed-off export had no FAQ.
+ * Nineteen questions, two columns.
  *
- * Placed between the founders and the closing ask on purpose: an FAQ is
- * last-mile objection handling, so it belongs immediately before the booking.
+ * The width problem: the FAQ sat in a 760px column while every section around
+ * it used the page wrap, so its edges lined up with nothing. It is in the same
+ * 1280px wrap as everything else now, split into the two groups it already had
+ * — "Working together" and "Technical scope" — which is what earns the width
+ * back rather than stretching a single list across it.
  *
- * Two groups rather than one flat list. Group A carries the questions that
- * actually block a booking - price, timeline, access, effort, risk. Group B
- * carries the capability questions, which reassure a technical reader and earn
- * long-tail search traffic. A single list would bury the first behind the
- * second.
+ * All nineteen answers are unchanged and still come from src/data/faq.ts, so
+ * Schema.astro's FAQPage JSON-LD needs no change and cannot drift.
  *
- * Native details/summary throughout: keyboard-operable and screen-reader
- * labelled with no JS, open to Ctrl+F when expanded, and it still works with
- * scripting off. The copy lives in src/data/faq.ts so the visible text and the
- * FAQPage JSON-LD in Schema.astro cannot drift apart.
+ * Answers cap at 72ch. A 600px measure is unreadable regardless of how much
+ * column there is.
  */
+
+const groups = [
+  { label: 'Working together', items: GROUP_A },
+  { label: 'Technical scope', items: GROUP_B },
+];
 ---
 
-<section id="faq" class="faq section" data-section="faq" data-added="faq">
-  <div class="faq__inner">
-    <div data-reveal="1">
-      <h2 class="faq__head">Questions people ask before booking.</h2>
-      <p class="faq__sub">Including the ones that are awkward to answer.</p>
+<section id="faq" class="faq section" data-section="faq">
+  <div class="wrap">
+    <div class="section-head faq__head" data-reveal="1">
+      <div class="eyebrow">BEFORE YOU BOOK</div>
+      <h2 class="faq__h2">Questions people ask before booking.</h2>
+      <p class="section-lead">Including the ones that are awkward to answer.</p>
     </div>
 
-    <div class="faq__list">
+    <div class="faq__cols">
       {
-        GROUP_A.map((item, i) => (
-          <details class="faq__item" open={i === 0}>
-            <summary class="faq__q">
-              <span>{item.q}</span>
-              <svg
-                class="faq__chevron"
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 5.5 L7 9.5 L11 5.5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </summary>
-            <div class="faq__a" set:html={toHtml(item.a)} />
-          </details>
-        ))
-      }
-    </div>
-
-    <h3 class="faq__group">Technical questions</h3>
-
-    <div class="faq__list">
-      {
-        GROUP_B.map((item, i) => (
-          <details class="faq__item" open={i === 0}>
-            <summary class="faq__q">
-              <span>{item.q}</span>
-              <svg
-                class="faq__chevron"
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                aria-hidden="true"
-              >
-                <path
-                  d="M3 5.5 L7 9.5 L11 5.5"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </summary>
-            <div class="faq__a" set:html={toHtml(item.a)} />
-          </details>
+        groups.map((g) => (
+          <div class="faq__col">
+            <div class="faq__group">{g.label}</div>
+            {g.items.map((item, i) => (
+              <details class="faq__item" open={i === 0}>
+                <summary class="faq__q">
+                  <span>{item.q}</span>
+                  <Icon name="caret-down" size={13} />
+                </summary>
+                <p class="faq__a" set:html={toHtml(item.a)} />
+              </details>
+            ))}
+          </div>
         ))
       }
     </div>
@@ -90,114 +54,86 @@ import { GROUP_A, GROUP_B, toHtml } from '../data/faq';
 </section>
 
 <style>
-  /* Deliberately quieter than the sections above: no cards, no shadows, just
-     hairlines. The argument has already been made by this point. */
   .faq {
-    background: var(--c-paper);
-    border-top: 1px solid var(--c-line);
-  }
-
-  .faq__inner {
-    max-width: 760px;
-    margin: 0 auto;
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
   }
 
   .faq__head {
-    font-size: var(--fs-h2);
-    color: var(--c-ink);
+    max-width: 52ch;
   }
 
-  .faq__sub {
-    margin-top: var(--space-sm);
-    font-size: var(--fs-body-xl);
-    color: var(--c-ink-soft);
-    font-style: italic;
+  .faq__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
   }
 
-  .faq__list {
-    margin-top: var(--space-lg);
+  .faq__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+    gap: 0 clamp(28px, 4vw, 64px);
+    margin-top: clamp(40px, 4vw, 64px);
   }
 
-  /* The 2px left border is always present and transparent until the row opens,
-     so opening one does not nudge its text sideways. */
+  /* Each column is a track in the grid; the min-width stops a long question
+     forcing the two columns apart. */
+  .faq__col {
+    min-width: 0;
+  }
+
+  .faq__group {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-bottom: 14px;
+  }
+
   .faq__item {
-    border-top: 1px solid var(--c-line);
-    border-left: 2px solid transparent;
-  }
-
-  .faq__item:last-child {
-    border-bottom: 1px solid var(--c-line);
-  }
-
-  .faq__item[open] {
-    border-left-color: var(--c-amber);
+    border-top: 1px solid var(--color-line);
   }
 
   .faq__q {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--space-sm);
-    padding: var(--space-md);
+    gap: 18px;
+    padding: 18px 0;
     min-height: 44px;
     cursor: pointer;
-    font-family: var(--font-body);
-    font-weight: 500;
-    /* New values: the export has no 500-weight text and no size between its
-       body and heading scales. Kept local rather than added to tokens.css,
-       which is the export inventory. */
-    font-size: clamp(16px, 1.5vw, 18.5px);
-    line-height: 1.45;
-    color: var(--c-ink);
     list-style: none;
+    font-size: 16.5px;
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
   }
 
-  /* Suppress the native disclosure triangle in every engine. */
-  .faq__q::-webkit-details-marker {
-    display: none;
-  }
-
-  .faq__q::marker {
-    content: '';
-  }
-
-  .faq__chevron {
-    flex: none;
-    margin-top: 0.3em;
-    color: var(--c-ink-soft);
+  .faq__q :global(svg) {
+    margin-top: 5px;
+    color: var(--color-text-4);
     transition: transform 180ms ease;
   }
 
-  .faq__item[open] .faq__chevron {
+  .faq__item[open] .faq__q :global(svg) {
     transform: rotate(180deg);
   }
 
   .faq__a {
-    padding: 0 var(--space-md) var(--space-md);
-    font-size: clamp(15px, 1.3vw, 17px);
-    line-height: 1.65;
-    color: var(--c-ink-muted);
-    max-width: var(--measure-summary);
+    padding: 0 0 20px;
+    max-width: 72ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-answer);
+    color: var(--color-text-2);
   }
 
   .faq__a :global(code) {
     font-family: var(--font-mono);
     font-size: 0.92em;
+    color: var(--color-text);
   }
 
-  .faq__group {
-    margin-top: var(--space-xl);
-    font-family: var(--font-mono);
-    font-weight: 400;
-    font-size: var(--fs-mono-sm);
-    letter-spacing: var(--ls-eyebrow-lg);
-    text-transform: uppercase;
-    color: var(--c-ink-soft);
-  }
-
-  /* The chevron is the only thing that moves in this section. */
   @media (prefers-reduced-motion: reduce) {
-    .faq__chevron {
+    .faq__q :global(svg) {
       transition: none;
     }
   }

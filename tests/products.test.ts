@@ -91,7 +91,7 @@ test('cards render, are whole-card links, and open in a new tab', { skip }, () =
 
   // One tab stop per card. A card wrapping a second link or button would give
   // two stops to the same destination.
-  const section = html.slice(html.indexOf('id="products"'), html.indexOf('data-section="founders"'));
+  const section = html.slice(html.indexOf('id="products"'), html.indexOf('id="blog"'));
   const links = (section.match(/<a\s/g) ?? []).length;
   assert.equal(links, PRODUCTS.length, 'the section has more links than cards');
   assert.equal((section.match(/<button/g) ?? []).length, 0, 'a button inside a card link');

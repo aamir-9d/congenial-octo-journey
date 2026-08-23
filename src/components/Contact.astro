@@ -27,8 +27,20 @@ const spendOptions = [
 ];
 ---
 
-<section id="book" class="contact section" data-section="contact" data-added="phase-2">
+<section id="contact" class="contact section" data-section="contact">
+  {/* One amber bloom behind the whole section. */}
+  <div class="contact__bloom" aria-hidden="true"></div>
+
   <div class="contact__inner">
+    <div class="section-head contact__close" data-reveal="1">
+      <h2 class="contact__close-h2">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+      <p class="contact__close-lead">
+        A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is
+        likely costing. If there's nothing wrong, I'll tell you that too &#8212; it's the fastest
+        way for both of us to find out whether this is worth a conversation.
+      </p>
+    </div>
+
     {
       hasCalendly && (
         <div>
@@ -136,6 +148,57 @@ const spendOptions = [
 </script>
 
 <style>
+  .contact {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact__bloom {
+    position: absolute;
+    bottom: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(227, 154, 31, 0.12),
+      rgba(227, 154, 31, 0) 66%
+    );
+    filter: blur(50px);
+    pointer-events: none;
+  }
+
+  .contact__inner {
+    position: relative;
+  }
+
+  .contact__close {
+    max-width: 56ch;
+  }
+
+  .contact__close-h2 {
+    font-size: var(--t-h2-closing);
+    letter-spacing: var(--ls-h1);
+    line-height: var(--lh-h2-closing);
+  }
+
+  .contact__close-lead {
+    margin-top: 20px;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  /* The form card: 760px, centred, with its own centred sub-header. */
+  .form,
+  .contact__panel {
+    max-width: var(--wrap-form);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   .contact {
     background: var(--c-ink-deep);
     border-top: 1px solid rgba(var(--rgb-paper), 0.1);

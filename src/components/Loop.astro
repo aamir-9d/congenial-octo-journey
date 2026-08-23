@@ -1,17 +1,19 @@
 ---
-import Disclose from './Disclose.astro';
-
 /**
- * "The Full Loop" — four stations around a cycle.
+ * The Full Loop, as an actual cycle.
  *
- * On the narrow layout the body and outcome collapse behind a tap target. The
- * station number and its one-word name are the sequence; the detail is for
- * whoever wants it.
+ * The rounded-rectangle diagram is gone, and so is the separate stacked
+ * fallback it needed below 1024px. One 3x3 grid at every width: the circle in
+ * the centre cell, the four stations at N / E / S / W, so reading order runs
+ * clockwise and each card points at the circle. That also removes the "back to
+ * 01" marker, which was failing contrast — NOTES.md flagged item 1.
  *
- * The export rendered two entirely separate markup trees and chose between
- * them from JS (`window.innerWidth >= 1024`). Here both live in the DOM and a
- * `@media (min-width: 1024px)` query picks one — same breakpoint, no JS, and
- * no layout shift while the script boots.
+ * One dot travels the ring on `animateMotion`, with a wider outline circle on
+ * the same path as a halo. Deliberately no rotating dashed arc: a moving dashed
+ * line reads as a broken connection, not a flowing one.
+ *
+ * Station copy is the export's, in full. The design file abbreviates it; the
+ * outcome lines especially are the point of the section.
  */
 
 const stations = [
@@ -44,71 +46,95 @@ const stations = [
   },
 ];
 
-/* Grid placement for the wide layout: 01 and 04 on the left, 02 and 03 on the
-   right, so reading order runs clockwise around the cycle. */
-const cell = ['a', 'b', 'c', 'd'];
+const byNumber = Object.fromEntries(stations.map((s) => [s.n, s]));
+
+/* Node geometry on the 112px ring, plus a small tangent arrowhead just past
+   each node showing the direction of travel. */
+const nodes = [
+  { n: '01', cx: 150, cy: 38, ny: 43, arrow: '196,46 186,38 190,50' },
+  { n: '02', cx: 262, cy: 150, ny: 155, arrow: '254,196 262,186 250,190' },
+  { n: '03', cx: 150, cy: 262, ny: 267, arrow: '104,254 114,262 110,250' },
+  { n: '04', cx: 38, cy: 150, ny: 155, arrow: '46,104 38,114 50,110' },
+];
+
+/* One full turn of the ring, closed. Both the dot and its halo ride this. */
+const RING = 'M 150 38 A 112 112 0 1 1 149.9 38 Z';
 ---
 
 <section id="loop" class="loop section" data-section="loop">
   <div class="wrap">
-    <div data-reveal="1" class="loop__intro">
+    <div class="section-head loop__head" data-reveal="1">
       <div class="eyebrow">HOW THE WORK IS SEQUENCED</div>
-      <h2 class="loop__head">The Full Loop</h2>
+      <h2 class="loop__h2">The Full Loop</h2>
       <p class="section-lead">
         Four stations. The output of the last one is the input to the first. That's the point.
       </p>
     </div>
 
-    <div class="loop__wide">
-      <svg viewBox="0 0 1000 660" preserveAspectRatio="none" class="loop__path" aria-hidden="true">
-        <path
-          d="M 500 150 L 560 150 A 60 60 0 0 1 620 210 L 620 450 A 60 60 0 0 1 560 510 L 440 510 A 60 60 0 0 1 380 450 L 380 210 A 60 60 0 0 1 440 150 Z"
-          fill="none"
-          stroke="#D6D3CB"
-          stroke-width="1.5"></path>
-        <polygon points="524,150 512,144 512,156" fill="#E39A1F"></polygon>
-        <polygon points="620,336 614,324 626,324" fill="#E39A1F"></polygon>
-        <polygon points="476,510 488,516 488,504" fill="#E39A1F"></polygon>
-        <polygon points="380,324 386,336 374,336" fill="#E39A1F"></polygon>
-      </svg>
-
+    <div class="loop__grid">
       {
-        stations.map((s, i) => (
-          <div class={`loop__card loop__card--${cell[i]}`}>
-            <div class="loop__station">STATION {s.n}</div>
-            <h3 class="loop__title">{s.title}</h3>
-            <p class="loop__body">{s.body}</p>
-            <p class="loop__outcome">{s.outcome}</p>
+        (['01', '02', '03', '04'] as const).map((n) => (
+          <div class:list={['loop__cell', `loop__cell--${n}`]}>
+            <div class="loop__card" data-reveal="1">
+              <div class="loop__station">STATION {byNumber[n]!.n}</div>
+              <h3 class="loop__title">{byNumber[n]!.title}</h3>
+              <p class="loop__body">{byNumber[n]!.body}</p>
+              <p class="loop__outcome">{byNumber[n]!.outcome}</p>
+            </div>
           </div>
         ))
       }
 
-      <div class="loop__hub">THE<br />FULL<br />LOOP</div>
-    </div>
+      <div class="loop__cell loop__cell--ring">
+        <svg
+          class="loop__svg"
+          viewBox="0 0 300 300"
+          role="img"
+          aria-label="The loop: Instrument, Attribute, Decide, Deploy, feeding back to Instrument"
+        >
+          <circle cx="150" cy="150" r="112" fill="none" stroke="var(--color-line-strong)" stroke-width="1.5"></circle>
 
-    <div class="loop__narrow">
-      {
-        stations.map((s) => (
-          <div class="loop__card loop__card--stacked">
-            <div class="loop__station">STATION {s.n}</div>
-            <h3 class="loop__title loop__title--narrow">{s.title}</h3>
-            <Disclose label="What it covers" describes={s.title}>
-              <p class="loop__body">{s.body}</p>
-              <p class="loop__outcome">{s.outcome}</p>
-            </Disclose>
-          </div>
-        ))
-      }
-      <div class="loop__back">
-        <svg width="40" height="28" viewBox="0 0 40 28" aria-hidden="true" class="loop__back-icon">
-          <path d="M36 24 L14 24 A8 8 0 0 1 6 16 L6 9" fill="none" stroke="#E39A1F" stroke-width="1.5"
-          ></path>
-          <polygon points="6,2 2.5,9 9.5,9" fill="#E39A1F"></polygon>
-        </svg>back to 01
+          <circle r="5.5" fill="var(--color-accent)">
+            <animateMotion dur="11s" repeatCount="indefinite" path={RING}></animateMotion>
+          </circle>
+          <circle r="11" fill="none" stroke="var(--color-accent)" stroke-width="1" opacity="0.35">
+            <animateMotion dur="11s" repeatCount="indefinite" path={RING}></animateMotion>
+          </circle>
+
+          {
+            nodes.map((nd) => (
+              <g>
+                <circle
+                  cx={nd.cx}
+                  cy={nd.cy}
+                  r="19"
+                  fill="var(--color-surface)"
+                  stroke="var(--color-accent)"
+                  stroke-width="1.5"
+                />
+                <text
+                  x={nd.cx}
+                  y={nd.ny}
+                  text-anchor="middle"
+                  font-family="IBM Plex Mono, monospace"
+                  font-size="12"
+                  font-weight="500"
+                  fill="var(--color-accent)"
+                >
+                  {nd.n}
+                </text>
+                <polygon points={nd.arrow} fill="var(--color-accent)" />
+              </g>
+            ))
+          }
+
+          <text x="150" y="144" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="var(--color-text-4)">SIGNAL IN</text>
+          <text x="150" y="163" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="var(--color-text-4)">SPEND OUT</text>
+        </svg>
       </div>
     </div>
 
-    <p data-reveal="1" class="pull">
+    <p data-reveal="1" class="pull loop__pull">
       Most consultants stop after Station 02. The loop only closes when the same person walks all
       four.
     </p>
@@ -117,149 +143,162 @@ const cell = ['a', 'b', 'c', 'd'];
 
 <style>
   .loop {
-    background: var(--c-paper);
-  }
-
-  .loop__intro {
-    max-width: var(--measure-hero-lead);
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
   }
 
   .loop__head {
-    font-size: var(--fs-h2);
-    color: var(--c-ink);
+    max-width: 58ch;
   }
 
-  /* --- shared card ------------------------------------------------------ */
+  .loop__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
+  .loop__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px) minmax(0, 1fr);
+    gap: clamp(16px, 2vw, 28px);
+    margin: clamp(40px, 4vw, 64px) auto 0;
+    max-width: var(--wrap-loop);
+    align-items: center;
+  }
+
+  /* Each cell is only a positioning hook; the card inside carries the surface. */
+  .loop__cell {
+    min-width: 0;
+  }
+
+  /* N / E / S / W around the ring, so reading order runs clockwise. */
+  .loop__cell--01 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .loop__cell--02 {
+    grid-column: 3;
+    grid-row: 2;
+  }
+  .loop__cell--03 {
+    grid-column: 2;
+    grid-row: 3;
+  }
+  .loop__cell--04 {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .loop__cell--ring {
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    place-items: center;
+    padding: clamp(8px, 1.5vw, 20px);
+  }
+
+  /* Each card points at the circle it sits beside. */
+  .loop__cell--01 .loop__card,
+  .loop__cell--03 .loop__card {
+    text-align: center;
+  }
+  .loop__cell--04 .loop__card {
+    text-align: right;
+  }
 
   .loop__card {
-    background: var(--c-white);
-    border: 1px solid var(--c-line);
-    border-radius: var(--r-12);
-    box-shadow: var(--shadow-card);
+    background: var(--color-surface);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    box-shadow: var(--ring);
   }
 
   .loop__station {
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-eyebrow-sm);
-    color: var(--c-amber);
-    margin-bottom: var(--space-2xs);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-accent);
   }
 
   .loop__title {
-    font-size: var(--fs-h-lg);
-    color: var(--c-ink);
+    margin-top: 8px;
+    font-size: var(--t-h3-station);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
   }
 
   .loop__body {
-    margin-top: var(--space-2xs);
-    font-size: var(--fs-body-xs);
-    color: var(--c-ink-muted);
+    margin-top: 8px;
+    font-size: 13.5px;
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
   }
 
   .loop__outcome {
-    margin-top: var(--space-xs);
-    padding-top: var(--space-xs);
-    border-top: 1px solid var(--c-line);
+    margin-top: var(--s4);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--color-line);
     font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    line-height: var(--lh-outcome);
-    color: var(--c-teal);
+    font-size: var(--t-mono-sm);
+    line-height: var(--lh-card);
+    color: var(--color-accent);
   }
 
-  /* --- wide (>= 1024px) -------------------------------------------------- */
-
-  .loop__wide {
-    display: none;
-  }
-
-  .loop__path {
-    position: absolute;
-    inset: 0;
+  .loop__svg {
     width: 100%;
-    height: 100%;
-    pointer-events: none;
+    height: auto;
+    overflow: visible;
   }
 
-  .loop__hub {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    align-self: center;
-    justify-self: center;
+  .loop__pull {
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-xs);
-    letter-spacing: var(--ls-eyebrow-md);
-    color: var(--c-ink-soft);
   }
 
-  /* --- narrow (< 1024px) ------------------------------------------------- */
+  /* Below 900px the ring cannot hold four cards around it. One column, the
+     diagram first, then the stations in order — the same reading order the
+     ring encodes. */
+  @media (max-width: 900px) {
+    .loop__grid {
+      grid-template-columns: 1fr;
+      gap: var(--s4);
+    }
 
-  .loop__narrow {
-    display: grid;
-    gap: var(--space-xs);
-    margin-top: var(--space-lg);
-    position: relative;
-    padding-left: var(--space-md);
-    border-left: 2px solid var(--c-line-strong);
+    .loop__cell--ring {
+      grid-column: 1;
+      grid-row: 1;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .loop__cell--01 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+    .loop__cell--02 {
+      grid-column: 1;
+      grid-row: 3;
+    }
+    .loop__cell--03 {
+      grid-column: 1;
+      grid-row: 4;
+    }
+    .loop__cell--04 {
+      grid-column: 1;
+      grid-row: 5;
+    }
+
+    .loop__cell--01 .loop__card,
+    .loop__cell--03 .loop__card,
+    .loop__cell--04 .loop__card {
+      text-align: left;
+    }
   }
 
-  .loop__card--stacked {
-    padding: var(--space-sm);
-    box-shadow: none;
-  }
-
-  .loop__title--narrow {
-    font-size: var(--fs-h-md);
-  }
-
-  .loop__back {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2xs);
-    font-family: var(--font-mono);
-    font-size: var(--fs-mono-sm);
-    color: var(--c-amber);
-  }
-
-  .loop__back-icon {
-    flex: none;
-  }
-
-  @media (min-width: 1024px) {
-    .loop__narrow {
+  /* The travelling dot is the only continuous motion here. */
+  @media (prefers-reduced-motion: reduce) {
+    .loop__svg :global(animateMotion) {
       display: none;
-    }
-
-    .loop__wide {
-      display: grid;
-      position: relative;
-      width: min(var(--wrap-loop), 100%);
-      margin: var(--space-xl) auto 0;
-      grid-template-columns: min(355px, 37%) 1fr min(355px, 37%);
-      row-gap: var(--space-xl);
-      align-items: start;
-    }
-
-    .loop__wide .loop__card {
-      padding: var(--space-md);
-    }
-
-    .loop__card--a {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .loop__card--b {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    .loop__card--c {
-      grid-column: 3;
-      grid-row: 2;
-    }
-    .loop__card--d {
-      grid-column: 1;
-      grid-row: 2;
     }
   }
 </style>
