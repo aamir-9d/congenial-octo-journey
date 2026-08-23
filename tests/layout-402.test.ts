@@ -49,22 +49,27 @@ function rules(page: string): Array<[string, string]> {
 /** The narrowest viewport the brief tests, less the smallest gutter. */
 const NARROWEST = 360;
 
-test('no grid column floor is wider than the phone viewport', { skip }, () => {
+test('every grid column floor is wrapped in min()', { skip }, () => {
+  // Deliberately not "is the floor narrower than the viewport". A floor only
+  // has to be narrower than *its own container*, and this cannot see
+  // containers: a 280px floor inside the calculator's disclosure panel
+  // overflowed at 375px, because that panel is about 263px once the card, the
+  // panel's margin and its padding come off. It shipped straight past an
+  // earlier version of this test that only flagged floors over 360px.
+  //
+  // So the rule is the discipline rather than the arithmetic. `min(Npx, 100%)`
+  // is never worse than a bare `Npx` and removes the whole class of bug.
   const offenders: string[] = [];
 
   for (const page of PAGES) {
     for (const [selector, decl] of rules(page)) {
       for (const m of decl.matchAll(/minmax\(\s*([^,]+),/g)) {
         const floor = m[1]!.trim();
-
-        // `min(420px, 100%)` is the correct form: it collapses to the track
-        // width on a narrow screen. A bare pixel floor does not.
         if (floor.startsWith('min(')) continue;
+        // %, fr, auto and min-content all shrink on their own.
+        if (!/^[0-9.]+px$/.test(floor)) continue;
 
-        const px = /^([0-9.]+)px$/.exec(floor);
-        if (px && Number(px[1]) > NARROWEST) {
-          offenders.push(`${page}  ${selector.slice(0, 60)} → minmax(${floor}, …)`);
-        }
+        offenders.push(`${page}  ${selector.slice(0, 60)} → minmax(${floor}, …)`);
       }
     }
   }
@@ -72,9 +77,9 @@ test('no grid column floor is wider than the phone viewport', { skip }, () => {
   assert.deepEqual(
     offenders,
     [],
-    'These grid floors cannot shrink below their content and will overflow:\n  ' +
+    'These grid floors cannot shrink below themselves:\n  ' +
       offenders.join('\n  ') +
-      '\n\nWrap the floor in min(): minmax(min(420px, 100%), 1fr).',
+      `\n\nWrap the floor: minmax(min(${NARROWEST}px, 100%), 1fr).`,
   );
 });
 
@@ -165,5 +170,23 @@ test('the page still relies on a masking overflow rule — recorded, not asserte
     typeof masks,
     'boolean',
     'if this ever fails, the sweep above is the only thing left catching overflow',
+  );
+});
+
+test('a nowrap element never sits inside a flex child that must shrink', { skip }, () => {
+  // The shape that broke the product cards on a phone: .products__meta carried
+  // white-space:nowrap and lived INSIDE .products__open, which the phone rule
+  // gave `flex: 1; min-width: 0`. The parent duly shrank; the nowrap child
+  // could not, so it punched straight out of the card and the page scrolled.
+  //
+  // Checked structurally rather than by measuring: the two must be siblings.
+  const html = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+
+  const open = /<span class="products__open"[^>]*>([\s\S]*?)<\/span>/.exec(html);
+  assert.ok(open, '.products__open is gone — this test needs rewriting, not deleting');
+  assert.ok(
+    !open![1]!.includes('products__meta'),
+    '.products__meta is nested inside .products__open again; they must be siblings so the ' +
+      'nowrap element is not inside the one that shrinks',
   );
 });

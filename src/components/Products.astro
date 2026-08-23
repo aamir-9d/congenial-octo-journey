@@ -51,10 +51,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
             <div class="products__foot">
               <span class="products__stack">{p.stack}</span>
-              <span class="products__open">
-                Read the overview &#8599;
+              <span class="products__actions">
+                <span class="products__open">Read the overview &#8599;</span>
                 <span class="products__meta">
-                  PDF &#183; {p.pages} pages &#183; {megabytes(p.bytes)}
+                  <span class="wide-only">
+                    PDF &#183; {p.pages} pages &#183; {megabytes(p.bytes)}
+                  </span>
+                  <span class="narrow-only">PDF &#183; {megabytes(p.bytes)}</span>
                 </span>
               </span>
             </div>
@@ -158,6 +161,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     color: var(--color-text-4);
   }
 
+  .products__actions {
+    display: block;
+  }
+
   .products__open {
     display: block;
     margin-top: var(--s3);
@@ -229,10 +236,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
 
     /* The affordance and the file size share a line: the reader wants to know
-       what it costs them to tap before they tap it. */
-    .products__foot {
+       what it costs them to tap before they tap it. The stack line stays on
+       its own row above, which is what the design draws. */
+    .products__actions {
       display: flex;
-      align-items: center;
+      align-items: baseline;
       justify-content: space-between;
       gap: 10px;
       margin-top: var(--s3);
@@ -241,11 +249,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     .products__open {
       flex: 1;
       min-width: 0;
+      margin-top: 0;
       font-size: 13.5px;
     }
 
     .products__meta {
       flex: none;
+      margin-top: 0;
       font-size: 10.5px;
       white-space: nowrap;
     }
