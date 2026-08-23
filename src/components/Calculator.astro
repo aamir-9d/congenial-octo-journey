@@ -48,13 +48,13 @@ const chartVars = [
 ].join(';');
 
 const subSliders = [
-  { id: 's-i2t', label: 'Install → trial start', key: 'i2t', bind: 'i2tLabel', min: 1, max: 25, step: 0.5 },
+  { id: 's-i2t', label: 'Install → trial start', short: 'Install → trial', key: 'i2t', bind: 'i2tLabel', min: 1, max: 25, step: 0.5 },
   { id: 's-t2p', label: 'Trial → paid', key: 't2p', bind: 't2pLabel', min: 10, max: 60, step: 1 },
   { id: 's-price', label: 'Plan price', key: 'price', bind: 'priceLabel', min: 1.99, max: 99.99, step: 1 },
 ];
 
 const subSliders2 = [
-  { id: 's-ret', label: 'Renewal retention per cycle', key: 'retention', bind: 'retLabel', min: 50, max: 98, step: 0.5 },
+  { id: 's-ret', label: 'Renewal retention per cycle', short: 'Retention per cycle', key: 'retention', bind: 'retLabel', min: 50, max: 98, step: 0.5 },
 ];
 
 const subSliders3 = [
@@ -209,7 +209,7 @@ const assumptions = [
             <span class="calc__row-val calc__row-val--dim tabular" data-bind="tileDash">{v('tileDash')}</span>
           </div>
           <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
-            <span class="calc__row-label">Invisible / 1,000 installs</span>
+            <span class="calc__row-label"><span class="wide-only">Invisible / 1,000 installs</span><span class="narrow-only">Invisible / 1,000</span></span>
             <span class="calc__row-val tabular" data-bind="tileInvisible">{v('tileInvisible')}</span>
           </div>
           <div class="calc__row" data-when="isSub" hidden={!view.isSub}>
@@ -225,14 +225,16 @@ const assumptions = [
             <span class="calc__row-val tabular" data-bind="bLabel">{v('bLabel')}</span>
           </div>
           <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
-            <span class="calc__row-label">Model predicts D7</span>
+            <span class="calc__row-label"><span class="wide-only">Model predicts D7</span><span class="narrow-only">Predicts D7</span></span>
             <span class="calc__row-val tabular" data-bind="predD7Label">{v('predD7Label')}</span>
           </div>
           <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
             <span class="calc__row-label">Active days by D30</span>
             <span class="calc__row-val tabular" data-bind="activeD30Label">{v('activeD30Label')}</span>
           </div>
-          <div class="calc__row" data-when="isAd" hidden={!view.isAd}>
+          {/* Dropped at phone width: the label is long, and the chart already
+              shows the same relationship. */}
+          <div class="calc__row calc__row--wide-only" data-when="isAd" hidden={!view.isAd}>
             <span class="calc__row-label" data-bind="roasTileLabel">{v('roasTileLabel')}</span>
             <span class="calc__row-val tabular" data-bind="tileRoas">{v('tileRoas')}</span>
           </div>
@@ -383,6 +385,7 @@ const assumptions = [
               <Slider
                 id="s-skan"
                 label="Share of iOS installs with null CV"
+                short="iOS installs with null CV"
                 key="skanNull"
                 bind="skanNullLabel"
                 min={0}
@@ -409,6 +412,7 @@ const assumptions = [
               <Slider
                 id="s-web"
                 label="Share miscredited to organic"
+                short="Miscredited to organic"
                 key="webLoss"
                 bind="webLossLabel"
                 min={0}

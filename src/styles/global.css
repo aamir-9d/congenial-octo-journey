@@ -542,6 +542,33 @@ h3 {
   color: var(--color-accent);
 }
 
+/* Copy that has a shorter phone form. Only one of the pair is ever displayed,
+   so only one reaches the accessibility tree. 768px because that is where the
+   calculator's rows stop having room for a full label beside their value. */
+.narrow-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .wide-only {
+    display: none;
+  }
+
+  .narrow-only {
+    display: inline;
+  }
+}
+
+/* A `width: 100%` range input is 4px wider than its container with the UA
+   margin still on it, which is enough to give the whole card a horizontal
+   scrollbar. Checkboxes do the same with their 3px. */
+input,
+select,
+textarea,
+button {
+  margin: 0;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

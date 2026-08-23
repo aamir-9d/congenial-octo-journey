@@ -107,6 +107,22 @@
     transform: translateX(calc(-100% - 8px));
   }
 
+  /* The plot is too narrow at phone width to carry its own annotations: the
+     breakeven label lands on top of the day-7 tick. The header already states
+     the breakeven, so on a phone the plot keeps the dashed line and drops the
+     words. */
+  @media (max-width: 767px) {
+    .calc__row--wide-only {
+      display: none;
+    }
+
+    .chart__lbl--be,
+    #lbl-day7,
+    #lbl-tmid {
+      display: none;
+    }
+  }
+
   /* --- legend ------------------------------------------------------------ */
 
   .calc__legend {
@@ -152,13 +168,21 @@
 
   /* --- verdict ----------------------------------------------------------- */
 
+  /* The chart's aria-live announcement. It is not a caption: the same text is
+     already in the SVG's <desc>, and rendering it visibly puts a long mono
+     paragraph under the verdict on a phone. Clipped rather than hidden so it
+     stays in the accessibility tree and still announces on change. */
   .calc__summary {
-    margin-top: var(--s4);
-    max-width: 72ch;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    line-height: var(--lh-body);
-    color: var(--color-text-4);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   /* --- controls ---------------------------------------------------------- */
@@ -190,7 +214,8 @@
   .calc__sub-head {
     display: flex;
     justify-content: space-between;
-    gap: var(--s3);
+    align-items: baseline;
+    gap: 10px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     color: var(--color-text-4);
@@ -200,7 +225,15 @@
     font-size: var(--t-mono-2xs);
   }
 
+  .calc__field-head label,
+  .calc__sub-head label {
+    flex: 1;
+    min-width: 0;
+  }
+
   .calc__field-val {
+    flex: none;
+    white-space: nowrap;
     color: var(--color-text);
   }
 
@@ -629,12 +662,12 @@
 .calc__row {
   display: flex;
   justify-content: space-between;
-  gap: 14px;
+  align-items: baseline;
+  gap: 10px;
   padding: 11px 0;
   border-top: 1px solid var(--color-line);
   font-family: var(--font-mono);
   font-size: var(--t-mono);
-  white-space: nowrap;
 }
 
 .calc__row--head {
@@ -644,10 +677,14 @@
 }
 
 .calc__row-label {
+  flex: 1;
+  min-width: 0;
   color: var(--color-text-4);
 }
 
 .calc__row-val {
+  flex: none;
+  white-space: nowrap;
   color: var(--color-text);
 }
 
@@ -826,4 +863,55 @@
   .calc__checks {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Chart palette.
+
+   The SVG carries the cream build's colours as presentation attributes: a teal
+   true line (#0E6E63), cream axes (#E2E0DA), slate rules (#5C6779) and a white
+   marker ring. On the dark ground that renders teal-on-black with a brown
+   wash, which is what you were seeing.
+
+   These rules override the attributes -- CSS wins over presentation attributes
+   -- so the palette stays in tokens.css rather than being duplicated as hex in
+   the markup. The geometry attributes are still what calculator.ts writes.
+   --------------------------------------------------------------------------- */
+
+#ax-y,
+#ax-x {
+  stroke: var(--chart-axis);
+}
+
+#zero-line {
+  stroke: var(--chart-rule);
+}
+
+#day7-line,
+#p-meas {
+  stroke: var(--chart-measured);
+}
+
+#zero-text {
+  fill: var(--chart-measured);
+}
+
+#p-true {
+  stroke: var(--chart-true);
+}
+
+#p-gap {
+  fill: var(--chart-true);
+}
+
+/* The ring reads as a hole punched in the line, so it has to be the surface
+   the chart sits on, not white. */
+#cross-dot {
+  fill: var(--chart-true);
+  stroke: var(--color-surface);
+}
+
+#cross-line {
+  stroke: var(--chart-true);
 }

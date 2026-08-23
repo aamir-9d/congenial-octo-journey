@@ -5,6 +5,11 @@
  * only needs re-running when the card's design or copy changes — the site build
  * does not depend on it.
  *
+ * The card is on the Bento dark palette. It was left on the cream one through
+ * the redesign, which nothing catches: the PNG is committed, the site build
+ * does not depend on it, and it is only ever seen by someone pasting a link
+ * somewhere else. tests/overflow.test.ts now fails if a cream value returns.
+ *
  * Two things worth knowing:
  *
  * 1. The card draws the *real* payback curve. The series come from the same
@@ -36,7 +41,7 @@ const H = 630;
 /* --- fonts ---------------------------------------------------------------- */
 
 const FONT_CSS =
-  'https://fonts.googleapis.com/css2?family=Archivo:wght@700&family=IBM+Plex+Mono:wght@400';
+  'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700&family=IBM+Plex+Mono:wght@400';
 
 async function prepareFonts() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'e2e-og-'));
@@ -49,7 +54,7 @@ async function prepareFonts() {
   if (urls.length < 2) throw new Error('could not find TTF URLs in the Google Fonts CSS');
 
   for (const url of urls) {
-    const name = url.includes('archivo') ? 'Archivo-Bold.ttf' : 'IBMPlexMono.ttf';
+    const name = url.includes('bevietnampro') ? 'BeVietnamPro-Bold.ttf' : 'IBMPlexMono.ttf';
     const buf = Buffer.from(await (await fetch(url)).arrayBuffer());
     fs.writeFileSync(path.join(fontDir, name), buf);
   }
@@ -128,34 +133,34 @@ function chartSvg(x0, y0, w, h) {
   const beX = sx(be);
 
   return `
-  <path d="${gap} Z" fill="#E39A1F" opacity="0.2"/>
-  <line x1="${x0}" y1="${zeroY.toFixed(1)}" x2="${(x0 + w).toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="#5C6779" stroke-width="1"/>
-  <path d="${step(mv)}" fill="none" stroke="#5C6779" stroke-width="2" stroke-dasharray="6 5"/>
-  <path d="${truePath}" fill="none" stroke="#0E6E63" stroke-width="3"/>
+  <path d="${gap} Z" fill="#E39A1F" opacity="0.16"/>
+  <line x1="${x0}" y1="${zeroY.toFixed(1)}" x2="${(x0 + w).toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="#5B626B" stroke-width="1"/>
+  <path d="${step(mv)}" fill="none" stroke="#5B626B" stroke-width="2" stroke-dasharray="6 5"/>
+  <path d="${truePath}" fill="none" stroke="#E39A1F" stroke-width="3"/>
   <line x1="${beX.toFixed(1)}" y1="${(zeroY - 46).toFixed(1)}" x2="${beX.toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="2 3"/>
-  <circle cx="${beX.toFixed(1)}" cy="${zeroY.toFixed(1)}" r="7" fill="#E39A1F" stroke="#F7F6F3" stroke-width="2.5"/>
-  <text x="${(beX - 12).toFixed(1)}" y="${(zeroY - 56).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="19" fill="#101725">breakeven: day ${be}</text>
-  <text x="${sx(7).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" font-family="IBM Plex Mono" font-size="17" fill="#5C6779">day 7</text>
-  <text x="${(x0 + w).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="17" fill="#5C6779">day 365</text>`;
+  <circle cx="${beX.toFixed(1)}" cy="${zeroY.toFixed(1)}" r="7" fill="#E39A1F" stroke="#0E1014" stroke-width="2.5"/>
+  <text x="${(beX - 12).toFixed(1)}" y="${(zeroY - 56).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="19" fill="#E8EAED">breakeven: day ${be}</text>
+  <text x="${sx(7).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" font-family="IBM Plex Mono" font-size="17" fill="#7C838D">day 7</text>
+  <text x="${(x0 + w).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="17" fill="#7C838D">day 365</text>`;
 }
 
 /* --- card ----------------------------------------------------------------- */
 
 function card() {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="#F7F6F3"/>
+  <rect width="${W}" height="${H}" fill="#0E1014"/>
   <rect x="0" y="0" width="${W}" height="8" fill="#E39A1F"/>
 
-  <text x="72" y="92" font-family="IBM Plex Mono" font-size="19" letter-spacing="3.4" fill="#5C6779">MOBILE GROWTH &amp; MEASUREMENT</text>
+  <text x="72" y="92" font-family="IBM Plex Mono" font-size="19" letter-spacing="3.4" fill="#7C838D">MOBILE GROWTH &amp; MEASUREMENT</text>
 
-  <text x="72" y="184" font-family="Archivo" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#101725">It broke even in month nine.</text>
-  <text x="72" y="252" font-family="Archivo" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#0E6E63">You killed it in week one.</text>
+  <text x="72" y="184" font-family="Be Vietnam Pro" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#E8EAED">It broke even in month nine.</text>
+  <text x="72" y="252" font-family="Be Vietnam Pro" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#E39A1F">You killed it in week one.</text>
 
   ${chartSvg(72, 316, 1056, 196)}
 
-  <line x1="72" y1="566" x2="1128" y2="566" stroke="#E2E0DA" stroke-width="1"/>
-  <text x="72" y="600" font-family="Archivo" font-weight="700" font-size="26" letter-spacing="-0.5" fill="#101725">E2E Apps</text>
-  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#5C6779">e2eapps.com</text>
+  <line x1="72" y1="566" x2="1128" y2="566" stroke="#23272E" stroke-width="1"/>
+  <text x="72" y="600" font-family="Be Vietnam Pro" font-weight="700" font-size="26" letter-spacing="-0.5" fill="#E8EAED">E2E Apps</text>
+  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#7C838D">e2eapps.com</text>
 </svg>`;
 }
 
