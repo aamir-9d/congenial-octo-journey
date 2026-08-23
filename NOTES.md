@@ -326,8 +326,25 @@ calculator from `design/E2E Apps - Bento mobile.dc.html`.
 
 ## Flagged, not fixed
 
-The brief says that if something looks wrong, leave it and note it. These five
-qualify. Each has a one-line fix ready; none has been applied.
+The brief says that if something looks wrong, leave it and note it. These
+qualify. Each has a fix ready; none has been applied.
+
+### 0. The phone chart is 300 tall, not the design's 150
+
+The mobile design draws the payback chart at 300x150. The port draws it at the
+width of its wrapper by 300, because the height comes from
+
+    VH = Math.max(300, Math.min(420, VW * 0.36))
+
+in `src/scripts/calc-model.ts` -- the file the brief says never to edit. On a
+375px phone that clamp bottoms out at 300, and no value of `chartPx` reaches
+150. Forcing it in CSS instead would need `preserveAspectRatio: none`, which
+stretches the curve and misrepresents the model.
+
+So the phone chart is taller and squarer than the design. It is legible and the
+geometry is right; it is simply not 2:1. Changing it is a two-line edit to the
+protected file (`Math.max(300, ...)` becomes a breakpoint-aware floor) and your
+call to authorise, since it is the one file I was told to leave alone.
 
 ### 1. Amber on white fails WCAG AA — 7 pairings
 

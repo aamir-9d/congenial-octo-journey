@@ -51,6 +51,10 @@ const fmt = (d: Date) =>
             <span class="blog__arrow">
               <Icon name="arrow-up-right" size={15} />
             </span>
+            <span class="blog__read">
+              Read
+              <Icon name="arrow-right" size={12} />
+            </span>
           </a>
         ))
       }
@@ -140,28 +144,78 @@ const fmt = (d: Date) =>
     color: var(--color-text-4);
   }
 
+  .blog__read {
+    display: none;
+  }
+
   @media (max-width: 767px) {
-    .blog__row {
-      grid-template-columns: 1fr auto;
-      gap: var(--s3) var(--s6);
+    .blog__head {
+      display: block;
     }
 
-    .blog__body {
-      grid-column: 1 / -1;
-      order: 3;
+    .blog__h2 {
+      margin-top: var(--s3);
+      font-size: 24px;
+      letter-spacing: var(--ls-h2-card);
+      line-height: 1.16;
+    }
+
+    /* A link rather than a button: the section already shows every post there
+       is, so this is a way back to the index, not the primary action. */
+    .blog__all {
+      margin-top: var(--s6);
+      padding: 0;
+      border: 0;
+      background: none;
+      font-size: var(--t-card);
+      color: var(--color-accent);
+    }
+
+    .blog__row {
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 10px;
+      row-gap: var(--s3);
+      align-items: center;
+      padding: var(--s6) 0;
     }
 
     .blog__date {
       order: 1;
+      font-size: var(--t-mono-3xs);
     }
 
     .blog__tag {
       order: 2;
-      text-align: right;
+      justify-self: start;
+      font-size: 10px;
     }
 
+    .blog__body {
+      order: 3;
+      grid-column: 1 / -1;
+    }
+
+    .blog__title {
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .blog__kicker,
     .blog__arrow {
       display: none;
     }
+
+    .blog__read {
+      order: 4;
+      grid-column: 1 / -1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-self: start;
+      font-size: 13px;
+      font-weight: var(--fw-semibold);
+      color: var(--color-accent);
+    }
   }
+
 </style>

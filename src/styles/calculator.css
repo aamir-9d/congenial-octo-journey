@@ -763,7 +763,22 @@
   }
 
   .calc__head {
+    text-align: left;
     padding: var(--s16) var(--s6) 0;
+  }
+
+  .calc__lead {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .calc__modes {
+    margin-left: 0;
+  }
+
+  .calc__preset {
+    min-height: 58px;
+    padding: 13px 15px;
   }
 
   .calc__title {
