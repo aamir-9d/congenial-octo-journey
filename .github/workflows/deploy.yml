@@ -9,9 +9,14 @@ name: Deploy to GitHub Pages
 #   /congenial-octo-journey/        main      the live site
 #   /congenial-octo-journey/next/   redesign  the Bento redesign, in progress
 #
-# This runs on a push to either branch and always rebuilds both, so whichever
-# one you touch, the deployed tree stays consistent. The workflow file is
-# identical on both branches — GitHub reads it from the branch you pushed.
+# Only `main` deploys. The github-pages environment has a custom branch policy
+# that permits main alone, and that is worth keeping: a work-in-progress branch
+# should not hold the deploy key for the live site. A push to `redesign`
+# therefore just asks main's workflow to run, and main rebuilds both branches.
+#
+# The live build is pinned to `ref: main` regardless of what triggered the run,
+# so `/` always comes from main even on a preview-driven deploy. That is a
+# stronger guarantee than trusting the trigger branch.
 #
 # The live build's tests are enforced. The preview's are not: the redesign
 # deliberately breaks copy-parity and the class inventory while it is in
@@ -50,7 +55,22 @@ env:
   # PUBLIC_GOOGLE_ADS_BOOKING_LABEL: xxxxxxxxxxxxxxxxx
 
 jobs:
+  # A push to the redesign branch only asks main to redeploy. No loop: the
+  # dispatched run arrives on main, where this job's condition is false.
+  request-deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/redesign'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Ask main to rebuild and deploy both sites
+        run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   build:
+    # Skipped for redesign pushes — request-deploy handles those.
+    if: "!(github.event_name == 'push' && github.ref == 'refs/heads/redesign')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v4
@@ -134,9 +154,7 @@ jobs:
   deploy:
     # Pages has no native PR previews; PRs build and test only. The artifact
     # from the build job is downloadable from the run summary for review.
-    if: >
-      github.event_name != 'pull_request' &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/redesign')
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:
