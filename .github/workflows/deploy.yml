@@ -29,7 +29,10 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: pages
+  # Deploying runs serialise on one group, so a new push supersedes a running
+  # deploy. The redesign dispatcher must NOT share it — it would be cancelled
+  # by the very run it just asked for.
+  group: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/redesign') && 'pages-dispatch' || 'pages' }}
   cancel-in-progress: true
 
 env:
