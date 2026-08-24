@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<style>
+  body { margin: 0; background: #0A0C10; color: #E8EAED; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+  p, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 700; }
+  p { font-weight: 400; text-wrap: pretty; }
+  a { color: #E39A1F; text-decoration: none; }
+  a:hover { color: #F0AB33; }
+  @keyframes lgSpin { to { transform: rotate(360deg) } }
+  @keyframes lgDraw { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important } }
+</style>
+</helmet>
+
+<section style="font-family:'Be Vietnam Pro',system-ui,sans-serif;color:#E8EAED;padding:56px 48px 40px;background:#0A0C10">
+  <div style="max-width:1640px;margin:0 auto">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#E39A1F">Round 2 · category-aware</div>
+    <h1 style="margin-top:14px;font-size:38px;letter-spacing:-0.03em;line-height:1.1;max-width:28ch">Six more, read against the category.</h1>
+    <p style="margin-top:16px;max-width:84ch;font-size:16px;line-height:1.65;color:#A8AEB6">Semrush, Ahrefs, AppTweak, Sensor Tower, RevenueCat and Adapty share a grammar: one compact geometric glyph beside a bold sans wordmark, single-colour capable, with an implied direction of travel — up, or forward. None of them tries to be clever. These six sit in that grammar but say the thing none of them say, which is <em style="font-style:normal;color:#E8EAED">end to end</em>: a start, a path, and a finish.</p>
+    <p style="margin-top:12px;max-width:84ch;font-size:15px;line-height:1.65;color:#7C838D">Original geometry throughout — no competitor's mark is reproduced or approximated. Round 1 is unchanged below.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:36px;margin-top:44px;align-items:flex-start">
+      <sc-for list="{{ options2 }}" as="o" hint-placeholder-count="6">
+        <div id="{{ o.id }}" style="flex:0 0 auto;width:500px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:4px 10px;border-radius:4px;background:#E39A1F;color:#101725">{{ o.id }}</span>
+            <span style="font-size:16px;font-weight:600;letter-spacing:-0.018em;white-space:nowrap">{{ o.name }}</span>
+          </div>
+          <p style="font-size:13.5px;line-height:1.6;color:#8E959E;min-height:6.4em;margin-bottom:16px">{{ o.note }}</p>
+
+          <div style="border-radius:14px;overflow:hidden;background:#16191F;box-shadow:0 0 0 1px #23272E">
+            <div style="display:grid;place-items:center;padding:44px 24px;background:#0E1014">{{ o.big }}</div>
+
+            <div style="display:flex;align-items:center;gap:18px;padding:22px 24px;border-top:1px solid #23272E">
+              {{ o.lockMark }}
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <span style="font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1.05">E2E Apps</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#7C838D">End-to-end attribution</span>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#23272E;border-top:1px solid #23272E">
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#0E1014">{{ o.sm1 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C838D">On ground</span></div>
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#F7F6F3">{{ o.sm2 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#5C6779">On light</span></div>
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#E39A1F">{{ o.sm3 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#101725">On accent</span></div>
+            </div>
+
+            <div style="display:flex;align-items:flex-end;gap:22px;padding:20px 24px;border-top:1px solid #23272E">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f32 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">32px</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f24 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">24px</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f16 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">16px</span></div>
+              <p style="flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.7;color:#7C838D">{{ o.smallNote }}</p>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section style="font-family:'Be Vietnam Pro',system-ui,sans-serif;color:#E8EAED;padding:56px 48px 96px;background:#0A0C10">
+  <div style="max-width:1640px;margin:0 auto">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#7C838D">Round 1 · logo directions</div>
+    <h1 style="margin-top:14px;font-size:38px;letter-spacing:-0.03em;line-height:1.1;max-width:26ch">Six marks for E2E Apps.</h1>
+    <p style="margin-top:16px;max-width:80ch;font-size:16px;line-height:1.65;color:#A8AEB6"><a href="#1a">1a</a> is your linked-E idea. The other five come from things the site already argues: the loop that closes, the payback curve, the attribution chain, the technical bracket, and the fact that your clients live in an app store. Every mark is drawn geometry, including the lettering — no typeface dependency, so nothing shifts if a font fails to load. <strong style="font-weight:600;color:#E8EAED">1c</strong> and <strong style="font-weight:600;color:#E8EAED">1f</strong> reduce below 24px, because three glyphs cannot hold a favicon; the other four hold as drawn.</p>
+    <p style="margin-top:12px;max-width:80ch;font-size:15px;line-height:1.65;color:#7C838D">Reply with one id. I'll then produce the finished mark in every format you need and drop it into the brand book.</p>
+
+    <div style="display:flex;flex-wrap:wrap;gap:36px;margin-top:52px;align-items:flex-start">
+      <sc-for list="{{ options }}" as="o" hint-placeholder-count="6">
+        <div id="{{ o.id }}" style="flex:0 0 auto;width:500px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;padding:4px 10px;border-radius:4px;background:#E39A1F;color:#101725">{{ o.id }}</span>
+            <span style="font-size:16px;font-weight:600;letter-spacing:-0.018em;white-space:nowrap">{{ o.name }}</span>
+          </div>
+          <p style="font-size:13.5px;line-height:1.6;color:#8E959E;min-height:6.4em;margin-bottom:16px">{{ o.note }}</p>
+
+          <div style="border-radius:14px;overflow:hidden;background:#16191F;box-shadow:0 0 0 1px #23272E">
+            <div style="display:grid;place-items:center;padding:44px 24px;background:#0E1014">{{ o.big }}</div>
+
+            <div style="display:flex;align-items:center;gap:18px;padding:22px 24px;border-top:1px solid #23272E">
+              {{ o.lockMark }}
+              <div style="display:flex;flex-direction:column;gap:1px">
+                <span style="font-size:26px;font-weight:700;letter-spacing:-0.03em;line-height:1.05">E2E Apps</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:#7C838D">Mobile growth &amp; measurement</span>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#23272E;border-top:1px solid #23272E">
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#0E1014">{{ o.sm1 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#7C838D">On ground</span></div>
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#F7F6F3">{{ o.sm2 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#5C6779">On light</span></div>
+              <div style="display:grid;place-items:center;gap:10px;padding:20px 8px;background:#E39A1F">{{ o.sm3 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.1em;text-transform:uppercase;color:#101725">On accent</span></div>
+            </div>
+
+            <div style="display:flex;align-items:flex-end;gap:22px;padding:20px 24px;border-top:1px solid #23272E">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f32 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">32px</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f24 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">24px</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px">{{ o.f16 }}<span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:#7C838D">16px</span></div>
+              <p style="flex:1;min-width:0;font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.7;color:#7C838D">{{ o.smallNote }}</p>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+/* Every mark is drawn on the same 100×100 box with the same 10-unit stroke, so
+   the six read as one family and can be compared at matched optical weight. */
+const AM = '#E39A1F', TX = '#E8EAED', INK = '#101725', GR = '#5B626B';
+
+class Component extends DCLogic {
+  /* "E2E" as stroked paths, so no mark depends on a typeface being loaded and
+     all six scale as pure geometry. */
+  word(W, h, t, color) {
+    const gap = W * 0.11, gw = (W - 2 * gap) / 3, cy = 50;
+    const y0 = cy - h / 2, y1 = cy + h / 2;
+    const x = i => 50 - W / 2 + i * (gw + gap);
+    const E = a => 'M' + (a + t / 2) + ' ' + y0 + ' V' + y1 +
+      ' M' + a + ' ' + (y0 + t / 2) + ' H' + (a + gw) +
+      ' M' + a + ' ' + cy + ' H' + (a + gw * 0.78) +
+      ' M' + a + ' ' + (y1 - t / 2) + ' H' + (a + gw);
+    const TWO = a => 'M' + a + ' ' + (y0 + h * 0.3) +
+      ' C' + a + ' ' + y0 + ' ' + (a + gw) + ' ' + y0 + ' ' + (a + gw) + ' ' + (y0 + h * 0.32) +
+      ' C' + (a + gw) + ' ' + (y0 + h * 0.56) + ' ' + a + ' ' + (y1 - h * 0.16) + ' ' + a + ' ' + (y1 - t / 2) +
+      ' H' + (a + gw);
+    return React.createElement('g', { stroke: color, strokeWidth: t, fill: 'none', strokeLinecap: 'butt', strokeLinejoin: 'round' },
+      React.createElement('path', { d: E(x(0)) }),
+      React.createElement('path', { d: TWO(x(1)) }),
+      React.createElement('path', { d: E(x(2)) })
+    );
+  }
+
+  /* Single stroked E for the reduced small-size variants. */
+  glyphE(cx, h, gw, t, color) {
+    const cy = 50, y0 = cy - h / 2, y1 = cy + h / 2, a = cx - gw / 2;
+    return React.createElement('path', {
+      d: 'M' + (a + t / 2) + ' ' + y0 + ' V' + y1 +
+        ' M' + a + ' ' + (y0 + t / 2) + ' H' + (a + gw) +
+        ' M' + a + ' ' + cy + ' H' + (a + gw * 0.78) +
+        ' M' + a + ' ' + (y1 - t / 2) + ' H' + (a + gw),
+      stroke: color, strokeWidth: t, fill: 'none', strokeLinecap: 'butt'
+    });
+  }
+  /* ---- 1a Linked E's: two mirrored E's sharing one continuous waist bar ---- */
+  linked(size, fg, accent) {
+    const s = { display: 'block' };
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: s, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('g', { stroke: fg, strokeWidth: 10, strokeLinecap: 'butt', fill: 'none' },
+        React.createElement('path', { d: 'M18 26 V74' }),
+        React.createElement('path', { d: 'M82 26 V74' }),
+        React.createElement('path', { d: 'M18 26 H44' }),
+        React.createElement('path', { d: 'M82 26 H56' }),
+        React.createElement('path', { d: 'M18 74 H44' }),
+        React.createElement('path', { d: 'M82 74 H56' })
+      ),
+      React.createElement('path', { d: 'M18 50 H82', stroke: accent, strokeWidth: 10, fill: 'none' })
+    );
+  }
+
+  /* ---- 1b The loop: the site's own thesis as a mark ---- */
+  loop(size, fg, accent, animate) {
+    const ring = 'M56 20 H62 A18 18 0 0 1 80 38 V62 A18 18 0 0 1 62 80 H38 A18 18 0 0 1 20 62 V38 A18 18 0 0 1 38 20 H46';
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', { d: ring, stroke: fg, strokeWidth: 9, fill: 'none', strokeLinecap: 'butt' }),
+      React.createElement('polygon', { points: '46,12 60,20 46,28', fill: accent }),
+      animate
+        ? React.createElement('circle', { r: 6, fill: accent },
+            React.createElement('animateMotion', { dur: '6s', repeatCount: 'indefinite', path: ring }))
+        : React.createElement('circle', { cx: 20, cy: 56, r: 6, fill: accent })
+    );
+  }
+
+  /* ---- 1c Bracketed: "end to end" stated literally ----
+     At or below 24px the wordmark drops out and the brackets thicken: three
+     glyphs cannot hold a 100-unit box down to a favicon, the bracket can. */
+  bracket(size, fg, accent) {
+    const sm = size <= 24;
+    const t = sm ? 13 : 8;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', { d: sm ? 'M30 14 H8 V86 H30' : 'M22 18 H8 V82 H22', stroke: accent, strokeWidth: t, fill: 'none', strokeLinejoin: 'miter' }),
+      React.createElement('path', { d: sm ? 'M70 14 H92 V86 H70' : 'M78 18 H92 V82 H78', stroke: accent, strokeWidth: t, fill: 'none', strokeLinejoin: 'miter' }),
+      sm ? this.glyphE(50, 42, 22, 11, fg) : this.word(40, 28, 4.6, fg)
+    );
+  }
+
+  /* ---- 1d The payback curve: the one graphic the whole site turns on ---- */
+  curve(size, fg, accent) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', { d: 'M12 62 H88', stroke: fg === accent ? fg : GR, strokeWidth: 3, fill: 'none' }),
+      React.createElement('path', { d: 'M14 82 H28 V74 H42 V66 H54 V54 H68 V40 H82 V24 H88', stroke: accent, strokeWidth: 9, fill: 'none', strokeLinejoin: 'miter', strokeLinecap: 'butt' }),
+      React.createElement('circle', { cx: 54, cy: 62, r: 8, fill: fg })
+    );
+  }
+
+  /* ---- 1e The chain: two endpoints, one path between them ---- */
+  chain(size, fg, accent) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', { d: 'M34 50 H66', stroke: fg === accent ? fg : GR, strokeWidth: 7, strokeDasharray: '7 7', fill: 'none' }),
+      React.createElement('circle', { cx: 20, cy: 50, r: 14, fill: accent }),
+      React.createElement('circle', { cx: 80, cy: 50, r: 14, fill: 'none', stroke: fg, strokeWidth: 9 })
+    );
+  }
+
+  /* ---- 1f App tile: your clients live in an app store ----
+     When fg and accent are the same colour (the on-accent test cell), a filled
+     tile would hide its own wordmark, so it draws as an outline instead. At or
+     below 24px the three glyphs reduce to one. */
+  tile(size, fg, accent) {
+    const mono = fg === accent, sm = size <= 24;
+    const ink = mono ? fg : INK;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('rect', {
+        x: 4, y: 4, width: 92, height: 92, rx: sm ? 20 : 23,
+        fill: mono ? 'none' : accent,
+        stroke: mono ? fg : 'none', strokeWidth: 8
+      }),
+      sm ? this.glyphE(50, 46, 26, 12, ink) : this.word(58, 34, 6.4, ink)
+    );
+  }
+
+  /* ---- 2a Source to outcome: a filled node, a rising path, an open node ---- */
+  nodePath(size, fg, accent) {
+    const mono = fg === accent;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', { d: 'M30 66 C44 66 52 40 68 38', stroke: mono ? fg : GR, strokeWidth: 8, fill: 'none', strokeLinecap: 'round' }),
+      React.createElement('circle', { cx: 18, cy: 68, r: 14, fill: accent }),
+      React.createElement('circle', { cx: 80, cy: 34, r: 14, fill: 'none', stroke: fg, strokeWidth: 9 })
+    );
+  }
+
+  /* ---- 2b Measured, then compounding: three bars, the last leaves the frame ---- */
+  bars(size, fg, accent) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('g', { fill: fg },
+        React.createElement('rect', { x: 12, y: 66, width: 17, height: 24, rx: 3 }),
+        React.createElement('rect', { x: 37, y: 50, width: 17, height: 40, rx: 3 }),
+        React.createElement('rect', { x: 62, y: 34, width: 17, height: 56, rx: 3 })
+      ),
+      React.createElement('path', { d: 'M20 44 L46 26 L70 14', stroke: accent, strokeWidth: 9, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }),
+      React.createElement('polygon', { points: '90 10 66 12 78 30', fill: accent })
+    );
+  }
+
+  /* ---- 2c Attributed to a place: a pin whose interior is the direction ---- */
+  pin(size, fg, accent) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('path', {
+        d: 'M50 10 C67 10 80 23 80 40 C80 60 50 90 50 90 C50 90 20 60 20 40 C20 23 33 10 50 10 Z',
+        fill: 'none', stroke: fg, strokeWidth: 9, strokeLinejoin: 'round'
+      }),
+      React.createElement('path', { d: 'M38 48 L60 30', stroke: accent, strokeWidth: 9, fill: 'none', strokeLinecap: 'round' }),
+      React.createElement('polygon', { points: '68 24 48 26 62 40', fill: accent })
+    );
+  }
+
+  /* ---- 2d The bridge: two ends, one span carrying the measurement ---- */
+  bridge(size, fg, accent) {
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('g', { fill: fg },
+        React.createElement('rect', { x: 6, y: 30, width: 19, height: 40, rx: 4 }),
+        React.createElement('rect', { x: 75, y: 30, width: 19, height: 40, rx: 4 })
+      ),
+      React.createElement('path', { d: 'M25 50 H72', stroke: accent, strokeWidth: 11, fill: 'none' }),
+      React.createElement('polygon', { points: '78 50 60 41 60 59', fill: accent })
+    );
+  }
+
+  /* ---- 2e Signal ring: a cycle with one gap, tightened for icon sizes ---- */
+  ring(size, fg, accent) {
+    const C = 2 * Math.PI * 32;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('circle', {
+        cx: 50, cy: 50, r: 32, fill: 'none', stroke: fg, strokeWidth: 13,
+        strokeDasharray: (C * 0.78).toFixed(1) + ' ' + (C * 0.22).toFixed(1),
+        transform: 'rotate(-64 50 50)'
+      }),
+      React.createElement('polygon', { points: '74 12 54 26 76 34', fill: accent })
+    );
+  }
+
+  /* ---- 2f Store tile, crossed: end to end as negative space ---- */
+  crossTile(size, fg, accent) {
+    const mono = fg === accent;
+    const ink = mono ? fg : INK;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', style: { display: 'block' }, role: 'img', 'aria-label': 'E2E Apps' },
+      React.createElement('rect', {
+        x: 4, y: 4, width: 92, height: 92, rx: 24,
+        fill: mono ? 'none' : accent, stroke: mono ? fg : 'none', strokeWidth: 8
+      }),
+      React.createElement('path', { d: 'M20 50 H58', stroke: ink, strokeWidth: 12, fill: 'none' }),
+      React.createElement('polygon', { points: '82 50 56 36 56 64', fill: ink })
+    );
+  }
+
+  renderVals() {
+    const mk = (fn, id, name, note, small) => ({
+      id, name, note, smallNote: small,
+      big: fn(150, TX, AM, true),
+      lockMark: fn(46, TX, AM, false),
+      sm1: fn(44, TX, AM, false),
+      sm2: fn(44, INK, AM, false),
+      sm3: fn(44, INK, INK, false),
+      f32: fn(32, TX, AM, false),
+      f24: fn(24, TX, AM, false),
+      f16: fn(16, TX, AM, false)
+    });
+
+    return {
+      options2: [
+        mk((z, fg, ac) => this.nodePath(z, fg, ac),
+          '2a', 'Source to outcome',
+          'A filled node, a rising path, an open node. The filled end is the click you paid for; the open end is the revenue you have not yet counted. The category’s most common gesture — one glyph with a direction of travel — pointed at your specific problem.',
+          'The strongest of the six small: three shapes, no detail to lose.'),
+        mk((z, fg, ac) => this.bars(z, fg, ac),
+          '2b', 'Measured, then compounding',
+          'Three bars and a line that leaves the frame. Reads instantly as analytics, which is the register Sensor Tower and Ahrefs both sit in — but the escaping arrow is the argument: the value keeps accruing after the chart stops.',
+          'Bars survive to 16px; the arrow is what thins first. Favicon should keep two bars and the arrow.'),
+        mk((z, fg, ac) => this.pin(z, fg, ac),
+          '2c', 'Attributed to a place',
+          'A pin whose interior is a direction. Your work is country-by-country — payback ceilings per market, localisation, store metadata — and no competitor mark says geography. The most ownable of the six.',
+          'Excellent at every size; the pin silhouette is recognisable before the interior resolves.'),
+        mk((z, fg, ac) => this.bridge(z, fg, ac),
+          '2d', 'The bridge',
+          'Two solid ends and one span between them carrying an arrow. The literal reading of end-to-end: install on one side, revenue on the other, and the measurement is the thing that connects them. Quietest and most infrastructural.',
+          'Holds to 16px unchanged. The most favicon-native of the round.'),
+        mk((z, fg, ac) => this.ring(z, fg, ac),
+          '2e', 'Signal ring',
+          'A tighter, heavier version of the loop — thick stroke, one gap, one arrowhead. Where 1b was a diagram, this is an icon. Ties to The Full Loop without needing the section beside it to explain.',
+          'Built for small: 13-unit stroke means the ring is still a ring at 16px.'),
+        mk((z, fg, ac) => this.crossTile(z, fg, ac),
+          '2f', 'Store tile, crossed',
+          'The rounded tile your clients ship, with an arrow crossing edge to edge in its negative space. AppTweak and Adapty both live in this shape language; the crossing is what makes it yours rather than generic.',
+          'Native at every icon size. The tile carries recognition and the arrow only has to sit inside it.')
+      ],
+      options: [
+        mk((z, fg, ac) => this.linked(z, fg, ac),
+          '1a',
+          'Linked E’s',
+          'Your idea. Two mirrored E’s joined by one continuous amber bar — the only stroke that runs the full width, so the link is the accent. Reads as E–E, as a hinge, and as the two of you.',
+          'Holds to 16px. The joined waist is the last thing to go, which is the right thing to survive.'),
+        mk((z, fg, ac, an) => this.loop(z, fg, ac, an),
+          '1b',
+          'The closed loop',
+          'The argument the whole site makes, as a mark: a cycle with one gap, an arrowhead, and a signal travelling it. Directly ties the logo to The Full Loop section.',
+          'The travelling dot is a web-only flourish. The static mark keeps the dot parked at the nine-o’clock node.'),
+        mk((z, fg, ac) => this.bracket(z, fg, ac),
+          '1c',
+          'Bracketed',
+          '“End to end” stated literally — the brackets are the two ends and everything measurable sits between them. The most technical of the six, and the closest to how an analytics tool would sign itself.',
+          'Below 24px it reduces: the brackets thicken and the wordmark drops to a single E. Three glyphs cannot hold a favicon; the bracket silhouette can.'),
+        mk((z, fg, ac) => this.curve(z, fg, ac),
+          '1d',
+          'The payback curve',
+          'Your own signature graphic: a stepped revenue line crossing the baseline, with breakeven marked. Nobody else in the category can use this mark, because nobody else leads with the curve.',
+          'The most distinctive at large sizes and the weakest at 16px — it needs a simplified three-step favicon variant.'),
+        mk((z, fg, ac) => this.chain(z, fg, ac),
+          '1e',
+          'The attribution chain',
+          'Two endpoints, a dashed path between them. Filled node is the click, open node is the revenue, and the dashes are the part that breaks. Quietest and most abstract of the six.',
+          'Excellent small. The dash pattern needs to drop to a solid line below 20px.'),
+        mk((z, fg, ac) => this.tile(z, fg, ac),
+          '1f',
+          'App tile',
+          'Your clients live in an app store, so the mark is shaped like the thing they ship. Filled amber for the icon, outlined for use on the site. The most conventional option — and the most immediately legible.',
+          'Best of the six small, because the tile carries the shape and the glyph only has to sit inside it. Reduces to a single E at 24px and below.')
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

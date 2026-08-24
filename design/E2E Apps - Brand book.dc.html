@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+  body { margin: 0; background: #0A0C10; color: #E8EAED; -webkit-font-smoothing: antialiased; }
+  *, *::before, *::after { box-sizing: border-box; }
+  p, h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 700; }
+  p { font-weight: 400; text-wrap: pretty; }
+  a { color: #E39A1F; text-decoration: none; }
+  a:hover { color: #F0AB33; }
+  code { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  @keyframes bbDrift { 0% { transform: translate3d(-4%,2%,0) scale(1) } 50% { transform: translate3d(6%,-4%,0) scale(1.14) } 100% { transform: translate3d(-4%,2%,0) scale(1) } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important } }
+</style>
+</helmet>
+
+<div style="--bg:#0E1014;--surf:#16191F;--surf2:#1D2128;--line:#23272E;--line2:#1D2027;--tx:#E8EAED;--tx2:#A8AEB6;--tx3:#8E959E;--tx4:#7C838D;--am:#E39A1F;--amH:#F0AB33;--ink:#101725;--f:'Be Vietnam Pro',system-ui,sans-serif;--fm:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(0.22,0.61,0.36,1);font-family:var(--f);background:#0A0C10;color:var(--tx);min-height:100vh;padding:0 0 120px">
+
+  <div style="position:relative;overflow:hidden;padding:104px 56px 72px">
+    <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle at center,rgba(232,234,237,0.05) 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(ellipse 70% 60% at 34% 40%,#000 26%,transparent 76%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 34% 40%,#000 26%,transparent 76%)"></div>
+    <div aria-hidden="true" style="position:absolute;top:-24%;left:2%;width:44%;height:82%;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(227,154,31,0.2),rgba(227,154,31,0) 66%);filter:blur(46px);pointer-events:none;animation:bbDrift 28s ease-in-out infinite"></div>
+    <div style="position:relative;max-width:1160px;margin:0 auto">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Brand book · v1 · August 2026</div>
+      <h1 style="margin-top:20px;font-size:clamp(44px,5.6vw,76px);letter-spacing:-0.034em;line-height:1.02;max-width:20ch">E2E Apps</h1>
+      <p style="margin-top:24px;max-width:70ch;font-size:19px;line-height:1.55;color:var(--tx2)">Every colour, typeface, size and motion value in the live site, in one place. Values are exact — copy them rather than sampling a screenshot.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:36px">
+        <sc-for list="{{ toc }}" as="t" hint-placeholder-count="9">
+          <a href="{{ t.href }}" style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;padding:9px 15px;border-radius:999px;color:var(--tx2);background:var(--surf2);box-shadow:inset 0 0 0 1px var(--line)" style-hover="color:#E39A1F">{{ t.label }}</a>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1160px;margin:0 auto;padding:0 56px">
+
+    <section id="logo" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">01 · Logo</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">The mark</h2>
+      <p style="margin-top:16px;max-width:68ch;font-size:16px;line-height:1.65;color:var(--tx2)">Six directions are out for review in <strong style="font-weight:600;color:var(--tx)">E2E Apps — Logo directions</strong>. Once one is chosen it lands here with its clear space, minimum sizes and misuse rules. Until then the wordmark below is the mark in use.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:16px;margin-top:32px">
+        <div style="display:grid;place-items:center;min-height:180px;border-radius:14px;background:var(--bg);box-shadow:0 0 0 1px var(--line)">
+          <div style="text-align:center">
+            <div style="font-size:38px;font-weight:700;letter-spacing:-0.032em;line-height:1.05">E2E Apps</div>
+            <div style="margin-top:8px;font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Mobile growth &amp; measurement</div>
+          </div>
+        </div>
+        <div style="display:grid;place-items:center;min-height:180px;border-radius:14px;background:#F7F6F3;color:var(--ink)">
+          <div style="text-align:center">
+            <div style="font-size:38px;font-weight:700;letter-spacing:-0.032em;line-height:1.05">E2E Apps</div>
+            <div style="margin-top:8px;font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#5C6779">Mobile growth &amp; measurement</div>
+          </div>
+        </div>
+        <div style="display:grid;place-items:center;min-height:180px;border-radius:14px;background:var(--am);color:var(--ink)">
+          <div style="text-align:center">
+            <div style="font-size:38px;font-weight:700;letter-spacing:-0.032em;line-height:1.05">E2E Apps</div>
+            <div style="margin-top:8px;font-family:var(--fm);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(16,23,37,0.7)">Mobile growth &amp; measurement</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:18px;font-family:var(--fm);font-size:12px;line-height:1.75;color:var(--tx4)">Wordmark: Be Vietnam Pro 700, letter-spacing −0.032em. Never re-space it, never outline it, never set it in another face. Minimum width 96px.</p>
+    </section>
+
+    <section id="color" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">02 · Colour</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">One accent, four greys, no second hue</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">The palette is a near-black ground, four text greys and a single amber. There is no secondary brand colour and no gradient fills — depth comes from surface steps and from blurred radial glows behind a section, never from a gradient across a card.</p>
+
+      <sc-for list="{{ colorGroups }}" as="g" hint-placeholder-count="4">
+        <div style="margin-top:36px">
+          <h3 style="font-size:15px;font-weight:600;letter-spacing:0.01em">{{ g.title }}</h3>
+          <p style="margin-top:6px;max-width:64ch;font-size:14px;line-height:1.6;color:var(--tx3)">{{ g.note }}</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:16px">
+            <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="4">
+              <div style="border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px var(--line)">
+                <div style="height:76px;background:{{ c.hex }};box-shadow:{{ c.inner }}"></div>
+                <div style="padding:12px 14px;background:var(--surf)">
+                  <div style="font-size:13.5px;font-weight:600">{{ c.name }}</div>
+                  <div style="margin-top:4px;font-family:var(--fm);font-size:11.5px;color:var(--tx3)">{{ c.hex }}</div>
+                  <div style="margin-top:6px;font-family:var(--fm);font-size:10.5px;line-height:1.6;color:var(--tx4)">{{ c.token }}</div>
+                  <div style="margin-top:6px;font-size:11.5px;line-height:1.55;color:var(--tx4)">{{ c.use }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <div style="margin-top:40px;border-radius:14px;background:var(--surf);box-shadow:0 0 0 1px var(--line);overflow:hidden">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--line)">
+          <h3 style="font-size:15px;font-weight:600">Contrast, measured on the ground <code style="font-size:13px;color:var(--tx3)">#0E1014</code></h3>
+          <p style="margin-top:6px;font-size:13.5px;line-height:1.6;color:var(--tx3)">Every text token clears WCAG AA for body copy. The old cream-and-amber palette failed on seven pairings; inverting the ground resolved all of them.</p>
+        </div>
+        <sc-for list="{{ contrast }}" as="r" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:18px;padding:13px 22px;border-bottom:1px solid var(--line2)">
+            <span style="flex:none;width:132px;font-family:var(--fm);font-size:12px;color:var(--tx3)">{{ r.hex }}</span>
+            <span style="flex:1;min-width:0;font-size:15px;color:{{ r.hex }}">{{ r.sample }}</span>
+            <span style="flex:none;font-family:var(--fm);font-size:13px;color:var(--tx)">{{ r.ratio }}</span>
+            <span style="flex:none;width:96px;text-align:right;font-family:var(--fm);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:{{ r.verdictColor }}">{{ r.verdict }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;margin-top:24px">
+        <div style="border-radius:12px;padding:20px;background:rgba(227,154,31,0.08);box-shadow:inset 0 0 0 1px rgba(227,154,31,0.28)">
+          <div style="display:flex;align-items:center;gap:9px"><i class="ph ph-check-circle" style="font-size:18px;color:var(--am)"></i><span style="font-size:14px;font-weight:600">Amber is a 8.1:1 colour</span></div>
+          <p style="margin-top:8px;font-size:13.5px;line-height:1.65;color:var(--tx2)">Safe for body copy, figures, icons and chrome on the dark ground. This is the one real gain from inverting the site.</p>
+        </div>
+        <div style="border-radius:12px;padding:20px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="display:flex;align-items:center;gap:9px"><i class="ph ph-x-circle" style="font-size:18px;color:var(--tx3)"></i><span style="font-size:14px;font-weight:600">Never amber on light</span></div>
+          <p style="margin-top:8px;font-size:13.5px;line-height:1.65;color:var(--tx2)">On <code style="font-size:12.5px">#F7F6F3</code> amber falls to 2.2:1. On a light ground use <code style="font-size:12.5px">#101725</code> for text and reserve amber for filled buttons only.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="type" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">03 · Typography</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Be Vietnam Pro over IBM Plex Mono</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">Two families and nothing else. Be Vietnam Pro carries every heading and every piece of body copy; IBM Plex Mono carries eyebrows, labels, metadata, code signatures and axis ticks. The split is semantic, not decorative — mono means "this is a machine value or a label", never "this is small text".</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:16px;margin-top:32px">
+        <div style="border-radius:14px;padding:26px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Display &amp; body</div>
+          <div style="margin-top:12px;font-size:42px;font-weight:700;letter-spacing:-0.032em;line-height:1.05">Be Vietnam Pro</div>
+          <div style="margin-top:16px;font-size:26px;font-weight:400;letter-spacing:-0.01em;color:var(--tx2)">AaBbCcDdEe 0123456789</div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+            <span style="font-size:15px;font-weight:400;color:var(--tx3)">400 Regular</span>
+            <span style="font-size:15px;font-weight:500;color:var(--tx3)">500 Medium</span>
+            <span style="font-size:15px;font-weight:600;color:var(--tx3)">600 SemiBold</span>
+            <span style="font-size:15px;font-weight:700;color:var(--tx3)">700 Bold</span>
+          </div>
+        </div>
+        <div style="border-radius:14px;padding:26px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--am)">Labels &amp; values</div>
+          <div style="margin-top:12px;font-family:var(--fm);font-size:34px;font-weight:400;letter-spacing:-0.02em;line-height:1.1">IBM Plex Mono</div>
+          <div style="margin-top:16px;font-family:var(--fm);font-size:22px;color:var(--tx2)">AaBbCcDdEe 0123456789</div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)">
+            <span style="font-family:var(--fm);font-size:15px;font-weight:400;color:var(--tx3)">400 Regular</span>
+            <span style="font-family:var(--fm);font-size:15px;font-weight:500;color:var(--tx3)">500 Medium</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:40px;font-size:15px;font-weight:600">The scale</h3>
+      <div style="margin-top:16px;border-radius:14px;background:var(--surf);box-shadow:0 0 0 1px var(--line);overflow:hidden">
+        <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="9">
+          <div style="display:flex;align-items:baseline;gap:24px;padding:20px 22px;border-bottom:1px solid var(--line2)">
+            <span style="flex:none;width:108px;font-family:var(--fm);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx4)">{{ t.role }}</span>
+            <span style="flex:1;min-width:0;font-family:{{ t.family }};font-size:{{ t.size }};font-weight:{{ t.weight }};letter-spacing:{{ t.ls }};line-height:1.1;color:var(--tx)">{{ t.sample }}</span>
+            <span style="flex:none;width:230px;text-align:right;font-family:var(--fm);font-size:11px;line-height:1.7;white-space:pre-line;color:var(--tx3)">{{ t.spec }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;margin-top:24px">
+        <div style="border-radius:12px;padding:20px;background:var(--surf2);box-shadow:0 0 0 1px var(--line2)">
+          <div style="font-size:14px;font-weight:600">Tabular numerals, always</div>
+          <p style="margin-top:8px;font-size:13.5px;line-height:1.65;color:var(--tx2)">Every figure carries <code style="font-size:12.5px">font-variant-numeric: tabular-nums</code>. Proportional digits jitter as a slider moves, and the calculator's whole point is watching a number change.</p>
+          <div style="display:flex;gap:20px;margin-top:14px">
+            <div><div style="font-size:24px;font-weight:700;letter-spacing:-0.026em;font-variant-numeric:tabular-nums">day 277</div><div style="margin-top:3px;font-family:var(--fm);font-size:10px;color:var(--am)">tabular</div></div>
+            <div><div style="font-size:24px;font-weight:700;letter-spacing:-0.026em;font-variant-numeric:proportional-nums">day 277</div><div style="margin-top:3px;font-family:var(--fm);font-size:10px;color:var(--tx4)">proportional</div></div>
+          </div>
+        </div>
+        <div style="border-radius:12px;padding:20px;background:var(--surf2);box-shadow:0 0 0 1px var(--line2)">
+          <div style="font-size:14px;font-weight:600">Self-hosted, one subset</div>
+          <p style="margin-top:8px;font-size:13.5px;line-height:1.65;color:var(--tx2)">Both faces are self-hosted from <code style="font-size:12.5px">public/fonts/</code> and preloaded. Keep the existing <code style="font-size:12.5px">unicode-range</code> — the arrows <span style="color:var(--tx)">→ ↗</span> and <span style="color:var(--tx)">≠</span> sit outside the Latin subset and are meant to fall back.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="styles" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">03b · Text styles</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Every style, at real size</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">Fifteen named styles. Each sample below is set at its real specification — not a description of it — so you can read the actual rendered weight, tracking and leading. Copy the spec line straight into CSS.</p>
+
+      <div style="margin-top:32px;display:grid;gap:12px">
+        <sc-for list="{{ textStyles }}" as="t" hint-placeholder-count="15">
+          <div style="border-radius:12px;background:var(--surf);box-shadow:0 0 0 1px var(--line);overflow:hidden">
+            <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 20px;background:var(--surf2)">
+              <span style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--am)">{{ t.name }}</span>
+              <span style="flex:none;font-family:var(--fm);font-size:10.5px;line-height:1.6;white-space:pre;text-align:right;color:var(--tx4)">{{ t.spec }}</span>
+            </div>
+            <div style="padding:22px 20px">
+              <div style="font-family:{{ t.family }};font-size:{{ t.size }};font-weight:{{ t.weight }};letter-spacing:{{ t.ls }};line-height:{{ t.lh }};text-transform:{{ t.tt }};color:{{ t.color }};max-width:{{ t.measure }}">{{ t.sample }}</div>
+            </div>
+            <div style="padding:0 20px 16px">
+              <p style="font-size:13px;line-height:1.6;color:var(--tx3)">{{ t.use }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <h3 style="margin-top:44px;font-size:15px;font-weight:600">In context</h3>
+      <p style="margin-top:8px;max-width:64ch;font-size:14px;line-height:1.6;color:var(--tx3)">The styles working together, at the density the site actually uses.</p>
+      <div style="margin-top:20px;border-radius:14px;padding:40px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+        <div style="font-family:var(--fm);font-size:11.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">Why your numbers don't reconcile</div>
+        <h2 style="margin-top:16px;font-size:clamp(28px,3vw,40px);letter-spacing:-0.028em;line-height:1.08;max-width:24ch">Three places the money goes missing.</h2>
+        <p style="margin-top:18px;max-width:58ch;font-size:18px;line-height:1.6;color:var(--tx2)">The first isn't a measurement failure, and no amount of attribution accuracy will save you from it. The other three are — the revenue exists and you can't see it.</p>
+        <p style="margin-top:22px;max-width:66ch;font-size:16px;line-height:1.6;color:var(--tx2)">Subscription renewals happen on Apple's servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms — so every channel looks worse than it is, and you optimise against your own best cohorts.</p>
+        <div style="margin-top:24px;padding:14px 16px;border-radius:8px;background:var(--surf2);font-family:var(--fm);font-size:12px;line-height:1.7;color:var(--tx3)">revenue_dashboard ≠ mmp_reported · gap grows monthly</div>
+        <div style="display:flex;flex-wrap:wrap;gap:32px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line)">
+          <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.03em;font-variant-numeric:tabular-nums;color:var(--am)">day 277</div><div style="margin-top:4px;font-family:var(--fm);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx4)">True breakeven</div></div>
+          <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.03em;font-variant-numeric:tabular-nums">1.28×</div><div style="margin-top:4px;font-family:var(--fm);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx4)">Lifetime ROAS</div></div>
+          <div><div style="font-size:30px;font-weight:700;letter-spacing:-0.03em;font-variant-numeric:tabular-nums">$1,199</div><div style="margin-top:4px;font-family:var(--fm);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx4)">Invisible / 1,000</div></div>
+        </div>
+        <p style="margin-top:28px;max-width:30ch;font-size:23px;font-weight:600;letter-spacing:-0.022em;line-height:1.3">Three of these are fixable in weeks. The first is a product problem.</p>
+      </div>
+    </section>
+
+    <section id="palettes" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">02b · Palette iterations</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Six accents on the same architecture</h2>
+      <p style="margin-top:16px;max-width:74ch;font-size:16px;line-height:1.65;color:var(--tx2)">The structure never changes — a near-black ground, one surface step, four text greys, one accent. Only the hue moves. Each row below shows the full set with hex codes and the same three components rendered in it, so you can compare them doing the same job rather than as swatches.</p>
+      <p style="margin-top:12px;max-width:74ch;font-size:15px;line-height:1.6;color:var(--tx4)"><strong style="font-weight:600;color:var(--tx3)">A · Signal Amber</strong> is what ships today. Reply with a letter if you want one of the others made canonical and I will re-cut the whole build on it.</p>
+
+      <div style="display:grid;gap:16px;margin-top:36px">
+        <sc-for list="{{ palettes }}" as="p" hint-placeholder-count="6">
+          <div style="border-radius:14px;overflow:hidden;background:{{ p.surf }};box-shadow:0 0 0 1px {{ p.line }}">
+            <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;padding:18px 22px;background:{{ p.bg }}">
+              <span style="font-family:var(--fm);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:{{ p.accent }}">{{ p.key }}</span>
+              <span style="font-size:19px;font-weight:600;letter-spacing:-0.022em;color:{{ p.text }}">{{ p.name }}</span>
+              <span style="flex:1;min-width:200px;font-size:13.5px;line-height:1.55;color:{{ p.text2 }}">{{ p.note }}</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:1px;background:{{ p.line }}">
+              <sc-for list="{{ p.swatches }}" as="s" hint-placeholder-count="6">
+                <div style="background:{{ p.surf }};padding:0">
+                  <div style="height:52px;background:{{ s.hex }};box-shadow:{{ s.inner }}"></div>
+                  <div style="padding:10px 12px">
+                    <div style="font-size:11.5px;font-weight:600;color:{{ p.text }}">{{ s.role }}</div>
+                    <div style="margin-top:3px;font-family:var(--fm);font-size:10.5px;color:{{ p.text3 }}">{{ s.hex }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:22px;background:{{ p.bg }}">
+              <span style="display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:600;padding:13px 22px;border-radius:9px;background:{{ p.accent }};color:{{ p.onAccent }};box-shadow:{{ p.glow }}">Book a call →</span>
+              <span style="display:inline-flex;align-items:center;font-family:var(--fm);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;color:{{ p.accent }};background:{{ p.tint }};border:1px solid {{ p.accent }}">Measurement</span>
+              <svg viewBox="0 0 200 56" preserveAspectRatio="none" role="img" aria-label="Payback curve sample" style="flex:1;min-width:180px;height:56px;display:block">
+                <path d="{{ p.gapPath }}" fill="{{ p.accent }}" opacity="0.16"></path>
+                <line x1="0" y1="34" x2="200" y2="34" stroke="{{ p.zero }}" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                <path d="{{ p.measPath }}" fill="none" stroke="{{ p.dash }}" stroke-width="2" stroke-dasharray="6 5" vector-effect="non-scaling-stroke"></path>
+                <path d="{{ p.truePath }}" fill="none" stroke="{{ p.accent }}" stroke-width="2.6" vector-effect="non-scaling-stroke"></path>
+                <circle cx="132" cy="34" r="4.5" fill="{{ p.accent }}"></circle>
+              </svg>
+              <span style="font-family:var(--fm);font-size:11px;line-height:1.7;white-space:pre-line;color:{{ p.text3 }}">{{ p.contrast }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="space" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">04 · Space &amp; shape</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">A seven-step scale</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:32px;margin-top:32px">
+        <div>
+          <h3 style="font-size:15px;font-weight:600">Spacing</h3>
+          <div style="margin-top:16px;display:grid;gap:8px">
+            <sc-for list="{{ spacing }}" as="s" hint-placeholder-count="7">
+              <div style="display:flex;align-items:center;gap:16px">
+                <span style="flex:none;width:52px;font-family:var(--fm);font-size:11.5px;color:var(--tx4)">{{ s.token }}</span>
+                <span style="height:12px;border-radius:3px;background:var(--am);width:{{ s.px }}"></span>
+                <span style="flex:none;font-family:var(--fm);font-size:11.5px;color:var(--tx3)">{{ s.px }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin-top:18px;font-family:var(--fm);font-size:11.5px;line-height:1.8;color:var(--tx4)">Section rhythm <span style="color:var(--tx3)">clamp(72px, 8vw, 124px)</span><br />Page gutter <span style="color:var(--tx3)">clamp(20px, 4vw, 44px)</span><br />Content wrap <span style="color:var(--tx3)">1280px</span></p>
+        </div>
+        <div>
+          <h3 style="font-size:15px;font-weight:600">Radius</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:16px">
+            <sc-for list="{{ radii }}" as="r" hint-placeholder-count="5">
+              <div style="text-align:center">
+                <div style="width:72px;height:72px;background:var(--surf2);box-shadow:0 0 0 1px var(--line);border-radius:{{ r.px }}"></div>
+                <div style="margin-top:8px;font-family:var(--fm);font-size:11px;color:var(--tx3)">{{ r.px }}</div>
+                <div style="margin-top:2px;font-family:var(--fm);font-size:10px;line-height:1.5;color:var(--tx4)">{{ r.use }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <h3 style="margin-top:32px;font-size:15px;font-weight:600">Elevation</h3>
+          <p style="margin-top:8px;max-width:52ch;font-size:13.5px;line-height:1.6;color:var(--tx3)">On a near-black ground, elevation is a hairline plus ambient darkness. Never stack shadows.</p>
+          <div style="display:grid;gap:12px;margin-top:16px">
+            <sc-for list="{{ elevation }}" as="e" hint-placeholder-count="3">
+              <div style="border-radius:12px;padding:16px 18px;background:var(--surf);box-shadow:{{ e.shadow }}">
+                <div style="font-size:13.5px;font-weight:600">{{ e.name }}</div>
+                <div style="margin-top:5px;font-family:var(--fm);font-size:10.5px;line-height:1.6;white-space:pre-line;color:var(--tx4)">{{ e.css }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="components" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">05 · Components</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Filled primary, hairline everything else</h2>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:16px;margin-top:32px">
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tx4)">Buttons</div>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px">
+            <a href="#components" style="display:inline-flex;align-items:center;gap:9px;font-size:15.5px;font-weight:600;padding:15px 26px;border-radius:9px;background:var(--am);color:var(--ink);box-shadow:0 8px 30px -10px rgba(227,154,31,0.7);transition:background 180ms var(--ease),box-shadow 180ms var(--ease)" style-hover="background:#F0AB33;box-shadow:0 12px 40px -8px rgba(227,154,31,0.9)">Primary<i class="ph ph-arrow-right" style="font-size:15px"></i></a>
+            <a href="#components" style="display:inline-flex;align-items:center;font-size:15.5px;font-weight:600;padding:15px 26px;border-radius:9px;color:var(--tx);border:1px solid #2C3138;transition:background 180ms var(--ease),border-color 180ms var(--ease)" style-hover="background:rgba(232,234,237,0.06);border-color:#3D444D">Secondary</a>
+          </div>
+          <p style="margin-top:18px;font-family:var(--fm);font-size:10.5px;line-height:1.85;color:var(--tx4)">Filled amber with <code style="font-size:10.5px;color:var(--tx3)">#101725</code> text and a resting glow. Every CTA carries an arrow: <code style="font-size:10.5px;color:var(--tx3)">ph-arrow-right</code> in-page, <code style="font-size:10.5px;color:var(--tx3)">ph-arrow-up-right</code> when it leaves.</p>
+        </div>
+
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tx4)">Chips &amp; segmented</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+            <span style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--tx2);padding:7px 13px;border-radius:999px;background:var(--surf2);box-shadow:inset 0 0 0 1px var(--line)"><i class="ph ph-broadcast" style="font-size:13px;color:var(--am)"></i>AppsFlyer</span>
+            <span style="display:inline-flex;align-items:center;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--am);padding:7px 13px;border-radius:999px;background:rgba(227,154,31,0.12);border:1px solid var(--am)">Selected</span>
+          </div>
+          <div style="display:inline-flex;overflow:hidden;border:1px solid #2C3138;border-radius:8px;margin-top:16px">
+            <span style="padding:9px 16px;font-family:var(--fm);font-size:12.5px;background:var(--am);color:var(--ink)">90d</span>
+            <span style="padding:9px 16px;font-family:var(--fm);font-size:12.5px;border-left:1px solid #2C3138;color:var(--tx2)">180d</span>
+            <span style="padding:9px 16px;font-family:var(--fm);font-size:12.5px;border-left:1px solid #2C3138;color:var(--tx2)">365d</span>
+          </div>
+          <p style="margin-top:18px;font-family:var(--fm);font-size:10.5px;line-height:1.85;color:var(--tx4)">Selected state is an amber tint plus an amber border — never a fill on a chip. Segmented controls fill the active cell.</p>
+        </div>
+
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tx4)">Inputs</div>
+          <div style="margin-top:16px">
+            <label for="bb-in" style="display:block;font-family:var(--fm);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px">Work email</label>
+            <input id="bb-in" type="email" placeholder="you@company.com" style="width:100%;min-height:46px;padding:10px 14px;font-family:var(--f);font-size:15px;color:var(--tx);caret-color:#E39A1F;background:var(--surf2);border:1px solid var(--line);border-radius:9px;margin:0" style-hover="border-color:#3D444D" />
+          </div>
+          <div style="margin-top:16px">
+            <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--fm);font-size:11.5px;color:var(--tx4)"><span>Cost per install</span><span style="color:var(--tx)">$1.20</span></div>
+            <input type="range" min="0.2" max="8" step="0.05" value="1.2" aria-label="Cost per install" style="width:100%;height:44px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;accent-color:#E39A1F" />
+          </div>
+          <p style="margin-top:8px;font-family:var(--fm);font-size:10.5px;line-height:1.85;color:var(--tx4)">Labels are 11.5px mono uppercase. Fields are 46px, sliders 44px with a 26px thumb, and every control has <code style="font-size:10.5px;color:var(--tx3)">margin: 0</code>.</p>
+        </div>
+
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="font-family:var(--fm);font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tx4)">Focus &amp; selection</div>
+          <div style="margin-top:16px;display:grid;gap:14px">
+            <div style="display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;padding:12px 20px;border-radius:9px;background:var(--surf2);outline:2px solid var(--am);outline-offset:3px">Focus ring</div>
+            <p style="font-size:14px;line-height:1.6;color:var(--tx2)">Selected text uses <span style="background:rgba(227,154,31,0.3)">an amber tint at 30%</span> — never the browser blue.</p>
+          </div>
+          <p style="margin-top:14px;font-family:var(--fm);font-size:10.5px;line-height:1.85;color:var(--tx4)"><code style="font-size:10.5px;color:var(--tx3)">2px solid #E39A1F</code>, offset 3px, radius 4px. On <code style="font-size:10.5px;color:var(--tx3)">:focus-visible</code> only.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="chart" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">06 · Data visualisation</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">One saturated line in the frame</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">True revenue is the only saturated thing on a chart. What the dashboard sees is grey and dashed — literally the less real of the two. There is no red, and no warm/cool split.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:12px;margin-top:28px">
+        <sc-for list="{{ chartRoles }}" as="c" hint-placeholder-count="6">
+          <div style="border-radius:12px;padding:18px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+            <div style="height:22px;display:flex;align-items:center">{{ c.swatchSlot }}
+              <sc-if value="{{ c.isLine }}" hint-placeholder-val="{{ false }}"><span style="width:56px;height:{{ c.w }};background:{{ c.hex }};border-radius:2px"></span></sc-if>
+              <sc-if value="{{ c.isDash }}" hint-placeholder-val="{{ false }}"><span style="width:56px;height:0;border-top:2px dashed {{ c.hex }}"></span></sc-if>
+              <sc-if value="{{ c.isFill }}" hint-placeholder-val="{{ false }}"><span style="width:56px;height:16px;background:{{ c.hex }};opacity:{{ c.op }};border-radius:3px"></span></sc-if>
+            </div>
+            <div style="margin-top:12px;font-size:13.5px;font-weight:600">{{ c.name }}</div>
+            <div style="margin-top:4px;font-family:var(--fm);font-size:11px;color:var(--tx3)">{{ c.spec }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:24px;border-radius:14px;padding:22px;background:var(--surf2);box-shadow:0 0 0 1px var(--line2)">
+        <div style="font-size:14px;font-weight:600">Axis labels are HTML, never SVG <code style="font-size:13px;color:var(--tx3)">&lt;text&gt;</code></div>
+        <p style="margin-top:8px;max-width:74ch;font-size:13.5px;line-height:1.65;color:var(--tx2)">The chart SVG scales to its column, so text inside it shrinks with the viewBox and becomes illegible. Labels are positioned over the SVG as percentages of its box, at real px sizes. The y-axis gutter is a fixed flex column outside the viewBox — 54px on desktop, 46px on mobile.</p>
+      </div>
+    </section>
+
+    <section id="motion" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">07 · Motion</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Opacity and transform only</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">Nothing in the system animates a property that triggers layout, so there is no CLS cost. One easing curve throughout. Everything stops after its entrance except the two hero glows and the loop's travelling signal.</p>
+      <div style="margin-top:28px;border-radius:14px;background:var(--surf);box-shadow:0 0 0 1px var(--line);overflow:hidden">
+        <sc-for list="{{ motion }}" as="m" hint-placeholder-count="6">
+          <div style="display:flex;align-items:flex-start;gap:20px;padding:18px 22px;border-bottom:1px solid var(--line2)">
+            <span style="flex:none;width:180px;font-size:14px;font-weight:600">{{ m.name }}</span>
+            <span style="flex:1;min-width:0;font-size:13.5px;line-height:1.6;color:var(--tx2)">{{ m.what }}</span>
+            <span style="flex:none;width:190px;text-align:right;font-family:var(--fm);font-size:11px;line-height:1.7;white-space:pre-line;color:var(--tx3)">{{ m.spec }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin-top:18px;font-family:var(--fm);font-size:11.5px;line-height:1.8;color:var(--tx4)">Easing <span style="color:var(--tx3)">cubic-bezier(0.22, 0.61, 0.36, 1)</span> — the only curve in the system.<br />Every keyframe sits behind <span style="color:var(--tx3)">prefers-reduced-motion</span>.</p>
+    </section>
+
+    <section id="icons" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">08 · Icons</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Phosphor, regular weight</h2>
+      <p style="margin-top:16px;max-width:70ch;font-size:16px;line-height:1.65;color:var(--tx2)">One set, one weight. Amber when the icon is carrying meaning, <code style="font-size:15px;color:var(--tx3)">#8E959E</code> when it is decorative or secondary. Sized to the text beside it, never larger than its line.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:28px">
+        <sc-for list="{{ icons }}" as="i" hint-placeholder-count="12">
+          <div style="display:flex;align-items:center;gap:11px;padding:14px 16px;border-radius:10px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+            <i class="{{ i.cls }}" style="font-size:19px;flex:none;color:var(--am)"></i>
+            <span style="flex:1;min-width:0;font-family:var(--fm);font-size:10.5px;line-height:1.5;color:var(--tx3)">{{ i.name }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section id="rules" style="padding:64px 0;border-top:1px solid var(--line)">
+      <div style="font-family:var(--fm);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--tx4)">09 · Rules</div>
+      <h2 style="margin-top:14px;font-size:36px;letter-spacing:-0.03em">Do and don't</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:16px;margin-top:32px">
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px rgba(227,154,31,0.3)">
+          <div style="display:flex;align-items:center;gap:9px"><i class="ph ph-check" style="font-size:18px;color:var(--am)"></i><h3 style="font-size:15px;font-weight:600">Do</h3></div>
+          <div style="display:grid;gap:12px;margin-top:16px">
+            <sc-for list="{{ dos }}" as="d" hint-placeholder-count="6">
+              <p style="font-size:14px;line-height:1.6;color:var(--tx2)">{{ d }}</p>
+            </sc-for>
+          </div>
+        </div>
+        <div style="border-radius:14px;padding:24px;background:var(--surf);box-shadow:0 0 0 1px var(--line)">
+          <div style="display:flex;align-items:center;gap:9px"><i class="ph ph-x" style="font-size:18px;color:var(--tx3)"></i><h3 style="font-size:15px;font-weight:600">Don't</h3></div>
+          <div style="display:grid;gap:12px;margin-top:16px">
+            <sc-for list="{{ donts }}" as="d" hint-placeholder-count="6">
+              <p style="font-size:14px;line-height:1.6;color:var(--tx3)">{{ d }}</p>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding:64px 0 0;border-top:1px solid var(--line)">
+      <p style="font-family:var(--fm);font-size:11.5px;line-height:1.9;color:var(--tx4)">E2E Apps brand book v1 · August 2026<br />Source of truth: <span style="color:var(--tx3)">E2E Apps — Bento.dc.html</span> (desktop) and <span style="color:var(--tx3)">E2E Apps — Bento mobile.dc.html</span> (mobile).<br />Logo pending selection from <span style="color:var(--tx3)">E2E Apps — Logo directions.dc.html</span>.</p>
+    </section>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      toc: [
+        { label: '01 Logo', href: '#logo' },
+        { label: '02 Colour', href: '#color' },
+        { label: '02b Palettes', href: '#palettes' },
+        { label: '03 Typography', href: '#type' },
+        { label: '03b Text styles', href: '#styles' },
+        { label: '04 Space & shape', href: '#space' },
+        { label: '05 Components', href: '#components' },
+        { label: '06 Data viz', href: '#chart' },
+        { label: '07 Motion', href: '#motion' },
+        { label: '08 Icons', href: '#icons' },
+        { label: '09 Rules', href: '#rules' }
+      ],
+
+      colorGroups: [
+        {
+          title: 'Ground and surface',
+          note: 'Four steps, all near-neutral. A card is one step above its ground; a tile inside a card is one step above that. Never more than three steps in one view.',
+          items: [
+            { name: 'Ground', hex: '#0E1014', token: '--color-bg', use: 'The page. Every section sits on this.', inner: 'inset 0 0 0 1px #23272E' },
+            { name: 'Surface', hex: '#16191F', token: '--color-surface', use: 'Cards, the calculator shell, form panels.', inner: 'none' },
+            { name: 'Surface sunk', hex: '#1D2128', token: '--color-surface-sunk', use: 'Tiles and code blocks inside a card.', inner: 'none' },
+            { name: 'Section wash', hex: '#111318', token: '—', use: 'Mid-stop of the alternating section gradient, and the footer ground.', inner: 'none' }
+          ]
+        },
+        {
+          title: 'Text',
+          note: 'Four greys, each with a job. Do not introduce a fifth — if a piece of text needs to sit between two of these, it is the size that should change, not the colour.',
+          items: [
+            { name: 'Text', hex: '#E8EAED', token: '--color-text', use: 'Headings, figures, primary copy.', inner: 'none' },
+            { name: 'Text 2', hex: '#A8AEB6', token: '--color-text-2', use: 'Body copy and card paragraphs.', inner: 'none' },
+            { name: 'Text 3', hex: '#8E959E', token: '--color-text-3', use: 'Secondary detail, disclosure bodies.', inner: 'none' },
+            { name: 'Text 4', hex: '#7C838D', token: '--color-text-4', use: 'Eyebrows, labels, metadata, axis ticks.', inner: 'none' }
+          ]
+        },
+        {
+          title: 'Accent',
+          note: 'One hue, carried over from the original site. It appears as a filled button, an eyebrow, a figure, an icon or a chart line — never as a large flood or a gradient.',
+          items: [
+            { name: 'Amber', hex: '#E39A1F', token: '--color-accent', use: 'Primary buttons, eyebrows, key figures, the true-revenue line.', inner: 'none' },
+            { name: 'Amber hover', hex: '#F0AB33', token: '--color-accent-hover', use: 'Hover state of a filled button only.', inner: 'none' },
+            { name: 'Amber tint 12%', hex: 'rgba(227,154,31,0.12)', token: '--color-accent-dim', use: 'Selected chips, pill backgrounds, callouts.', inner: 'inset 0 0 0 1px rgba(227,154,31,0.28)' },
+            { name: 'Ink', hex: '#101725', token: '--color-ink', use: 'Text on a filled amber surface. 7.6:1.', inner: 'none' }
+          ]
+        },
+        {
+          title: 'Lines and structure',
+          note: 'Card outlines are drawn as a 1px box-shadow rather than a border, so they never affect layout. Borders are reserved for controls and dividers.',
+          items: [
+            { name: 'Line', hex: '#23272E', token: '--color-line', use: 'Card hairlines, table row rules.', inner: 'none' },
+            { name: 'Line soft', hex: '#1D2027', token: '--color-line-soft', use: 'Dividers inside a card, nav underline.', inner: 'none' },
+            { name: 'Control border', hex: '#2C3138', token: '—', use: 'Secondary buttons, segmented controls, slider tracks.', inner: 'none' },
+            { name: 'Control hover', hex: '#3D444D', token: '—', use: 'Hover border on a secondary button or input.', inner: 'none' }
+          ]
+        }
+      ],
+
+      contrast: [
+        { hex: '#E8EAED', sample: 'Headings, figures and primary copy', ratio: '15.8:1', verdict: 'AAA', verdictColor: '#E39A1F' },
+        { hex: '#A8AEB6', sample: 'Body copy and card paragraphs', ratio: '8.6:1', verdict: 'AAA', verdictColor: '#E39A1F' },
+        { hex: '#E39A1F', sample: 'Accent text, eyebrows and key figures', ratio: '8.1:1', verdict: 'AAA', verdictColor: '#E39A1F' },
+        { hex: '#8E959E', sample: 'Secondary detail and disclosure bodies', ratio: '6.3:1', verdict: 'AA', verdictColor: '#A8AEB6' },
+        { hex: '#7C838D', sample: 'Eyebrows, labels, metadata, axis ticks', ratio: '5.0:1', verdict: 'AA', verdictColor: '#A8AEB6' },
+        { hex: '#5B626B', sample: 'The dashboard line — non-text graphics only', ratio: '3.1:1', verdict: 'AA large', verdictColor: '#7C838D' }
+      ],
+
+      /* Fifteen named styles, each rendered at its own spec rather than described. */
+      textStyles: (() => {
+        const BV = "'Be Vietnam Pro',system-ui,sans-serif";
+        const PM = "'IBM Plex Mono',ui-monospace,monospace";
+        return [
+          { name: 'Display / H1', family: BV, size: 'clamp(38px,5.4vw,68px)', weight: 700, ls: '-0.032em', lh: '1.05', tt: 'none', color: '#E8EAED', measure: '19ch', sample: 'Your dashboard says the campaign is losing money.', spec: 'Be Vietnam Pro 700\nclamp(38px, 5.4vw, 68px)\n1.05 · −0.032em', use: 'One per page, the hero only. It is the LCP element, so nothing may delay it beyond 80ms.' },
+          { name: 'H2 · Section', family: BV, size: 'clamp(30px,3.4vw,44px)', weight: 700, ls: '-0.028em', lh: '1.08', tt: 'none', color: '#E8EAED', measure: '24ch', sample: 'Three places the money goes missing.', spec: 'Be Vietnam Pro 700\nclamp(30px, 3.4vw, 44px)\n1.08 · −0.028em', use: 'Every section header. Centred, capped in ch, with the eyebrow above it.' },
+          { name: 'H3 · Card title', family: BV, size: '22px', weight: 600, ls: '-0.02em', lh: '1.22', tt: 'none', color: '#E8EAED', measure: '22ch', sample: 'Renewals nobody counted.', spec: 'Be Vietnam Pro 600\n22–23px · 1.22 · −0.02em', use: 'Bento cards, product cards, loop stations. Drops to 600 — 700 is reserved for h1 and h2.' },
+          { name: 'H4 · Sub-card', family: BV, size: '19px', weight: 600, ls: '-0.018em', lh: '1.25', tt: 'none', color: '#E8EAED', measure: '26ch', sample: 'The conversion rule that reports zero', spec: 'Be Vietnam Pro 600\n19px · 1.25 · −0.018em', use: 'Blog row titles and the mobile card titles.' },
+          { name: 'H5 · Inline heading', family: BV, size: '15px', weight: 600, ls: '0.01em', lh: '1.4', tt: 'none', color: '#E8EAED', measure: '34ch', sample: 'Contrast, measured on the ground', spec: 'Be Vietnam Pro 600\n15px · 1.4', use: 'Sub-headings inside a card or a panel, and disclosure summaries.' },
+          { name: 'H6 · Eyebrow', family: PM, size: '11.5px', weight: 400, ls: '0.14em', lh: '1.5', tt: 'uppercase', color: '#7C838D', measure: '40ch', sample: 'Why your numbers don’t reconcile', spec: 'IBM Plex Mono 400\n11.5px · 0.14em · uppercase\ncolour: text-4', use: 'Sits above every h2. Amber instead of grey when the section needs lifting.' },
+          { name: 'Subtitle / Lead', family: BV, size: 'clamp(16px,1.35vw,18.5px)', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '58ch', sample: 'It broke even in month nine — you killed it in week one. I fix the attribution, close the marketing gaps it was hiding, and grow the app on numbers you can defend.', spec: 'Be Vietnam Pro 400\nclamp(16px, 1.35vw, 18.5px)\n1.6 · colour: text-2', use: 'The paragraph directly under a heading. Capped at 58–62ch, never full width.' },
+          { name: 'Paragraph', family: BV, size: '16px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '66ch', sample: 'Subscription renewals happen on Apple’s servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms.', spec: 'Be Vietnam Pro 400\n16px · 1.6 · colour: text-2', use: 'Body copy. 66ch maximum measure; text-wrap: pretty everywhere.' },
+          { name: 'Small / card body', family: BV, size: '14.5px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '52ch', sample: 'Every LTV model is retention multiplied by monetisation. If the curve dies before the payback horizon, no CPI saves the campaign.', spec: 'Be Vietnam Pro 400\n14.5px · 1.6', use: 'Inside cards and FAQ answers. 13.5px on mobile.' },
+          { name: 'Caption / meta', family: PM, size: '11px', weight: 400, ls: '0.06em', lh: '1.6', tt: 'none', color: '#7C838D', measure: '46ch', sample: 'PDF · 6 pages · 0.9 MB', spec: 'IBM Plex Mono 400\n10–12.5px · colour: text-4', use: 'File sizes, dates, tech stacks, axis ticks, legends.' },
+          { name: 'Button label', family: BV, size: '15.5px', weight: 600, ls: '0', lh: '1.2', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Find what your stack is missing', spec: 'Be Vietnam Pro 600\n15.5px · 1.2\npadding 15px 26px', use: 'Never all-caps, never letter-spaced. Always paired with a Phosphor arrow.' },
+          { name: 'Input label', family: PM, size: '11.5px', weight: 400, ls: '0.06em', lh: '1.5', tt: 'uppercase', color: '#8E959E', measure: '30ch', sample: 'Monthly ad spend', spec: 'IBM Plex Mono 400\n11.5px · 0.06em · uppercase\ncolour: text-3', use: 'Every form field and every slider readout label.' },
+          { name: 'Link', family: BV, size: '16px', weight: 500, ls: '0', lh: '1.6', tt: 'none', color: '#E39A1F', measure: '40ch', sample: 'Read the overview ↗', spec: 'Be Vietnam Pro 500\n16px · colour: accent\nhover: accent-hover', use: 'Inline links carry no underline on this ground — the amber is the signal. Underline on hover only inside body copy.' },
+          { name: 'Pull quote', family: BV, size: '23px', weight: 600, ls: '-0.022em', lh: '1.3', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Most consultants stop after Station 02. The loop only closes when the same person walks all four.', spec: 'Be Vietnam Pro 600\nclamp(19px, 2vw, 25px)\n1.3 · −0.022em', use: 'Closes a section. One per section maximum, capped at 30ch.' },
+          { name: 'Code / value', family: PM, size: '12px', weight: 400, ls: '0', lh: '1.7', tt: 'none', color: '#8E959E', measure: '46ch', sample: 'skan_cv: null · 71% of postbacks', spec: 'IBM Plex Mono 400\n11.5–12px · 1.7\non surface-sunk, radius 8px', use: 'Data signatures in the bento cards and the stack bundle bodies.' }
+        ];
+      })(),
+
+      /* Same architecture, six hues. Curves are drawn once on a 200×56 box so
+         each palette shows the chart doing identical work. */
+      palettes: (() => {
+        const truePath = 'M2 50 L26 50 L26 46 L52 46 L52 42 L78 42 L78 36 L106 36 L106 28 L132 28 L132 20 L160 20 L160 12 L198 12';
+        const measPath = 'M2 50 L60 50 L60 44 L198 44';
+        const gapPath = truePath + ' L198 44 L160 44 L160 44 L132 44 L106 44 L78 44 L52 44 L26 44 L2 50 Z';
+        const P = (key, name, note, bg, surf, line, accent, hover, onAccent, text, text2, text3, zero, dash, tint, contrast) => ({
+          key, name, note, bg, surf, line, accent, hover, onAccent, text, text2, text3, zero, dash, tint, contrast,
+          truePath, measPath, gapPath,
+          glow: '0 8px 26px -10px ' + tint.replace(/0\.\d+/, '0.85'),
+          swatches: [
+            { role: 'Ground', hex: bg, inner: 'inset 0 0 0 1px ' + line },
+            { role: 'Surface', hex: surf, inner: 'inset 0 0 0 1px ' + line },
+            { role: 'Text', hex: text, inner: 'none' },
+            { role: 'Text 2', hex: text2, inner: 'none' },
+            { role: 'Accent', hex: accent, inner: 'none' },
+            { role: 'Accent hover', hex: hover, inner: 'none' }
+          ]
+        });
+        return [
+          P('A · ships today', 'Signal Amber',
+            'Warm, unusual in the category, and already yours. Every competitor named is blue, violet or green — amber is the one hue none of them occupy.',
+            '#0E1014', '#16191F', '#23272E', '#E39A1F', '#F0AB33', '#101725', '#E8EAED', '#A8AEB6', '#7C838D', '#4A515A', '#5B626B', 'rgba(227,154,31,0.12)',
+            'accent on ground 8.1:1\nink on accent 7.6:1'),
+          P('B', 'Attribution Blue',
+            'The category default — Ahrefs, Adjust, most MMPs. Reads immediately as “analytics tool”, which is either the point or the problem depending on whether you want to blend in.',
+            '#0B0E16', '#141824', '#212633', '#4C8DFF', '#6BA1FF', '#08101F', '#E8EAED', '#A6AEBD', '#79808F', '#454C5C', '#565E70', 'rgba(76,141,255,0.14)',
+            'accent on ground 6.0:1\nink on accent 5.9:1'),
+          P('C', 'Telemetry Green',
+            'The colour of a passing check and a healthy pipeline. Suits the audit half of the business — “this is instrumented correctly” — more than the growth half.',
+            '#0A1210', '#121B18', '#1E2A26', '#2FD48A', '#4FE3A0', '#04140D', '#E6EDEA', '#A2B0AA', '#75827C', '#404E48', '#4F5D57', 'rgba(47,212,138,0.14)',
+            'accent on ground 9.9:1\nink on accent 9.8:1'),
+          P('D', 'Cohort Violet',
+            'The subscription-analytics register — RevenueCat and Adapty both live here. Closest to the Nocturne palette you rejected, but at a chroma that carries on a near-black ground.',
+            '#0D0E17', '#171824', '#242633', '#8B7CF6', '#A79BFA', '#0A0818', '#E9E9F0', '#A9AABD', '#7C7D90', '#4A4B5C', '#5A5B6E', 'rgba(139,124,246,0.16)',
+            'accent on ground 5.8:1\nink on accent 6.0:1'),
+          P('E', 'Store Coral',
+            'App Store energy — warm, consumer, high-energy. The most distinctive of the six and the least “enterprise”, which cuts both ways for a B2B audit sale.',
+            '#12100F', '#1C1917', '#2A2624', '#FF6B4A', '#FF8468', '#160603', '#EDEAE8', '#B0A9A5', '#847D79', '#524B47', '#635B57', 'rgba(255,107,74,0.14)',
+            'accent on ground 6.7:1\nink on accent 7.0:1'),
+          P('F', 'Paper',
+            'The light counterpart, for PDFs, decks and printed audits. The accent is a darkened amber — #8F5900, not the brand #E39A1F, which reads at 2.2:1 on paper and is unusable there. At this value it clears AA as text as well as fill.',
+            '#F7F6F3', '#FFFFFF', '#E2E0DA', '#8F5900', '#7A4B00', '#FFFFFF', '#101725', '#3A4354', '#5C6779', '#C9C6BE', '#8E959E', 'rgba(143,89,0,0.1)',
+            'accent on paper 5.4:1\nwhite on accent 5.8:1')
+        ];
+      })(),
+
+      typeScale: [
+        { role: 'Hero', family: "'Be Vietnam Pro',sans-serif", size: '46px', weight: 700, ls: '-0.032em', sample: 'Your dashboard says', spec: 'clamp(38px, 5.4vw, 68px)\n1.05 · −0.032em · 700' },
+        { role: 'Section', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.028em', sample: 'Three places the money', spec: 'clamp(30px, 3.4vw, 44px)\n1.08 · −0.028em · 700' },
+        { role: 'Closing', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.032em', sample: 'Send me your MMP setup', spec: 'clamp(30px, 3.8vw, 50px)\n1.06 · −0.032em · 700' },
+        { role: 'Card title', family: "'Be Vietnam Pro',sans-serif", size: '22px', weight: 600, ls: '-0.02em', sample: 'Renewals nobody counted.', spec: '22–23px · 1.22 · −0.02em · 600' },
+        { role: 'Lead', family: "'Be Vietnam Pro',sans-serif", size: '18px', weight: 400, ls: '0', sample: 'It broke even in month nine', spec: 'clamp(16px, 1.35vw, 18.5px)\n1.6 · 400' },
+        { role: 'Body', family: "'Be Vietnam Pro',sans-serif", size: '16px', weight: 400, ls: '0', sample: 'The measurement stops before the money arrives', spec: '16px · 1.6 · 400' },
+        { role: 'Card body', family: "'Be Vietnam Pro',sans-serif", size: '14.5px', weight: 400, ls: '0', sample: 'Every LTV model is retention multiplied by monetisation', spec: '14.5px · 1.6 · 400' },
+        { role: 'Eyebrow', family: "'IBM Plex Mono',monospace", size: '11.5px', weight: 400, ls: '0.14em', sample: 'WHY YOUR NUMBERS DON’T RECONCILE', spec: '11.5px mono · 0.14em\nuppercase · text-4' },
+        { role: 'Meta', family: "'IBM Plex Mono',monospace", size: '11px', weight: 400, ls: '0.06em', sample: 'PDF · 6 pages · 0.9 MB', spec: '10–12.5px mono · text-4' }
+      ],
+
+      spacing: [
+        { token: '--s2', px: '6px' }, { token: '--s3', px: '9px' }, { token: '--s4', px: '12px' },
+        { token: '--s6', px: '18px' }, { token: '--s8', px: '24px' }, { token: '--s12', px: '34px' }, { token: '--s16', px: '46px' }
+      ],
+      radii: [
+        { px: '4px', use: 'Focus ring' }, { px: '8px', use: 'Chips, code' }, { px: '9px', use: 'Buttons, inputs' },
+        { px: '12px', use: 'Cards' }, { px: '14px', use: 'Panels' }
+      ],
+      elevation: [
+        { name: 'Resting card', shadow: '0 0 0 1px #23272E', css: '0 0 0 1px #23272E' },
+        { name: 'Accent card', shadow: '0 0 0 1px rgba(227,154,31,0.34)', css: '0 0 0 1px rgba(227,154,31,0.34)' },
+        { name: 'Hover lift', shadow: '0 0 0 1px #E39A1F, 0 18px 44px rgba(0,0,0,0.5)', css: '0 0 0 1px #E39A1F,\n0 18px 44px rgba(0,0,0,0.5)\n+ translateY(−3px)' }
+      ],
+
+      chartRoles: [
+        { name: 'True revenue', hex: '#E39A1F', spec: '2.6px solid · step path', isLine: true, isDash: false, isFill: false, w: '3px', op: 1, swatchSlot: '' },
+        { name: 'What the dashboard sees', hex: '#5B626B', spec: '2px · dasharray 6 5', isLine: false, isDash: true, isFill: false, w: '2px', op: 1, swatchSlot: '' },
+        { name: 'The invisible gap', hex: '#E39A1F', spec: 'fill at opacity 0.16', isLine: false, isDash: false, isFill: true, w: '16px', op: 0.16, swatchSlot: '' },
+        { name: 'Axes', hex: '#2C3138', spec: '1px solid', isLine: true, isDash: false, isFill: false, w: '1px', op: 1, swatchSlot: '' },
+        { name: 'Zero and day-7 lines', hex: '#4A515A', spec: '1px · dasharray 3 4 on day 7', isLine: true, isDash: false, isFill: false, w: '1px', op: 1, swatchSlot: '' },
+        { name: 'Breakeven marker', hex: '#E39A1F', spec: 'r=5 dot · 1.5px dashed drop line', isLine: false, isDash: false, isFill: true, w: '16px', op: 1, swatchSlot: '' }
+      ],
+
+      motion: [
+        { name: 'Hero entrance', what: 'Pill, headline, lead, CTAs and chips rise into place in sequence.', spec: 'fade + 16px rise · 600ms\ndelays 0/80/160/240/320ms' },
+        { name: 'Scroll reveal', what: 'Section headers and cards on a scroll-driven timeline, no JS and no class gate.', spec: 'animation-timeline: view()\nentry 4% → entry 55% · 650ms' },
+        { name: 'Hero backdrop', what: 'Two blurred radial glows drifting, plus one accent line sweeping the top edge.', spec: '28s / 36s ease-in-out\nsweep 11s linear' },
+        { name: 'The loop signal', what: 'Desktop: a dot travels the circle. Mobile: each rail node lights in sequence.', spec: 'animateMotion 11s\nnodes 5.2s · delays 0/1.3/2.6/3.9s' },
+        { name: 'Chart draw-on', what: 'The true-revenue path draws from left to right on first paint.', spec: 'pathLength=1 · dashoffset 1→0\n1.2–1.3s · delay 300–400ms' },
+        { name: 'Interactive states', what: 'Button fill and glow, card lift, input border, chip tint.', spec: '160–200ms · background,\nbox-shadow, transform only' }
+      ],
+
+      icons: [
+        { cls: 'ph ph-plugs-connected', name: 'plugs-connected' },
+        { cls: 'ph ph-arrow-right', name: 'arrow-right' },
+        { cls: 'ph ph-arrow-up-right', name: 'arrow-up-right' },
+        { cls: 'ph ph-arrows-clockwise', name: 'arrows-clockwise' },
+        { cls: 'ph ph-chart-line-down', name: 'chart-line-down' },
+        { cls: 'ph ph-git-branch', name: 'git-branch' },
+        { cls: 'ph ph-arrow-square-out', name: 'arrow-square-out' },
+        { cls: 'ph ph-broadcast', name: 'broadcast' },
+        { cls: 'ph ph-crosshair', name: 'crosshair' },
+        { cls: 'ph ph-shield-check', name: 'shield-check' },
+        { cls: 'ph ph-receipt', name: 'receipt' },
+        { cls: 'ph ph-cursor-click', name: 'cursor-click' },
+        { cls: 'ph ph-magnifying-glass', name: 'magnifying-glass' },
+        { cls: 'ph ph-chart-line', name: 'chart-line' },
+        { cls: 'ph ph-caret-down', name: 'caret-down' },
+        { cls: 'ph ph-plus', name: 'plus' },
+        { cls: 'ph ph-list', name: 'list' },
+        { cls: 'ph ph-x', name: 'x' },
+        { cls: 'ph ph-arrow-u-left-up', name: 'arrow-u-left-up' },
+        { cls: 'ph ph-paper-plane-tilt', name: 'paper-plane-tilt' }
+      ],
+
+      dos: [
+        'Fill the primary button. Amber on transparent was tried and rejected — the filled button is the brand’s one confident gesture.',
+        'Set every figure in tabular numerals, in both families.',
+        'Centre section headers and cap them in ch units. Mixed left- and centre-aligned headers is what made the old page feel unaligned.',
+        'Draw card outlines as a 1px box-shadow, not a border.',
+        'Put chart axis labels in HTML over the SVG, never in SVG text.',
+        'Give every tap target 44px on mobile, and every native control margin: 0.'
+      ],
+      donts: [
+        'Do not add a second brand hue. If something needs to stand apart from amber, use a grey step or a size change.',
+        'Do not use red — not for the dashboard line, not for errors in a chart. Grey and dashed carries “less real” better.',
+        'Do not gradient-fill a card or a button. Gradients exist only as blurred radial glows behind a section and as the section wash.',
+        'Do not set amber text on a light ground — it falls to 2.2:1.',
+        'Do not stack shadows. On this ground, elevation is one hairline plus one ambient shadow.',
+        'Do not put white-space: nowrap on a row or a label — only on the value it protects.'
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

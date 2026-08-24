@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/build-design-docs.mjs && astro build",
+    "build:design-docs": "node scripts/build-design-docs.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test": "node --test \"tests/*.test.ts\""
