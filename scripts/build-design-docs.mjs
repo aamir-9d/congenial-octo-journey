@@ -43,6 +43,27 @@ const DOCS = [
     out: 'logo-directions',
     title: 'Logo directions — E2E Apps',
     description: 'Twelve logo directions for E2E Apps, drawn as geometry and shown at every size.',
+    /**
+     * Centre the card rows, so the page reads like the brand book.
+     *
+     * The export lays the marks out as a 500px-wide flex wrap inside a 1640px
+     * column. On anything narrower than three cards the last row hugs the left
+     * and leaves a wide gap at the right, which makes the page look
+     * left-weighted next to the brand book's centred column.
+     *
+     * Done here rather than in `design/`, so the export on disk stays a
+     * byte-exact copy of what the design tool produced.
+     */
+    transform: (html) => {
+      const before = /display:flex;flex-wrap:wrap;gap:36px;margin-top:(\d+)px;align-items:flex-start/g;
+      const out = html.replace(
+        before,
+        'display:flex;flex-wrap:wrap;justify-content:center;gap:36px;margin-top:$1px;align-items:flex-start',
+      );
+      const count = (html.match(before) ?? []).length;
+      if (count !== 2) throw new Error(`expected 2 mark rows to centre, found ${count}`);
+      return out;
+    },
   },
 ];
 
@@ -112,16 +133,66 @@ const isRaw = (v) => v !== null && typeof v === 'object' && v[RAW] === true;
 
 const VOID_TAGS = new Set(['path', 'circle', 'rect', 'polygon', 'line', 'polyline', 'animateMotion', 'stop']);
 
+/**
+ * SVG attributes that are genuinely camelCase and must survive untouched.
+ *
+ * This is the difference between a mark that renders and one that does not.
+ * Hyphenating `viewBox` to `view-box` silently removes the viewBox: the SVG
+ * keeps its width and height but loses the coordinate system that maps the
+ * 100-unit drawing onto them, so every mark renders at 1:1 pixels and a 16px
+ * icon shows the top-left corner of the artwork. It looks like a dozen broken
+ * logos and reads as a design problem rather than a build one.
+ *
+ * Only the attributes these documents can actually reach are listed; the full
+ * SVG set is much longer, and guessing at it would hide the next omission.
+ */
+const CAMEL_SVG_ATTRS = new Set([
+  'viewBox',
+  'preserveAspectRatio',
+  'pathLength',
+  'repeatCount',
+  'repeatDur',
+  'attributeName',
+  'attributeType',
+  'calcMode',
+  'keyPoints',
+  'keyTimes',
+  'keySplines',
+  'gradientUnits',
+  'gradientTransform',
+  'patternUnits',
+  'clipPathUnits',
+  'maskUnits',
+  'markerWidth',
+  'markerHeight',
+  'markerUnits',
+  'refX',
+  'refY',
+  'spreadMethod',
+  'startOffset',
+  'stdDeviation',
+  'textLength',
+  'lengthAdjust',
+]);
+
 /** camelCase React prop -> the SVG/HTML attribute name it stands for. */
 function attrName(key) {
   if (key === 'className') return 'class';
+  if (CAMEL_SVG_ATTRS.has(key)) return key;
   if (key.includes('-')) return key; // already hyphenated, e.g. aria-label
   return key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase());
 }
 
+/**
+ * CSS properties always hyphenate, so this deliberately does NOT share
+ * attrName's camelCase exception list — those are attribute names, a different
+ * namespace that happens to look similar.
+ */
+const cssName = (key) => key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase());
+
 function styleObject(obj) {
   return Object.entries(obj)
-    .map(([k, v]) => `${attrName(k)}:${v}`)
+    .map(([k, v]) => `${cssName(k)}:${v}`)
     .join(';');
 }
 
@@ -340,6 +411,8 @@ function render(doc) {
 
   // Drop the authoring-only attribute the design editor uses for sizing.
   html = html.replace(/\s+hint-placeholder-(count|val)="[^"]*"/g, '');
+
+  if (doc.transform) html = doc.transform(html);
 
   const lifted = liftHoverStyles(html);
   html = inlineIcons(lifted.html);

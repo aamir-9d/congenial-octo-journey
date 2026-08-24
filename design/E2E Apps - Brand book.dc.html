@@ -467,12 +467,12 @@ class Component extends DCLogic {
             { name: 'Ground', hex: '#0E1014', token: '--color-bg', use: 'The page. Every section sits on this.', inner: 'inset 0 0 0 1px #23272E' },
             { name: 'Surface', hex: '#16191F', token: '--color-surface', use: 'Cards, the calculator shell, form panels.', inner: 'none' },
             { name: 'Surface sunk', hex: '#1D2128', token: '--color-surface-sunk', use: 'Tiles and code blocks inside a card.', inner: 'none' },
-            { name: 'Section wash', hex: '#111318', token: '—', use: 'Mid-stop of the alternating section gradient, and the footer ground.', inner: 'none' }
+            { name: 'Section wash', hex: '#111318', token: '\u2014', use: 'Mid-stop of the alternating section gradient, and the footer ground.', inner: 'none' }
           ]
         },
         {
           title: 'Text',
-          note: 'Four greys, each with a job. Do not introduce a fifth — if a piece of text needs to sit between two of these, it is the size that should change, not the colour.',
+          note: 'Four greys, each with a job. Do not introduce a fifth \u2014 if a piece of text needs to sit between two of these, it is the size that should change, not the colour.',
           items: [
             { name: 'Text', hex: '#E8EAED', token: '--color-text', use: 'Headings, figures, primary copy.', inner: 'none' },
             { name: 'Text 2', hex: '#A8AEB6', token: '--color-text-2', use: 'Body copy and card paragraphs.', inner: 'none' },
@@ -482,7 +482,7 @@ class Component extends DCLogic {
         },
         {
           title: 'Accent',
-          note: 'One hue, carried over from the original site. It appears as a filled button, an eyebrow, a figure, an icon or a chart line — never as a large flood or a gradient.',
+          note: 'One hue, carried over from the original site. It appears as a filled button, an eyebrow, a figure, an icon or a chart line \u2014 never as a large flood or a gradient.',
           items: [
             { name: 'Amber', hex: '#E39A1F', token: '--color-accent', use: 'Primary buttons, eyebrows, key figures, the true-revenue line.', inner: 'none' },
             { name: 'Amber hover', hex: '#F0AB33', token: '--color-accent-hover', use: 'Hover state of a filled button only.', inner: 'none' },
@@ -496,8 +496,8 @@ class Component extends DCLogic {
           items: [
             { name: 'Line', hex: '#23272E', token: '--color-line', use: 'Card hairlines, table row rules.', inner: 'none' },
             { name: 'Line soft', hex: '#1D2027', token: '--color-line-soft', use: 'Dividers inside a card, nav underline.', inner: 'none' },
-            { name: 'Control border', hex: '#2C3138', token: '—', use: 'Secondary buttons, segmented controls, slider tracks.', inner: 'none' },
-            { name: 'Control hover', hex: '#3D444D', token: '—', use: 'Hover border on a secondary button or input.', inner: 'none' }
+            { name: 'Control border', hex: '#2C3138', token: '\u2014', use: 'Secondary buttons, segmented controls, slider tracks.', inner: 'none' },
+            { name: 'Control hover', hex: '#3D444D', token: '\u2014', use: 'Hover border on a secondary button or input.', inner: 'none' }
           ]
         }
       ],
@@ -508,7 +508,7 @@ class Component extends DCLogic {
         { hex: '#E39A1F', sample: 'Accent text, eyebrows and key figures', ratio: '8.1:1', verdict: 'AAA', verdictColor: '#E39A1F' },
         { hex: '#8E959E', sample: 'Secondary detail and disclosure bodies', ratio: '6.3:1', verdict: 'AA', verdictColor: '#A8AEB6' },
         { hex: '#7C838D', sample: 'Eyebrows, labels, metadata, axis ticks', ratio: '5.0:1', verdict: 'AA', verdictColor: '#A8AEB6' },
-        { hex: '#5B626B', sample: 'The dashboard line — non-text graphics only', ratio: '3.1:1', verdict: 'AA large', verdictColor: '#7C838D' }
+        { hex: '#5B626B', sample: 'The dashboard line \u2014 non-text graphics only', ratio: '3.1:1', verdict: 'AA large', verdictColor: '#7C838D' }
       ],
 
       /* Fifteen named styles, each rendered at its own spec rather than described. */
@@ -516,21 +516,21 @@ class Component extends DCLogic {
         const BV = "'Be Vietnam Pro',system-ui,sans-serif";
         const PM = "'IBM Plex Mono',ui-monospace,monospace";
         return [
-          { name: 'Display / H1', family: BV, size: 'clamp(38px,5.4vw,68px)', weight: 700, ls: '-0.032em', lh: '1.05', tt: 'none', color: '#E8EAED', measure: '19ch', sample: 'Your dashboard says the campaign is losing money.', spec: 'Be Vietnam Pro 700\nclamp(38px, 5.4vw, 68px)\n1.05 · −0.032em', use: 'One per page, the hero only. It is the LCP element, so nothing may delay it beyond 80ms.' },
-          { name: 'H2 · Section', family: BV, size: 'clamp(30px,3.4vw,44px)', weight: 700, ls: '-0.028em', lh: '1.08', tt: 'none', color: '#E8EAED', measure: '24ch', sample: 'Three places the money goes missing.', spec: 'Be Vietnam Pro 700\nclamp(30px, 3.4vw, 44px)\n1.08 · −0.028em', use: 'Every section header. Centred, capped in ch, with the eyebrow above it.' },
-          { name: 'H3 · Card title', family: BV, size: '22px', weight: 600, ls: '-0.02em', lh: '1.22', tt: 'none', color: '#E8EAED', measure: '22ch', sample: 'Renewals nobody counted.', spec: 'Be Vietnam Pro 600\n22–23px · 1.22 · −0.02em', use: 'Bento cards, product cards, loop stations. Drops to 600 — 700 is reserved for h1 and h2.' },
-          { name: 'H4 · Sub-card', family: BV, size: '19px', weight: 600, ls: '-0.018em', lh: '1.25', tt: 'none', color: '#E8EAED', measure: '26ch', sample: 'The conversion rule that reports zero', spec: 'Be Vietnam Pro 600\n19px · 1.25 · −0.018em', use: 'Blog row titles and the mobile card titles.' },
-          { name: 'H5 · Inline heading', family: BV, size: '15px', weight: 600, ls: '0.01em', lh: '1.4', tt: 'none', color: '#E8EAED', measure: '34ch', sample: 'Contrast, measured on the ground', spec: 'Be Vietnam Pro 600\n15px · 1.4', use: 'Sub-headings inside a card or a panel, and disclosure summaries.' },
-          { name: 'H6 · Eyebrow', family: PM, size: '11.5px', weight: 400, ls: '0.14em', lh: '1.5', tt: 'uppercase', color: '#7C838D', measure: '40ch', sample: 'Why your numbers don’t reconcile', spec: 'IBM Plex Mono 400\n11.5px · 0.14em · uppercase\ncolour: text-4', use: 'Sits above every h2. Amber instead of grey when the section needs lifting.' },
-          { name: 'Subtitle / Lead', family: BV, size: 'clamp(16px,1.35vw,18.5px)', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '58ch', sample: 'It broke even in month nine — you killed it in week one. I fix the attribution, close the marketing gaps it was hiding, and grow the app on numbers you can defend.', spec: 'Be Vietnam Pro 400\nclamp(16px, 1.35vw, 18.5px)\n1.6 · colour: text-2', use: 'The paragraph directly under a heading. Capped at 58–62ch, never full width.' },
-          { name: 'Paragraph', family: BV, size: '16px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '66ch', sample: 'Subscription renewals happen on Apple’s servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms.', spec: 'Be Vietnam Pro 400\n16px · 1.6 · colour: text-2', use: 'Body copy. 66ch maximum measure; text-wrap: pretty everywhere.' },
-          { name: 'Small / card body', family: BV, size: '14.5px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '52ch', sample: 'Every LTV model is retention multiplied by monetisation. If the curve dies before the payback horizon, no CPI saves the campaign.', spec: 'Be Vietnam Pro 400\n14.5px · 1.6', use: 'Inside cards and FAQ answers. 13.5px on mobile.' },
-          { name: 'Caption / meta', family: PM, size: '11px', weight: 400, ls: '0.06em', lh: '1.6', tt: 'none', color: '#7C838D', measure: '46ch', sample: 'PDF · 6 pages · 0.9 MB', spec: 'IBM Plex Mono 400\n10–12.5px · colour: text-4', use: 'File sizes, dates, tech stacks, axis ticks, legends.' },
-          { name: 'Button label', family: BV, size: '15.5px', weight: 600, ls: '0', lh: '1.2', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Find what your stack is missing', spec: 'Be Vietnam Pro 600\n15.5px · 1.2\npadding 15px 26px', use: 'Never all-caps, never letter-spaced. Always paired with a Phosphor arrow.' },
-          { name: 'Input label', family: PM, size: '11.5px', weight: 400, ls: '0.06em', lh: '1.5', tt: 'uppercase', color: '#8E959E', measure: '30ch', sample: 'Monthly ad spend', spec: 'IBM Plex Mono 400\n11.5px · 0.06em · uppercase\ncolour: text-3', use: 'Every form field and every slider readout label.' },
-          { name: 'Link', family: BV, size: '16px', weight: 500, ls: '0', lh: '1.6', tt: 'none', color: '#E39A1F', measure: '40ch', sample: 'Read the overview ↗', spec: 'Be Vietnam Pro 500\n16px · colour: accent\nhover: accent-hover', use: 'Inline links carry no underline on this ground — the amber is the signal. Underline on hover only inside body copy.' },
-          { name: 'Pull quote', family: BV, size: '23px', weight: 600, ls: '-0.022em', lh: '1.3', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Most consultants stop after Station 02. The loop only closes when the same person walks all four.', spec: 'Be Vietnam Pro 600\nclamp(19px, 2vw, 25px)\n1.3 · −0.022em', use: 'Closes a section. One per section maximum, capped at 30ch.' },
-          { name: 'Code / value', family: PM, size: '12px', weight: 400, ls: '0', lh: '1.7', tt: 'none', color: '#8E959E', measure: '46ch', sample: 'skan_cv: null · 71% of postbacks', spec: 'IBM Plex Mono 400\n11.5–12px · 1.7\non surface-sunk, radius 8px', use: 'Data signatures in the bento cards and the stack bundle bodies.' }
+          { name: 'Display / H1', family: BV, size: 'clamp(38px,5.4vw,68px)', weight: 700, ls: '-0.032em', lh: '1.05', tt: 'none', color: '#E8EAED', measure: '19ch', sample: 'Your dashboard says the campaign is losing money.', spec: 'Be Vietnam Pro 700\nclamp(38px, 5.4vw, 68px)\n1.05 \u00b7 \u22120.032em', use: 'One per page, the hero only. It is the LCP element, so nothing may delay it beyond 80ms.' },
+          { name: 'H2 · Section', family: BV, size: 'clamp(30px,3.4vw,44px)', weight: 700, ls: '-0.028em', lh: '1.08', tt: 'none', color: '#E8EAED', measure: '24ch', sample: 'Three places the money goes missing.', spec: 'Be Vietnam Pro 700\nclamp(30px, 3.4vw, 44px)\n1.08 \u00b7 \u22120.028em', use: 'Every section header. Centred, capped in ch, with the eyebrow above it.' },
+          { name: 'H3 · Card title', family: BV, size: '22px', weight: 600, ls: '-0.02em', lh: '1.22', tt: 'none', color: '#E8EAED', measure: '22ch', sample: 'Renewals nobody counted.', spec: 'Be Vietnam Pro 600\n22\u201323px \u00b7 1.22 \u00b7 \u22120.02em', use: 'Bento cards, product cards, loop stations. Drops to 600 \u2014 700 is reserved for h1 and h2.' },
+          { name: 'H4 · Sub-card', family: BV, size: '19px', weight: 600, ls: '-0.018em', lh: '1.25', tt: 'none', color: '#E8EAED', measure: '26ch', sample: 'The conversion rule that reports zero', spec: 'Be Vietnam Pro 600\n19px \u00b7 1.25 \u00b7 \u22120.018em', use: 'Blog row titles and the mobile card titles.' },
+          { name: 'H5 · Inline heading', family: BV, size: '15px', weight: 600, ls: '0.01em', lh: '1.4', tt: 'none', color: '#E8EAED', measure: '34ch', sample: 'Contrast, measured on the ground', spec: 'Be Vietnam Pro 600\n15px \u00b7 1.4', use: 'Sub-headings inside a card or a panel, and disclosure summaries.' },
+          { name: 'H6 · Eyebrow', family: PM, size: '11.5px', weight: 400, ls: '0.14em', lh: '1.5', tt: 'uppercase', color: '#7C838D', measure: '40ch', sample: 'Why your numbers don\u2019t reconcile', spec: 'IBM Plex Mono 400\n11.5px \u00b7 0.14em \u00b7 uppercase\ncolour: text-4', use: 'Sits above every h2. Amber instead of grey when the section needs lifting.' },
+          { name: 'Subtitle / Lead', family: BV, size: 'clamp(16px,1.35vw,18.5px)', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '58ch', sample: 'It broke even in month nine \u2014 you killed it in week one. I fix the attribution, close the marketing gaps it was hiding, and grow the app on numbers you can defend.', spec: 'Be Vietnam Pro 400\nclamp(16px, 1.35vw, 18.5px)\n1.6 \u00b7 colour: text-2', use: 'The paragraph directly under a heading. Capped at 58\u201362ch, never full width.' },
+          { name: 'Paragraph', family: BV, size: '16px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '66ch', sample: 'Subscription renewals happen on Apple\u2019s servers while your app is closed. If nothing is listening server-side, that revenue never reaches your MMP or your ad platforms.', spec: 'Be Vietnam Pro 400\n16px \u00b7 1.6 \u00b7 colour: text-2', use: 'Body copy. 66ch maximum measure; text-wrap: pretty everywhere.' },
+          { name: 'Small / card body', family: BV, size: '14.5px', weight: 400, ls: '0', lh: '1.6', tt: 'none', color: '#A8AEB6', measure: '52ch', sample: 'Every LTV model is retention multiplied by monetisation. If the curve dies before the payback horizon, no CPI saves the campaign.', spec: 'Be Vietnam Pro 400\n14.5px \u00b7 1.6', use: 'Inside cards and FAQ answers. 13.5px on mobile.' },
+          { name: 'Caption / meta', family: PM, size: '11px', weight: 400, ls: '0.06em', lh: '1.6', tt: 'none', color: '#7C838D', measure: '46ch', sample: 'PDF \u00b7 6 pages \u00b7 0.9 MB', spec: 'IBM Plex Mono 400\n10\u201312.5px \u00b7 colour: text-4', use: 'File sizes, dates, tech stacks, axis ticks, legends.' },
+          { name: 'Button label', family: BV, size: '15.5px', weight: 600, ls: '0', lh: '1.2', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Find what your stack is missing', spec: 'Be Vietnam Pro 600\n15.5px \u00b7 1.2\npadding 15px 26px', use: 'Never all-caps, never letter-spaced. Always paired with a Phosphor arrow.' },
+          { name: 'Input label', family: PM, size: '11.5px', weight: 400, ls: '0.06em', lh: '1.5', tt: 'uppercase', color: '#8E959E', measure: '30ch', sample: 'Monthly ad spend', spec: 'IBM Plex Mono 400\n11.5px \u00b7 0.06em \u00b7 uppercase\ncolour: text-3', use: 'Every form field and every slider readout label.' },
+          { name: 'Link', family: BV, size: '16px', weight: 500, ls: '0', lh: '1.6', tt: 'none', color: '#E39A1F', measure: '40ch', sample: 'Read the overview \u2197', spec: 'Be Vietnam Pro 500\n16px \u00b7 colour: accent\nhover: accent-hover', use: 'Inline links carry no underline on this ground \u2014 the amber is the signal. Underline on hover only inside body copy.' },
+          { name: 'Pull quote', family: BV, size: '23px', weight: 600, ls: '-0.022em', lh: '1.3', tt: 'none', color: '#E8EAED', measure: '30ch', sample: 'Most consultants stop after Station 02. The loop only closes when the same person walks all four.', spec: 'Be Vietnam Pro 600\nclamp(19px, 2vw, 25px)\n1.3 \u00b7 \u22120.022em', use: 'Closes a section. One per section maximum, capped at 30ch.' },
+          { name: 'Code / value', family: PM, size: '12px', weight: 400, ls: '0', lh: '1.7', tt: 'none', color: '#8E959E', measure: '46ch', sample: 'skan_cv: null \u00b7 71% of postbacks', spec: 'IBM Plex Mono 400\n11.5\u201312px \u00b7 1.7\non surface-sunk, radius 8px', use: 'Data signatures in the bento cards and the stack bundle bodies.' }
         ];
       })(),
 
@@ -555,42 +555,42 @@ class Component extends DCLogic {
         });
         return [
           P('A · ships today', 'Signal Amber',
-            'Warm, unusual in the category, and already yours. Every competitor named is blue, violet or green — amber is the one hue none of them occupy.',
+            'Warm, unusual in the category, and already yours. Every competitor named is blue, violet or green \u2014 amber is the one hue none of them occupy.',
             '#0E1014', '#16191F', '#23272E', '#E39A1F', '#F0AB33', '#101725', '#E8EAED', '#A8AEB6', '#7C838D', '#4A515A', '#5B626B', 'rgba(227,154,31,0.12)',
             'accent on ground 8.1:1\nink on accent 7.6:1'),
           P('B', 'Attribution Blue',
-            'The category default — Ahrefs, Adjust, most MMPs. Reads immediately as “analytics tool”, which is either the point or the problem depending on whether you want to blend in.',
+            'The category default \u2014 Ahrefs, Adjust, most MMPs. Reads immediately as \u201canalytics tool\u201d, which is either the point or the problem depending on whether you want to blend in.',
             '#0B0E16', '#141824', '#212633', '#4C8DFF', '#6BA1FF', '#08101F', '#E8EAED', '#A6AEBD', '#79808F', '#454C5C', '#565E70', 'rgba(76,141,255,0.14)',
             'accent on ground 6.0:1\nink on accent 5.9:1'),
           P('C', 'Telemetry Green',
-            'The colour of a passing check and a healthy pipeline. Suits the audit half of the business — “this is instrumented correctly” — more than the growth half.',
+            'The colour of a passing check and a healthy pipeline. Suits the audit half of the business \u2014 \u201cthis is instrumented correctly\u201d \u2014 more than the growth half.',
             '#0A1210', '#121B18', '#1E2A26', '#2FD48A', '#4FE3A0', '#04140D', '#E6EDEA', '#A2B0AA', '#75827C', '#404E48', '#4F5D57', 'rgba(47,212,138,0.14)',
             'accent on ground 9.9:1\nink on accent 9.8:1'),
           P('D', 'Cohort Violet',
-            'The subscription-analytics register — RevenueCat and Adapty both live here. Closest to the Nocturne palette you rejected, but at a chroma that carries on a near-black ground.',
+            'The subscription-analytics register \u2014 RevenueCat and Adapty both live here. Closest to the Nocturne palette you rejected, but at a chroma that carries on a near-black ground.',
             '#0D0E17', '#171824', '#242633', '#8B7CF6', '#A79BFA', '#0A0818', '#E9E9F0', '#A9AABD', '#7C7D90', '#4A4B5C', '#5A5B6E', 'rgba(139,124,246,0.16)',
             'accent on ground 5.8:1\nink on accent 6.0:1'),
           P('E', 'Store Coral',
-            'App Store energy — warm, consumer, high-energy. The most distinctive of the six and the least “enterprise”, which cuts both ways for a B2B audit sale.',
+            'App Store energy \u2014 warm, consumer, high-energy. The most distinctive of the six and the least \u201centerprise\u201d, which cuts both ways for a B2B audit sale.',
             '#12100F', '#1C1917', '#2A2624', '#FF6B4A', '#FF8468', '#160603', '#EDEAE8', '#B0A9A5', '#847D79', '#524B47', '#635B57', 'rgba(255,107,74,0.14)',
             'accent on ground 6.7:1\nink on accent 7.0:1'),
           P('F', 'Paper',
-            'The light counterpart, for PDFs, decks and printed audits. The accent is a darkened amber — #8F5900, not the brand #E39A1F, which reads at 2.2:1 on paper and is unusable there. At this value it clears AA as text as well as fill.',
+            'The light counterpart, for PDFs, decks and printed audits. The accent is a darkened amber \u2014 #8F5900, not the brand #E39A1F, which reads at 2.2:1 on paper and is unusable there. At this value it clears AA as text as well as fill.',
             '#F7F6F3', '#FFFFFF', '#E2E0DA', '#8F5900', '#7A4B00', '#FFFFFF', '#101725', '#3A4354', '#5C6779', '#C9C6BE', '#8E959E', 'rgba(143,89,0,0.1)',
             'accent on paper 5.4:1\nwhite on accent 5.8:1')
         ];
       })(),
 
       typeScale: [
-        { role: 'Hero', family: "'Be Vietnam Pro',sans-serif", size: '46px', weight: 700, ls: '-0.032em', sample: 'Your dashboard says', spec: 'clamp(38px, 5.4vw, 68px)\n1.05 · −0.032em · 700' },
-        { role: 'Section', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.028em', sample: 'Three places the money', spec: 'clamp(30px, 3.4vw, 44px)\n1.08 · −0.028em · 700' },
-        { role: 'Closing', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.032em', sample: 'Send me your MMP setup', spec: 'clamp(30px, 3.8vw, 50px)\n1.06 · −0.032em · 700' },
-        { role: 'Card title', family: "'Be Vietnam Pro',sans-serif", size: '22px', weight: 600, ls: '-0.02em', sample: 'Renewals nobody counted.', spec: '22–23px · 1.22 · −0.02em · 600' },
-        { role: 'Lead', family: "'Be Vietnam Pro',sans-serif", size: '18px', weight: 400, ls: '0', sample: 'It broke even in month nine', spec: 'clamp(16px, 1.35vw, 18.5px)\n1.6 · 400' },
-        { role: 'Body', family: "'Be Vietnam Pro',sans-serif", size: '16px', weight: 400, ls: '0', sample: 'The measurement stops before the money arrives', spec: '16px · 1.6 · 400' },
-        { role: 'Card body', family: "'Be Vietnam Pro',sans-serif", size: '14.5px', weight: 400, ls: '0', sample: 'Every LTV model is retention multiplied by monetisation', spec: '14.5px · 1.6 · 400' },
-        { role: 'Eyebrow', family: "'IBM Plex Mono',monospace", size: '11.5px', weight: 400, ls: '0.14em', sample: 'WHY YOUR NUMBERS DON’T RECONCILE', spec: '11.5px mono · 0.14em\nuppercase · text-4' },
-        { role: 'Meta', family: "'IBM Plex Mono',monospace", size: '11px', weight: 400, ls: '0.06em', sample: 'PDF · 6 pages · 0.9 MB', spec: '10–12.5px mono · text-4' }
+        { role: 'Hero', family: "'Be Vietnam Pro',sans-serif", size: '46px', weight: 700, ls: '-0.032em', sample: 'Your dashboard says', spec: 'clamp(38px, 5.4vw, 68px)\n1.05 \u00b7 \u22120.032em \u00b7 700' },
+        { role: 'Section', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.028em', sample: 'Three places the money', spec: 'clamp(30px, 3.4vw, 44px)\n1.08 \u00b7 \u22120.028em \u00b7 700' },
+        { role: 'Closing', family: "'Be Vietnam Pro',sans-serif", size: '34px', weight: 700, ls: '-0.032em', sample: 'Send me your MMP setup', spec: 'clamp(30px, 3.8vw, 50px)\n1.06 \u00b7 \u22120.032em \u00b7 700' },
+        { role: 'Card title', family: "'Be Vietnam Pro',sans-serif", size: '22px', weight: 600, ls: '-0.02em', sample: 'Renewals nobody counted.', spec: '22\u201323px \u00b7 1.22 \u00b7 \u22120.02em \u00b7 600' },
+        { role: 'Lead', family: "'Be Vietnam Pro',sans-serif", size: '18px', weight: 400, ls: '0', sample: 'It broke even in month nine', spec: 'clamp(16px, 1.35vw, 18.5px)\n1.6 \u00b7 400' },
+        { role: 'Body', family: "'Be Vietnam Pro',sans-serif", size: '16px', weight: 400, ls: '0', sample: 'The measurement stops before the money arrives', spec: '16px \u00b7 1.6 \u00b7 400' },
+        { role: 'Card body', family: "'Be Vietnam Pro',sans-serif", size: '14.5px', weight: 400, ls: '0', sample: 'Every LTV model is retention multiplied by monetisation', spec: '14.5px \u00b7 1.6 \u00b7 400' },
+        { role: 'Eyebrow', family: "'IBM Plex Mono',monospace", size: '11.5px', weight: 400, ls: '0.14em', sample: 'WHY YOUR NUMBERS DON\u2019T RECONCILE', spec: '11.5px mono \u00b7 0.14em\nuppercase \u00b7 text-4' },
+        { role: 'Meta', family: "'IBM Plex Mono',monospace", size: '11px', weight: 400, ls: '0.06em', sample: 'PDF \u00b7 6 pages \u00b7 0.9 MB', spec: '10\u201312.5px mono \u00b7 text-4' }
       ],
 
       spacing: [
@@ -604,25 +604,25 @@ class Component extends DCLogic {
       elevation: [
         { name: 'Resting card', shadow: '0 0 0 1px #23272E', css: '0 0 0 1px #23272E' },
         { name: 'Accent card', shadow: '0 0 0 1px rgba(227,154,31,0.34)', css: '0 0 0 1px rgba(227,154,31,0.34)' },
-        { name: 'Hover lift', shadow: '0 0 0 1px #E39A1F, 0 18px 44px rgba(0,0,0,0.5)', css: '0 0 0 1px #E39A1F,\n0 18px 44px rgba(0,0,0,0.5)\n+ translateY(−3px)' }
+        { name: 'Hover lift', shadow: '0 0 0 1px #E39A1F, 0 18px 44px rgba(0,0,0,0.5)', css: '0 0 0 1px #E39A1F,\n0 18px 44px rgba(0,0,0,0.5)\n+ translateY(\u22123px)' }
       ],
 
       chartRoles: [
-        { name: 'True revenue', hex: '#E39A1F', spec: '2.6px solid · step path', isLine: true, isDash: false, isFill: false, w: '3px', op: 1, swatchSlot: '' },
-        { name: 'What the dashboard sees', hex: '#5B626B', spec: '2px · dasharray 6 5', isLine: false, isDash: true, isFill: false, w: '2px', op: 1, swatchSlot: '' },
+        { name: 'True revenue', hex: '#E39A1F', spec: '2.6px solid \u00b7 step path', isLine: true, isDash: false, isFill: false, w: '3px', op: 1, swatchSlot: '' },
+        { name: 'What the dashboard sees', hex: '#5B626B', spec: '2px \u00b7 dasharray 6 5', isLine: false, isDash: true, isFill: false, w: '2px', op: 1, swatchSlot: '' },
         { name: 'The invisible gap', hex: '#E39A1F', spec: 'fill at opacity 0.16', isLine: false, isDash: false, isFill: true, w: '16px', op: 0.16, swatchSlot: '' },
         { name: 'Axes', hex: '#2C3138', spec: '1px solid', isLine: true, isDash: false, isFill: false, w: '1px', op: 1, swatchSlot: '' },
-        { name: 'Zero and day-7 lines', hex: '#4A515A', spec: '1px · dasharray 3 4 on day 7', isLine: true, isDash: false, isFill: false, w: '1px', op: 1, swatchSlot: '' },
-        { name: 'Breakeven marker', hex: '#E39A1F', spec: 'r=5 dot · 1.5px dashed drop line', isLine: false, isDash: false, isFill: true, w: '16px', op: 1, swatchSlot: '' }
+        { name: 'Zero and day-7 lines', hex: '#4A515A', spec: '1px \u00b7 dasharray 3 4 on day 7', isLine: true, isDash: false, isFill: false, w: '1px', op: 1, swatchSlot: '' },
+        { name: 'Breakeven marker', hex: '#E39A1F', spec: 'r=5 dot \u00b7 1.5px dashed drop line', isLine: false, isDash: false, isFill: true, w: '16px', op: 1, swatchSlot: '' }
       ],
 
       motion: [
-        { name: 'Hero entrance', what: 'Pill, headline, lead, CTAs and chips rise into place in sequence.', spec: 'fade + 16px rise · 600ms\ndelays 0/80/160/240/320ms' },
-        { name: 'Scroll reveal', what: 'Section headers and cards on a scroll-driven timeline, no JS and no class gate.', spec: 'animation-timeline: view()\nentry 4% → entry 55% · 650ms' },
+        { name: 'Hero entrance', what: 'Pill, headline, lead, CTAs and chips rise into place in sequence.', spec: 'fade + 16px rise \u00b7 600ms\ndelays 0/80/160/240/320ms' },
+        { name: 'Scroll reveal', what: 'Section headers and cards on a scroll-driven timeline, no JS and no class gate.', spec: 'animation-timeline: view()\nentry 4% \u2192 entry 55% \u00b7 650ms' },
         { name: 'Hero backdrop', what: 'Two blurred radial glows drifting, plus one accent line sweeping the top edge.', spec: '28s / 36s ease-in-out\nsweep 11s linear' },
-        { name: 'The loop signal', what: 'Desktop: a dot travels the circle. Mobile: each rail node lights in sequence.', spec: 'animateMotion 11s\nnodes 5.2s · delays 0/1.3/2.6/3.9s' },
-        { name: 'Chart draw-on', what: 'The true-revenue path draws from left to right on first paint.', spec: 'pathLength=1 · dashoffset 1→0\n1.2–1.3s · delay 300–400ms' },
-        { name: 'Interactive states', what: 'Button fill and glow, card lift, input border, chip tint.', spec: '160–200ms · background,\nbox-shadow, transform only' }
+        { name: 'The loop signal', what: 'Desktop: a dot travels the circle. Mobile: each rail node lights in sequence.', spec: 'animateMotion 11s\nnodes 5.2s \u00b7 delays 0/1.3/2.6/3.9s' },
+        { name: 'Chart draw-on', what: 'The true-revenue path draws from left to right on first paint.', spec: 'pathLength=1 \u00b7 dashoffset 1\u21920\n1.2\u20131.3s \u00b7 delay 300\u2013400ms' },
+        { name: 'Interactive states', what: 'Button fill and glow, card lift, input border, chip tint.', spec: '160\u2013200ms \u00b7 background,\nbox-shadow, transform only' }
       ],
 
       icons: [
@@ -649,7 +649,7 @@ class Component extends DCLogic {
       ],
 
       dos: [
-        'Fill the primary button. Amber on transparent was tried and rejected — the filled button is the brand’s one confident gesture.',
+        'Fill the primary button. Amber on transparent was tried and rejected \u2014 the filled button is the brand\u2019s one confident gesture.',
         'Set every figure in tabular numerals, in both families.',
         'Centre section headers and cap them in ch units. Mixed left- and centre-aligned headers is what made the old page feel unaligned.',
         'Draw card outlines as a 1px box-shadow, not a border.',
@@ -658,11 +658,11 @@ class Component extends DCLogic {
       ],
       donts: [
         'Do not add a second brand hue. If something needs to stand apart from amber, use a grey step or a size change.',
-        'Do not use red — not for the dashboard line, not for errors in a chart. Grey and dashed carries “less real” better.',
+        'Do not use red \u2014 not for the dashboard line, not for errors in a chart. Grey and dashed carries \u201cless real\u201d better.',
         'Do not gradient-fill a card or a button. Gradients exist only as blurred radial glows behind a section and as the section wash.',
-        'Do not set amber text on a light ground — it falls to 2.2:1.',
+        'Do not set amber text on a light ground \u2014 it falls to 2.2:1.',
         'Do not stack shadows. On this ground, elevation is one hairline plus one ambient shadow.',
-        'Do not put white-space: nowrap on a row or a label — only on the value it protects.'
+        'Do not put white-space: nowrap on a row or a label \u2014 only on the value it protects.'
       ]
     };
   }

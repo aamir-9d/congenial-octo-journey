@@ -84,6 +84,44 @@ test('every logo mark rendered at every size', { skip }, () => {
   assert.equal((html.match(/<animateMotion/g) ?? []).length, 1, '1b travelling signal is wrong');
 });
 
+test('camelCase SVG attributes survive the prop-name conversion', { skip }, () => {
+  // This shipped broken once. React props are camelCase and SVG attributes are
+  // mostly hyphenated, so the shim hyphenates — but a handful of SVG attributes
+  // are really camelCase, and `viewBox` is one of them.
+  //
+  // Hyphenating it to `view-box` does not error. The SVG still renders, still
+  // has its width and height, and simply loses the coordinate system that maps
+  // the 100-unit artwork onto them. Every mark then draws at 1:1 pixels, so the
+  // 16px favicon row shows the top-left corner of the drawing. It looks like a
+  // page full of broken logos, and nothing in the build says a word.
+  for (const name of Object.keys(DOCS) as Array<keyof typeof DOCS>) {
+    const html = read(name);
+    assert.ok(!/view-box|repeat-count|path-length|preserve-aspect-ratio/.test(html), `${name} hyphenated a camelCase SVG attribute`);
+  }
+
+  const marks = read('logo-directions');
+  assert.equal(
+    (marks.match(/viewBox="0 0 100 100"/g) ?? []).length,
+    96,
+    'not every mark carries its viewBox',
+  );
+  assert.match(marks, /repeatCount="indefinite"/, '1b lost its repeatCount');
+  assert.equal(
+    (read('brand-book').match(/preserveAspectRatio="none"/g) ?? []).length,
+    6,
+    'the palette curves lost preserveAspectRatio',
+  );
+});
+
+test('the logo card rows are centred, like the brand book', { skip }, () => {
+  const html = read('logo-directions');
+  assert.equal(
+    (html.match(/flex-wrap:wrap;justify-content:center;gap:36px/g) ?? []).length,
+    2,
+    'both rounds of marks should centre in the page',
+  );
+});
+
 test('the brand book kept its substance', { skip }, () => {
   const html = read('brand-book');
 
