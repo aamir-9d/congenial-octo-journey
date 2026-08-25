@@ -186,6 +186,54 @@ const fmt = (d: Date) =>
     line-height: var(--lh-prose);
   }
 
+  /* Case studies carry comparison tables. Wrapped in its own scroller so a
+     wide table never widens the page -- the same rule the site holds itself
+     to at phone width. */
+  .post__body :global(table) {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    margin-top: var(--s8);
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    line-height: var(--lh-snug);
+  }
+
+  .post__body :global(thead) {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .post__body :global(th) {
+    padding: var(--s3) var(--s6) var(--s3) 0;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  .post__body :global(td) {
+    padding: var(--s3) var(--s6) var(--s3) 0;
+    border-top: 1px solid var(--color-line-soft);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The row label reads as prose, the figures as data. */
+  .post__body :global(td:first-child) {
+    white-space: normal;
+    font-family: var(--font-body);
+    color: var(--color-text-4);
+  }
+
+  .post__body :global(td strong) {
+    color: var(--color-accent);
+    font-weight: var(--fw-regular);
+  }
+
   .post__body :global(blockquote) {
     margin-top: var(--s6);
     padding-left: var(--s6);

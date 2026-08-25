@@ -1,11 +1,16 @@
 /**
  * Blog checks.
  *
- * These posts are republished from the author's own LinkedIn articles, so the
- * thing most worth protecting is that the transcription stays intact — the code
- * blocks in particular. A Markdown fence that loses a line, or a backtick that
- * closes early, produces a page that still builds and still looks fine while
- * quietly serving broken code to someone who copies it.
+ * The blog started as four republished LinkedIn articles, so the thing most
+ * worth protecting was that the transcription stayed intact — the code blocks
+ * in particular. A Markdown fence that loses a line, or a backtick that closes
+ * early, produces a page that still builds and still looks fine while quietly
+ * serving broken code to someone who copies it.
+ *
+ * It is no longer only republications. Posts written for the site have no
+ * LinkedIn original, and claiming one would be a false attribution, so the
+ * source rule is now conditional rather than universal: a republished post
+ * must credit its original, and an original post must not invent one.
  *
  * Requires `npm run build`.
  */
@@ -37,8 +42,19 @@ const frontmatter = (file: string) => {
   return { fields, body: m[2]! };
 };
 
+/** Posts republished from LinkedIn, as opposed to written for the site. */
+const REPUBLISHED = new Set([
+  'app-conversion-rate-analysis-in-python.md',
+  'leveraging-skan-for-ios.md',
+  'master-onboarding-insights-with-pandas.md',
+  'mastering-jql-in-javascript.md',
+]);
+
 test('every post carries the frontmatter the collection requires', () => {
-  assert.equal(sources.length, 4, 'expected the four republished articles');
+  assert.ok(sources.length >= REPUBLISHED.size, 'a republished article has gone missing');
+  for (const file of REPUBLISHED) {
+    assert.ok(sources.includes(file), `${file} is no longer in the collection`);
+  }
 
   for (const file of sources) {
     const { fields } = frontmatter(file);
@@ -50,15 +66,23 @@ test('every post carries the frontmatter the collection requires', () => {
   }
 });
 
-test('every post credits the LinkedIn original', () => {
+test('republished posts credit the original, and original posts claim none', () => {
   for (const file of sources) {
     const { fields } = frontmatter(file);
-    assert.ok(fields.source, `${file} has no source URL`);
-    assert.match(
-      fields.source!,
-      /^https:\/\/www\.linkedin\.com\/pulse\//,
-      `${file} source is not a LinkedIn Pulse URL`,
-    );
+
+    if (REPUBLISHED.has(file)) {
+      assert.ok(fields.source, `${file} is a republication with no source URL`);
+      assert.match(
+        fields.source!,
+        /^https:\/\/www\.linkedin\.com\/pulse\//,
+        `${file} source is not a LinkedIn Pulse URL`,
+      );
+    } else {
+      assert.ok(
+        !fields.source,
+        `${file} was written for the site but claims a source — that is a false attribution`,
+      );
+    }
   }
 });
 
