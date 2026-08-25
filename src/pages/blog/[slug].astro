@@ -186,6 +186,40 @@ const fmt = (d: Date) =>
     line-height: var(--lh-prose);
   }
 
+  /* Figures.
+
+     Markdown gives no way to mark up a <figure>, so an image followed by an
+     italic line on the next line lands in one <p> and is styled as one. The
+     height cap does the work a width cap cannot: the charts are landscape and
+     the paywall screenshot is a 1125x2436 phone capture, so constraining
+     height keeps the portrait one from running a full screen tall while the
+     landscape ones still fill the measure. */
+  .post__body :global(p:has(img)) {
+    margin-top: var(--s12);
+    text-align: center;
+  }
+
+  .post__body :global(p img) {
+    max-width: 100%;
+    max-height: 520px;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius-sm);
+    /* A hairline, so a screenshot with a light ground does not float on the
+       dark page with no edge. */
+    box-shadow: var(--ring);
+  }
+
+  .post__body :global(p:has(img) em) {
+    display: block;
+    margin-top: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-style: normal;
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
   /* Case studies carry comparison tables. Wrapped in its own scroller so a
      wide table never widens the page -- the same rule the site holds itself
      to at phone width. */

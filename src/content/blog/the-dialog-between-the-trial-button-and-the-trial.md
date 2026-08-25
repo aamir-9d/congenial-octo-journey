@@ -30,6 +30,9 @@ Three things shipped together.
 2. **The paywall was rebuilt around a feature comparison** — a free column and a Pro column, five rows, so the user can see what they get rather than read a claim about it.
 3. **The plan set collapsed to one.** Monthly at $9.99 and annual were replaced by a single weekly plan at the old monthly price.
 
+![The rebuilt paywall: a five-row free-versus-Pro comparison, one weekly plan, and a trial button that starts the trial](./images/pdf-scanner-paywall.png)
+*The paywall that replaced it. Five rows, two columns, one plan, and no dialog between the button and the trial.*
+
 ## What moved
 
 | Mature cohorts | Before | After | Change |
@@ -44,6 +47,9 @@ Three things shipped together.
 
 Totals across 25 countries: 77,094 installs and 476 trials before, 38,638 installs and 1,544 trials after. The install counts differ because the windows are different lengths; the per-day rates above are the comparable figures.
 
+![Active trials sat near 100 for three months, then stepped to a 650–900 band at the end of July](./images/pdf-scanner-active-trials.png)
+*Active trials, three months. The flat band on the left is the dialog. Nothing about the spend changes at the step.*
+
 ## The number that got worse
 
 Trial-to-paid fell from 26.5% to 18.5%, and that is not a footnote — it is what should happen.
@@ -54,7 +60,15 @@ It falls without mattering. Payers per day went from 7.0 to 31.8 on the same spe
 
 ## Where the revenue actually came from
 
-MRR went from about $31k to about $52k over the four weeks after the change — roughly +68%. Active subscriptions over the same period went from about 2,200 to about 2,550, which is +16%.
+MRR went from about $31k to about $52k over the four weeks after the change — roughly +68%.
+
+![MRR rising from about $31k on 28 July to about $52k by 24 August](./images/pdf-scanner-mrr.png)
+*MRR, 28 July to 24 August.*
+
+Active subscriptions over the same period went from about 2,200 to about 2,550, which is +16%.
+
+![Active subscriptions rising only slightly, from about 2,200 to about 2,550, over the same period](./images/pdf-scanner-active-subscriptions.png)
+*Active subscriptions, same window, same scale of time. This is the chart that stops the MRR one being misread.*
 
 Those two numbers do not match, and the gap is the whole story. Revenue per subscription rose about 45%, and it rose because a weekly plan bills 4.33 times as often per year as a monthly one at the same price. Most of the MRR lift is billing frequency, not subscriber growth.
 

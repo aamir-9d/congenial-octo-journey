@@ -1,0 +1,301 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * One case study, in full, sitting under the three findings.
+ *
+ * Proof states three findings in a line each. This is the one that can be
+ * shown all the way down — same daily spend, same daily installs, a defect
+ * removed, and every figure traceable to a country table. It is the section
+ * that answers "prove it" rather than "what do you find".
+ *
+ * The figures are the article's, not restated by hand: if the post changes,
+ * these change with it, because both read from `src/data/case-study.ts`.
+ *
+ * Entirely new to the page, so the whole section is `data-added`.
+ */
+import { CASE_STUDY } from '../data/case-study.ts';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const href = `${base}/blog/${CASE_STUDY.slug}`;
+---
+
+<section id="case-study" class="case section" data-section="case-study" data-added="bento">
+  <div class="wrap">
+    <div class="section-head" data-reveal="1">
+      <div class="eyebrow eyebrow--amber">ONE OF THEM, ALL THE WAY DOWN</div>
+      <h2 class="case__h2">{CASE_STUDY.headline}</h2>
+      <p class="section-lead">{CASE_STUDY.lead}</p>
+    </div>
+
+    <a class="case__card" href={href} data-reveal="1">
+      <div class="case__body">
+        <div class="case__kicker">{CASE_STUDY.kicker}</div>
+
+        <p class="case__summary">{CASE_STUDY.summary}</p>
+
+        <ul class="case__changes">
+          {
+            CASE_STUDY.changes.map((c) => (
+              <li class="case__change">
+                <span class="case__tick" aria-hidden="true">
+                  <Icon name="arrow-right" size={12} />
+                </span>
+                <span>
+                  <span class="wide-only">{c.long}</span>
+                  <span class="narrow-only">{c.short}</span>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <span class="case__cta">
+          Read the case study
+          <Icon name="arrow-right" size={14} />
+        </span>
+      </div>
+
+      <div class="case__figures">
+        <div class="case__control">
+          <span class="case__control-label">THE CONTROL</span>
+          {CASE_STUDY.control}
+        </div>
+
+        {
+          CASE_STUDY.figures.map((f) => (
+            <div class="case__row">
+              <span class="case__row-label">
+                <span class="wide-only">{f.label}</span>
+                <span class="narrow-only">{f.labelShort ?? f.label}</span>
+              </span>
+              <span class="case__row-vals">
+                <span class="case__before tabular">{f.before}</span>
+                <span class="case__arrow" aria-hidden="true">&#8594;</span>
+                <span class="case__after tabular">{f.after}</span>
+              </span>
+            </div>
+          ))
+        }
+
+        <p class="case__caveat">{CASE_STUDY.caveat}</p>
+      </div>
+    </a>
+  </div>
+</section>
+
+<style>
+  .case {
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 55%, var(--color-bg));
+  }
+
+  .case__h2 {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+  }
+
+  /* The whole card is the link, so the ring belongs on the card. */
+  .case__card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(24px, 3vw, 48px);
+    margin-top: clamp(32px, 3.4vw, 48px);
+    padding: clamp(26px, 3vw, 40px);
+    background: var(--color-surface);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--ring);
+    transition:
+      box-shadow 180ms var(--ease-out-soft),
+      transform 180ms var(--ease-out-soft);
+  }
+
+  .case__card:hover {
+    box-shadow: var(--ring-accent);
+    transform: translateY(-3px);
+  }
+
+  .case__card:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* A grid child defaults to min-width:auto and will not shrink below its
+     content, which is how a column ends up wider than its track. */
+  .case__body {
+    min-width: 0;
+  }
+
+  .case__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .case__summary {
+    margin-top: var(--s4);
+    font-size: var(--t-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .case__changes {
+    margin-top: var(--s8);
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s3);
+  }
+
+  .case__change {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s3);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  .case__tick {
+    display: inline-flex;
+    flex: none;
+    margin-top: 4px;
+    color: var(--color-accent);
+  }
+
+  .case__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--s8);
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
+  }
+
+  /* --- the figures ------------------------------------------------------- */
+
+  .case__figures {
+    align-self: start;
+    padding: var(--s6);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-sunk);
+    box-shadow: 0 0 0 1px var(--color-line-soft);
+  }
+
+  /* The control is the point of the whole study, so it leads rather than
+     sitting in a footnote. */
+  .case__control {
+    padding-bottom: var(--s4);
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  .case__control-label {
+    display: block;
+    margin-bottom: var(--s2);
+    letter-spacing: var(--ls-label);
+    color: var(--color-text-4);
+  }
+
+  .case__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: var(--s3) 0;
+    border-bottom: 1px solid var(--color-line-soft);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+  }
+
+  .case__row-label {
+    flex: 1;
+    min-width: 0;
+    color: var(--color-text-4);
+  }
+
+  .case__row-vals {
+    flex: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .case__before {
+    color: var(--color-text-4);
+  }
+
+  .case__arrow {
+    color: var(--color-text-4);
+  }
+
+  .case__after {
+    color: var(--color-accent);
+  }
+
+  .case__caveat {
+    margin-top: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
+  @media (max-width: 900px) {
+    .case__card {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Phone, to the same rules as every other section: --s6 padding, the
+     smaller type scale, and a full-width 52px target. */
+  @media (max-width: 640px) {
+    .case__card {
+      gap: var(--s8);
+      padding: var(--s6);
+      border-radius: var(--radius-card);
+    }
+
+    .case__card:hover {
+      transform: none;
+    }
+
+    .case__summary {
+      margin-top: var(--s3);
+      font-size: var(--t-body-sm);
+    }
+
+    .case__changes {
+      margin-top: var(--s6);
+    }
+
+    .case__change {
+      font-size: var(--t-card-sm);
+    }
+
+    .case__cta {
+      display: flex;
+      justify-content: center;
+      min-height: 52px;
+      margin-top: var(--s6);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-line-strong);
+      font-size: var(--t-body);
+    }
+
+    .case__figures {
+      padding: var(--s4) var(--s6) var(--s6);
+    }
+
+    .case__row {
+      font-size: var(--t-mono-sm);
+    }
+  }
+</style>
