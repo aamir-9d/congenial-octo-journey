@@ -78,3 +78,24 @@ export const CASE_STUDY = {
   caveat:
     'Trial-to-paid fell 26.5% → 18.5%: a wider funnel admits weaker intent. Payers per day still went up 4.5×. Most of the MRR lift is billing frequency, not subscriber growth.',
 } as const;
+
+
+/**
+ * Further case studies, shown as compact rows under the featured one.
+ *
+ * These carry no figures. The portfolio work behind them was done under
+ * employment and the revenue numbers are not ours to publish, which is the
+ * same standard a client's data gets here — so they lead with the mechanism
+ * instead, and say so rather than implying the numbers are coming.
+ */
+export const MORE_CASES = [
+  {
+    slug: 'the-strategy-was-right-the-traffic-was-wrong',
+    kicker: '50-APP PORTFOLIO · UTILITY',
+    title: 'The strategy was right. The traffic was wrong.',
+    summary:
+      'A competitor paywall copied across fifty apps failed twice over: it displaced the ad placement carrying 70–80% of ad revenue, and it was shown to users the campaigns had been optimised to select for tapping ads, not buying. The fix was two acquisition tracks and one binary that knows which one it is serving.',
+    summaryShort:
+      'A competitor paywall copied across fifty apps failed twice over. The fix was two acquisition tracks, and one binary that knows which one it is serving.',
+  },
+] as const;

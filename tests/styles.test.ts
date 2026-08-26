@@ -154,3 +154,28 @@ test('the payback model is its own section, not a child of the hero', { skip }, 
   const heroClose = html.indexOf('</section>', hero);
   assert.ok(heroClose < payback, 'the payback section is still nested inside the hero');
 });
+
+test('no shared-component anchor is dead outside the homepage', { skip }, () => {
+  // The nav and footer render on every page, but every section they point at
+  // lives on the homepage. A bare `#contact` on /blog/a-post resolves against
+  // that post, finds nothing, and the primary call to action silently does
+  // nothing. That was true of the whole nav on five pages before it was found.
+  const offenders: string[] = [];
+
+  for (const page of PAGES.concat(['blog/index.html'])) {
+    const file = path.join(DIST, page);
+    if (!fs.existsSync(file) || page === 'index.html') continue;
+
+    for (const m of fs.readFileSync(file, 'utf8').matchAll(/href="(#[a-zA-Z][\w-]*)"/g)) {
+      offenders.push(`${page}  ${m[1]}`);
+    }
+  }
+
+  assert.deepEqual(
+    offenders,
+    [],
+    'These anchors point at sections that are not on the page:\n  ' +
+      offenders.join('\n  ') +
+      '\n\nPrefix with the base so they reach the homepage section instead.',
+  );
+});

@@ -17,7 +17,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { CASE_STUDY, RAW } from '../src/data/case-study.ts';
+import { CASE_STUDY, MORE_CASES, RAW } from '../src/data/case-study.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DIST = path.join(ROOT, 'dist', 'index.html');
@@ -120,4 +120,20 @@ test('the section renders, and links to the article that backs it', { skip }, ()
 test('the client stays withheld', { skip }, () => {
   assert.match(CASE_STUDY.kicker, /WITHHELD/);
   assert.match(html, /Client names withheld/);
+});
+
+test('further case studies link to posts that exist, and claim no figures', { skip }, () => {
+  for (const c of MORE_CASES) {
+    const file = path.join(ROOT, 'src', 'content', 'blog', `${c.slug}.md`);
+    assert.ok(fs.existsSync(file), `${c.slug} has no article behind it`);
+    assert.ok(html.includes(`/blog/${c.slug}`), `${c.slug} does not render on the homepage`);
+
+    // These carry no published revenue figures, so the card must not imply
+    // one. A currency amount, or a percentage attached to lift/growth language,
+    // would be a success claim with nothing behind it. A percentage that
+    // describes the failure -- "70-80% of ad revenue" -- is fine and is the
+    // point of the study, so it is deliberately not caught here.
+    const claim = /\$[\d,]+|\b\d+(\.\d+)?%\s*(lift|increase|uplift|growth)/i.exec(c.summary);
+    assert.equal(claim, null, `${c.slug} summary makes a numeric claim: "${claim?.[0]}"`);
+  }
 });

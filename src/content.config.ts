@@ -31,6 +31,14 @@ const blog = defineCollection({
     tag: z.string(),
     /** Where it first appeared. Rendered as a visible attribution link. */
     source: z.string().url().optional(),
+    /**
+     * Optional closing call to action.
+     *
+     * In the layout rather than in the Markdown because a Markdown link cannot
+     * know the deployed base path -- `../#contact` gets normalised to
+     * `#contact`, which points at the post itself. The layout has the base.
+     */
+    cta: z.string().optional(),
   }),
 });
 

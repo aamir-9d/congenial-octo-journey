@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
 
 /**
  * A single post.
@@ -50,6 +51,18 @@ const fmt = (d: Date) =>
         <div class="post__body">
           <Content />
         </div>
+
+        {
+          post.data.cta && (
+            <aside class="post__cta">
+              <p class="post__cta-text">{post.data.cta}</p>
+              <a class="btn-primary post__cta-btn" href={`${base}/#contact`}>
+                Book a call
+                <Icon name="arrow-right" size={14} />
+              </a>
+            </aside>
+          )
+        }
 
         {
           post.data.source && (
@@ -273,6 +286,46 @@ const fmt = (d: Date) =>
     padding-left: var(--s6);
     border-left: 2px solid var(--color-accent);
     color: var(--color-text-4);
+  }
+
+  /* Closing CTA. Only on posts that carry one -- an article that is purely
+     technical should not end in a pitch. */
+  .post__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s6);
+    margin-top: var(--s16);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring-accent);
+  }
+
+  .post__cta-text {
+    flex: 1;
+    min-width: min(100%, 34ch);
+    margin: 0;
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .post__cta-btn {
+    flex: none;
+  }
+
+  @media (max-width: 640px) {
+    .post__cta {
+      padding: var(--s6);
+      gap: var(--s4);
+    }
+
+    .post__cta-btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 52px;
+    }
   }
 
   .post__source {

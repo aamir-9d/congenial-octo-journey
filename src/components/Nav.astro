@@ -15,6 +15,20 @@ import type { IconName } from '../data/icons';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+/**
+ * Turn an in-page anchor into one that also works from another page.
+ *
+ * The nav and footer render on every page, but every section they point at
+ * lives on the homepage. A bare `#contact` on /blog/a-post resolves against
+ * that post, finds nothing, and the primary call to action silently does
+ * nothing -- which was true on /blog, /privacy, /terms, /404 and every post.
+ *
+ * Prefixing with the base fixes it without breaking the homepage: a link whose
+ * path matches the current document is still treated as a same-document
+ * fragment navigation, so it scrolls rather than reloads.
+ */
+const anchor = (href: string) => (href.startsWith('#') ? `${base}/${href}` : href);
+
 const links = [
   { href: '#services', label: 'Services' },
   { href: '#loop', label: 'The Loop' },
@@ -38,13 +52,13 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
 
 <nav class="nav">
   <div class="nav__bar">
-    <a href="#top" class="nav__logo">E2E Apps</a>
+    <a href={anchor("#top")} class="nav__logo">E2E Apps</a>
 
     <div id="nav-links" class="nav__links">
-      {links.map((l) => <a href={l.href} class="nav__link">{l.label}</a>)}
+      {links.map((l) => <a href={anchor(l.href)} class="nav__link">{l.label}</a>)}
     </div>
 
-    <a href="#contact" class="nav__cta">
+    <a href={anchor("#contact")} class="nav__cta">
       Book a call
       <Icon name="arrow-up-right" size={13} />
     </a>
@@ -71,7 +85,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
   <div class="sheet__links">
     {
       sheetLinks.map((l) => (
-        <a href={l.href} class="sheet__link">
+        <a href={anchor(l.href)} class="sheet__link">
           <span class="sheet__icon">
             <Icon name={l.icon} size={19} />
           </span>
@@ -86,7 +100,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
   </div>
 
   <div class="sheet__foot">
-    <a href="#contact" class="btn-primary sheet__cta">
+    <a href={anchor("#contact")} class="btn-primary sheet__cta">
       Book a call
       <Icon name="arrow-right" size={15} />
     </a>
