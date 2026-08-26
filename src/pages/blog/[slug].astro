@@ -229,6 +229,35 @@ const fmt = (d: Date) =>
     color: var(--color-text-4);
   }
 
+  /* Original diagrams, drawn in the site's own palette rather than lifted
+     from a source deck. <figure> because they carry a caption that is part of
+     the argument, not a label. */
+  .post__body :global(figure) {
+    margin: var(--s12) 0 0;
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    overflow-x: auto;
+  }
+
+  .post__body :global(figure svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* The diagrams are drawn on a fixed viewBox; below this they stop being
+       legible and should scroll inside the figure instead of shrinking. */
+    min-width: 460px;
+  }
+
+  .post__body :global(figcaption) {
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
   /* Case studies carry comparison tables. Wrapped in its own scroller so a
      wide table never widens the page -- the same rule the site holds itself
      to at phone width. */
