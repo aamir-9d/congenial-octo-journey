@@ -4,6 +4,8 @@ kicker: Aggregating onboarding and paywall data by device, filtering to complete
 date: 2024-10-25
 tag: Analytics
 source: https://www.linkedin.com/pulse/app-onboarding-analysis-revenue-boost-tracking-in-app-aamir-jan-khan-wqutc/
+cta: >-
+  This arithmetic is only as good as the events underneath it. A purchase event that fires before the receipt validates, or an onboarding step that never fires on one platform, and every rate in the table comes out confidently wrong. Checking that is what an audit is for.
 ---
 
 In the world of app development, understanding user engagement, particularly in terms of subscription conversions, is key to optimizing product offerings and improving user experience. Here's a step-by-step guide on using Python's Pandas library to aggregate user data, filter based on specific criteria, and calculate conversion rates.

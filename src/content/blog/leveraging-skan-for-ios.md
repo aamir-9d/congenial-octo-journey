@@ -4,6 +4,8 @@ kicker: How SKAdNetwork records an install, what happens when six ad networks co
 date: 2024-10-24
 tag: SKAdNetwork
 source: https://www.linkedin.com/pulse/leveraging-skan-ios-optimizing-ad-attribution-tracking-aamir-jan-khan-6bikf/
+cta: >-
+  A SKAN schema is not portable between apps. A subscription app keys its fine values to funnel position; a game keys them to revenue buckets; and a schema copied from one into the other wastes the signal completely. If yours was inherited rather than designed, that is worth an hour.
 ---
 
 In the evolving landscape of iOS advertising, Apple's SKAdNetwork (SKAN) and App Tracking Transparency (ATT) have redefined how advertisers track and measure campaign success. Leveraging SKAN's capabilities is essential for accurate ad attribution, ensuring your app maximizes its marketing potential while respecting user privacy.

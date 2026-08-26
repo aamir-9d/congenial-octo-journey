@@ -32,13 +32,18 @@ const blog = defineCollection({
     /** Where it first appeared. Rendered as a visible attribution link. */
     source: z.string().url().optional(),
     /**
-     * Optional closing call to action.
+     * Closing call to action, tailored to this post.
      *
-     * In the layout rather than in the Markdown because a Markdown link cannot
-     * know the deployed base path -- `../#contact` gets normalised to
-     * `#contact`, which points at the post itself. The layout has the base.
+     * Required, so a new post cannot ship without one. It lives here rather
+     * than in the Markdown body because a Markdown link cannot know the
+     * deployed base path -- `../#contact` gets normalised to `#contact`, which
+     * points the reader back at the post they are already reading. The layout
+     * has the base.
+     *
+     * Tailored, not boilerplate: it should name something specific to the
+     * article it closes. `tests/blog.test.ts` fails if two posts share one.
      */
-    cta: z.string().optional(),
+    cta: z.string(),
   }),
 });
 

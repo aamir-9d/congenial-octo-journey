@@ -52,17 +52,13 @@ const fmt = (d: Date) =>
           <Content />
         </div>
 
-        {
-          post.data.cta && (
-            <aside class="post__cta">
-              <p class="post__cta-text">{post.data.cta}</p>
-              <a class="btn-primary post__cta-btn" href={`${base}/#contact`}>
-                Book a call
-                <Icon name="arrow-right" size={14} />
-              </a>
-            </aside>
-          )
-        }
+        <aside class="post__cta">
+          <p class="post__cta-text">{post.data.cta}</p>
+          <a class="btn-primary post__cta-btn" href={`${base}/#contact`}>
+            Book a call
+            <Icon name="arrow-right" size={14} />
+          </a>
+        </aside>
 
         {
           post.data.source && (
@@ -288,8 +284,9 @@ const fmt = (d: Date) =>
     color: var(--color-text-4);
   }
 
-  /* Closing CTA. Only on posts that carry one -- an article that is purely
-     technical should not end in a pitch. */
+  /* Closing CTA. Every post carries one, tailored to what it just argued --
+     the copy comes from the post's own frontmatter, so the technical articles
+     close on the failure mode they imply rather than on a generic pitch. */
   .post__cta {
     display: flex;
     flex-wrap: wrap;

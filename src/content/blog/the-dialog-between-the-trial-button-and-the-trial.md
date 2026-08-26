@@ -3,6 +3,8 @@ title: The dialog between the trial button and the trial
 kicker: A PDF scanner app ran the same daily spend through a rebuilt paywall. Install-to-trial went from 0.6% to 4.0%, and the top of the funnel never moved.
 date: 2026-08-26
 tag: Paywall
+cta: >-
+  That defect sat in the highest-value step of the funnel for four months while every dashboard reported correctly. If your install-to-trial rate has been flat long enough to feel like a baseline, it is worth finding out what it is actually describing.
 ---
 
 A PDF scanner app was buying about 4,300 installs a day and converting 0.6% of them into a trial. That number had been flat for months. The spend was working — installs arrived, at a stable cost, from the countries the campaigns targeted — and almost none of them reached a paywall decision.

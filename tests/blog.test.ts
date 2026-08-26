@@ -34,10 +34,29 @@ const frontmatter = (file: string) => {
   const raw = fs.readFileSync(path.join(CONTENT, file), 'utf8');
   const m = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/.exec(raw);
   assert.ok(m, `${file} has no frontmatter block`);
+  // Handles YAML folded and literal scalars (`>-`, `>`, `|`, `|-`) as well as
+  // plain values. Without that, `cta: >-` parses as the two-character string
+  // ">-" and every assertion about its content is meaningless while still
+  // passing for the wrong reason.
   const fields: Record<string, string> = {};
-  for (const line of m[1]!.split('\n')) {
-    const kv = /^(\w+):\s*(.*)$/.exec(line);
-    if (kv) fields[kv[1]!] = kv[2]!.replace(/^['"]|['"]$/g, '');
+  const lines = m[1]!.split('\n');
+
+  for (let i = 0; i < lines.length; i++) {
+    const kv = /^(\w+):\s*(.*)$/.exec(lines[i]!);
+    if (!kv) continue;
+
+    const key = kv[1]!;
+    const inline = kv[2]!;
+
+    if (/^[|>][-+]?$/.test(inline.trim())) {
+      const block: string[] = [];
+      while (i + 1 < lines.length && /^\s+\S/.test(lines[i + 1]!)) {
+        block.push(lines[++i]!.trim());
+      }
+      fields[key] = block.join(' ');
+    } else {
+      fields[key] = inline.replace(/^['"]|['"]$/g, '');
+    }
   }
   return { fields, body: m[2]! };
 };
@@ -174,5 +193,33 @@ test('the sitemap covers the posts, dated when they were published', { skip }, (
     const m = entry.exec(xml);
     assert.ok(m, `${slug} has no lastmod`);
     assert.equal(m[1], fields.date, `${slug} lastmod is not its publication date`);
+  }
+});
+
+test('every post closes on a call to action tailored to it', () => {
+  const seen = new Map<string, string>();
+
+  for (const file of sources) {
+    const { fields } = frontmatter(file);
+
+    assert.ok(fields.cta, `${file} has no closing call to action`);
+    assert.ok(
+      fields.cta!.length > 120,
+      `${file} cta is too thin to be tailored to the article`,
+    );
+
+    // Boilerplate repeated across posts is the failure this guards against: the
+    // point of putting the copy in frontmatter is that each one names something
+    // specific to the piece it closes.
+    const prior = seen.get(fields.cta!);
+    assert.equal(prior, undefined, `${file} reuses the cta from ${prior}`);
+    seen.set(fields.cta!, file);
+
+    for (const banned of ['unlock', 'supercharge', 'game-chang', '!']) {
+      assert.ok(
+        !fields.cta!.toLowerCase().includes(banned),
+        `${file} cta uses "${banned}", which the brand voice rules out`,
+      );
+    }
   }
 });

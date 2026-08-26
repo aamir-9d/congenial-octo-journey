@@ -4,6 +4,8 @@ kicker: Pulling unique property values, exporting every property of an event, an
 date: 2024-10-23
 tag: Mixpanel
 source: https://www.linkedin.com/pulse/mastering-jql-javascript-advanced-analytics-mixpanel-aamir-jan-khan-poywf/
+cta: >-
+  JQL will answer whatever you ask it, including questions your event schema cannot actually support. If your Mixpanel numbers do not reconcile with your MMP or your subscription platform, the query is rarely the thing that is wrong.
 ---
 
 ## What is Mixpanel?
