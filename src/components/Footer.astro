@@ -31,7 +31,7 @@ const links = [
   <div class="footer__top">
     <div class="footer__brand">
       <div class="footer__logo">
-        <Logo size={30} label={null} />
+        <Logo size={44} label={null} />
         <span>E2E Apps</span>
       </div>
       <p class="footer__tagline">
@@ -83,10 +83,13 @@ const links = [
   /* Was `color: var(--color-text)`, which the compatibility shim resolved to the
      page ground — 1.02:1 against the footer. Invisible, and only found by
      auditing the shim rather than by looking at the page. */
+  /* The footer is where the brand signs off, so the mark runs a little larger
+     than the nav's and keeps the wordmark at every width -- there is no
+     competing control here to run out of room against. */
   .footer__logo {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 13px;
     font-size: 19px;
     font-weight: var(--fw-bold);
     letter-spacing: var(--ls-brand);

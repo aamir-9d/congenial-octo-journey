@@ -54,7 +54,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
 <nav class="nav">
   <div class="nav__bar">
     <a href={anchor("#top")} class="nav__logo">
-      <Logo size={26} label={null} />
+      <Logo size={40} label={null} />
       <span>E2E Apps</span>
     </a>
 
@@ -81,7 +81,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
 
   <div class="sheet__bar">
     <span class="nav__logo">
-        <Logo size={26} label={null} />
+        <Logo size={40} label={null} />
         <span>E2E Apps</span>
       </span>
     <button type="button" class="nav__burger" data-menu-close aria-label="Close menu">
@@ -140,10 +140,14 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     padding: 14px var(--gutter);
   }
 
+  /* The mark is sized to the "Book a call" button beside it, which computes to
+     42.4px (14px text at 1.6, plus 10px padding top and bottom). 40 rather
+     than 42 because a solid amber tile reads optically heavier than a filled
+     button of the same height. */
   .nav__logo {
     display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 11px;
     font-size: 18px;
     font-weight: var(--fw-bold);
     letter-spacing: var(--ls-brand);
@@ -324,6 +328,22 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
   @media (max-width: 640px) {
     .nav__links {
       display: none;
+    }
+
+    /* At 375px the full lockup, the CTA and the menu button leave about 12px
+       of slack -- one longer word from wrapping. The mark alone carries the
+       name here: the tile spells E2E, so nothing is lost by dropping the
+       wordmark beside it. */
+    .nav__bar .nav__logo span:not(.logo) {
+      display: none;
+    }
+
+    /* :global because the mark is Logo.astro's own root element and carries
+       ITS scope id, not this component's -- a plain `.logo` selector here
+       compiles to `.logo[nav-scope]` and silently matches nothing. */
+    .nav__bar .nav__logo :global(.logo) {
+      width: 36px;
+      height: 36px;
     }
 
     .nav__cta {

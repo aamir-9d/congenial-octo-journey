@@ -161,3 +161,40 @@ test('the head points at the icon set', { skip }, () => {
     assert.match(html, rel, `missing head link: ${rel}`);
   }
 });
+
+test('the mark is sized to the control beside it, at both widths', { skip }, () => {
+  // The complaint that produced these numbers was that the mark read small
+  // against the "Book a call" button. That button computes to 42.4px --
+  // 14px text at 1.6 line-height, plus 10px padding top and bottom -- so the
+  // mark sits at 40. If the button's padding or type size ever moves, this
+  // fails and the mark should move with it.
+  const cta = /\.nav__cta\[[^\]]*\]\{[^}]*\}/.exec(html)?.[0] ?? '';
+  assert.match(cta, /padding:10px 18px/, 'the CTA padding moved; re-derive the mark size');
+  assert.match(cta, /font-size:var\(--t-card-sm\)/, 'the CTA type size moved; re-derive the mark size');
+
+  const sizes = [...html.matchAll(/<svg width="(\d+)" height="\1"[^>]*class="logo/g)].map((m) =>
+    Number(m[1]),
+  );
+  assert.equal(sizes[0], 40, 'the nav mark is no longer sized to the CTA');
+  assert.ok(sizes.at(-1)! >= 40, 'the footer mark should not be smaller than the nav one');
+});
+
+test('a cross-component size override actually reaches the mark', { skip }, () => {
+  // Astro scopes a component's CSS to that component's own elements. The mark
+  // is Logo.astro's root, so a plain `.logo` selector written inside Nav
+  // compiles to `.logo[nav-scope]` and matches nothing -- the rule ships, the
+  // build is green, and the size silently does not apply. This has bitten five
+  // times in this project, and the class-reachability test cannot catch it
+  // because `.logo` IS defined, just in another component's scope.
+  const markScope = /class="logo"[^>]*data-astro-cid-([a-z0-9]+)/.exec(html)?.[1];
+  assert.ok(markScope, 'the mark no longer carries a scope id');
+
+  for (const m of html.matchAll(/\.logo\[data-astro-cid-([a-z0-9]+)\]/g)) {
+    assert.equal(
+      m[1],
+      markScope,
+      `a rule targets .logo in scope ${m[1]}, but the mark is in ${markScope} — ` +
+        'use :global(.logo) when styling it from another component',
+    );
+  }
+});
