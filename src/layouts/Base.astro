@@ -72,7 +72,15 @@ const LATIN =
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    {/* SVG first for browsers that take it; the PNGs are the fallback, and
+        Safari still wants apple-touch-icon by name. All generated from the one
+        mark by scripts/build-icons.mjs. */}
     <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={asset('/favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="icon" href={asset('/favicon-16.png')} sizes="16x16" type="image/png" />
+    <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} sizes="180x180" />
+    <link rel="manifest" href={asset('/site.webmanifest')} />
+    <meta name="theme-color" content="#0E1014" />
 
     {/* 700 carries the h1, which is the LCP element; 400 carries the lead
         paragraph beneath it. The other two weights and the mono face load with

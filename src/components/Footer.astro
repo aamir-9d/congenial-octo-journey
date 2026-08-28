@@ -1,4 +1,5 @@
 ---
+import Logo from './Logo.astro';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /* The export pointed Privacy and Terms at `#`, since neither page existed.
@@ -29,7 +30,10 @@ const links = [
 <footer class="footer">
   <div class="footer__top">
     <div class="footer__brand">
-      <div class="footer__logo">E2E Apps</div>
+      <div class="footer__logo">
+        <Logo size={30} label={null} />
+        <span>E2E Apps</span>
+      </div>
       <p class="footer__tagline">
         One specialist owns the entire growth loop &#8212; a second owns the infrastructure it runs
         on.
@@ -80,6 +84,9 @@ const links = [
      page ground — 1.02:1 against the footer. Invisible, and only found by
      auditing the shim rather than by looking at the page. */
   .footer__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-size: 19px;
     font-weight: var(--fw-bold);
     letter-spacing: var(--ls-brand);

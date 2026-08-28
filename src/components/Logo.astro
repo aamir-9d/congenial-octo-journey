@@ -1,0 +1,45 @@
+---
+import { markup, type LogoTreatment } from '../data/logo.ts';
+
+/**
+ * The E2E Apps mark, direction 1f.
+ *
+ * Renders the approved geometry at any size and picks the reduction form
+ * automatically — the three-glyph "E2E" above 24px, a single E at or below it.
+ *
+ * `label` exists because the same mark is sometimes the only thing identifying
+ * the site (the nav logo, which is a link home) and sometimes decoration beside
+ * a wordmark that already says "E2E Apps" (the footer lockup). Announcing it
+ * twice is worse than not announcing it, so decorative uses pass `label={null}`
+ * and get `aria-hidden`.
+ */
+
+interface Props {
+  size?: number;
+  treatment?: LogoTreatment;
+  /** Accessible name, or null when a visible wordmark already carries it. */
+  label?: string | null;
+  class?: string;
+}
+
+const { size = 32, treatment = 'filled', label = 'E2E Apps', class: cls } = Astro.props;
+
+const svg = markup(size, treatment);
+const a11y = label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' };
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 100 100"
+  class:list={['logo', cls]}
+  {...a11y}
+  set:html={svg}
+/>
+
+<style>
+  .logo {
+    display: block;
+    flex: none;
+  }
+</style>

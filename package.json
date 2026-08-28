@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/build-design-docs.mjs && astro build",
+    "build": "node scripts/build-icons.mjs && node scripts/build-design-docs.mjs && astro build",
+    "build:icons": "node scripts/build-icons.mjs",
     "build:design-docs": "node scripts/build-design-docs.mjs",
     "preview": "astro preview",
     "check": "astro check",
