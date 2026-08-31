@@ -113,6 +113,20 @@ const cards: Card[] = [
     added: true,
   },
 ];
+
+/**
+ * `compact` drops the five "Why it happens" disclosures.
+ *
+ * On the homepage the visitor has not yet been given a reason to care, so the
+ * lead line per card is the whole job and five collapsed essays underneath it
+ * are five decisions deferred to someone who will not make them. The full
+ * argument still renders on /services, where a reader has arrived deliberately.
+ */
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
 ---
 
 <section id="services" class="section" data-section="problems">
@@ -153,13 +167,17 @@ const cards: Card[] = [
             <h3 class="problems__title">{c.title}</h3>
             <p class="problems__lead">{c.lead}</p>
 
-            <details class="problems__why">
-              <summary class="problems__why-summary">
-                <span>Why it happens</span>
-                <Icon name="caret-down" size={11} />
-              </summary>
-              <p class="problems__body" set:html={withCode(c.body)} />
-            </details>
+            {
+              !compact && (
+                <details class="problems__why">
+                  <summary class="problems__why-summary">
+                    <span>Why it happens</span>
+                    <Icon name="caret-down" size={11} />
+                  </summary>
+                  <p class="problems__body" set:html={withCode(c.body)} />
+                </details>
+              )
+            }
 
             <div class="problems__visual">
               {

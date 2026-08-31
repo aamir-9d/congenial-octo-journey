@@ -1,0 +1,24 @@
+# Line endings are LF everywhere, in the repository and in the working tree.
+#
+# Without this, Git's autocrlf converts text files to CRLF on checkout on
+# Windows. That is invisible until something parses a file by anchoring on a
+# bare "\n" — and then it does not error, it silently matches nothing. Two real
+# failures from exactly that: the design-document renderer reported every
+# vendored icon as missing, and five content tests failed on frontmatter that
+# was perfectly well-formed.
+#
+# The nastiest part is that CI never sees it. A Linux runner checks out LF and
+# passes, so the breakage only exists on the machine the work is done on.
+#
+# eol=lf rather than text=auto alone: auto normalises what is committed but
+# still hands Windows CRLF in the working tree, which is the half that breaks.
+* text=auto eol=lf
+
+# Binaries must never be touched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.pdf binary
+*.ico binary

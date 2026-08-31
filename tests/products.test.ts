@@ -19,7 +19,8 @@ import { PRODUCTS, megabytes } from '../src/data/products.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const PDF_DIR = path.join(ROOT, 'public', 'pdf');
-const DIST = path.join(ROOT, 'dist', 'index.html');
+// Products moved to its own page in the homepage restructure.
+const DIST = path.join(ROOT, 'dist', 'products.html');
 
 const built = fs.existsSync(DIST);
 const skip = !built && 'run `npm run build` first';
@@ -91,7 +92,10 @@ test('cards render, are whole-card links, and open in a new tab', { skip }, () =
 
   // One tab stop per card. A card wrapping a second link or button would give
   // two stops to the same destination.
-  const section = html.slice(html.indexOf('id="products"'), html.indexOf('id="blog"'));
+  // Scoped to the card grid: on its own page the nav and footer contribute
+  // links of their own, and those are not what this is counting.
+  const grid = html.slice(html.indexOf('class="products__grid'));
+  const section = grid.slice(0, grid.indexOf('</section>'));
   const links = (section.match(/<a\s/g) ?? []).length;
   assert.equal(links, PRODUCTS.length, 'the section has more links than cards');
   assert.equal((section.match(/<button/g) ?? []).length, 0, 'a button inside a card link');
@@ -110,12 +114,13 @@ test('each href resolves under the deployed base path', { skip }, () => {
   }
 });
 
-test('the section sits between the audit findings and the founders', { skip }, () => {
-  const proof = html.indexOf('data-section="proof"');
-  const products = html.indexOf('id="products"');
-  const founders = html.indexOf('data-section="founders"');
+test('products has its own page, reachable from the nav', { skip }, () => {
+  // It used to sit between the audit findings and the founders on the
+  // homepage, where three product cards competed with the argument instead of
+  // supporting it. Position is no longer the thing to assert; reachability is.
+  assert.ok(html.includes('id="products"'), 'the products section did not render on its page');
 
-  assert.ok(proof > -1 && products > -1 && founders > -1, 'a section marker is missing');
-  assert.ok(proof < products, 'products render before the audit findings');
-  assert.ok(products < founders, 'products render after the founders');
+  const home = fs.readFileSync(path.join(ROOT, 'dist', 'index.html'), 'utf8');
+  assert.ok(!home.includes('id="products"'), 'products is still on the homepage');
+  assert.match(home, /href="[^"]*\/products"/, 'the homepage nav does not link to products');
 });

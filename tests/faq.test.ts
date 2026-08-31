@@ -19,7 +19,10 @@ import path from 'node:path';
 
 import { GROUP_A, GROUP_B, ALL_FAQ, toHtml, toText } from '../src/data/faq.ts';
 
-const DIST = path.resolve(import.meta.dirname, '..', 'dist', 'index.html');
+// The FAQ moved to its own page: it was 29% of the homepage and nineteen
+// disclosures in front of visitors who had not yet asked a question. The
+// content is unchanged and src/data/faq.ts is still the single source.
+const DIST = path.resolve(import.meta.dirname, '..', 'dist', 'faq.html');
 const built = fs.existsSync(DIST);
 const skip = !built && 'run `npm run build` first';
 const html = built ? fs.readFileSync(DIST, 'utf8') : '';
@@ -103,15 +106,15 @@ test('exactly one row per group is open by default', { skip }, () => {
   assert.equal(open, 2);
 });
 
-test('the section sits between the founders and the closing ask', { skip }, () => {
-  const founders = html.indexOf('data-section="founders"');
-  const faq = html.indexOf('id="faq"');
-  // CTA and Contact are one merged section now.
-  const cta = html.indexOf('data-section="contact"');
+test('the FAQ has its own page, reachable from the nav', { skip }, () => {
+  // It used to sit between the founders and the closing ask on the homepage,
+  // where it was 29% of the page. Now it is a destination, so what matters is
+  // that it exists, carries the questions, and can be found.
+  assert.ok(html.includes('id="faq"'), 'the FAQ section did not render on its page');
 
-  assert.ok(founders > -1 && faq > -1 && cta > -1, 'a section marker is missing');
-  assert.ok(founders < faq, 'FAQ renders before the founders');
-  assert.ok(faq < cta, 'FAQ renders after the closing ask — it is objection handling, so it goes first');
+  const home = fs.readFileSync(path.resolve(import.meta.dirname, '..', 'dist', 'index.html'), 'utf8');
+  assert.ok(!home.includes('id="faq"'), 'the FAQ is still on the homepage');
+  assert.match(home, /href="[^"]*\/faq"/, 'the homepage nav does not link to the FAQ page');
 });
 
 test('the FAQPage JSON-LD carries exactly the text the page shows', { skip }, () => {

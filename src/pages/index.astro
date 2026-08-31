@@ -2,23 +2,45 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Calculator from '../components/Calculator.astro';
 import Problems from '../components/Problems.astro';
-import Loop from '../components/Loop.astro';
-import Stack from '../components/Stack.astro';
+import Calculator from '../components/Calculator.astro';
 import Proof from '../components/Proof.astro';
 import CaseStudy from '../components/CaseStudy.astro';
-import Products from '../components/Products.astro';
-import Blog from '../components/Blog.astro';
+import Loop from '../components/Loop.astro';
 import Founders from '../components/Founders.astro';
-import Faq from '../components/Faq.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import Schema from '../components/Schema.astro';
 
-const title = 'E2E Apps — Mobile growth and measurement for subscription apps';
+/**
+ * The homepage.
+ *
+ * It used to run twelve sections, 4,269 words and nineteen minutes of reading,
+ * which is roughly four times what a page like this converts at. The stack,
+ * products and the FAQ now have their own pages and the blog index already had
+ * one; between them that was 40% of the words and 29 of the 35 disclosures.
+ * Nothing was deleted in the move.
+ *
+ * The order is the funnel rather than the inventory:
+ *
+ *   Hero        the claim, and one action
+ *   Problems    one beat of why it matters, compressed
+ *   Calculator  prove it with your own numbers — moved up from position four,
+ *               because it is the one object here a competitor cannot copy
+ *   Proof       three findings, as the lead-in to the case study
+ *   CaseStudy   one of them shown all the way down
+ *   Loop        how the work is sequenced
+ *   Founders    who you would actually be talking to
+ *   Contact     the one action, again
+ *
+ * Proof sits directly above CaseStudy on purpose: three one-line findings then
+ * the one that can be evidenced in full reads as a single movement, where two
+ * separate credibility sections read as repetition.
+ */
+
+const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
 const description =
-  'Most apps judge a campaign on day-7 revenue and kill the ones that would have paid back on day 60. We fix the measurement, then run the spend on top of it.';
+  'Your dashboard says the campaign is losing money. It broke even in month nine. We fix the attribution, close the gaps it was hiding, and spend against numbers you can defend.';
 ---
 
 <Base title={title} description={description} path="/">
@@ -26,16 +48,12 @@ const description =
   <div class="page">
     <Nav />
     <Hero />
-    <Problems />
+    <Problems compact />
     <Calculator />
-    <Loop />
     <Proof />
     <CaseStudy />
-    <Stack />
-    <Products />
-    <Blog />
+    <Loop />
     <Founders />
-    <Faq />
     <Contact />
     <Footer />
   </div>

@@ -26,7 +26,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
-const PAGES = ['index.html', 'blog/index.html', 'privacy.html', 'terms.html'];
+const PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'blog/index.html', 'privacy.html', 'terms.html'];
 
 const built = fs.existsSync(path.join(DIST, 'index.html'));
 const skip = !built && 'run `npm run build` first';
@@ -180,7 +180,8 @@ test('a nowrap element never sits inside a flex child that must shrink', { skip 
   // could not, so it punched straight out of the card and the page scrolled.
   //
   // Checked structurally rather than by measuring: the two must be siblings.
-  const html = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  // Products moved to its own page in the homepage restructure.
+  const html = fs.readFileSync(path.join(DIST, 'products.html'), 'utf8');
 
   const open = /<span class="products__open"[^>]*>([\s\S]*?)<\/span>/.exec(html);
   assert.ok(open, '.products__open is gone — this test needs rewriting, not deleting');

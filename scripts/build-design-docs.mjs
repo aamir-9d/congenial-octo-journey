@@ -84,7 +84,11 @@ function loadIcons() {
   const body = src.slice(src.indexOf('{'), src.lastIndexOf('}') + 1);
 
   const icons = { ...EXTRA_ICONS };
-  for (const m of body.matchAll(/'([a-z0-9-]+)':\s*\n?\s*'([\s\S]*?)',\n/g)) {
+  // `\r?\n`, not a bare `\n`. A branch switch on Windows can rewrite this file
+  // with CRLF, and anchoring on the bare newline then matches nothing at all —
+  // which surfaces as every icon appearing to be missing rather than as a
+  // parse error.
+  for (const m of body.matchAll(/'([a-z0-9-]+)':\s*\r?\n?\s*'([\s\S]*?)',\r?\n/g)) {
     icons[m[1]] = m[2].replace(/\\'/g, "'");
   }
   return icons;

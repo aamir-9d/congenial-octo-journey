@@ -39,7 +39,6 @@ const chips: { label: string; icon: IconName }[] = [
 
   {/* Layer 3: a line sweeping the top edge, inside a 1px clipping strip. */}
   <div class="hero__scan" aria-hidden="true">
-    <div class="hero__scan-line"></div>
   </div>
 
   <div class="hero__inner">
@@ -150,12 +149,6 @@ const chips: { label: string; icon: IconName }[] = [
     pointer-events: none;
   }
 
-  .hero__scan-line {
-    width: 38%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(227, 154, 31, 0.85), transparent);
-    animation: scan 11s linear 1.4s infinite;
-  }
 
   .hero__inner {
     position: relative;
@@ -347,9 +340,6 @@ const chips: { label: string; icon: IconName }[] = [
 
   @media (prefers-reduced-motion: reduce) {
     .hero__bloom,
-    .hero__scan-line {
-      animation: none;
-    }
 
     .hero__pill,
     .hero__h1,

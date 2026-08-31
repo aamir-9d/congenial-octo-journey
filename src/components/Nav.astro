@@ -30,24 +30,27 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
  */
 const anchor = (href: string) => (href.startsWith('#') ? `${base}/${href}` : href);
 
+/* Every label now names what it actually lands on. The old set pointed
+   "Services" at the problem statement and "Approach" at the stack -- which is
+   the services list -- so the first click taught a visitor the page could not
+   be trusted to do what it said. */
 const links = [
-  { href: '#services', label: 'Services' },
-  { href: '#loop', label: 'The Loop' },
-  { href: '#approach', label: 'Approach' },
+  { href: '#loop', label: 'Approach' },
+  { href: `${base}/services`, label: 'Services' },
+  { href: `${base}/products`, label: 'Products' },
   { href: `${base}/blog`, label: 'Blog' },
-  { href: '#faq', label: 'FAQ' },
+  { href: `${base}/faq`, label: 'FAQ' },
 ];
 
 /* The sheet rows carry a one-line description each. New copy, on the sign-off
    list — a bare label list would have been cheaper, but on a phone the whole
    nav is the sheet and the descriptions are what make it scannable. */
 const sheetLinks: { href: string; label: string; note: string; icon: IconName }[] = [
-  { href: '#services', label: 'Services', note: 'Where the money goes missing', icon: 'warning-diamond' },
-  { href: '#loop', label: 'The Loop', note: 'Four stations, one cycle', icon: 'arrows-clockwise' },
-  { href: '#approach', label: 'Approach', note: 'The full stack, in bundles', icon: 'stack' },
-  { href: '#products', label: 'Products', note: 'Tools built for this work', icon: 'cube' },
+  { href: '#loop', label: 'Approach', note: 'Four stations, one cycle', icon: 'arrows-clockwise' },
+  { href: `${base}/services`, label: 'Services', note: 'What breaks, and the work that fixes it', icon: 'stack' },
+  { href: `${base}/products`, label: 'Products', note: 'Tools built for this work', icon: 'cube' },
   { href: `${base}/blog`, label: 'Blog', note: 'Findings from live stacks', icon: 'article' },
-  { href: '#faq', label: 'FAQ', note: 'Before you book', icon: 'question' },
+  { href: `${base}/faq`, label: 'FAQ', note: 'Before you book', icon: 'question' },
 ];
 ---
 

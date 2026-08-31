@@ -33,6 +33,11 @@ const html = built ? fs.readFileSync(DIST, 'utf8') : '';
  * balancing braces to survive the nested blocks.
  */
 function phoneCss(px: number): string {
+  return phoneCssOf(html, px);
+}
+
+/** The same, against any document — the blog index has its own phone rules. */
+function phoneCssOf(html: string, px: number): string {
   const out: string[] = [];
   const re = /@media([^{]+)\{/g;
   let m: RegExpExecArray | null;
@@ -91,16 +96,24 @@ test('bento cards get the phone padding and type', { skip }, () => {
 });
 
 test('blog rows are stacked blocks closing on a Read affordance', { skip }, () => {
-  const css = phoneCss(767);
+  // The blog section left the homepage in the restructure; its rows and their
+  // phone rules now ship on the blog index, so that is where this reads.
+  const blogIndex = path.resolve(import.meta.dirname, '..', 'dist', 'blog.html');
+  const doc = fs.existsSync(blogIndex) ? fs.readFileSync(blogIndex, 'utf8') : html;
+  const css = phoneCssOf(doc, 767);
 
   assert.ok(has(css, '.blog__title', 'font-size:17px'), 'post titles are not the design 17px');
   assert.ok(/\.blog__read[^{}]*\{[^{}]*display:inline-flex/.test(css), '"Read" never becomes visible');
   // The updated mobile design keeps the kicker -- an earlier pass dropped it.
   assert.ok(!/\.blog__kicker[^{}]*\{[^{}]*display:none/.test(css), 'the kicker should stay on a phone');
-  assert.ok(/\.blog__all[^{}]*\{[^{}]*width:100%/.test(css), '"All posts" is not full width');
+  // The full-width "All posts" button was part of the homepage blog teaser,
+  // which the restructure removed. On the index itself there is nowhere for it
+  // to go, so there is nothing left to assert about it.
 
   // And it must be absent above the breakpoint, or it doubles the desktop row.
-  const desktop = html.replace(/@media[^{]+\{(?:[^{}]|\{[^{}]*\})*\}/g, '');
+  // Read from the same document as the phone rules above — the homepage no
+  // longer carries a blog section at all.
+  const desktop = doc.replace(/@media[^{]+\{(?:[^{}]|\{[^{}]*\})*\}/g, '');
   assert.ok(/\.blog__read[^{}]*\{[^{}]*display:none/.test(desktop), '"Read" is not hidden on desktop');
 });
 

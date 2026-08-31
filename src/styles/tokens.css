@@ -39,7 +39,7 @@
 
   /* --- Chart ------------------------------------------------------------ */
   --chart-true: var(--color-accent);
-  --chart-measured: #5b626b;
+  --chart-measured: #5f666f; /* 3.03:1 on --color-surface; #5B626B was 2.85:1 */
   --chart-axis: #2c3138;
   --chart-rule: #4a515a;
   --chart-bar-dim: #3a4048;
@@ -132,9 +132,13 @@
   --radius-pill: 999px;
 
   /* --- Elevation -------------------------------------------------------- */
-  --shadow-accent: 0 8px 30px -10px rgba(227, 154, 31, 0.7);
-  --shadow-accent-hover: 0 12px 40px -8px rgba(227, 154, 31, 0.9);
-  --shadow-accent-sm: 0 6px 24px -8px rgba(227, 154, 31, 0.8);
+  /* Neutral, not chromatic. A coloured blurred shadow on a dark ground is the
+     default "cool" look of generated interfaces; the amber fill already
+     carries the emphasis, and a neutral shadow under it reads more expensive.
+     The names are kept so nothing downstream has to change. */
+  --shadow-accent: 0 8px 24px -12px rgba(0, 0, 0, 0.9);
+  --shadow-accent-hover: 0 12px 32px -10px rgba(0, 0, 0, 0.95);
+  --shadow-accent-sm: 0 6px 18px -10px rgba(0, 0, 0, 0.85);
   --shadow-card-hover: 0 18px 44px rgba(0, 0, 0, 0.5);
   --ring: 0 0 0 1px var(--color-line);
   --ring-accent: 0 0 0 1px rgba(227, 154, 31, 0.34);

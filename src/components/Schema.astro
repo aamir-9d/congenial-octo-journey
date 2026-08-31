@@ -1,4 +1,18 @@
 ---
+/**
+ * `faq` controls whether the FAQPage node is emitted.
+ *
+ * Structured data has to sit on the page that displays it. When the FAQ moved
+ * to /faq, leaving FAQPage on the homepage would have described nineteen
+ * questions that were no longer there — which is a manual-action risk, not just
+ * an inaccuracy. The homepage keeps the business, people and website nodes; the
+ * FAQ page carries the questions.
+ */
+interface Props {
+  faq?: boolean;
+}
+
+const { faq = false } = Astro.props;
 import { ALL_FAQ, toText } from '../data/faq';
 
 /**
@@ -75,22 +89,26 @@ const graph = {
         'Cloud infrastructure and monitoring',
       ],
     },
-    {
-      /* Text comes from the same array the section renders, with the inline
-         markers stripped. Structured data that does not match the visible text
-         is a manual-action risk, and the way to guarantee they match is to
-         never write them twice. */
-      '@type': 'FAQPage',
-      '@id': `${home}#faq`,
-      mainEntity: ALL_FAQ.map((item) => ({
-        '@type': 'Question',
-        name: item.q,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: toText(item.a),
-        },
-      })),
-    },
+    ...(faq
+      ? [
+          {
+            /* Text comes from the same array the section renders, with the
+               inline markers stripped. Structured data that does not match the
+               visible text is a manual-action risk, and the way to guarantee
+               they match is to never write them twice. */
+            '@type': 'FAQPage',
+            '@id': `${home}#faq`,
+            mainEntity: ALL_FAQ.map((item) => ({
+              '@type': 'Question',
+              name: item.q,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: toText(item.a),
+              },
+            })),
+          },
+        ]
+      : []),
     {
       '@type': 'WebSite',
       '@id': `${home}#website`,

@@ -146,7 +146,7 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--color-accent);
   border: 3px solid var(--color-surface);
-  box-shadow: 0 0 12px -2px rgba(var(--rgb-accent), 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 input[type='range']::-moz-range-track {
@@ -169,7 +169,7 @@ input[type='range']::-moz-range-thumb {
     width: 26px;
     height: 26px;
     margin-top: -11px;
-    box-shadow: 0 0 14px -2px rgba(var(--rgb-accent), 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
 
   input[type='range']::-moz-range-thumb {
@@ -594,6 +594,6 @@ button {
   10%,
   38% {
     background: rgba(var(--rgb-accent), 0.2);
-    box-shadow: 0 0 18px -2px rgba(var(--rgb-accent), 0.75);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
   }
 }

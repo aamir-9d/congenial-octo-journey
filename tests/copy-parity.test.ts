@@ -24,7 +24,13 @@ import { computeView, INITIAL_STATE } from '../src/scripts/calc-model.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const ORIGINAL = path.join(ROOT, 'E2E Apps Homepage.dc.html');
-const PORT = path.join(ROOT, 'dist', 'index.html');
+// The homepage restructure moved the stack, products and the FAQ onto their own
+// pages. The export's copy still all ships — it just no longer all ships on one
+// page — so parity is checked against the built pages together.
+const PORT_PAGES = ['index.html', 'services.html', 'products.html', 'faq.html'].map((p) =>
+  path.join(ROOT, 'dist', p),
+);
+const PORT = PORT_PAGES[0]!;
 
 const ENTITIES: Record<string, string> = {
   amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
@@ -217,7 +223,15 @@ const SPLIT: { lead: string; rest: string }[] = [
 
 test('split paragraphs kept both halves, word for word', { skip: !distExists && 'run `npm run build` first' }, () => {
   const squash = (t: string) => t.replace(/\s+/g, '');
-  const port = squash(textRuns(fs.readFileSync(PORT, 'utf8')).join(''));
+  // Each page is extracted on its own and the results concatenated — never the
+  // raw HTML. stripAdded() walks from a `data-added` opener to its matching
+  // close, so on one long string of four concatenated documents it can run past
+  // the end of one page and swallow the start of the next.
+  const port = squash(
+    PORT_PAGES.filter((p) => fs.existsSync(p))
+      .map((p) => textRuns(fs.readFileSync(p, 'utf8')).join(''))
+      .join(''),
+  );
 
   const lost = SPLIT.flatMap(({ lead, rest }) =>
     [lead, rest].filter((half) => !port.includes(squash(half))),
@@ -228,7 +242,15 @@ test('split paragraphs kept both halves, word for word', { skip: !distExists && 
 
 test('no signed-off copy was quietly rewritten', { skip: !distExists && 'run `npm run build` first' }, () => {
   const squash = (t: string) => t.replace(/\s+/g, '');
-  const port = squash(textRuns(fs.readFileSync(PORT, 'utf8')).join(''));
+  // Each page is extracted on its own and the results concatenated — never the
+  // raw HTML. stripAdded() walks from a `data-added` opener to its matching
+  // close, so on one long string of four concatenated documents it can run past
+  // the end of one page and swallow the start of the next.
+  const port = squash(
+    PORT_PAGES.filter((p) => fs.existsSync(p))
+      .map((p) => textRuns(fs.readFileSync(p, 'utf8')).join(''))
+      .join(''),
+  );
 
   const replaced = REPLACED.map((r) => squash(r.text));
   const missing: string[] = [];
@@ -263,7 +285,15 @@ test('everything listed as replaced really is gone', { skip: !distExists && 'run
   // Stops the list becoming a dumping ground: an entry that is still on the
   // page is either a stale note or a suppression hiding a real regression.
   const squash = (t: string) => t.replace(/\s+/g, '');
-  const port = squash(textRuns(fs.readFileSync(PORT, 'utf8')).join(''));
+  // Each page is extracted on its own and the results concatenated — never the
+  // raw HTML. stripAdded() walks from a `data-added` opener to its matching
+  // close, so on one long string of four concatenated documents it can run past
+  // the end of one page and swallow the start of the next.
+  const port = squash(
+    PORT_PAGES.filter((p) => fs.existsSync(p))
+      .map((p) => textRuns(fs.readFileSync(p, 'utf8')).join(''))
+      .join(''),
+  );
 
   const stale = REPLACED.filter((r) => port.includes(squash(r.text))).map((r) => r.text);
 

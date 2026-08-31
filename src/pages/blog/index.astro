@@ -55,6 +55,7 @@ const description =
                 </span>
                 <span class="blog__tag">{post.data.tag}</span>
                 <span class="blog__arrow" aria-hidden="true">&#8594;</span>
+                <span class="blog__read">Read &#8594;</span>
               </a>
             ))
           }
@@ -143,20 +144,54 @@ const description =
     color: var(--color-text-4);
   }
 
+  /* Phone only: the arrow at the end of a wide row becomes an explicit
+     affordance once the row is a stacked block. */
+  .blog__read {
+    display: none;
+  }
+
+  /* The rows follow `design/E2E Apps - Bento mobile.dc.html`: date and tag on
+     one line, a 17px title beneath, the kicker, then "Read". These rules used
+     to live in the homepage Blog component; the blog index is where the rows
+     are now, so this is where they belong. */
   @media (max-width: 767px) {
     .blog__row {
-      grid-template-columns: 1fr auto;
-      gap: var(--s3) var(--s6);
+      grid-template-columns: auto minmax(0, 1fr);
+      column-gap: 10px;
+      row-gap: var(--s3);
+      align-items: center;
+      padding: var(--s6) 0;
+    }
+
+    .blog__title {
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .blog__read {
+      order: 4;
+      grid-column: 1 / -1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      justify-self: start;
+      font-size: 13px;
+      font-weight: var(--fw-semibold);
+      color: var(--color-accent);
+    }
+
+    .blog__date {
+      order: 1;
     }
 
     .blog__body {
       grid-column: 1 / -1;
-      order: 2;
+      order: 3;
     }
 
     .blog__tag {
-      order: 1;
-      text-align: right;
+      order: 2;
+      justify-self: start;
     }
 
     .blog__arrow {

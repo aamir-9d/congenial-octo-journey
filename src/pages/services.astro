@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Problems from '../components/Problems.astro';
+import Stack from '../components/Stack.astro';
+
+/**
+ * Services.
+ *
+ * Both of these sections used to sit on the homepage, where together they were
+ * 824 words and fifteen disclosures — a fifth of the page — read by a visitor
+ * who had not yet been given a reason to care. They are reference material:
+ * what goes wrong, and what we do about it. Someone who wants that detail comes
+ * looking for it, and now there is somewhere to send them.
+ *
+ * Nothing was cut in the move. The homepage keeps a compressed problem
+ * statement; the full argument and the ten capability bundles live here.
+ */
+
+const title = 'Services — E2E Apps';
+const description =
+  'What breaks in mobile measurement, and the ten capability bundles that fix it: attribution and MMP, SKAdNetwork, event tracking plans, subscriptions, Google and Apple Ads, web-to-app, ASO.';
+---
+
+<Base title={title} description={description} path="/services">
+  <div class="page">
+    <Nav />
+
+    <header class="page-head">
+      <div class="wrap">
+        <div class="eyebrow eyebrow--amber">WHAT WE DO</div>
+        <h1 class="page-head__h1">The problems, and the work that fixes them.</h1>
+        <p class="page-head__lead">
+          Below: where the money usually goes missing, then the ten bundles the work is organised
+          into. Named, so you can check whether the thing you need is on the list.
+        </p>
+      </div>
+    </header>
+
+    <Problems />
+    <Stack />
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  /* Clears the fixed nav, then hands off to the sections' own rhythm. */
+  .page-head {
+    padding: calc(var(--section-pad) + 48px) var(--gutter) 0;
+  }
+
+  .page-head__h1 {
+    margin-top: var(--s4);
+    max-width: 20ch;
+    font-size: var(--t-h1);
+    letter-spacing: var(--ls-h1);
+    line-height: var(--lh-h1);
+  }
+
+  .page-head__lead {
+    margin-top: var(--s6);
+    max-width: 58ch;
+    font-size: var(--t-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+</style>

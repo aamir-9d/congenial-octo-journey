@@ -1,29 +1,27 @@
-# build output
-dist/
-.astro/
-
-# dependencies
-node_modules/
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# environment — never commit real keys
-.env
-.env.production
-.env.local
-.env.*.local
 
 # (scripts/compare.html is committed — it is the pixel-parity harness)
-
+# build output
+# cloudflare worker local state
+# dependencies
+# environment — never commit real keys
+# logs
 # macOS / editors
 .DS_Store
-Thumbs.db
-.vscode/
+.astro/
+.env
+.env.*.local
+.env.local
+.env.production
+.github/agents/
+.github/hooks/
+.github/skills/
 .idea/
-
-# cloudflare worker local state
+.vscode/
+Thumbs.db
+dist/
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
 worker/.wrangler/
+yarn-debug.log*
+yarn-error.log*
