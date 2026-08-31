@@ -3,6 +3,9 @@
 Marketing site for E2E Apps — mobile growth and measurement for subscription and
 ad-monetised apps.
 
+**Start here:** [`docs/prd.md`](docs/prd.md) — what the site is for, what each
+section must do, and the full design system in one document.
+
 **Live:** https://aamir-9d.github.io/congenial-octo-journey/
 
 Ported from a Claude Design export (`E2E Apps Homepage.dc.html`) to Astro. The
