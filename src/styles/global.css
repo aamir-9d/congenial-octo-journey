@@ -408,6 +408,17 @@ input[type='checkbox'] {
   margin: 0 auto;
 }
 
+/* A section that opens its own page. It carries the h1 and the clearance the
+   fixed nav needs, so a dedicated page needs no separate header block above it
+   -- which is what produced two eyebrows and two headings on /products and
+   /faq. */
+.section--lead {
+  /* The nav is fixed and about 70px tall, so this has to clear it. A full
+     --section-pad on top of that left most of a screen empty before the first
+     word — generous is not the same as absent. */
+  padding-top: calc(var(--section-pad) * 0.6 + 74px);
+}
+
 .section {
   padding: var(--section-pad) var(--gutter);
 }

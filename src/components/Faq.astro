@@ -22,13 +22,34 @@ const groups = [
   { label: 'Working together', items: GROUP_A },
   { label: 'Technical scope', items: GROUP_B },
 ];
+
+/**
+ * `lead` makes this section the page's opening block.
+ *
+ * On its own page there is no separate page header — this section IS the
+ * header, so its heading becomes the h1 and it takes the top padding that
+ * clears the fixed nav. Wrapping it in another eyebrow/heading/lead stack was
+ * the bug: /products ended up printing "TOOLS BUILT FOR THIS WORK" and "Three
+ * products, in detail." twice, word for word.
+ */
+interface Props {
+  lead?: boolean;
+}
+
+const { lead = false } = Astro.props;
 ---
 
-<section id="faq" class="faq section" data-section="faq">
+<section id="faq" class:list={['faq', 'section', { 'section--lead': lead }]} data-section="faq">
   <div class="wrap">
     <div class="section-head" data-reveal="1">
       <div class="eyebrow">BEFORE YOU BOOK</div>
-      <h2 class="faq__h2">Questions people ask before booking.</h2>
+      {
+        lead ? (
+          <h1 class="faq__h2">Questions people ask before booking.</h1>
+        ) : (
+          <h2 class="faq__h2">Questions people ask before booking.</h2>
+        )
+      }
       <p class="section-lead">Including the ones that are awkward to answer.</p>
     </div>
 

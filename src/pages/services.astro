@@ -27,18 +27,8 @@ const description =
   <div class="page">
     <Nav />
 
-    <header class="page-head">
-      <div class="wrap">
-        <div class="eyebrow eyebrow--amber">WHAT WE DO</div>
-        <h1 class="page-head__h1">The problems, and the work that fixes them.</h1>
-        <p class="page-head__lead">
-          Below: where the money usually goes missing, then the ten bundles the work is organised
-          into. Named, so you can check whether the thing you need is on the list.
-        </p>
-      </div>
-    </header>
 
-    <Problems />
+    <Problems lead />
     <Stack />
 
     <Footer />
@@ -51,24 +41,4 @@ const description =
     background: var(--color-bg);
   }
 
-  /* Clears the fixed nav, then hands off to the sections' own rhythm. */
-  .page-head {
-    padding: calc(var(--section-pad) + 48px) var(--gutter) 0;
-  }
-
-  .page-head__h1 {
-    margin-top: var(--s4);
-    max-width: 20ch;
-    font-size: var(--t-h1);
-    letter-spacing: var(--ls-h1);
-    line-height: var(--lh-h1);
-  }
-
-  .page-head__lead {
-    margin-top: var(--s6);
-    max-width: 58ch;
-    font-size: var(--t-lead);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
-  }
 </style>

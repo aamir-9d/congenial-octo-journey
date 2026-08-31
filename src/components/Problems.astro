@@ -127,15 +127,38 @@ interface Props {
 }
 
 const { compact = false } = Astro.props;
+
+/**
+ * `lead` makes this section the page's opening block.
+ *
+ * On its own page there is no separate page header — this section IS the
+ * header, so its heading becomes the h1 and it takes the top padding that
+ * clears the fixed nav. Wrapping it in another eyebrow/heading/lead stack was
+ * the bug: /products ended up printing "TOOLS BUILT FOR THIS WORK" and "Three
+ * products, in detail." twice, word for word.
+ */
+interface Props {
+  lead?: boolean;
+}
+
+const { lead = false } = Astro.props;
 ---
 
-<section id="services" class="section" data-section="problems">
+<section id="services" class:list={['section', { 'section--lead': lead }]} data-section="problems">
   <div class="wrap">
     <div class="section-head" data-reveal="1">
       <div class="eyebrow">WHY YOUR NUMBERS DON'T RECONCILE</div>
-      <h2 class="problems__h2">
-        Three places the money goes missing. And one place it was never there.
-      </h2>
+      {
+        lead ? (
+          <h1 class="problems__h2">
+            Three places the money goes missing. And one place it was never there.
+          </h1>
+        ) : (
+          <h2 class="problems__h2">
+            Three places the money goes missing. And one place it was never there.
+          </h2>
+        )
+      }
       <p class="section-lead">
         The first isn't a measurement failure, and no amount of attribution accuracy will save you
         from it. The other three are &#8212; the revenue exists and you can't see it.

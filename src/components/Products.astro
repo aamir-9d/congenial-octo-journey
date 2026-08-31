@@ -19,13 +19,34 @@ import { PRODUCTS, megabytes } from '../data/products';
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/**
+ * `lead` makes this section the page's opening block.
+ *
+ * On its own page there is no separate page header — this section IS the
+ * header, so its heading becomes the h1 and it takes the top padding that
+ * clears the fixed nav. Wrapping it in another eyebrow/heading/lead stack was
+ * the bug: /products ended up printing "TOOLS BUILT FOR THIS WORK" and "Three
+ * products, in detail." twice, word for word.
+ */
+interface Props {
+  lead?: boolean;
+}
+
+const { lead = false } = Astro.props;
 ---
 
-<section id="products" class="section" data-section="products" data-added="products">
+<section id="products" class:list={['section', { 'section--lead': lead }]} data-section="products" data-added="products">
   <div class="wrap">
     <div class="section-head" data-reveal="1">
       <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
-      <h2 class="products__head">Three products, in detail.</h2>
+      {
+        lead ? (
+          <h1 class="products__head">Three products, in detail.</h1>
+        ) : (
+          <h2 class="products__head">Three products, in detail.</h2>
+        )
+      }
       <p class="section-lead">
         Each one a full overview &#8212; what it does, how it works, and screenshots from the
         running build.
