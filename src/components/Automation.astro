@@ -1,22 +1,21 @@
 ---
 import Icon from './Icon.astro';
-import { TEASER, SOURCES } from '../data/automation.ts';
+import { TEASER, SOURCES, ASSISTANTS } from '../data/automation.ts';
 
 /**
- * The homepage automation teaser.
+ * The homepage automation section.
  *
- * The first version of this was a full section — three question rows, a
- * platform panel and a boundary list, about 935px tall on desktop, repeating
- * material the dedicated page already carried. The visual audit's instruction
- * was to replace it with a 70–100 word visual bridge.
+ * Deliberately not the investigation interface. The brief's instruction was one
+ * heading, one short paragraph, a small visual and two actions, in 80-110
+ * visible words — the demonstration belongs on /automation, and duplicating it
+ * here would put the same 900px panel on two pages.
  *
- * So this is one heading, one explanation, a compact source graphic, one sample
- * question with its finding, a link, and a single qualification. The detailed
- * platform limits and the three switchable examples live on /automation, where
- * someone who wants them has gone looking.
+ * The small visual is the offer itself: four equal source tiles feeding one
+ * reporting line, with three equal assistant labels under it. That is legible
+ * before the paragraph is read, which is the job this section has.
  *
- * Copy lives in src/data/automation.ts alongside the page's, so the teaser and
- * the thing it teases cannot drift into disagreeing about what the service is.
+ * Copy lives in src/data/automation.ts beside the page's, so the summary and
+ * the thing it summarises cannot drift into disagreeing about the service.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -24,168 +23,160 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <section id="automation" class="section" data-section="automation" data-added="audit">
   <div class="wrap">
-    <div class="tease">
-      <div class="tease__copy">
-        <p class="eyebrow eyebrow--amber">Automation</p>
-        <h2 class="tease__h2">{TEASER.heading}</h2>
-        <p class="tease__body">{TEASER.body}</p>
-
-        <a href={`${base}/automation`} class="tease__link">
-          {TEASER.link}
-          <Icon name="arrow-right" size={14} />
-        </a>
-      </div>
-
-      <div class="tease__demo">
-        <ul class="tease__sources" aria-label="Connected sources">
-          {
-            SOURCES.map((s) => (
-              <li class="tsrc">
-                <span class="tsrc__dot" aria-hidden="true"></span>
-                {s.name}
-              </li>
-            ))
-          }
-        </ul>
-
-        <p class="tease__q">{TEASER.question}</p>
-        <p class="tease__finding">{TEASER.finding}</p>
-
-        <p class="tease__foot">
-          <span class="tease__sample">Sample</span>
-          <span>{TEASER.limit}</span>
-        </p>
-      </div>
+    <div class="section-head" data-reveal="1">
+      <div class="eyebrow eyebrow--amber">{TEASER.eyebrow}</div>
+      <h2 class="auto__h2">{TEASER.heading}</h2>
+      <p class="section-lead">{TEASER.body}</p>
     </div>
+
+    <div class="auto__figure" data-reveal="1">
+      <ul class="auto__tiles" aria-label="Connected reporting sources">
+        {
+          SOURCES.map((s) => (
+            <li class="auto__tile">
+              <span class="auto__tile-name">{s.name}</span>
+              <span class="auto__tile-note">{s.note}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="auto__bridge">
+        <span class="auto__rule" aria-hidden="true"></span>
+        <span class="auto__bridge-label">Connected reporting</span>
+        <span class="auto__rule" aria-hidden="true"></span>
+      </div>
+
+      <ul class="auto__asst" aria-label="Assistant options">
+        {
+          ASSISTANTS.map((a) => (
+            <li class="auto__asst-name">{a.name}</li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="auto__actions">
+      <a href={`${base}/automation`} class="btn-primary">
+        {TEASER.primary}
+        <Icon name="arrow-right" size={15} />
+      </a>
+      <a href={`${base}/#contact`} class="btn-secondary">{TEASER.secondary}</a>
+    </div>
+
+    <p class="auto__note">{TEASER.note}</p>
   </div>
 </section>
 
 <style>
-  .tease {
-    display: grid;
-    gap: var(--s12);
-    grid-template-columns: minmax(0, 1fr);
-    align-items: center;
+  .auto__h2 {
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
   }
 
-  @media (min-width: 900px) {
-    .tease {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
-      gap: var(--s16);
+  .auto__figure {
+    max-width: var(--wrap-loop);
+    margin: clamp(40px, 4vw, 64px) auto 0;
+  }
+
+  /* Four equal tiles, 2x2 on a phone. Equal is the message. */
+  .auto__tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 720px) {
+    .auto__tiles {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
-  /* Left-aligned, against a page of centred section heads. This section and the
-     calculator are the two that carry a different treatment on purpose. */
-  .tease__copy {
-    max-width: 46ch;
-  }
-
-  .tease__h2 {
-    margin-top: var(--s4);
-    font-size: var(--t-h2-card);
-    line-height: var(--lh-h2);
-    letter-spacing: var(--ls-h2-card);
-    color: var(--color-text);
-    text-wrap: balance;
-  }
-
-  .tease__body {
-    margin-top: var(--s8);
-    font-size: var(--t-section-lead);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
-  }
-
-  .tease__link {
-    display: inline-flex;
+  .auto__tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     align-items: center;
-    gap: var(--s3);
-    margin-top: var(--s8);
-    min-height: 44px;
-    font-size: var(--t-card);
-    font-weight: var(--fw-medium);
-    color: var(--color-accent);
-    text-decoration: none;
-  }
-
-  .tease__link:hover {
-    color: var(--color-accent-hover);
-  }
-
-  /* --- the compact graphic ------------------------------------------------ */
-
-  .tease__demo {
-    padding: var(--s8);
+    justify-content: center;
+    min-height: 62px;
+    padding: var(--s4) var(--s3);
     border-radius: var(--radius-card);
     background: var(--color-surface);
     box-shadow: var(--ring);
+    text-align: center;
     min-width: 0;
   }
 
-  .tease__sources {
-    list-style: none;
-    margin: 0;
-    padding: 0 0 var(--s6);
-    border-bottom: 1px solid var(--color-line);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s3) var(--s6);
-  }
-
-  .tsrc {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-meta);
-    color: var(--color-text-3);
-  }
-
-  .tsrc__dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-accent);
-  }
-
-  .tease__q {
-    margin-top: var(--s6);
-    font-family: var(--font-mono);
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
+  .auto__tile-name {
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
     color: var(--color-text);
   }
 
-  .tease__finding {
-    margin-top: var(--s4);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
-
-  .tease__foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s3) var(--s4);
-    margin-top: var(--s8);
-    padding-top: var(--s4);
-    border-top: 1px solid var(--color-line-soft);
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
+  .auto__tile-note {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
     color: var(--color-text-4);
   }
 
-  .tease__sample {
+  .auto__bridge {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    margin: var(--s6) 0;
+  }
+
+  .auto__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-line-strong);
+  }
+
+  .auto__bridge-label {
     flex: none;
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    background: var(--color-surface-sunk);
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-chip);
-    color: var(--color-text-3);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .auto__asst {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .auto__asst-name {
+    text-align: center;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-2);
+    min-width: 0;
+  }
+
+  .auto__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--s4);
+    margin-top: clamp(32px, 3.5vw, 52px);
+  }
+
+  .auto__note {
+    margin-top: var(--s8);
+    text-align: center;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-4);
   }
 </style>

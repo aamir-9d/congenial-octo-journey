@@ -4,35 +4,33 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Investigation from '../components/Investigation.astro';
-import { STEPS, OUTCOMES, DISCLOSURES } from '../data/automation.ts';
+import { STEPS, OUTCOMES, DISCLOSURES, TEASER } from '../data/automation.ts';
 
 /**
  * /automation
  *
- * Rebuilt against docs/automation-visual-revision.md. The previous version was
- * 621 words of prose with no imagery and nearly 5,000px of phone scrolling; the
- * service was described and never demonstrated.
+ * Revision 2 of docs/automation-visual-revision.md. Two structural changes from
+ * the first build:
  *
- * Four sections now, in the order the brief sets:
+ *   The 40/60 split hero is gone. The copy column ended roughly 500px above the
+ *   panel beside it, and the empty lower-left region read as unfinished. A
+ *   centred introduction now sits above a full-width demonstration.
  *
- *   1  Hero and the investigation canvas — the promise, the sources, a visible
- *      output, and a contextual CTA rather than only the nav's general one
- *   2  Three outcomes, one sentence each
- *   3  Connect → Investigate → Review, with the technical detail in three
- *      labelled disclosures
- *   4  Closing CTA
+ *   Three sources became four and one assistant became three. GA4 covers the
+ *   behaviour gap between acquisition and revenue, and Claude, ChatGPT and
+ *   Gemini appear equally — the service is not exclusive to one provider.
  *
- * The 40/60 split is deliberate: the demonstration is the larger half, because
- * the audit's first finding was that nobody could see what the service produces.
+ * Sections: centred hero, full-width demonstration, four outcomes, three
+ * process steps, three disclosures, closing CTA.
  *
  * Disclosure is not concealment. Every limit that would change a buying
- * decision stays beside its example in the canvas; the disclosures carry the
- * long-form explanation of the same facts.
+ * decision sits beside its example inside the demonstration; the disclosures
+ * carry the long-form version of the same facts.
  */
 
 const title = 'Automation — E2E Apps';
 const description =
-  'Ask Claude what changed across your ad spend, ad earnings and subscriptions, and get one explanation with the source data attached. Reporting and investigation; account changes are written up for your decision.';
+  'Bring Google Ads, GA4, AdMob and RevenueCat into one reporting workflow, and investigate spend, user behavior and revenue with Claude, ChatGPT or Gemini. Reporting and investigation; account changes are written up for your decision.';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -45,29 +43,22 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       {/* ---------------------------------------------------- 1 · hero ---- */}
       <section class="section section--lead" data-section="automation-hero">
         <div class="wrap">
-          <div class="hero">
-            <div class="hero__copy">
-              <p class="eyebrow eyebrow--amber">Google Ads · AdMob · RevenueCat</p>
-              <h1 class="hero__h1">Your growth stack.<br />One conversation.</h1>
-              <p class="hero__lead">
-                Ask Claude what changed across your ad spend, ad earnings and subscriptions. Get a
-                clear explanation with the source data attached.
-              </p>
+          <div class="lead-in">
+            <p class="eyebrow eyebrow--amber">{TEASER.eyebrow}</p>
+            <h1 class="lead-in__h1">Your growth stack.<br />Your choice of AI.</h1>
+            <p class="lead-in__lead">
+              Investigate your reporting sources in the assistant your team already uses, with the
+              source figures attached.
+            </p>
 
-              <a href={`${base}/#contact`} class="btn-primary hero__cta">
-                Discuss your setup
-                <Icon name="arrow-right" size={15} />
-              </a>
+            <a href={`${base}/#contact`} class="btn-primary lead-in__cta">
+              Discuss your setup
+              <Icon name="arrow-right" size={15} />
+            </a>
+          </div>
 
-              <p class="hero__note">
-                Reporting and investigation. Anything that would change an account is written up for
-                your decision.
-              </p>
-            </div>
-
-            <div class="hero__demo">
-              <Investigation headingId="demo" />
-            </div>
+          <div class="stage">
+            <Investigation headingId="demo" />
           </div>
         </div>
       </section>
@@ -126,13 +117,12 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       <section class="section" data-section="automation-cta">
         <div class="wrap">
           <div class="close">
-            <h2 class="close__h2">Bring your stack. We&#8217;ll map the first workflow.</h2>
+            <h2 class="close__h2">Make your reporting easier to act on.</h2>
             <p class="close__body">
-              Tell us which accounts you run and what you keep having to check by hand. We will show
-              you what the first investigation would look like on your own numbers.
+              Tell us which accounts you run and which assistant your team uses.
             </p>
             <a href={`${base}/#contact`} class="btn-primary">
-              Book a call
+              Discuss your setup
               <Icon name="arrow-right" size={15} />
             </a>
           </div>
@@ -152,54 +142,60 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   /* --- 1 · hero ----------------------------------------------------------- */
 
-  .hero {
-    display: grid;
-    gap: var(--s12);
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
+  /* Centred introduction above a full-width demonstration. The 40/60 split this
+     replaces left the copy column ending 500px above the panel beside it, and
+     the empty lower-left region read as an unfinished page. */
+  /* No measure on this container.
+     
+     `max-width: 30ch` here resolves against the container's own 16px font, not
+     the 60px headline inside it -- about 240px, which wrapped a two-line
+     headline onto five. docs/design.md states the rule and this broke it: a
+     measure belongs on the element that owns the font size. */
+  .lead-in {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  /* 40/60 in favour of the demonstration. The copy column is capped in ch so
-     it does not stretch to the grid track. */
-  @media (min-width: 980px) {
-    .hero {
-      grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
-      gap: var(--s16);
-    }
-  }
-
-  .hero__copy {
-    max-width: 44ch;
-  }
-
-  .hero__h1 {
+  .lead-in__h1 {
     margin-top: var(--s4);
-    font-size: var(--t-h2);
-    line-height: var(--lh-h2);
-    letter-spacing: var(--ls-h2);
+    /* 56-64px desktop, ~34-40px phone, per the brief. */
+    font-size: clamp(34px, 4.4vw, 60px);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
     color: var(--color-text);
+    /* At its own size, not the container's. Holds the two authored lines. */
+    max-width: 22ch;
+    text-wrap: balance;
   }
 
-  .hero__lead {
+  .lead-in__lead {
     margin-top: var(--s8);
+    max-width: 44ch;
     font-size: var(--t-section-lead);
     line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
-  .hero__cta {
+  .lead-in__cta {
     margin-top: var(--s12);
   }
 
-  .hero__note {
-    margin-top: var(--s8);
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-4);
+  .stage {
+    margin-top: var(--s16);
+    padding: var(--s12) var(--s8);
+    border-radius: var(--radius-panel);
+    background: var(--color-band);
+    box-shadow: var(--ring);
+    min-width: 0;
   }
 
-  .hero__demo {
-    min-width: 0;
+  @media (max-width: 640px) {
+    .stage {
+      margin-top: var(--s12);
+      padding: var(--s8) var(--s6);
+    }
   }
 
   /* --- 2 · outcomes ------------------------------------------------------- */

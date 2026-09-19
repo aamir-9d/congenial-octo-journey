@@ -1,203 +1,217 @@
-# Automation — visual audit and builder revision brief
+# Automation — revised audit and builder brief, revision 2
 
-Reviewed live: https://aamir-9d.github.io/congenial-octo-journey/next/automation  
-Also reviewed: https://aamir-9d.github.io/congenial-octo-journey/next/  
-Date: 19 September 2026  
-Scope: focused visual and copy revision of the existing public service page and homepage teaser.
+Date: 19 September 2026
 
-**The requested outcome**
+Primary site: https://aamir-9d.github.io/congenial-octo-journey/
 
-Make the automation service immediately understandable and visually memorable. Visitors should see what connecting Google Ads, AdMob, RevenueCat, and Claude produces. They should be able to explore a sample and find the next action without reading the implementation details.
+Reference for the automation defects: https://aamir-9d.github.io/congenial-octo-journey/next/automation
 
-Retain the current E2E Apps logo, amber accent, dark grounds, Be Vietnam Pro, and IBM Plex Mono. The service remains a consulting engagement. The current task does not add a client portal or implement account automation.
+Scope: a revised public service offering, homepage placement, and dedicated automation page. This document supersedes the previous split-hero, three-source, Claude-only brief. It does not implement or publish website changes.
 
-**Audit of the live preview**
+## 1. Direction and source of truth
 
-Browser inspection at 1440 px desktop and 390 px mobile found:
+Use the root homepage as the design and publishing target. Treat /next/ as an older preview, useful for examining the automation component shown in the supplied screenshot.
 
-| Observation | Desktop | Mobile |
+Retain E2E Apps' dark backgrounds, amber accent, typography, logo, and existing homepage identity. Position automation as a service: E2E connects the client's reporting sources, configures an appropriate assistant workflow, and helps investigate results.
+
+Expand the service presentation to four data sources — Google Ads, GA4, AdMob, RevenueCat — and three assistant options — Claude, ChatGPT, Gemini. Give the options equal visual prominence without implying that every consumer chat product supports identical connections or that all three assistants run together.
+
+**Publishing observation:** the root page retrieved during this audit contained no automation section, while the local branch already imports an Automation component. The deployment workflow builds the root from main and /next/ from redesign. Updating a preview component alone will therefore not establish the feature on the root site. Reconcile the intended implementation with the production branch through the normal review and publishing process.
+
+## 2. Updated audit: what actually needs fixing
+
+The preview has improved since the earlier audit. It now includes a contextual hero CTA, a source diagram, interactive example tabs, and a chart. The current problem is presentation, coverage, and evidence quality.
+
+| Current observation | Consequence | Required revision |
 | --- | --- | --- |
-| Document height | 4,346 px | 4,996 px |
-| Main-content words | Approximately 621 | Approximately 621 |
-| Main-content image/video/canvas elements | 0 | 0 |
-| Automation-specific CTA begins | Approximately 3,895 px down | Approximately 4,449 px down |
+| Short left copy beside a much taller right panel | A large empty lower-left region makes the opening feel unfinished | Center the introduction above a full-width demonstration |
+| Source list, assistant, tabs, chart, finding, qualification, and next check sit inside one tall card | Too many competing reading levels | Organize the demonstration into aligned horizontal rows |
+| Only three sources appear | User behavior between acquisition and revenue is absent | Add GA4 to the diagram, copy, outcomes, and example data |
+| Claude is the only assistant in copy and the diagram | The service appears exclusive to one provider | Present Claude, ChatGPT, and Gemini equally |
+| The mobile source diagram consumes substantial height | Visitors reach the evidence slowly | Use a compact 2 × 2 source grid |
+| Similar bar treatments serve different questions | The demo feels templated | Match each chart to its question |
+| A week-on-week label accompanies current-period bars only | The displayed evidence cannot substantiate the comparison | Show both periods or remove comparative claims |
+| Some sample findings cite inputs absent from the sample dataset | Even illustrative output can look untrustworthy | Supply coherent supporting inputs and calculate the claims |
 
-The persistent general “Book a call” navigation action is present. The missing action is one contextual to the automation hero/demo.
+Measured in the current browser capture:
 
-The main problems:
-
-1. **The service is described but never demonstrated.** There is no connected-source diagram, actual report, screenshot, chart, or visible finding.
-2. **The opening is visually weak.** A centered heading and short lead float in a large empty area. The heading uses the regular section-heading scale.
-3. **Every subsequent section is reading work.** Three question/answer rows, five process paragraphs, a capability table, a long caveat, and access requirements create one continuous prose-heavy experience.
-4. **Technical caveats receive disproportionate emphasis.** “The boundary,” API access, joins, credentials, and the “arithmetic nobody checks” section dominate the sales narrative.
-5. **Large section gaps amplify the length.** The five-stage process takes approximately 871 px on desktop before visitors reach the platform table.
-6. **The mobile table is deliberately at least 620 px wide.** Its horizontally scrolling treatment makes a key comparison harder to consume at 390 px.
-7. **The homepage repeats the page's question/answer material.** Its automation section is approximately 935 px high on desktop and begins around 3,875 px down the homepage.
-8. **The homepage platform panel describes constraints first.** “Read-only” and “It also exposes configuration changes” do not explain why a visitor should care.
-9. **Some wording suggests more certainty than the evidence supports.** “Until the change has a named cause” should allow inconclusive investigations. “The arithmetic nobody checks” is an unsupported absolute.
-10. **Stage semantics conflict.** “Propose” is described as presenting a change, but the following note calls it the stage that touches an account. Distinguish proposal, approval, and execution wherever they are described.
-
-Retain accurate capability limitations. Put the short, decision-relevant qualification beside the relevant example and place the full technical explanation in clearly labeled details.
-
-**Recommended visual direction**
-
-Use a **Claude investigation canvas**: three recognizable data sources, one real business question, a simple chart, and a short sourced finding.
-
-This is the preferred direction because the visitor sees the service output immediately and can inspect the example. Build the demonstration in HTML/SVG so labels remain crisp and its mobile arrangement can genuinely change.
-
-Two alternatives:
-
-| Direction | Best use | Tradeoff |
+| Measurement | Desktop, 1440 px window | Mobile, 390 px |
 | --- | --- | --- |
-| Interactive investigation canvas — recommended | Main automation page; visitors choose a question and see the corresponding result | Needs three coherent example states |
-| Annotated real report | Strongest evidence once a client-safe report or Claude capture exists | Requires a genuine artifact and appropriate redaction |
-| Short operator walkthrough | Optional supporting explanation using an actual connected workflow | Slower to scan; use a click-to-play recording with a poster image and controls |
+| Document height | Approximately 2,808 px | Approximately 3,872 px |
+| Automation hero section height | Approximately 1,039 px | Approximately 1,694 px |
+| Main-content words | Approximately 344 | Approximately 344 |
 
-A recording can support the main visual later. The initial design should work fully without it.
+These replace the earlier 621-word audit figures. The chart is rendered with native web elements; a zero image-element count would not mean the page has no visual content. Word reduction still helps, but hierarchy and the panel's height are now the larger issues.
 
-**Hero copy and composition**
+Evidence: [root homepage](audit-assets/automation-revision-2-2026-09-19/root-homepage-hero.png), [desktop automation](audit-assets/automation-revision-2-2026-09-19/hero-1440.png), [mobile automation](audit-assets/automation-revision-2-2026-09-19/hero-390.png), [browser findings](audit-assets/automation-revision-2-2026-09-19/findings.json).
 
-Desktop: an asymmetric two-column composition with roughly 40% copy and 60% demonstration. Align the heading left. Give the demo enough scale to read at normal size.
+## 3. Exact placement on the root homepage
 
-Draft copy:
+Preserve the root site's existing section sequence and insert Automation immediately after the case study and before The Loop:
 
-> Google Ads · AdMob · RevenueCat
->
-> **Your growth stack.  
-> One conversation.**
->
-> Ask Claude what changed across your ad spend, ad earnings, and subscriptions. Get a clear explanation with the source data attached.
->
-> **Discuss your setup →**
->
-> Explore the example ↓
+**Hero → Problems → Payback calculator → Proof → Case study → Automation → The Loop → Founders → Contact**
 
-The last link is only needed if the demonstration extends below the hero; otherwise focus the example directly. The primary CTA uses the existing contact path and preserves the configured deployment base.
+This placement first establishes the business problem and evidence, then introduces ongoing reporting and investigation as a relevant next service. The Loop can explain the wider engagement afterward. Avoid calling automation “the fourth section”; that referred to a different homepage structure.
 
-The demonstration's visible question:
+Add an Automation navigation link beside the service links. Use the same root-site header and footer on the dedicated page.
 
-> Why did ad earnings fall last week?
+Intended production destinations:
 
-Suggested composition:
+- Homepage section: /congenial-octo-journey/#automation
+- Dedicated page: /congenial-octo-journey/automation
+- Consultation CTA: /congenial-octo-journey/#contact
 
-- Small official Google Ads, AdMob, and RevenueCat marks with text labels.
-- Thin connector paths leading toward a labeled Claude investigation.
-- One prominent question, a small relevant chart, and a short result.
-- A bottom line showing sources, comparison period, and “Example workflow.”
-- An explicit sample-data label if the state is synthetic.
+The dedicated root route is a required destination, not a claim that it is already published. Generate internal links from the site's configured base path.
 
-Example finding for a **clearly labeled illustrative dataset**:
+### Homepage section
 
-> Impressions stayed steady. Lower eCPM in two markets explains most of the change. Review the country breakdown.
+Keep it compact: one heading, one short paragraph, a small visual, and two actions. Aim for 80–110 visible words including concise labels; do not embed the entire investigation interface here.
 
-Use that finding only with a matching example dataset. For a real artifact, use the actual supported finding. Do not imply that the screen is connected to the visitor's accounts.
+**Eyebrow:** AI reporting & automation
 
-One source node can briefly illuminate on entry, followed by the finding appearing. Keep the animation finite, disable it for reduced motion, and leave the full explanation visible without animation.
+**Heading:** Your growth stack. Your choice of AI.
 
-**Interactive example**
+**Copy:** Bring Google Ads, GA4, AdMob, and RevenueCat into one reporting workflow. Investigate spend, user behavior, and revenue with Claude, ChatGPT, or Gemini.
 
-Three short, keyboard-operable selectors:
+**Primary action:** Explore automation
 
-- **Spend changes**
-- **Ad earnings**
-- **Subscriptions**
+**Secondary action:** Discuss your setup
 
-Each must change the question, chart or evidence, finding, and source labels. A selector changing only its active color is incomplete.
+**Small note:** Connections are configured around your accounts and reporting needs.
 
-Suggested questions:
+Use four equal source tiles feeding a centered reporting line, with three equal assistant labels underneath. This makes the offer understandable before a visitor reads the paragraph. Keep these labels compact rather than turning each into a large card with explanatory text.
 
-- Spend changes: “Which campaigns spent more this week?”
-- Ad earnings: “Why did estimated ad earnings fall?”
-- Subscriptions: “What changed in renewals and refunds?”
+## 4. Symmetric automation page
 
-Keep findings source-specific when campaign attribution is unavailable. Use “source-linked finding,” “comparison,” or “suggested next check” where that is what the data supports.
+Choose a **centered introduction above a full-width reporting demonstration**. This explicitly replaces the earlier 40/60 split recommendation.
 
-Budget: one question, one chart, two brief findings, one next step per state. Avoid replicating an entire analytics product inside the page.
+Suggested desktop composition:
 
-Mobile: heading → short explanation → CTA → source labels → question selector → chart → finding. Stack the diagram vertically and make the selected state usable without horizontal scrolling or hover.
+```text
+               AI REPORTING & AUTOMATION
+         Your growth stack. Your choice of AI.
+                   One short sentence
+                [ Discuss your setup ]
 
-**Images and graphic assets to add**
+┌──────────────────────────────────────────────────────┐
+│ [ Google Ads ] [ GA4 ] [ AdMob ] [ RevenueCat ]       │
+│                  Connected reporting                 │
+│          [ Claude ] [ ChatGPT ] [ Gemini ]            │
+│                                                      │
+│ Spend · User behavior · Ad earnings · Subscriptions   │
+│ One business question                    Sample data │
+│ ┌──────────────────────┬───────────────────────────┐ │
+│ │ Chart / evidence     │ Finding                   │ │
+│ │                      │ One next check           │ │
+│ └──────────────────────┴───────────────────────────┘ │
+│ Source and reporting period                          │
+└──────────────────────────────────────────────────────┘
+```
 
-| Asset | Placement | Production direction |
-| --- | --- | --- |
-| Official platform and Claude marks | Hero/demo source nodes | Use approved SVG assets with readable labels; preserve brand proportions. Keep surrounding UI in E2E's palette. |
-| Original connection diagram | Main hero demonstration; simplified on homepage | SVG paths and nodes with a left-to-right desktop flow and a vertical mobile arrangement. |
-| A real redacted Claude investigation capture | Secondary evidence or an expandable example | Show the question and useful output; crop tool logs and remove private identifiers. Use selectable HTML captions. |
-| A real sample report excerpt | Within the example or linked below it | Show period, sources, finding, and next action. Keep the text readable rather than shrinking a whole document into a thumbnail. |
-| Small charts built from consistent sample data | Inside the interactive states | Label illustrative data; maintain units and source names. Favor one chart per state. |
-| Optional 20–30 second operator recording | “Watch an example” link beside the demonstration | Click to play, muted preview poster, accessible controls, and captions. Use an actual workflow. |
+The diagram communicates the reporting workflow, not a deployed backend architecture.
 
-Prioritize original diagrams and actual output over decorative stock photography. The connected sources and the resulting investigation are the visual subject. Extra images should explain another part of that subject.
+Use a shared content width around 1,120–1,200 px, four equal source columns, three equal assistant columns, consistent gaps, and aligned chart/finding regions. Set the desktop chart and finding to equal-width columns. Balance their content rather than clipping text to enforce a fixed height.
 
-**Page sequence and text budget**
+Use 56–64 px desktop hero typography and approximately 34–40 px on mobile, adjusted to the existing font and line breaks. Use restrained borders and one amber emphasis within each visual. Introduce separation with spacing and background tones rather than multiple nested panels.
 
-Use four principal sections:
+On mobile:
 
-1. **Hero plus interactive example.** The promise, sources, visible output, and contextual CTA.
-2. **Three practical outcomes.** Short open columns: “Review spend,” “Investigate ad earnings,” “Understand subscription changes.” One sentence each, with restrained mini graphics where useful.
-3. **How we work.** One compact sequence: Connect → Investigate → Review. Below it, three labeled disclosures: “Supported actions,” “Access and control,” and “How we reconcile the numbers.”
-4. **Closing CTA.** “Bring your stack. We’ll map the first workflow.” Brief explanation plus the same contact action.
+- Stack the introduction, source grid, assistant options, example tabs, chart, and finding.
+- Use a 2 × 2 source grid and a 2 × 2 example selector.
+- Keep the three short assistant names in equal columns where readable.
+- Show one finding and one next step; move extra methodology into a details disclosure.
+- Keep charts fluid, with readable labels and no horizontal page overflow.
 
-Target **250–350 words of default-visible copy**, including the initially selected demo state. Keep complete technical detail in the labeled disclosures or linked supporting documentation. This is an editorial target, not a claim about an optimal conversion length.
+Assistant names are compatibility labels unless there is a real behavior to switch. If a visual assistant selector is added, explain what changes and keep the selected state accessible. Do not suggest a live account connection or provider-generated response in a static demonstration.
 
-Condense five process paragraphs into three short steps. Include qualifications relevant to the selected example beside it; disclosure should not conceal a material limitation or change the meaning of the promise.
+## 5. Give GA4 a real role
 
-**Homepage placement and sequence**
+Use four examples that explain four different business questions:
 
-Current preview:
+| Tab | Example question | Visual | Primary source |
+| --- | --- | --- | --- |
+| Spend | Which campaigns spent more this week? | Paired previous/current bars | Google Ads |
+| User behavior | Where are users dropping out of onboarding? | Configured funnel or step-completion comparison | GA4 |
+| Ad earnings | What moved ad revenue? | Revenue trend with a supported driver breakdown | AdMob |
+| Subscriptions | How are renewals changing? | Renewal trend with clearly defined periods | RevenueCat |
 
-Hero → Calculator → Case study → Proof → Automation → Loop → Founders → Contact.
+For GA4, document the required events, population, sequence, and reporting window. A true funnel needs suitable funnel reporting or event-level data; raw counts of differently named events do not establish sequential conversion.
 
-Recommended:
+All examples should have a coherent synthetic dataset, a visible “Sample data” label, the source, and reporting period. Derive numerical claims from the values supplied. Remove unsupported cost-per-install, retention, match-rate, or billing explanations unless the demo also supplies their inputs.
 
-**Hero → Calculator → Case study with compact proof → Automation → How we work → Founders → Contact.**
+Cross-source comparisons require compatible dates, currencies, account scope, and metric definitions. Put that implementation detail in a disclosure. Do not suggest that attribution across all four platforms reconciles perfectly by default.
 
-Automation should be the **fourth principal section**, directly after the featured case study and before the process. Fold the separate Proof section into the case-study treatment so it no longer delays the new capability.
+## 6. Claude, ChatGPT/GPT, and Gemini: accurate presentation
 
-The visitor sequence is: understand the proposition → explore the numbers → see credible work → discover automation → understand the engagement → meet the operators → contact.
+Use **ChatGPT** as the public-facing assistant name. In the technical explanation, distinguish it from **OpenAI GPT models through the Responses API**.
 
-Retain a top-level Automation navigation link immediately after Services. The homepage hero can mention measurement, growth, and automation in its category line, without leading with MCP setup.
+| Public option | Implementation wording for the brief |
+| --- | --- |
+| Claude | Use the appropriate supported Claude MCP client or API integration for the engagement |
+| ChatGPT / OpenAI | Configure an appropriate ChatGPT MCP app/plugin, or build with GPT models through the Responses API and supported MCP tools |
+| Gemini | Use a supported Gemini CLI or Gemini API integration; confirm the chosen surface and transport |
 
-Homepage teaser:
+Do not imply that one connection process works unchanged in every consumer app or workspace. Verify the offered routes before presenting them as available service capabilities. Keep this detail in the FAQ or engagement scoping rather than placing a technical comparison table in the hero.
 
-- About **70–100 visible words**, including diagram labels.
-- Heading: **“Your growth stack. One conversation.”**
-- One short explanation.
-- A compact connected-source graphic and one sample question/finding.
-- Link: **“Explore automation →”**
-- One brief qualification if needed.
+The official Google Analytics MCP server supports read requests and does not edit Analytics settings. Describe GA4 reporting and investigation accordingly. Changes to campaigns, configuration, or accounts depend on the relevant tool and the agreed approval workflow.
 
-Use the compact visualization as the bridge to the dedicated page. Keep the detailed platform limits and three question/answer pairs on the dedicated page in their redesigned form.
+Primary references checked:
 
-**Implementation handoff**
+- [Google Analytics MCP documentation](https://developers.google.com/analytics/devguides/MCP)
+- [OpenAI Responses API connectors and MCP tools](https://developers.openai.com/api/docs/guides/tools-connectors-mcp)
+- [ChatGPT MCP server documentation](https://developers.openai.com/plugins/concepts/mcp-server)
+- [Gemini CLI MCP servers](https://geminicli.com/docs/tools/mcp-server/)
+- [Gemini API function calling and remote MCP](https://ai.google.dev/gemini-api/docs/function-calling)
+- [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp)
 
-Revise:
+## 7. Images and visual assets
 
-- src/pages/automation.astro — main composition and page content.
-- src/components/Automation.astro — compact visual homepage teaser.
-- src/data/automation.ts — concise summaries, example-state data, and retained full technical detail.
-- src/pages/index.astro — merge the proof movement and position automation fourth.
-- Shared styles/tokens only where the composition needs reusable values.
+Prioritize recognizable sources and inspectable evidence:
 
-Preserve the calculator model, existing routes/base-path handling, truthful platform capabilities, and original design exports.
+1. **Official platform marks:** four source marks and three assistant marks, with visible names. Normalize optical size in equal containers, approximately 24–32 px marks. Follow official asset guidance; use text when a suitable asset is unavailable.
+2. **A custom native SVG connection diagram:** four sources converge into a centered reporting workflow and lead to assistant options. Keep lines evenly spaced. Optional restrained motion should respect reduced-motion preferences.
+3. **Question-specific charts:** paired bars, a properly defined funnel, a revenue trend, and renewal comparisons. These are the principal eye-catching visuals.
+4. **A real, redacted output example when available:** an actual report or assistant response, cropped to the useful evidence. Until then use the labeled illustrative demo. Never attribute invented output to a provider or client.
 
-Before finalizing:
+Skip generic robot artwork, glowing brains, ornamental dashboards, and stock “person at laptop” imagery. Their space is better used to show the service's output. No generated photography is required for this direction.
 
-- Inspect 1440 px desktop, tablet, and 390 px mobile.
-- Ensure the first screen includes the proposition, an action, and a meaningful part of the demonstration.
-- Confirm selectors change substantive content and support keyboard interaction.
-- Verify no horizontally scrolling capability table remains on phones.
-- Check reduced motion and the no-JavaScript fallback.
-- Keep source labels, units, qualifications, and sample-data status visible.
-- Run the existing build/tests and inspect the rendered result visually.
-- Report what changed with before/after screenshots.
+## 8. Dedicated page sequence and text limits
 
-**Short prompt to give the builder**
+1. Centered hero: heading, one-sentence lead, CTA.
+2. Full-width demonstration: four sources, three assistant options, four example tabs.
+3. Four outcomes: one sentence each — spend, behavior, ad earnings, subscriptions.
+4. Three process steps: Connect → Investigate → Review.
+5. Three concise disclosures: supported connections; access and approvals; data and reporting definitions.
+6. Closing CTA: “Make your reporting easier to act on.” / “Discuss your setup.”
 
-> Redesign the Automation page and homepage teaser using this brief. The current page has about 621 words, no explanatory imagery, and almost 5,000 px of mobile scrolling. Make one large connected-source investigation example the visual centerpiece. Use Google Ads, AdMob, RevenueCat, and Claude marks; show one question, a chart, a brief finding, and a next step. Build it with responsive HTML/SVG. Add three selectors that change the example: Spend changes, Ad earnings, Subscriptions. Use the headline “Your growth stack. One conversation.” and add a contextual CTA in the hero. Reduce default-visible page copy to 250–350 words. Compress the process into Connect → Investigate → Review; retain full access/capability details in three labeled disclosures. Label sample data and keep relevant limits beside examples. On the homepage, use a 70–100 word visual teaser directly after the case study, folding the separate Proof section into that case-study movement. Keep the existing E2E identity and show desktop/mobile before-and-after screenshots.
+Target approximately 250–320 visible words in the initial page state, excluding global navigation/footer and collapsed technical details. Treat this as an editorial budget, not a requirement to remove necessary context. Use one primary action consistently.
 
-**Before screenshots**
+## 9. Builder handoff
 
-[Desktop opening](audit-assets/automation-2026-09-19/desktop-before.png) · [Mobile opening](audit-assets/automation-2026-09-19/mobile-before.png) · [Homepage teaser](audit-assets/automation-2026-09-19/homepage-before.png) · [Browser measurements](audit-assets/automation-2026-09-19/findings.json)
+Update the root-site experience and the intended root /automation route. Reuse the current demo behavior where useful, but replace the oversized split hero with the centered layout specified above.
 
-This document is an audit and handoff brief. It has not been sent to another assistant, and it does not change the website.
+Relevant implementation files:
+
+- src/components/Automation.astro — compact homepage service section.
+- src/components/Investigation.astro — symmetric source/assistant/demo composition.
+- src/data/automation.ts — four sources, four coherent example datasets, neutral copy.
+- src/scripts/investigation.ts — accessible example switching and chart updates.
+- src/pages/automation.astro — page structure, metadata, CTA destinations.
+- src/pages/index.astro — insertion after the case study and before The Loop.
+- Shared navigation/footer — root-site discovery and links.
+- .github/workflows/deploy.yml — understand the production/preview branch mapping before publishing.
+
+Do not copy the old /next/ homepage wholesale into production. Keep the root site's existing design context and calculator behavior.
+
+Acceptance checks:
+
+- Compare desktop 1440 px, tablet 1024 px, and mobile 390/360 px screenshots.
+- Four sources and all three assistants are visible and consistently sized.
+- The tall right panel and empty left-column imbalance are gone.
+- GA4 has a functioning example with a defined measurement basis.
+- Tabs work with keyboard and touch; focus, selected states, and panel semantics are correct.
+- All displayed numerical findings match the sample dataset.
+- No clipped copy, unreadable chart labels, overflowing rows, or mandatory horizontal scrolling.
+- Reduced motion, contrast, and existing form/calculator behavior remain intact.
+- Relevant build and existing checks pass before publishing.
+- Inspect the actual published root homepage, root automation page, navigation, and CTA paths; a working preview alone is insufficient.

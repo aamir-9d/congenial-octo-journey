@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import Problems from '../components/Problems.astro';
 import Proof from '../components/Proof.astro';
 import Calculator from '../components/Calculator.astro';
 import Automation from '../components/Automation.astro';
@@ -21,31 +22,27 @@ import Schema from '../components/Schema.astro';
  * one; between them that was 40% of the words and 29 of the 35 disclosures.
  * Nothing was deleted in the move.
  *
- * The September audit measured the calculator starting 2,172px down on desktop
- * and 2,637px at narrow width, behind a Problems section that was on its own
- * 1,441-2,019px tall. The most persuasive object on the site, and the only one
- * a competitor cannot copy, arrived after two full screens of preamble.
+ * Revision 2 of the automation brief sets this order against the root site's
+ * existing sequence, rather than the /next preview's:
  *
- * So the order is now evidence-led rather than argument-led:
- *
- *   Hero        the claim, one action, and one real result beside it
- *   Calculator  prove it with your own numbers, at position two
- *   CaseStudy   one engagement shown all the way down, with the three shorter
- *               findings folded in as its tail rather than standing alone
- *   Automation  what the monitoring looks like afterwards -- fourth, so it
- *               arrives on the back of credible work rather than before it
- *   Loop        how the work is sequenced
+ *   Hero        the claim, and one action
+ *   Problems    where the money goes missing, compressed
+ *   Calculator  prove it with your own numbers
+ *   Proof       three findings from real audits
+ *   CaseStudy   one of them shown all the way down
+ *   Automation  ongoing reporting, once the problem and the evidence have landed
+ *   Loop        the wider engagement
  *   Founders    who you would actually be talking to
  *   Contact     the one action, again
  *
- * Problems has left the homepage. It is not deleted -- /services opens with it
- * in full, where someone looking for the diagnosis will find it. The hero lead
- * now carries the compressed version, which is what the audit asked for: fold
- * problem recognition into an introduction rather than a section.
+ * Automation sits after the case study on purpose: a visitor meets the business
+ * problem and the evidence first, and only then the service that keeps watching.
+ * Leading with it would imply a platform in front of a consulting engagement.
  *
- * CaseStudy before Proof, inverting the old order: the engagement that can be
- * evidenced in full earns the three one-line findings that follow it, where the
- * reverse made the reader wait through assertions for the proof.
+ * Proof stands on its own again rather than nesting inside the case study. It
+ * was folded in during the previous pass, which cannot work -- CaseStudy is
+ * marked data-added and the copy-parity check strips such blocks whole, taking
+ * Proof's signed-off copy with it.
  */
 
 const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
@@ -59,9 +56,10 @@ const description =
     <Nav />
     <main id="main">
       <Hero />
+      <Problems compact />
       <Calculator />
+      <Proof />
       <CaseStudy />
-      <Proof nested />
       <Automation />
       <Loop />
       <Founders />

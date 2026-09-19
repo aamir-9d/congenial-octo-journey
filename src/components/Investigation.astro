@@ -1,84 +1,79 @@
 ---
-import { EXAMPLES, SOURCES } from '../data/automation.ts';
+import { EXAMPLES, SOURCES, ASSISTANTS } from '../data/automation.ts';
 
 /**
- * The investigation canvas.
+ * The reporting demonstration.
  *
- * Three connected sources feed a Claude investigation; the investigation
- * produces a question, a chart, two findings and a next check. Three selectors
- * switch the whole state, not just an active colour.
+ * Revision 2 replaced the 40/60 split with a centred introduction above a
+ * full-width demonstration: the short copy column used to end while the panel
+ * beside it ran on for another 500px, leaving a large empty lower-left region
+ * that made the opening read as unfinished.
  *
- * ── Why it is built in HTML and SVG rather than shipped as an image ──────
+ * The composition is horizontal rows now, each doing one job — four equal
+ * source tiles, the reporting line, three equal assistant options, four example
+ * selectors, chart beside finding as equal columns, then source and period.
  *
- * The audit asked for a demonstration whose labels stay crisp and whose mobile
- * arrangement genuinely changes. A PNG can do neither: it blurs when scaled,
- * it cannot reflow from a left-to-right flow into a vertical stack, and its
- * text is invisible to a screen reader and unselectable. So the diagram is
- * real markup, and the phone layout is a different arrangement rather than the
- * same picture made smaller.
+ * ── Four chart kinds, not one ────────────────────────────────────────────
+ *
+ * `paired` `funnel` `trend` `periods`. The previous build drew the same bars
+ * for every question, which is what made the demonstration feel templated — and
+ * worse, a single-period bar chart cannot substantiate a week-on-week claim.
+ * Each kind draws what its question needs, and every figure a finding quotes is
+ * now visible on the chart it sits beside.
  *
  * ── On the platform marks ───────────────────────────────────────────────
  *
- * The brief asked for official Google Ads, AdMob, RevenueCat and Claude marks.
- * Those are third-party trademarks, their SVGs are not in this repository, and
- * each carries its own usage terms — so this ships text labels on neutral nodes
- * in the E2E palette instead. Dropping the real marks in is a small change once
- * the approved assets and permission exist; inventing approximations of other
- * companies' logos is not something to do on a page about accuracy.
+ * The brief asks for official marks and says to use text where a suitable asset
+ * is unavailable. None of the seven are in this repository and each carries its
+ * own usage terms, so all seven are text in equal containers. Equal is the part
+ * that carries the meaning: no source and no assistant is the headline one.
  *
  * ── Without JavaScript ──────────────────────────────────────────────────
  *
- * All three panels render. The first is visible, the others carry `hidden`, and
- * the selectors are real buttons. With scripting off a visitor sees a complete,
- * labelled example rather than an empty frame — which is the same standard the
- * rest of this site holds to.
+ * All four panels render; the first is visible and the rest carry `hidden`,
+ * with a companion `display: none` rule because an author `display` beats the
+ * UA sheet's. That rule is not optional — without it every state renders at
+ * once, which is exactly what shipped last time.
  */
 
 interface Props {
-  /** Heading level, so the canvas can sit under an h1 or an h2. */
   headingId?: string;
 }
 
-const { headingId = 'investigation' } = Astro.props;
+const { headingId = 'demo' } = Astro.props;
 
-/** Bar geometry. The chart is 5-7 bars; anything denser stops being readable. */
-const CHART_W = 520;
-const CHART_H = 104;
+/** Drawing box. Bars are proportions, so it stretches horizontally. */
+const W = 560;
+const H = 150;
 ---
 
-<div class="inv" data-investigation>
-  {/* --- the connected sources ------------------------------------------- */}
-  <div class="inv__flow">
-    <ul class="inv__sources" aria-label="Connected sources">
-      {
-        SOURCES.map((s) => (
-          <li class="src">
-            <span class="src__dot" aria-hidden="true"></span>
-            <span class="src__text">
-              <span class="src__name">{s.name}</span>
-              <span class="src__note">{s.note}</span>
-            </span>
-          </li>
-        ))
-      }
-    </ul>
+<div class="demo" data-investigation>
+  <ul class="tiles" aria-label="Connected reporting sources">
+    {
+      SOURCES.map((s) => (
+        <li class="tile">
+          <span class="tile__name">{s.name}</span>
+          <span class="tile__note">{s.note}</span>
+        </li>
+      ))
+    }
+  </ul>
 
-    <div class="inv__join" aria-hidden="true">
-      <svg viewBox="0 0 64 120" preserveAspectRatio="none" focusable="false">
-        <path d="M0 20 C 40 20, 34 60, 64 60" fill="none" stroke="currentColor" stroke-width="1"></path>
-        <path d="M0 60 H 64" fill="none" stroke="currentColor" stroke-width="1"></path>
-        <path d="M0 100 C 40 100, 34 60, 64 60" fill="none" stroke="currentColor" stroke-width="1"></path>
-      </svg>
-    </div>
-
-    <div class="inv__engine">
-      <span class="inv__engine-label">Claude</span>
-      <span class="inv__engine-note">reads all three, reconciles, explains</span>
-    </div>
+  <div class="bridge">
+    <span class="bridge__rule" aria-hidden="true"></span>
+    <span class="bridge__label">Connected reporting</span>
+    <span class="bridge__rule" aria-hidden="true"></span>
   </div>
 
-  {/* --- the selectors ---------------------------------------------------- */}
-  <div class="inv__tabs" role="tablist" aria-label="Example investigations">
+  <ul class="assistants" aria-label="Assistant options">
+    {
+      ASSISTANTS.map((a) => (
+        <li class="asst">{a.name}</li>
+      ))
+    }
+  </ul>
+
+  <div class="tabs" role="tablist" aria-label="Example investigations">
     {
       EXAMPLES.map((e, i) => (
         <button
@@ -97,13 +92,23 @@ const CHART_H = 104;
     }
   </div>
 
-  {/* --- one panel per state ---------------------------------------------- */}
   {
     EXAMPLES.map((e, i) => {
-      const max = Math.max(...e.chart.points.map((p) => p.v));
-      const n = e.chart.points.length;
-      const gap = 10;
-      const bw = (CHART_W - gap * (n - 1)) / n;
+      const c = e.chart;
+      const max = Math.max(...c.points.map((p) => Math.max(p.v, p.prev ?? 0)));
+      const n = c.points.length;
+      const money = (v: number) => `${c.prefix ?? ''}${v.toLocaleString('en-US')}`;
+
+      const gap = 12;
+      const bw = (W - gap * (n - 1)) / n;
+
+      /* `trend` draws the two period averages the finding quotes, so the claim
+         is readable off the chart instead of only asserted beside it. */
+      const split = c.splitAfter ?? -1;
+      const mean = (from: number, to: number) =>
+        c.points.slice(from, to).reduce((s, p) => s + p.v, 0) / (to - from);
+      const avgA = split >= 0 ? mean(0, split + 1) : 0;
+      const avgB = split >= 0 ? mean(split + 1, n) : 0;
 
       return (
         <div
@@ -117,73 +122,150 @@ const CHART_H = 104;
         >
           <p class="panel__q">{e.question}</p>
 
-          <figure class="panel__chart">
-            <figcaption class="chart__cap">
-              {e.chart.label}
-              <span class="chart__sample">Sample data</span>
-            </figcaption>
+          <div class="split">
+            <figure class="ev">
+              <figcaption class="ev__cap">
+                <span>{c.caption}</span>
+                <span class="ev__sample">Sample data</span>
+              </figcaption>
 
-            <svg
-              viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-              role="img"
-              preserveAspectRatio="none"
-              aria-label={`${e.chart.label}. ${e.chart.points.map((p) => `${p.note} ${e.chart.prefix ?? ''}${p.v.toLocaleString('en-US')}`).join(', ')}.`}
-            >
-              <line
-                x1="0"
-                y1={CHART_H}
-                x2={CHART_W}
-                y2={CHART_H}
-                stroke="var(--chart-axis)"
-                stroke-width="1"
-                vector-effect="non-scaling-stroke"
-              />
-              {e.chart.points.map((p, bi) => {
-                const h = Math.round((CHART_H * p.v) / max);
-                return (
-                  <rect
-                    x={bi * (bw + gap)}
-                    y={CHART_H - h}
-                    width={bw}
-                    height={h}
-                    rx="2"
-                    fill={bi === e.chart.focus ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
-                  />
-                );
-              })}
-            </svg>
+              {c.kind === 'funnel' ? (
+                <div class="funnel">
+                  {c.points.map((p, bi) => (
+                    <div class:list={['fstep', { 'fstep--focus': bi === c.focus }]}>
+                      <span class="fstep__label">{p.label}</span>
+                      <span class="fstep__track">
+                        <span class="fstep__bar" style={`width:${((p.v / max) * 100).toFixed(1)}%`} />
+                      </span>
+                      <span class="fstep__v">{p.v.toLocaleString('en-US')}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <svg
+                    viewBox={`0 0 ${W} ${H}`}
+                    preserveAspectRatio="none"
+                    role="img"
+                    aria-label={`${c.caption}. ${c.points
+                      .map(
+                        (p) =>
+                          `${p.label} ${money(p.v)}${p.prev !== undefined ? `, previously ${money(p.prev)}` : ''}`,
+                      )
+                      .join('. ')}.`}
+                  >
+                    {split >= 0 && (
+                      <Fragment>
+                        <line
+                          x1="0"
+                          y1={H - (avgA / max) * H}
+                          x2={(split + 1) * (bw + gap) - gap}
+                          y2={H - (avgA / max) * H}
+                          stroke="var(--chart-rule)"
+                          stroke-width="1"
+                          stroke-dasharray="4 4"
+                          vector-effect="non-scaling-stroke"
+                        />
+                        <line
+                          x1={(split + 1) * (bw + gap)}
+                          y1={H - (avgB / max) * H}
+                          x2={W}
+                          y2={H - (avgB / max) * H}
+                          stroke="var(--color-accent)"
+                          stroke-width="1"
+                          stroke-dasharray="4 4"
+                          vector-effect="non-scaling-stroke"
+                        />
+                      </Fragment>
+                    )}
 
-            {/* Axis labels are HTML, not SVG <text>.
-                
-                Inside the SVG they scale with the viewBox: at 390px the 520-unit
-                box renders about two thirds size, so an 11px label arrives at
-                roughly 7px and stops being readable. As HTML they stay the size
-                the type scale says, at every width -- and they are selectable
-                and translatable, which SVG text is not. */}
-            <ul class="chart__ticks">
-              {e.chart.points.map((p, bi) => (
-                <li class:list={['tick', { 'tick--focus': bi === e.chart.focus }]}>
-                  <span class="tick__val">
-                    {`${e.chart.prefix ?? ''}${p.v.toLocaleString('en-US')}${e.chart.unit}`}
-                  </span>
-                  <span class="tick__note">{p.note}</span>
-                </li>
-              ))}
-            </ul>
-          </figure>
+                    {c.points.map((p, bi) => {
+                      const x = bi * (bw + gap);
+                      const hv = (p.v / max) * H;
+                      const on = bi === c.focus;
 
-          <p class="panel__finding">{e.findings[0]}</p>
-          <p class="panel__qualify">{e.findings[1]}</p>
+                      if (p.prev === undefined) {
+                        return (
+                          <rect
+                            x={x}
+                            y={H - hv}
+                            width={bw}
+                            height={hv}
+                            rx="2"
+                            fill={on ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
+                          />
+                        );
+                      }
 
-          <p class="panel__next">
-            <span class="panel__next-label">Next check</span>
-            {e.next}
-          </p>
+                      /* Both periods on screen, so a week-on-week claim can be
+                         read off the chart rather than taken on trust. */
+                      const hp = (p.prev / max) * H;
+                      const half = (bw - 4) / 2;
+                      return (
+                        <Fragment>
+                          <rect x={x} y={H - hp} width={half} height={hp} rx="2" fill="var(--chart-bar-dim)" />
+                          <rect
+                            x={x + half + 4}
+                            y={H - hv}
+                            width={half}
+                            height={hv}
+                            rx="2"
+                            fill={on ? 'var(--color-accent)' : 'var(--chart-measured)'}
+                          />
+                        </Fragment>
+                      );
+                    })}
+                  </svg>
 
-          <p class="panel__limit">{e.limit}</p>
+                  {/* Labels are HTML. Inside the viewBox they scale with the
+                      container and arrive at roughly 7px on a phone. */}
+                  <ul class="ticks">
+                    {c.points.map((p, bi) => (
+                      <li class:list={['tick', { 'tick--focus': bi === c.focus }]}>
+                        <span class="tick__v">{money(p.v)}</span>
+                        <span class="tick__l">{p.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {c.points[0]?.prev !== undefined && (
+                    <p class="legend">
+                      <span class="legend__k legend__k--prev" aria-hidden="true" />
+                      Previous week
+                      <span class="legend__k legend__k--now" aria-hidden="true" />
+                      This week
+                    </p>
+                  )}
+
+                  {split >= 0 && (
+                    <p class="legend">
+                      <span class="legend__k legend__k--dash" aria-hidden="true" />
+                      Period averages, {money(Math.round(avgA))} then {money(Math.round(avgB))}
+                    </p>
+                  )}
+                </>
+              )}
+            </figure>
+
+            <div class="read">
+              <p class="read__finding">{e.findings[0]}</p>
+              <p class="read__second">{e.findings[1]}</p>
+
+              <p class="read__next">
+                <span class="read__next-label">Next check</span>
+                {e.next}
+              </p>
+
+              <details class="read__basis">
+                <summary>How this is measured</summary>
+                <p>{e.basis}</p>
+                <p>{e.limit}</p>
+              </details>
+            </div>
+          </div>
 
           <p class="panel__foot">
-            <span>{e.sources.join(' · ')}</span>
+            <span>{e.source}</span>
             <span>{e.period}</span>
             <span class="panel__foot-tag">Example workflow</span>
           </p>
@@ -199,134 +281,123 @@ const CHART_H = 104;
 </script>
 
 <style>
-  .inv {
-    background: var(--color-surface);
-    border-radius: var(--radius-panel);
-    box-shadow: var(--ring);
-    padding: var(--s8);
+  .demo {
     display: flex;
     flex-direction: column;
     gap: var(--s8);
     min-width: 0;
   }
 
-  /* --- sources → engine --------------------------------------------------- */
+  /* --- sources: four equal tiles, 2x2 on a phone -------------------------- */
 
-  .inv__flow {
-    display: grid;
-    gap: var(--s4);
-    grid-template-columns: 1fr;
-    align-items: center;
-  }
-
-  /* The left-to-right flow only exists where there is room for it. Below this
-     the connector is dropped entirely rather than squeezed — a 64px tangle of
-     curves at phone width reads as decoration, not as a diagram. */
-  @media (min-width: 620px) {
-    .inv__flow {
-      grid-template-columns: minmax(0, 1fr) 64px minmax(0, 0.9fr);
-    }
-  }
-
-  .inv__sources {
+  .tiles {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--s4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .src {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--s4);
-    min-width: 0;
-  }
-
-  .src__dot {
-    flex: none;
-    width: 9px;
-    height: 9px;
-    margin-top: 5px;
-    border-radius: 50%;
-    background: var(--color-accent);
-  }
-
-  .src__text {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .src__name {
-    font-size: var(--t-card);
-    font-weight: var(--fw-medium);
-    color: var(--color-text);
-  }
-
-  .src__note {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    line-height: var(--lh-snug);
-    color: var(--color-text-4);
-  }
-
-  .inv__join {
-    display: none;
-    color: var(--color-line-hover);
-  }
-
-  @media (min-width: 620px) {
-    .inv__join {
-      display: block;
-      height: 96px;
-    }
-
-    .inv__join svg {
-      display: block;
-      width: 100%;
-      height: 100%;
+  @media (min-width: 720px) {
+    .tiles {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
-  .inv__engine {
+  .tile {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: var(--s4) var(--s6);
+    align-items: center;
+    text-align: center;
+    padding: var(--s4) var(--s3);
     border-radius: var(--radius-card);
-    background: var(--color-surface-sunk);
+    background: var(--color-surface);
     box-shadow: var(--ring);
     min-width: 0;
   }
 
-  .inv__engine-label {
+  .tile__name {
     font-size: var(--t-card);
     font-weight: var(--fw-semibold);
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
-  .inv__engine-note {
+  .tile__note {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    line-height: var(--lh-snug);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
     color: var(--color-text-4);
   }
 
-  /* --- selectors ---------------------------------------------------------- */
+  /* --- the reporting line -------------------------------------------------- */
 
-  .inv__tabs {
+  .bridge {
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .bridge__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-line-strong);
+  }
+
+  .bridge__label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  /* --- assistants ---------------------------------------------------------- */
+
+  /* Three columns at every width. The names are short enough to read at
+     390px -- roughly 118px each -- and stacking them cost three rows of
+     height in front of the evidence, which is the thing a visitor came for. */
+  .assistants {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Names only. Each provider's setup genuinely differs, but a three-way
+     technical comparison beside the hero is the brief's explicit "no" -- the
+     routes live in the Supported connections disclosure instead. */
+  .asst {
+    text-align: center;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-2);
+    min-width: 0;
+  }
+
+  /* --- selectors: 2x2 on a phone, four across above 720 -------------------- */
+
+  .tabs {
+    display: grid;
     gap: var(--s3);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     padding-top: var(--s6);
     border-top: 1px solid var(--color-line);
   }
 
+  @media (min-width: 720px) {
+    .tabs {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
   .tab {
     min-height: 44px;
-    padding: 0 var(--s6);
+    padding: 0 var(--s4);
     border: 0;
     border-radius: var(--radius-pill);
     background: transparent;
@@ -351,7 +422,7 @@ const CHART_H = 104;
     box-shadow: var(--ring-accent);
   }
 
-  /* --- one state ---------------------------------------------------------- */
+  /* --- one state ----------------------------------------------------------- */
 
   .panel {
     display: flex;
@@ -360,10 +431,8 @@ const CHART_H = 104;
     min-width: 0;
   }
 
-  /* `display: flex` beats the UA sheet's `[hidden] { display: none }`, so
-     without this every state renders at once and the selectors appear to do
-     nothing. The markup was correct and the page was wrong -- which is why the
-     markup tests all passed while three panels stacked up on a phone. */
+  /* An author `display` beats the UA sheet's `[hidden] { display: none }`.
+     Without this, every state renders at once. */
   .panel[hidden] {
     display: none;
   }
@@ -381,50 +450,63 @@ const CHART_H = 104;
     color: var(--color-text);
   }
 
-  .panel__chart {
+  /* Equal columns, top-aligned: balanced by content rather than clipped. */
+  .split {
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 860px) {
+    .split {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s12);
+    }
+  }
+
+  /* --- evidence ------------------------------------------------------------ */
+
+  .ev {
     margin: 0;
     display: flex;
     flex-direction: column;
     gap: var(--s4);
+    min-width: 0;
   }
 
-  .chart__cap {
+  .ev__cap {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--s4);
+    gap: var(--s3) var(--s4);
     font-family: var(--font-mono);
     font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-meta);
-    text-transform: uppercase;
     color: var(--color-text-4);
   }
 
-  /* Sample data is labelled where the chart is, not in a footnote. */
-  .chart__sample {
+  .ev__sample {
     padding: 2px 7px;
     border-radius: var(--radius-pill);
     background: var(--color-surface-sunk);
     color: var(--color-text-3);
-    text-transform: none;
     letter-spacing: var(--ls-chip);
   }
 
-  /* A fixed render height with preserveAspectRatio="none": the bars are a
-     proportion comparison, so stretching them horizontally costs nothing, and a
-     fixed height stops the chart collapsing to a sliver at phone width. */
-  .panel__chart svg {
+  .ev svg {
     display: block;
     width: 100%;
-    height: 104px;
+    height: 150px;
   }
 
-  .chart__ticks {
+  .ticks {
     list-style: none;
     display: flex;
-    gap: 10px;
-    margin: var(--s3) 0 0;
+    gap: 12px;
+    margin: 0;
     padding: 0;
+    align-items: start;
   }
 
   .tick {
@@ -436,11 +518,14 @@ const CHART_H = 104;
     text-align: center;
   }
 
-  .chart__ticks {
-    align-items: start;
+  .tick__v {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-3);
   }
 
-  .tick__note {
+  .tick__l {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     line-height: var(--lh-snug);
@@ -448,19 +533,106 @@ const CHART_H = 104;
     overflow-wrap: anywhere;
   }
 
-  .tick__val {
+  .tick--focus .tick__v,
+  .tick--focus .tick__l {
+    color: var(--color-accent);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s3);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  .legend__k {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    flex: none;
+  }
+
+  .legend__k--prev {
+    background: var(--chart-bar-dim);
+  }
+
+  .legend__k--now {
+    background: var(--color-accent);
+    margin-left: var(--s4);
+  }
+
+  .legend__k--dash {
+    height: 0;
+    border-top: 1px dashed var(--color-accent);
+    border-radius: 0;
+  }
+
+  /* --- funnel: horizontal, because the labels are event names -------------- */
+
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .fstep {
+    display: grid;
+    grid-template-columns: minmax(0, 9em) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .fstep__label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+    overflow-wrap: anywhere;
+  }
+
+  .fstep__track {
+    display: block;
+    min-width: 0;
+  }
+
+  .fstep__bar {
+    display: block;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--chart-bar-dim);
+  }
+
+  .fstep--focus .fstep__bar {
+    background: var(--color-accent);
+  }
+
+  .fstep--focus .fstep__label,
+  .fstep--focus .fstep__v {
+    color: var(--color-accent);
+  }
+
+  .fstep__v {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     font-variant-numeric: tabular-nums;
     color: var(--color-text-3);
+    white-space: nowrap;
   }
 
-  .tick--focus .tick__note,
-  .tick--focus .tick__val {
-    color: var(--color-accent);
+  /* --- reading ------------------------------------------------------------- */
+
+  .read {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    min-width: 0;
   }
 
-  .panel__finding {
+  .read__finding {
     margin: 0;
     font-size: var(--t-section-lead);
     line-height: var(--lh-tight);
@@ -469,31 +641,26 @@ const CHART_H = 104;
     text-wrap: balance;
   }
 
-  .panel__qualify,
-  .panel__limit {
+  .read__second {
     margin: 0;
     font-size: var(--t-card-sm);
     line-height: var(--lh-card);
     color: var(--color-text-3);
   }
 
-  .panel__limit {
-    padding-top: var(--s4);
-    border-top: 1px solid var(--color-line-soft);
-    color: var(--color-text-4);
-  }
-
-  .panel__next {
+  .read__next {
     display: flex;
     flex-wrap: wrap;
     gap: var(--s3) var(--s4);
     margin: 0;
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line-soft);
     font-size: var(--t-card-sm);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .panel__next-label {
+  .read__next-label {
     flex: none;
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
@@ -501,6 +668,44 @@ const CHART_H = 104;
     text-transform: uppercase;
     color: var(--color-accent);
     padding-top: 2px;
+  }
+
+  .read__basis summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-text-4);
+    list-style: none;
+  }
+
+  .read__basis summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .read__basis summary::before {
+    content: '+';
+    width: 1.3em;
+    color: var(--color-accent);
+  }
+
+  .read__basis[open] summary::before {
+    content: '\2212';
+  }
+
+  .read__basis summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .read__basis p {
+    margin: 0 0 var(--s4) 1.3em;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
   }
 
   .panel__foot {
@@ -519,17 +724,5 @@ const CHART_H = 104;
 
   .panel__foot-tag {
     color: var(--color-accent);
-  }
-
-  @media (max-width: 640px) {
-    .inv {
-      padding: var(--s6);
-      gap: var(--s6);
-    }
-
-    .tab {
-      flex: 1 1 auto;
-      padding: 0 var(--s4);
-    }
   }
 </style>
