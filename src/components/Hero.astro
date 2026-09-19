@@ -37,9 +37,9 @@ const chips: { label: string; icon: IconName }[] = [
     <div class="hero__bloom hero__bloom--cool"></div>
   </div>
 
-  {/* Layer 3: a line sweeping the top edge, inside a 1px clipping strip. */}
-  <div class="hero__scan" aria-hidden="true">
-  </div>
+  {/* The sweeping scan line that used to live here was removed — continuous
+      motion demanding attention it had not earned. Its empty 1px clipping strip
+      outlived it until the September audit spotted the corpse. */}
 
   <div class="hero__inner">
     <div class="hero__pill" data-added="bento">
@@ -137,18 +137,6 @@ const chips: { label: string; icon: IconName }[] = [
     filter: blur(50px);
     animation: drift-b 36s ease-in-out infinite;
   }
-
-  .hero__scan {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    z-index: 1;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
 
   .hero__inner {
     position: relative;

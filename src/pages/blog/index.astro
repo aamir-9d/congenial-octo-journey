@@ -30,40 +30,41 @@ const description =
 <Base title={title} description={description} path="/blog">
   <div class="page">
     <Nav />
+    <main id="main">
+      <section class="section section--lead">
+        <div class="wrap">
+          <div class="section-head" data-reveal="1">
+            <div class="eyebrow">FROM THE BLOG</div>
+            <h1 class="blog__head">What we're finding in live stacks</h1>
+            <p class="section-lead">
+              Written while the work was happening, not afterwards. Every one of these started as a
+              problem in somebody's stack.
+            </p>
+          </div>
 
-    <section class="section section--lead">
-      <div class="wrap">
-        <div class="section-head" data-reveal="1">
-          <div class="eyebrow">FROM THE BLOG</div>
-          <h1 class="blog__head">What we're finding in live stacks</h1>
-          <p class="section-lead">
-            Written while the work was happening, not afterwards. Every one of these started as a
-            problem in somebody's stack.
-          </p>
+          <div class="blog__list">
+            {
+              posts.map((post) => (
+                <a class="blog__row" href={`${base}/blog/${post.id}`}>
+                  <span class="blog__date">
+                    <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                      {fmt(post.data.date)}
+                    </time>
+                  </span>
+                  <span class="blog__body">
+                    <span class="blog__title">{post.data.title}</span>
+                    <span class="blog__kicker">{post.data.kicker}</span>
+                  </span>
+                  <span class="blog__tag">{post.data.tag}</span>
+                  <span class="blog__arrow" aria-hidden="true">&#8594;</span>
+                  <span class="blog__read">Read &#8594;</span>
+                </a>
+              ))
+            }
+          </div>
         </div>
-
-        <div class="blog__list">
-          {
-            posts.map((post) => (
-              <a class="blog__row" href={`${base}/blog/${post.id}`}>
-                <span class="blog__date">
-                  <time datetime={post.data.date.toISOString().slice(0, 10)}>
-                    {fmt(post.data.date)}
-                  </time>
-                </span>
-                <span class="blog__body">
-                  <span class="blog__title">{post.data.title}</span>
-                  <span class="blog__kicker">{post.data.kicker}</span>
-                </span>
-                <span class="blog__tag">{post.data.tag}</span>
-                <span class="blog__arrow" aria-hidden="true">&#8594;</span>
-                <span class="blog__read">Read &#8594;</span>
-              </a>
-            ))
-          }
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
     <Footer />
   </div>

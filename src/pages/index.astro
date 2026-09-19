@@ -47,14 +47,17 @@ const description =
   <Schema slot="head" />
   <div class="page">
     <Nav />
-    <Hero />
-    <Problems compact />
-    <Calculator />
-    <Proof />
-    <CaseStudy />
-    <Loop />
-    <Founders />
-    <Contact />
+    <main id="main">
+      <Hero />
+      <Problems compact />
+      <Calculator />
+      <Proof />
+      <CaseStudy />
+      <Loop />
+      <Founders />
+      <Contact />
+    </main>
+
     <Footer />
   </div>
 </Base>
@@ -63,6 +66,8 @@ const description =
   .page {
     min-height: 100vh;
     background: var(--color-bg);
-    overflow-x: hidden;
+    /* `clip`, not `hidden` — see global.css. `hidden` makes this a scroll
+       container and the sticky nav sticks to it instead of the viewport. */
+    overflow-x: clip;
   }
 </style>

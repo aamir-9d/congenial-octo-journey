@@ -55,9 +55,23 @@ the template syntax at build time so the published pages are static.
 
 ## 1. Colour
 
-Dark, near-monochrome, one accent. No second brand hue, no gradients, **no red
-anywhere in the system** — including for errors, which use copy and an amber
-rule instead.
+Dark, near-monochrome, one accent. **No red anywhere in the system** —
+including for errors, which use copy and an amber rule instead.
+
+> **One correction to an earlier version of this document.** It said "no second
+> brand hue, no gradients". That is true of every token and every component
+> surface, and false of exactly one place: the hero carries **two drifting
+> radial blooms**, one amber at `rgba(227,154,31,0.26)` and one blue-grey at
+> `rgba(64,86,140,0.34)`, both blurred past 40px. The September audit flagged
+> the blue as hardcoded drift against the one-accent rule and recommended
+> removing it.
+>
+> **It is not drift.** Both blooms, their blur radii and their 28s/36s drift
+> animations are verbatim from `design/E2E Apps - Bento.dc.html`. The
+> implementation is faithful; the rule as written was too absolute. The blue is
+> atmosphere behind the headline at roughly a third opacity, not a brand colour
+> — nothing else in the system may use it, and no component surface, text,
+> border or chart may introduce a second hue.
 
 ### Ground and surface
 

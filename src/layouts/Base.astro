@@ -145,6 +145,13 @@ const LATIN =
   </head>
 
   <body>
+    {/* First thing in the tab order on every route. A landmark is only half the
+        fix: it lets assistive technology jump to the content, but a sighted
+        keyboard user still has to tab through the whole nav on every page. The
+        link is invisible until it is focused, and then it has to be visible —
+        a skip link that stays hidden while focused is the classic broken one. */}
+    <a href="#main" class="skip-link">Skip to content</a>
+
     <slot />
     <ConsentBanner />
 
