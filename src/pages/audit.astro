@@ -65,9 +65,9 @@ const findings: Finding[] = [
   {
     pri: 'P1',
     finding:
-      'The hero combined a centred pill, headline, two buttons, seven chips, dot texture and two drifting blooms.',
+      'The hero combines a centred pill, headline, two buttons, seven chips, dot texture and two drifting blooms.',
     change: 'A quieter split composition, a clear service category, and a real work artifact.',
-    state: 'Fixed',
+    state: 'Open',
   },
   {
     pri: 'P1',
@@ -97,9 +97,9 @@ const findings: Finding[] = [
   },
   {
     pri: 'P2',
-    finding: 'Case-study results were compressed into 12.5px monospace rows inside a large card.',
+    finding: 'Case-study results are compressed into 12.5px monospace rows inside a large card.',
     change: 'Enlarge one result, pair it with the artifact, keep the qualifiers beside it.',
-    state: 'Fixed',
+    state: 'Open',
   },
   {
     pri: 'P2',
@@ -129,7 +129,6 @@ const shots = [
     h: 900,
     alt: 'The homepage hero at 1440px before the redesign: a centred badge, large headline, two buttons and a row of seven platform chips.',
     cap: 'Desktop, 1440. A centred pill, headline, two buttons, seven chips, dot texture and two drifting blooms — with roughly 200px of dead space beneath.',
-    wide: true,
   },
   {
     src: 'home-narrow.png',
@@ -137,7 +136,6 @@ const shots = [
     h: 900,
     alt: 'The same homepage at 390px wide, elements stacked vertically.',
     cap: 'Narrow, 390. The same composition, stacked.',
-    wide: false,
   },
 ];
 ---
@@ -162,13 +160,14 @@ const shots = [
             production booking, email delivery and analytics collection not verified.
           </p>
 
-          <div class="callout callout--ok">
+          <div class="callout">
             <span class="callout__tag">Since the audit was written</span>
             <p>
-              The four browser-confirmed defects are fixed, the calculator has moved to position two,
-              the hero is recomposed around a real result, and automation has a section and a page.
-              <strong>Two findings did not survive verification</strong> and are marked in place
-              rather than deleted.
+              The four browser-confirmed defects are fixed, the calculator has moved from 2,172px
+              down to position two, and automation has a section, a page and a navigation entry.
+              <strong>The hero is unchanged</strong> &#8212; it is still the composition described
+              below. Two findings did not survive verification and are marked in place rather than
+              deleted.
             </p>
           </div>
         </div>
@@ -180,7 +179,7 @@ const shots = [
           <div class="shots">
             {
               shots.map((s) => (
-                <figure class:list={['shot', { 'shot--wide': s.wide }]}>
+                <figure class="shot">
                   <img
                     src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/img/audit/${s.src}`}
                     alt={s.alt}
@@ -362,19 +361,27 @@ const shots = [
 
   /* --- callouts ---------------------------------------------------------- */
 
+  /* No accent rail down the side.
+
+     A thick coloured border on one edge of a filled, rounded card is the
+     most recognisable tell of a generated interface, and docs/design.md says
+     so in as many words — so it has no business on the page that audits this
+     site for exactly that. The blockquote in [slug].astro keeps its 2px amber
+     rule because that is a bare rule on text standing in for a quotation mark,
+     not a rail bolted to a card.
+
+     The surface step and the amber tag already separate a callout from the
+     prose around it, which is the system's rule: one hairline, at most one
+     ambient shadow, and depth from stepping between grounds. */
   .callout {
     margin-top: var(--s12);
     padding: var(--s8);
-    border-left: 2px solid var(--color-accent);
-    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    border-radius: var(--radius-card);
     background: var(--color-band);
+    box-shadow: var(--ring);
     display: flex;
     flex-direction: column;
     gap: var(--s4);
-  }
-
-  .callout--bad {
-    border-left-color: var(--color-text-4);
   }
 
   .callout__tag {
