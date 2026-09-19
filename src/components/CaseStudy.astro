@@ -315,16 +315,23 @@ const shown = CASE_STUDY.cardFigures.map(
     min-width: 0;
   }
 
+  /* Inline, not inline-flex. As a flex box the title wraps inside the link and
+     the arrow is left stranded at the far right of the first line instead of
+     following the last word. Inline keeps it in the text flow, so it wraps with
+     the sentence. */
   .case__more-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline;
     min-height: 44px;
     font-size: var(--t-card);
     font-weight: var(--fw-medium);
     line-height: var(--lh-card);
     text-decoration: none;
     color: var(--color-text);
+  }
+
+  .case__more-link svg {
+    margin-left: 6px;
+    vertical-align: -1px;
   }
 
   .case__more-link:hover {

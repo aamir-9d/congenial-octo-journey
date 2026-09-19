@@ -47,8 +47,8 @@ const founders = [
 
 <section class="section" data-section="founders">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow">WHO YOU TALK TO</div>
+    <div data-reveal="1">
+      <p class="eyebrow founders__eyebrow">06 / Who you talk to</p>
       <h2 class="founders__h2">Nothing gets handed off.</h2>
     </div>
 
@@ -70,7 +70,11 @@ const founders = [
                       class="founders__photo"
                     />
                   ) : (
-                    <Icon name="user" size={24} />
+                    <span class="founders__await">
+                      Real portrait
+                      <br />
+                      to be added
+                    </span>
                   )
                 }
               </div>
@@ -87,7 +91,7 @@ const founders = [
             </div>
 
             <a href={f.linkedin} target="_blank" rel="noopener" class="founders__linkedin">
-              LinkedIn
+              Meet on LinkedIn
               <Icon name="arrow-up-right" size={13} />
             </a>
           </div>
@@ -103,9 +107,14 @@ const founders = [
 
 <style>
 
+  .founders__eyebrow {
+    margin-bottom: var(--s6);
+  }
+
   .founders__h2 {
-    margin-top: 16px;
+    max-width: 24ch;
     font-size: var(--t-h2);
+    line-height: var(--lh-h2);
     letter-spacing: var(--ls-h2);
   }
 
@@ -136,7 +145,7 @@ const founders = [
   .founders__slot {
     flex: none;
     width: 78px;
-    height: 78px;
+    height: 94px;
     border-radius: var(--radius-card);
     overflow: hidden;
     background: repeating-linear-gradient(135deg, #1d2128 0 6px, #191c22 6px 12px);
@@ -144,6 +153,17 @@ const founders = [
     place-items: center;
     color: var(--color-line-hover);
     box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+
+  /* Says what it is. A user glyph reads as an avatar that failed to load; this
+     reads as a frame with a photo still to come, which is what it is. */
+  .founders__await {
+    padding: 4px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    line-height: var(--lh-tight);
+    text-align: center;
+    color: var(--color-text-4);
   }
 
   .founders__photo {
@@ -204,10 +224,11 @@ const founders = [
     color: var(--color-accent);
   }
 
+  /* Left, with the head and the cards. The old centred pull under a centred
+     head was consistent; under a left-aligned one it is not. */
   .founders__pull {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+    max-width: 34ch;
+    text-align: left;
   }
 
   /* --- phone ---------------------------------------------------------------
@@ -229,7 +250,7 @@ const founders = [
     .founders__photo,
     .founders__slot {
       width: 64px;
-      height: 64px;
+      height: 76px;
       flex: none;
     }
 
