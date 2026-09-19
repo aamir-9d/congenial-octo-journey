@@ -1,10 +1,11 @@
-# E2E Apps — Product Requirements & Design System
+# E2E Apps — Product Requirements
 
-**Status:** live on the `redesign` branch · 91 automated checks · last revised 29 August 2026
-**Related:** [`NOTES.md`](../NOTES.md) (decisions and open findings) · [`docs/measurement.md`](measurement.md) (analytics wiring) · [`docs/credentials.md`](credentials.md) (secrets runbook) · [`design/CLAUDE-BRAND-BRIEF.md`](../design/CLAUDE-BRAND-BRIEF.md) (identity work)
+**Status:** live on `main` · 95 automated checks · last revised 19 September 2026
+**Related:** [`design.md`](design.md) (the design system) · [`NOTES.md`](../NOTES.md) (decisions and open findings) · [`docs/measurement.md`](measurement.md) (analytics wiring) · [`docs/credentials.md`](credentials.md) (secrets runbook) · [`design/CLAUDE-BRAND-BRIEF.md`](../design/CLAUDE-BRAND-BRIEF.md) (identity work)
 
-This document describes what the site is for, what it must do, and the design
-system it is built on. It is written to be usable by someone who has never seen
+This document describes what the site is for, what it must do, and how the
+repository is laid out. The visual system has its own document,
+[`design.md`](design.md). It is written to be usable by someone who has never seen
 the repository — a designer, a contractor, or the author six months from now.
 
 Where a value here differs from the code, **the code is right and this document
@@ -90,34 +91,67 @@ The page order in §4 follows that sequence deliberately.
 
 ---
 
-## 4. Information architecture
+## 4. Structure: repository, pages, routes
+
+### Repository map
+
+Everything a newcomer needs to find, and nothing generated.
+
+| Path | Holds | Notes |
+| --- | --- | --- |
+| `design/` | **The signed-off designs.** Three `.dc.html` exports (desktop, phone, phone-updated), the brand book, the logo-directions sheet, and three authoring briefs | **Byte-exact copies. Never edited.** Adjust at render time |
+| `src/components/` | 21 `.astro` components — one per section, plus `Logo`, `Icon`, `Disclose`, `Slider`, `Schema`, `Analytics`, `ConsentBanner` | Composition and scoped CSS only |
+| `src/pages/` | The routes. `index`, `services`, `products`, `faq`, `privacy`, `terms`, `404`, `blog/` and `sitemap.xml.ts` | File-based routing |
+| `src/layouts/` | `Base.astro` (head, fonts, analytics) and `Prose.astro` (blog article shell) | |
+| `src/styles/` | `tokens.css` (the single source of design values), `global.css` (shared patterns), `calculator.css` | 1,726 lines total |
+| `src/scripts/` | 12 TypeScript modules — calculator, attribution, analytics, consent, contact form, nav menu, filters | `calc-model.ts` is **protected**, see §6 |
+| `src/data/` | Content as typed modules: `faq`, `products`, `case-study`, `presets`, `icons`, `logo`, `decay` | Single source for both the page and its JSON-LD |
+| `src/content/blog/` | 15 markdown posts | Astro content collection |
+| `public/` | Static, served as-is: `fonts/` (5 woff2), `pdf/`, generated icons, `og-image.png`, `robots.txt`, manifest | |
+| `public/brand-book/`, `public/logo-directions/` | Rendered from `design/` at build time | `noindex`; never hand-edited |
+| `scripts/` | Build and audit tooling: icon generation, OG image, design-document renderer, contrast checker | Node built-ins plus the `sharp` inside Astro |
+| `tests/` | 15 suites, 95 checks | `node --test`, zero dependencies |
+| `worker/` | The Cloudflare Worker behind the contact form | Deployed with `wrangler`, not part of the site build |
+| `docs/` | `prd.md`, `design.md`, `measurement.md`, `credentials.md`, `redesign-plan.md` | |
+| `.github/workflows/` | `deploy.yml`, `lighthouse.yml` | |
+
+Untracked or incidental at the root: `E2E Apps Homepage.dc.html`, `support.js`
+and `image-slot.js` are the original Claude Design export and its runtime, kept
+for reference and not deployable.
 
 ### Homepage sections, in order
 
-Order is enforced by tests where a section's position carries meaning.
+Eight content sections, in funnel order. Order is enforced by tests where a
+section's position carries meaning. The homepage was 4,269 words across
+twelve sections and is now 2,056 — **nothing was deleted, four sections moved to
+their own pages.**
 
 | # | Section | Component | Job |
 | --- | --- | --- | --- |
-| 1 | Nav | `Nav.astro` | Mark + wordmark, six links, persistent "Book a call" |
-| 2 | Hero | `Hero.astro` | The claim, in one sentence, plus two CTAs and platform chips |
-| 3 | Problems (bento) | `Problems.astro` | Five cards: where the money goes missing |
-| 4 | Payback model | `Calculator.astro` | The interactive proof (§6) |
-| 5 | The Full Loop | `Loop.astro` | Four stations: how the work is sequenced |
-| 6 | Proof | `Proof.astro` | Three findings from real audits, one line each |
-| 7 | Case study | `CaseStudy.astro` | One finding shown all the way down |
-| 8 | The stack | `Stack.astro` | Ten capability bundles behind a filter |
-| 9 | Products | `Products.astro` | Three tools, each linking to a hosted PDF |
-| 10 | Blog | `Blog.astro` | Four most recent posts |
-| 11 | Founders | `Founders.astro` | Two people, named, with LinkedIn |
-| 12 | FAQ | `Faq.astro` | 19 questions in two groups |
-| 13 | Contact | `Contact.astro` | Calendly embed plus the form |
-| 14 | Footer | `Footer.astro` | Lockup, links, legal |
+| — | Nav | `Nav.astro` | Mark + wordmark, five links, persistent "Book a call" |
+| 1 | Hero | `Hero.astro` | The claim, in one sentence |
+| 2 | Problems | `Problems.astro` `compact` | Five cards: where the money goes missing. `compact` drops the disclosures |
+| 3 | Payback model | `Calculator.astro` | The interactive proof (§6) |
+| 4 | Proof | `Proof.astro` | Three findings from real audits, one line each |
+| 5 | Case study | `CaseStudy.astro` | One finding shown all the way down |
+| 6 | The Full Loop | `Loop.astro` | Four stations: how the work is sequenced |
+| 7 | Founders | `Founders.astro` | Two people, named, with LinkedIn |
+| 8 | Contact | `Contact.astro` | Calendly embed plus the form |
+| — | Footer | `Footer.astro` | Lockup, links, legal |
+
+**The order is the argument:** claim → the problem → prove it with their own
+numbers → prove it with ours → show the method → show the people → ask. The
+calculator sits at 3 because it is the only thing a competitor cannot copy, and
+it used to sit at 4 behind two sections of preamble.
 
 ### Routes
 
 | Route | Source | Notes |
 | --- | --- | --- |
-| `/` | `pages/index.astro` | The single marketing page |
+| `/` | `pages/index.astro` | The marketing page |
+| `/services` | `pages/services.astro` | `Problems lead` + `Stack` — the full problem statement and the ten capability bundles |
+| `/products` | `pages/products.astro` | `Products lead` — three tools, each linking to a hosted PDF |
+| `/faq` | `pages/faq.astro` | `Faq lead` — 19 questions in two groups, and the `FAQPage` JSON-LD |
 | `/blog` | `pages/blog/index.astro` | All posts, newest first |
 | `/blog/<slug>` | `pages/blog/[slug].astro` | One post; build format is `file`, so **no trailing slash** |
 | `/privacy`, `/terms` | own pages | Describe the tracking actually implemented, not a template |
@@ -130,7 +164,7 @@ Order is enforced by tests where a section's position carries meaning.
 
 Only the requirements that are non-obvious or have bitten before are listed.
 
-**Nav.** Six links plus a CTA. All in-page anchors carry the base path — a bare
+**Nav.** Five links plus a CTA, and **every label names its destination** — `Services` and `Approach` used to point at each other's sections.  All in-page anchors carry the base path — a bare
 `#contact` on a blog post resolves against that post and silently does nothing
 (this shipped once and killed the primary CTA on five page types). Below 640px
 the links collapse into a full-screen sheet behind a 44px button, and the bar
@@ -157,6 +191,12 @@ no JavaScript. Filter chips set `hidden` on non-matching cards.
 
 **Products.** Three cards, each a whole-card link to a PDF in `public/pdf/`.
 Page counts and file sizes are asserted against the real files. *Tested.*
+
+**Sub-pages.** `Problems`, `Products` and `Faq` each take a `lead` prop that
+promotes their section `h2` to the page `h1` and adds nav clearance. **A section
+that opens a page is that page's header** — there is no separate page-header
+component, and adding one back reintroduces the duplicate-heading bug it was
+created to fix. *Tested.*
 
 **FAQ.** 19 items, two groups, `<details>`. Single source in `src/data/faq.ts`,
 which also feeds the `FAQPage` JSON-LD. Copy rules: never answer "yes" alone,
@@ -258,162 +298,26 @@ These are enforced socially, and several by test:
 
 ## 8. Design system
 
-Dark, near-monochrome, one accent. 103 tokens in `src/styles/tokens.css`, which
-is the single source — a retired token name anywhere in source fails the build.
+**Moved.** The full system — 103 tokens, the type scale, the component
+vocabulary, the mark, the phone design and the eight failure modes that shaped
+them — is now [`docs/design.md`](design.md).
 
-### 8.1 Colour
+It lives on its own because two documents describing one set of tokens is
+precisely how this project's last three drift bugs started. The one-screen
+version:
 
-**Ground and surface**
-
-| Token | Value | Use |
-| --- | --- | --- |
-| `--color-bg` | `#0E1014` | The page |
-| `--color-surface` | `#16191F` | Cards, calculator shell, form panel |
-| `--color-surface-sunk` | `#1D2128` | Tiles and code blocks inside a card |
-| `--color-band` | `#111318` | Alternating section wash, footer ground |
-
-**Text** — all four pass WCAG AA on the ground
-
-| Token | Value | Contrast | Use |
-| --- | --- | --- | --- |
-| `--color-text` | `#E8EAED` | 15.8:1 | Headings, figures, primary copy |
-| `--color-text-2` | `#A8AEB6` | 8.5:1 | Body copy, card paragraphs |
-| `--color-text-3` | `#8E959E` | 6.3:1 | Secondary detail, disclosure bodies |
-| `--color-text-4` | `#7C838D` | 5.0:1 | Eyebrows, labels, metadata, axis ticks |
-
-**Accent** — one hue, no second brand colour, no gradients
-
-| Token | Value | Note |
-| --- | --- | --- |
-| `--color-accent` | `#E39A1F` | 8.1:1 on the ground |
-| `--color-accent-hover` | `#F0AB33` | Filled buttons only |
-| `--color-accent-dim` | `rgba(227,154,31,0.12)` | Chips, pills, callouts |
-| `--color-ink` | `#101725` | Text on filled amber, 7.6:1 |
-
-**Amber must never be set on a light ground** — it falls to 2.2:1. On light, use
-`#101725` for text and `#8F5900` if the accent must appear.
-
-**Lines** — card outlines are a 1px `box-shadow`, never a border, so they never
-affect layout. `--color-line` `#23272E`, `--color-line-soft` `#1D2027`,
-`--color-line-strong` `#2C3138`, `--color-line-hover` `#3D444D`.
-
-**Chart** — `--chart-true` (accent), `--chart-measured` `#5B626B`,
-`--chart-axis` `#2C3138`, `--chart-rule` `#4A515A`. True revenue is the only
-saturated thing on a chart; what the dashboard sees is grey and dashed. **No red
-anywhere in the system.**
-
-`scripts/check-contrast.mjs` reads these tokens directly and reports every
-pairing. One known failure is recorded in §12.
-
-### 8.2 Typography
-
-Two families, and the split is semantic rather than decorative: mono means "this
-is a machine value or a label", never "this is small text".
-
-- **Be Vietnam Pro** — 400/500/600/700 — headings and body
-- **IBM Plex Mono** — 400 — eyebrows, labels, metadata, code, axis ticks
-
-Both self-hosted from `public/fonts/` and preloaded. The `unicode-range` is
-Google's `latin` subset deliberately: `→ ↗ ≠` fall outside it and fall back to a
-system face, which is the original behaviour and not a regression.
-
-Every figure carries `font-variant-numeric: tabular-nums`. Proportional digits
-jitter as a slider moves, and watching a number change is the calculator's
-entire point.
-
-**Scale** (21 tokens). Key values: `--t-h1` `clamp(38px, 5.4vw, 68px)`,
-`--t-h2` `clamp(30px, 3.4vw, 44px)`, `--t-h3` `23px`, `--t-lead`
-`clamp(16px, 1.35vw, 18.5px)`, `--t-body` `16px`, `--t-card` `14.5px`,
-`--t-mono` `12.5px`. At ≤640px `--t-h1` becomes `32px` and `--t-h2` `25px`, so
-every heading moves together rather than per component.
-
-Headings use `text-wrap: balance`; `h2` is capped at 24ch and section leads at
-62ch. Measures are set on the element that owns the font size — a `ch` cap on a
-16px container constraining a 44px heading produces the wrong measure, which
-shipped once.
-
-### 8.3 Space, shape, elevation
-
-Seven steps: `--s2` 6 · `--s3` 9 · `--s4` 12 · `--s6` 18 · `--s8` 24 ·
-`--s12` 34 · `--s16` 46.
-
-Section rhythm `clamp(72px, 8vw, 124px)` · gutter `clamp(20px, 4vw, 44px)` ·
-wrap 1280px · form wrap 760px · loop wrap 1120px.
-
-Radii: 8 focus/chips · 9 buttons and inputs · 12 cards · 14 panels · 16 large
-panels · 999 pills.
-
-Elevation is one hairline plus, at most, one ambient shadow. **Never stack
-shadows.** Depth comes from surface steps and blurred radial glows behind a
-section, never a gradient across a card.
-
-### 8.4 Components
-
-**Buttons.** Primary is filled amber with `#101725` text and a resting glow;
-secondary is a hairline. Every CTA carries an arrow — right in-page, up-right
-when it leaves. Never all-caps, never letter-spaced.
-
-**Chips and segmented controls.** Selected state is an amber tint plus an amber
-border, never a fill on a chip. Segmented controls fill the active cell.
-
-**Inputs.** 46px tall, labels 10.5–11.5px mono uppercase, `caret-color` amber.
-Every native control carries `margin: 0` — a `width: 100%` range input is 4px
-wider than its container with the UA margin on, which is enough to give the
-whole card a horizontal scrollbar. *This shipped once.*
-
-**Focus.** `2px solid #E39A1F`, offset 3px, on `:focus-visible` only. Selection
-is amber at 30%, never browser blue.
-
-**Two-ended rows** (label one side, value the other) are the system's most
-repeated pattern and its most repeated bug. The rule: `white-space: nowrap`
-belongs on the **value only**; the label gets `flex: 1; min-width: 0`. `nowrap`
-on the row stops the label wrapping, the row's intrinsic width exceeds the
-viewport, and the page scrolls sideways. *Tested.*
-
-**Grid floors** must be wrapped: `minmax(min(280px, 100%), 1fr)`. A bare px
-floor cannot shrink below itself, and a floor only has to be narrower than *its
-own container* — which static analysis cannot see. *Tested.*
-
-### 8.5 Motion
-
-Opacity and transform only, so there is no CLS cost. One easing curve —
-`cubic-bezier(0.22, 0.61, 0.36, 1)`. Everything stops after its entrance except
-the two hero glows and the loop's travelling signal. Scroll reveals use
-`animation-timeline: view()` — no JavaScript, no class gate, no flash of hidden
-content with scripting off. Every keyframe sits behind `prefers-reduced-motion`.
-
-### 8.6 Icons and the mark
-
-Icons are 26 vendored Phosphor paths in `src/data/icons.ts`, rendered with
-`currentColor` and `aria-hidden` by default. Amber when carrying meaning,
-`#8E959E` when decorative. Never emoji, never dingbats.
-
-**The mark** is logo direction **1f, "App tile"** — a rounded amber tile with
-"E2E" drawn as geometry, so it depends on no font. Below 25px it reduces to a
-single E on a heavier stroke; three glyphs cannot hold a 100-unit box down to a
-favicon. Path data lives in `src/data/logo.ts` and is re-evaluated against the
-approved design export at test time so it cannot drift.
-
-Sizes: **40px** in the nav (matched to the 42.4px CTA beside it), **36px** on
-phones with the wordmark dropped, **44px** in the footer. Both lockups pair the
-mark with a visible wordmark, so the mark is `aria-hidden` — announcing "E2E
-Apps" twice is worse than once. *All tested.*
-
-`scripts/build-icons.mjs` generates the favicon, PNG set, apple-touch icon, PWA
-icons and manifest from that one source, using the sharp already inside Astro.
-
-### 8.7 Mobile
-
-`design/E2E Apps - Bento mobile.dc.html` is a **separate signed-off design**,
-not a narrower rendering of the desktop one. Notable divergences: the Loop
-becomes a vertical rail; blog rows become stacked blocks closing on "Read"; the
-calculator header goes left-aligned and controls stack one per row.
-
-Every tap target is ≥44px, and a test parses the phone media blocks out of the
-built CSS to enforce it — no other test in the suite can see what a rule is
-gated behind.
-
----
+- **Dark, near-monochrome, one accent.** Four grounds (`#0E1014` page, `#16191F`
+  surface, `#1D2128` sunk, `#111318` band), four text greys, one amber
+  `#E39A1F`. No second hue, no gradients, **no red anywhere**.
+- **Amber is unusable on light** — 2.2:1. That is why the site is dark.
+- **Two families, split semantically.** Be Vietnam Pro for reading, IBM Plex
+  Mono for machine values and labels — never for "small text".
+- **Seven space steps, six radii, one easing curve.** Elevation is one hairline
+  plus at most one neutral shadow; never stacked, never chromatic.
+- **`src/styles/tokens.css` is the single source.** A retired token name
+  anywhere in source fails the build.
+- **All 22 contrast pairings pass**, verified by `scripts/check-contrast.mjs`
+  reading the tokens directly.
 
 ## 9. Measurement
 
@@ -469,7 +373,7 @@ rendering → `astro build`. Generated artefacts cannot fall behind their source
 
 ## 11. Quality gates
 
-**91 tests**, `node --test` with `node:assert` and native TypeScript stripping —
+**95 tests across 15 suites**, `node --test` with `node:assert` and native TypeScript stripping —
 zero test dependencies. Most exist because a specific defect shipped.
 
 | Suite | Guards |
@@ -488,6 +392,7 @@ zero test dependencies. Most exist because a specific defect shipped.
 | `styles` (5) | Every class is reachable by a rule that can match it |
 | `copy-parity` (3) | Deliberate copy changes are declared, accidental ones fail |
 | `tokens` (3) | No retired token; no `var()` resolving to nothing |
+| `pages` (4) | One `h1` per page; no repeated or near-duplicate heading; shared centred header; nav clearance |
 
 ### Two failure modes worth naming
 
@@ -508,14 +413,15 @@ resolves to nothing, which is what removing a compatibility shim introduces.
 | # | Item | Status |
 | --- | --- | --- |
 | 1 | **Domain.** `e2eapps.com` is registered but dormant and offered via a broker. Buy, or take `.io`/`.app` | Yours |
-| 2 | **Chart line contrast.** `#5B626B` on `#16191F` is 2.85:1, under the 3:1 floor for non-text. `#5F666F` gives 3.03:1 | Yours |
+| 2 | ~~**Chart line contrast.**~~ Fixed — `#5F666F` gives 3.03:1, and the full sweep is clean | **Done** |
 | 3 | **Brand book section 01** still says six directions are out for review; 1f is chosen. Job B in the brand brief | Pending |
 | 4 | **OG image** still reads `e2eapps.com` | Blocked on #1 |
 | 5 | **Phone chart** is 300 tall, design says 150; requires editing the protected model file | Yours |
 | 6 | **Six pieces of new copy** await sign-off — hero lead, bento card 05, three Proof labels, condensed founder bios, six menu descriptions | Pending |
-| 7 | **`main` still serves the old cream site.** `redesign` is ahead and fast-forward clean | Yours |
+| 7 | **`/next` is now the frozen "before".** It holds the pre-restructure site by design; decide when to retire it | Yours |
 | 8 | **Founder photos** not supplied; placeholders hold the layout | Yours |
 | 9 | Unused `mini` chart block in `calc-model.ts`; removing it means editing the protected file | Deliberate |
+| 10 | **Section rhythm is uniform** — one beat, one column width, no full-bleed moment. `redesign-plan.md` §2 and §6. The largest piece of design work outstanding | Yours |
 
 ---
 
