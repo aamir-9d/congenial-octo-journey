@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Problems from '../components/Problems.astro';
+import Diagnostics from '../components/Diagnostics.astro';
 import Proof from '../components/Proof.astro';
 import Calculator from '../components/Calculator.astro';
 import Automation from '../components/Automation.astro';
@@ -26,10 +26,10 @@ import Schema from '../components/Schema.astro';
  * existing sequence, rather than the /next preview's:
  *
  *   Hero        the claim, and one action
- *   Problems    where the money goes missing, compressed
+ *   Diagnostics three rows naming where the money goes missing
  *   Calculator  prove it with your own numbers
- *   Proof       three findings from real audits
- *   CaseStudy   one of them shown all the way down
+ *   CaseStudy   one case, shown all the way down
+ *   Proof       three more findings, as its tail
  *   Automation  ongoing reporting, once the problem and the evidence have landed
  *   Loop        the wider engagement
  *   Founders    who you would actually be talking to
@@ -39,10 +39,15 @@ import Schema from '../components/Schema.astro';
  * problem and the evidence first, and only then the service that keeps watching.
  * Leading with it would imply a platform in front of a consulting engagement.
  *
- * Proof stands on its own again rather than nesting inside the case study. It
- * was folded in during the previous pass, which cannot work -- CaseStudy is
- * marked data-added and the copy-parity check strips such blocks whole, taking
- * Proof's signed-off copy with it.
+ * Proof now reads as the tail of the case-study movement, which is what the
+ * approved composition asks for, but it is a SIBLING of CaseStudy rather than a
+ * child of it. Folding it inside cannot work: CaseStudy is marked data-added
+ * and the copy-parity check strips such blocks whole, which would take Proof's
+ * signed-off copy with it. As a sibling it reads the same and survives.
+ *
+ * Problems is no longer on this page. It is not deleted -- /services renders it
+ * in full, and Diagnostics links each row there. The audit measured it at
+ * 1,441px here, a screen and a half spent before the calculator.
  */
 
 const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
@@ -56,10 +61,10 @@ const description =
     <Nav />
     <main id="main">
       <Hero />
-      <Problems compact />
+      <Diagnostics />
       <Calculator />
-      <Proof />
       <CaseStudy />
+      <Proof nested />
       <Automation />
       <Loop />
       <Founders />

@@ -1,0 +1,176 @@
+---
+/**
+ * "01 / Where we look" — three diagnostic rows.
+ *
+ * This replaces the twelve-column bento on the homepage. The bento is not
+ * deleted: it still renders in full on /services, where a visitor has already
+ * decided they want the detail. Here the visitor has not yet been given a
+ * reason to care, so the section's job is to name the three places money goes
+ * missing and get out of the way. The audit measured the bento at 1,441px on
+ * the homepage, which is a screen and a half spent before the calculator.
+ *
+ * Each row links to the section of /services that explains it, so nothing is
+ * behind a disclosure that a search engine or a keyboard cannot reach.
+ *
+ * All copy here is new, from the approved composition, so the section root
+ * carries `data-added` — the copy-parity check lifts it out whole and goes on
+ * comparing the export's own strings, which now ship on /services.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const rows = [
+  {
+    n: '01',
+    title: 'Revenue after install',
+    desc: 'Renewals, refunds and server events.',
+    href: `${base}/services`,
+  },
+  {
+    n: '02',
+    title: 'The route to purchase',
+    desc: 'What happens between an install and a trial?',
+    href: `${base}/services`,
+  },
+  {
+    n: '03',
+    title: 'The economics by market',
+    desc: 'Retention, monetisation and the payback horizon.',
+    href: `${base}/services`,
+  },
+];
+---
+
+<section id="services" class="section" data-section="diagnostics" data-added="redesign">
+  <div class="wrap">
+    <div class="diag">
+      <div data-reveal="1">
+        <p class="eyebrow eyebrow--amber diag__eyebrow">01 / Where we look</p>
+        <h2 class="diag__h2">Find the gap.<br />Follow the money.</h2>
+        <p class="diag__lead">
+          A few examples of what gets checked. Each one changes a spending decision.
+        </p>
+      </div>
+
+      <ol class="diag__rows" data-reveal="2">
+        {
+          rows.map((r) => (
+            <li class="diag__row">
+              <a class="diag__link" href={r.href}>
+                <span class="diag__n" aria-hidden="true">
+                  {r.n}
+                </span>
+                <span class="diag__text">
+                  <span class="diag__title">{r.title}</span>
+                  <span class="diag__desc">{r.desc}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Stacked on a phone, two columns from 900px. The intro is not sticky: the
+     rows are short enough that the whole section fits one screen at every width
+     it is two columns at, and a sticky column inside a section that short only
+     produces a pane that never moves. */
+  .diag {
+    display: grid;
+    gap: var(--s8) var(--s16);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 900px) {
+    .diag {
+      grid-template-columns: minmax(0, 40fr) minmax(0, 55fr);
+      align-items: start;
+    }
+  }
+
+  .diag__eyebrow {
+    margin-bottom: var(--s6);
+  }
+
+  .diag__h2 {
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
+  }
+
+  .diag__lead {
+    margin-top: var(--s6);
+    /* On the element that owns the font size: `ch` resolves against its own
+       font, so a measure set on the grid cell would be counting 16px units
+       against whatever this actually renders at. */
+    max-width: 34ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .diag__rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .diag__row + .diag__row {
+    border-top: 1px solid var(--color-line);
+  }
+
+  /* The whole row is the target, so the hit area is the full width rather than
+     the width of the title. */
+  .diag__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s6);
+    min-height: 44px;
+    padding: var(--s6) 0;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .diag__n {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-accent);
+  }
+
+  .diag__text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .diag__title {
+    font-size: var(--t-h3-sm);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .diag__link:hover .diag__title {
+    color: var(--color-accent);
+  }
+
+  .diag__desc {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  .diag__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+</style>

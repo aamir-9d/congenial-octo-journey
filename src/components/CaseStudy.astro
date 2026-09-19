@@ -2,15 +2,28 @@
 import Icon from './Icon.astro';
 
 /**
- * One case study, in full, sitting under the three findings.
+ * "03 / A case you can inspect" — one case, shown all the way down.
  *
- * Proof states three findings in a line each. This is the one that can be
- * shown all the way down — same daily spend, same daily installs, a defect
- * removed, and every figure traceable to a country table. It is the section
- * that answers "prove it" rather than "what do you find".
+ * Rebuilt to the approved composition
+ * (docs/design-explorations/homepage-redesign-evidence.png): a left-aligned
+ * head, one card whose left half makes the claim and whose right half is the
+ * evidence, and a single line of further field notes beneath it.
+ *
+ * Three figures, not five. MRR is left off here on purpose — it is the one
+ * figure whose honest reading needs a second sentence, and the card has no room
+ * to give it one. Cost per trial is dropped for space. Both are in the article,
+ * with the rest of the country tables.
  *
  * The figures are the article's, not restated by hand: if the post changes,
  * these change with it, because both read from `src/data/case-study.ts`.
+ * `tests/case-study.test.ts` recomputes every one of them from the raw period
+ * totals and fails if a displayed figure and its arithmetic disagree.
+ *
+ * The card is no longer one big anchor. It was, and that put the three notes
+ * that qualify the figures inside the link — so a screen reader announced the
+ * caveats as part of the link name, and a reader could not select the numbers
+ * without following it. The action is now a real link at the end of the claim,
+ * which is also what the composition draws.
  *
  * Entirely new to the page, so the whole section is `data-added`.
  */
@@ -18,85 +31,77 @@ import { CASE_STUDY, MORE_CASES } from '../data/case-study.ts';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = `${base}/blog/${CASE_STUDY.slug}`;
+
+/** The three the card shows, in the order the composition sets. */
+const shown = CASE_STUDY.cardFigures.map(
+  (label) => CASE_STUDY.figures.find((f) => f.label === label)!,
+);
 ---
 
 <section id="case-study" class="case section" data-section="case-study" data-added="bento">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow eyebrow--amber">ONE OF THEM, ALL THE WAY DOWN</div>
-      <h2 class="case__h2">{CASE_STUDY.headline}</h2>
-      <p class="section-lead">{CASE_STUDY.lead}</p>
+    <div data-reveal="1">
+      <p class="eyebrow eyebrow--amber case__eyebrow">03 / A case you can inspect</p>
+      <h2 class="case__h2">{CASE_STUDY.homeHeadline}</h2>
     </div>
 
-    <a class="case__card" href={href} data-reveal="1">
-      <div class="case__body">
-        <div class="case__kicker">{CASE_STUDY.kicker}</div>
+    <div class="case__card" data-reveal="1">
+      <div class="case__claim">
+        <p class="case__kicker">{CASE_STUDY.kicker}</p>
 
-        <p class="case__summary">{CASE_STUDY.summary}</p>
+        <h3 class="case__title">
+          {CASE_STUDY.cardHeadline.map((line) => <span class="case__title-line">{line}</span>)}
+        </h3>
 
-        <ul class="case__changes">
+        <p class="case__summary">{CASE_STUDY.cardSummary}</p>
+
+        <a class="case__cta" href={href}>
+          Read the full case study
+          <Icon name="arrow-up-right" size={13} />
+        </a>
+      </div>
+
+      <div class="case__evidence">
+        <p class="case__evidence-label">Before &#8594; after</p>
+
+        <div class="case__rows">
           {
-            CASE_STUDY.changes.map((c) => (
-              <li class="case__change">
-                <span class="case__tick" aria-hidden="true">
-                  <Icon name="arrow-right" size={12} />
+            shown.map((f) => (
+              <p class="case__row">
+                <span class="case__row-label">
+                  <span class="wide-only">{f.label}</span>
+                  <span class="narrow-only">{f.labelShort ?? f.label}</span>
                 </span>
-                <span>
-                  <span class="wide-only">{c.long}</span>
-                  <span class="narrow-only">{c.short}</span>
+                <span class="case__before tabular">{f.before}</span>
+                <span class="case__arrow" aria-hidden="true">
+                  &#8594;
                 </span>
-              </li>
+                <span class="case__after tabular">{f.after}</span>
+              </p>
             ))
           }
-        </ul>
-
-        <span class="case__cta">
-          Read the case study
-          <Icon name="arrow-right" size={14} />
-        </span>
-      </div>
-
-      <div class="case__figures">
-        <div class="case__control">
-          <span class="case__control-label">THE CONTROL</span>
-          {CASE_STUDY.control}
         </div>
 
+        <ul class="case__notes">
+          {CASE_STUDY.cardNotes.map((n) => <li class="case__note">{n}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="case__more" data-reveal="1">
+      <p class="case__more-label">More field notes</p>
+      <ul class="case__more-list">
         {
-          CASE_STUDY.figures.map((f) => (
-            <div class="case__row">
-              <span class="case__row-label">
-                <span class="wide-only">{f.label}</span>
-                <span class="narrow-only">{f.labelShort ?? f.label}</span>
-              </span>
-              <span class="case__row-vals">
-                <span class="case__before tabular">{f.before}</span>
-                <span class="case__arrow" aria-hidden="true">&#8594;</span>
-                <span class="case__after tabular">{f.after}</span>
-              </span>
-            </div>
+          MORE_CASES.map((c) => (
+            <li>
+              <a class="case__more-link" href={`${base}/blog/${c.slug}`}>
+                {c.title}
+                <Icon name="arrow-up-right" size={13} />
+              </a>
+            </li>
           ))
         }
-
-        <p class="case__caveat">{CASE_STUDY.caveat}</p>
-      </div>
-    </a>
-
-    <div class="case__more">
-      {
-        MORE_CASES.map((c) => (
-          <a class="case__row-card" href={`${base}/blog/${c.slug}`} data-reveal="1">
-            <div class="case__more-kicker">{c.kicker}</div>
-            <h3 class="case__more-title">{c.title}</h3>
-            <p class="case__more-summary wide-only">{c.summary}</p>
-            <p class="case__more-summary narrow-only">{c.summaryShort}</p>
-            <span class="case__cta case__cta--row">
-              Read the case study
-              <Icon name="arrow-right" size={14} />
-            </span>
-          </a>
-        ))
-      }
+      </ul>
     </div>
   </div>
 </section>
@@ -106,286 +111,229 @@ const href = `${base}/blog/${CASE_STUDY.slug}`;
     background: linear-gradient(180deg, var(--color-bg), var(--color-band) 55%, var(--color-bg));
   }
 
-  .case__h2 {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
+  .case__eyebrow {
+    margin-bottom: var(--s6);
   }
 
-  /* The whole card is the link, so the ring belongs on the card. */
+  .case__h2 {
+    /* The measure belongs on the element that owns the font size. On the
+       container it would resolve against 16px and cut a 44px heading to about
+       nineteen characters a line. */
+    max-width: 28ch;
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
+  }
+
   .case__card {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    gap: clamp(24px, 3vw, 48px);
-    margin-top: clamp(32px, 3.4vw, 48px);
-    padding: clamp(26px, 3vw, 40px);
-    background: var(--color-surface);
+    gap: var(--s8) var(--s16);
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: clamp(32px, 4vw, 56px);
+    padding: clamp(24px, 3vw, 40px);
     border-radius: var(--radius-panel);
+    background: var(--color-surface);
     box-shadow: var(--ring);
-    transition:
-      box-shadow 180ms var(--ease-out-soft),
-      transform 180ms var(--ease-out-soft);
   }
 
-  .case__card:hover {
-    box-shadow: var(--ring-accent);
-    transform: translateY(-3px);
+  @media (min-width: 900px) {
+    .case__card {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
   }
 
-  .case__card:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
+  /* --- the claim ------------------------------------------------------------ */
 
-  /* A grid child defaults to min-width:auto and will not shrink below its
-     content, which is how a column ends up wider than its track. */
-  .case__body {
+  .case__claim {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s6);
     min-width: 0;
   }
 
   .case__kicker {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-label);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--color-accent);
   }
 
+  .case__title {
+    font-size: var(--t-h2-card);
+    line-height: var(--lh-h2-closing);
+    letter-spacing: var(--ls-h2-card);
+    color: var(--color-text);
+  }
+
+  /* Each sentence on its own line, as drawn — without a <br> that a narrow
+     column cannot undo. */
+  .case__title-line {
+    display: block;
+  }
+
   .case__summary {
-    margin-top: var(--s4);
-    font-size: var(--t-lead);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
-  }
-
-  .case__changes {
-    margin-top: var(--s8);
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: var(--s3);
-  }
-
-  .case__change {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--s3);
+    max-width: 46ch;
     font-size: var(--t-card);
     line-height: var(--lh-card);
-    color: var(--color-text-3);
-  }
-
-  .case__tick {
-    display: inline-flex;
-    flex: none;
-    margin-top: 4px;
-    color: var(--color-accent);
+    color: var(--color-text-2);
   }
 
   .case__cta {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: var(--s8);
-    font-size: var(--t-card);
+    min-height: 44px;
+    margin-top: auto;
+    padding: 0 20px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 0 0 1px var(--color-line-strong);
+    font-size: var(--t-card-sm);
     font-weight: var(--fw-semibold);
-    color: var(--color-accent);
+    text-decoration: none;
+    color: var(--color-text);
   }
 
-  /* --- further studies, as compact rows ---------------------------------- */
-
-  .case__more {
-    display: grid;
-    gap: var(--s4);
-    margin-top: var(--s4);
+  .case__cta:hover {
+    box-shadow: 0 0 0 1px var(--color-line-hover);
+    background: var(--color-surface-sunk);
   }
 
-  .case__row-card {
-    display: block;
-    padding: clamp(22px, 2.4vw, 32px);
-    background: var(--color-surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--ring);
-    transition:
-      box-shadow 180ms var(--ease-out-soft),
-      transform 180ms var(--ease-out-soft);
-  }
-
-  .case__row-card:hover {
-    box-shadow: var(--ring-accent);
-    transform: translateY(-3px);
-  }
-
-  .case__row-card:focus-visible {
+  .case__cta:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
 
-  .case__more-kicker {
+  /* --- the evidence --------------------------------------------------------- */
+
+  .case__evidence {
+    min-width: 0;
+  }
+
+  .case__evidence-label {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-label);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-text-4);
   }
 
-  .case__more-title {
-    margin-top: var(--s3);
-    font-size: var(--t-h3);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-h3);
-    line-height: var(--lh-h3);
+  .case__rows {
+    margin: var(--s6) 0 0;
   }
 
-  .case__more-summary {
-    margin-top: var(--s3);
-    max-width: 76ch;
-    font-size: var(--t-card);
+  /* A grid, not a flex row, so the three arrows land in one column and the
+     before and after figures each align to their own edge. Flex would put every
+     pair flush right and leave the arrows scattered across three x-positions. */
+  .case__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
+    align-items: baseline;
+    column-gap: var(--s4);
+    padding: var(--s6) 0;
+  }
+
+  .case__row + .case__row {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .case__row-label {
+    font-size: var(--t-card-sm);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .case__cta--row {
-    margin-top: var(--s6);
-  }
-
-  /* --- the figures ------------------------------------------------------- */
-
-  .case__figures {
-    align-self: start;
-    padding: var(--s6);
-    border-radius: var(--radius-card);
-    background: var(--color-surface-sunk);
-    box-shadow: 0 0 0 1px var(--color-line-soft);
-  }
-
-  /* The control is the point of the whole study, so it leads rather than
-     sitting in a footnote. */
-  .case__control {
-    padding-bottom: var(--s4);
-    border-bottom: 1px solid var(--color-line);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    line-height: var(--lh-body);
-    color: var(--color-text-3);
-  }
-
-  .case__control-label {
-    display: block;
-    margin-bottom: var(--s2);
-    letter-spacing: var(--ls-label);
-    color: var(--color-text-4);
-  }
-
-  .case__row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    padding: var(--s3) 0;
-    border-bottom: 1px solid var(--color-line-soft);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono);
-  }
-
-  .case__row-label {
-    flex: 1;
-    min-width: 0;
-    color: var(--color-text-4);
-  }
-
-  .case__row-vals {
-    flex: none;
-    display: inline-flex;
-    align-items: baseline;
-    gap: 7px;
-    white-space: nowrap;
-  }
-
+  /* Each row is one sentence — "Install → trial 0.62% → 4.00%" — so it is a
+     paragraph of four grid items rather than a definition list. A <dl> would
+     have needed `display: contents` on the <dd> to get the four into one grid,
+     and that has a long history of dropping list semantics from the
+     accessibility tree. */
   .case__before {
+    justify-self: end;
+  }
+
+  /* The before figure is deliberately the quieter of the two: the card is about
+     where the number ended up. */
+  .case__before {
+    font-size: var(--t-h3);
+    line-height: var(--lh-snug);
     color: var(--color-text-4);
   }
 
   .case__arrow {
+    font-size: var(--t-card);
     color: var(--color-text-4);
   }
 
   .case__after {
-    color: var(--color-accent);
+    font-size: var(--t-h3);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--ls-tight);
+    color: var(--color-text);
   }
 
-  .case__caveat {
-    margin-top: var(--s4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    line-height: var(--lh-body);
+  .case__notes {
+    list-style: none;
+    margin: var(--s6) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .case__note {
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-card);
     color: var(--color-text-4);
   }
 
-  @media (max-width: 900px) {
-    .case__card {
-      grid-template-columns: 1fr;
-    }
+  /* --- further notes -------------------------------------------------------- */
+
+  .case__more {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s4) var(--s16);
+    margin-top: var(--s8);
   }
 
-  /* Phone, to the same rules as every other section: --s6 padding, the
-     smaller type scale, and a full-width 52px target. */
-  @media (max-width: 640px) {
-    .case__card {
-      gap: var(--s8);
-      padding: var(--s6);
-      border-radius: var(--radius-card);
-    }
+  .case__more-label {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-4);
+  }
 
-    .case__card:hover {
-      transform: none;
-    }
+  .case__more-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s4) var(--s8);
+    min-width: 0;
+  }
 
-    .case__summary {
-      margin-top: var(--s3);
-      font-size: var(--t-body-sm);
-    }
+  .case__more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-card);
+    text-decoration: none;
+    color: var(--color-text);
+  }
 
-    .case__changes {
-      margin-top: var(--s6);
-    }
+  .case__more-link:hover {
+    color: var(--color-accent);
+  }
 
-    .case__change {
-      font-size: var(--t-card-sm);
-    }
-
-    .case__cta {
-      display: flex;
-      justify-content: center;
-      min-height: 52px;
-      margin-top: var(--s6);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--color-line-strong);
-      font-size: var(--t-body);
-    }
-
-    .case__figures {
-      padding: var(--s4) var(--s6) var(--s6);
-    }
-
-    .case__row-card {
-      padding: var(--s6);
-    }
-
-    .case__row-card:hover {
-      transform: none;
-    }
-
-    .case__more-title {
-      font-size: var(--t-post-title);
-    }
-
-    .case__more-summary {
-      font-size: var(--t-card-sm);
-    }
-
-    .case__row {
-      font-size: var(--t-mono-sm);
-    }
+  .case__more-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
   }
 </style>

@@ -306,12 +306,17 @@ test('the homepage section stays a summary', { skip }, () => {
 
 test('the homepage order is the one the brief sets', { skip }, () => {
   const order = [...home.matchAll(/data-section="([a-z-]+)"/g)].map((m) => m[1]);
+  /* The approved composition (docs/design-explorations/homepage-redesign-
+     concept.md) replaces the bento with three diagnostic rows and folds Proof
+     into the case-study movement as its tail rather than standing it up as a
+     second credibility section ahead of it. Problems is not deleted -- it
+     renders in full on /services, which is where each diagnostic row links. */
   assert.deepEqual(order, [
     'hero',
-    'problems',
+    'diagnostics',
     'payback',
-    'proof',
     'case-study',
+    'proof',
     'automation',
     'loop',
     'founders',
