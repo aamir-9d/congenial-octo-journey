@@ -58,15 +58,31 @@ export function initCalculator(): void {
   const numbers = Array.from(root.querySelectorAll<HTMLInputElement>('input[data-number]'));
   const setters = Array.from(root.querySelectorAll<HTMLButtonElement>('button[data-set]'));
   const presets = Array.from(root.querySelectorAll<HTMLButtonElement>('button[data-preset]'));
+  const customChips = Array.from(root.querySelectorAll<HTMLElement>('[data-custom-chip]'));
+  const d7Blocks = Array.from(root.querySelectorAll<HTMLElement>('[data-d7-compare]'));
+  const resetButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-reset]'));
 
-  /* Which preset the current numbers came from, or null once anything has been
-     touched. A preset must never stay lit against values it does not describe —
-     that would be the calculator asserting something untrue about itself, on a
-     page whose whole argument is that dashboards do exactly that. */
-  let activePreset: string | null = 'typical';
-  const clearPreset = () => {
-    activePreset = null;
-  };
+  /* Which scenario the current numbers ARE, derived from the numbers.
+     
+     This used to be a flag cleared by any interaction, which was wrong in both
+     directions: changing the chart horizon unlit the scenario even though the
+     horizon is a view control and changes no economics, and setting values back
+     to a scenario's own numbers never re-lit it.
+     
+     Deriving it removes both. A scenario is lit exactly when the five fields it
+     varies hold its values — never against numbers it does not describe, which
+     on a page arguing that dashboards misreport would be the worst possible
+     thing for this control to do. */
+  const PRESET_FIELDS = ['i2t', 't2p', 'price', 'retention', 'cpi'] as const;
+
+  const activePreset = (): string | null =>
+    PRESETS.find((p) => PRESET_FIELDS.every((k) => state[k] === p.state[k]))?.key ?? null;
+
+  /* Measured D7 is optional and starts empty. The engine keeps its numeric
+     default so nothing downstream has to cope with an absent value; this flag
+     is UI-only and decides whether the comparison is shown at all. Prefilling a
+     figure and calling it the visitor's own data would be inventing it. */
+  let d7Entered = false;
 
   const svg = document.getElementById('chart-svg') as SVGSVGElement | null;
   const el = <T extends Element>(id: string) => document.getElementById(id) as unknown as T | null;
@@ -131,6 +147,16 @@ export function initCalculator(): void {
     }
     for (const n of numbers) {
       if (n === active) continue;
+
+      /* An optional field stays empty until the visitor fills it. Without this
+         the first render wrote the engine's own default into the measured-D7
+         box, which is exactly the invented figure the blank was there to
+         avoid — the markup said value="" and the script overruled it. */
+      if (n.dataset.optional !== undefined && !d7Entered) {
+        if (n.value !== '') n.value = '';
+        continue;
+      }
+
       const next = String(state[n.dataset.number as keyof CalcState]);
       if (n.value !== next) n.value = next;
     }
@@ -138,9 +164,16 @@ export function initCalculator(): void {
       const current = state[b.dataset.set as keyof CalcState];
       b.setAttribute('aria-pressed', String(String(current) === b.dataset.value));
     }
+    const preset = activePreset();
     for (const b of presets) {
-      b.setAttribute('aria-pressed', String(b.dataset.preset === activePreset));
+      b.setAttribute('aria-pressed', String(b.dataset.preset === preset));
     }
+    for (const c of customChips) c.hidden = preset !== null;
+
+    /* The D7 comparison stays out of the page until there is a measured value
+       to compare against. `d7Mismatch` alone would show it against the engine's
+       own default. */
+    for (const node of d7Blocks) node.hidden = !(d7Entered && v.d7Mismatch);
 
     /* Chart geometry. */
     if (svg) svg.setAttribute('viewBox', v.vb);
@@ -234,14 +267,12 @@ export function initCalculator(): void {
       reportSlider(key, num(slider.value));
       reportBreakeven();
     };
-    slider.addEventListener('input', clearPreset);
     slider.addEventListener('input', onMove);
     slider.addEventListener('change', onMove);
   }
 
   for (const toggle of toggles) {
     const key = toggle.dataset.toggle as keyof CalcState;
-    toggle.addEventListener('change', clearPreset);
     toggle.addEventListener('change', () => {
       (state[key] as boolean) = toggle.checked;
       render();
@@ -252,21 +283,53 @@ export function initCalculator(): void {
 
   for (const field of numbers) {
     const key = field.dataset.number as keyof CalcState;
+    const optional = field.dataset.optional !== undefined;
+
     const onType = () => {
-      // `|| 0` matches the export: a cleared field reads as zero, not NaN.
-      (state[key] as number) = num(field.value) || 0;
+      const raw = field.value.trim();
+
+      /* An empty field is missing data, not a measurement of zero. The previous
+         `|| 0` turned a cleared CPI into "free installs" and drew a confident
+         forecast from it. Leave the state alone, mark the field, and wait. */
+      if (raw === '') {
+        field.setAttribute('aria-invalid', optional ? 'false' : 'true');
+        if (optional) {
+          d7Entered = false;
+          render();
+        }
+        return;
+      }
+
+      const parsed = num(raw);
+      if (!Number.isFinite(parsed)) {
+        // Mid-typing states like "0." or "-" are left editable, not clobbered.
+        field.setAttribute('aria-invalid', 'true');
+        return;
+      }
+
+      field.setAttribute('aria-invalid', 'false');
+      if (optional) d7Entered = true;
+      (state[key] as number) = parsed;
       render();
-      reportSlider(key, num(field.value) || 0);
+      reportSlider(key, parsed);
     };
-    field.addEventListener('input', clearPreset);
+
     field.addEventListener('input', onType);
     field.addEventListener('change', onType);
+
+    /* On leaving an empty required field, put the live value back so the page
+       never shows a blank input beside a forecast computed from something. */
+    field.addEventListener('blur', () => {
+      if (field.value.trim() === '' && !optional) {
+        field.value = String(state[key]);
+        field.setAttribute('aria-invalid', 'false');
+      }
+    });
   }
 
   for (const button of setters) {
     const key = button.dataset.set as keyof CalcState;
     const raw = button.dataset.value!;
-    button.addEventListener('click', clearPreset);
     button.addEventListener('click', () => {
       const parsed = Number(raw);
       const previous = state[key];
@@ -288,11 +351,30 @@ export function initCalculator(): void {
       if (!preset) return;
 
       Object.assign(state, preset.state);
-      activePreset = preset.key;
       render();
 
       track('calc_preset_select', { preset: preset.key, calc_mode: state.mode });
       reportBreakeven();
+    });
+  }
+
+  /* Reset restores the active model's example inputs and nothing else: the
+     other model's edits, the chart horizon and the open editor all survive,
+     because none of them is part of the economics being reset. */
+  for (const button of resetButtons) {
+    button.addEventListener('click', () => {
+      const fields: (keyof CalcState)[] =
+        state.mode === 'sub'
+          ? ['i2t', 't2p', 'price', 'period', 'trialDays', 'retention', 'commission', 'refund', 'cpi',
+             'renewalCapture', 'skanMapped', 'webStitched', 'skanNull', 'webLoss']
+          : ['arpdau', 'd1', 'd30', 'adCpi'];
+
+      for (const key of fields) (state[key] as CalcState[typeof key]) = INITIAL_STATE[key];
+      if (state.mode === 'ad') d7Entered = false;
+
+      for (const n of numbers) n.setAttribute('aria-invalid', 'false');
+      render();
+      track('calc_reset', { calc_mode: state.mode });
     });
   }
 

@@ -98,18 +98,44 @@ const assumptions = [
         <span class="narrow-only">Pick the cohort that looks most like yours.</span>
       </p>
 
-      <div class="calc__modes" role="group" aria-label="Monetisation model">
-        <button type="button" class="calc__mode" data-set="mode" data-value="sub" aria-pressed={String(st.mode === 'sub')}>
-          Subscription
+      {/* Two equal choices, selected by border and indicator as well as colour.
+          Buttons with aria-pressed, not radios: the whole calculator is already
+          a button-driven state machine bound through data-set, and one control
+          behaving differently from the rest is how selection bugs start. The
+          group carries the accessible name; each button announces its own. */}
+      <div class="calc__modes calc__modes--cards" role="group" aria-label="Revenue model">
+        <button
+          type="button"
+          class="calc__mode"
+          data-set="mode"
+          data-value="sub"
+          aria-pressed={String(st.mode === 'sub')}
+        >
+          <span class="calc__mode-mark" aria-hidden="true"></span>
+          <span class="calc__mode-text">
+            <span class="calc__mode-title">Subscription</span>
+            <span class="calc__mode-sub">Trials, payments and renewals</span>
+          </span>
         </button>
-        <button type="button" class="calc__mode" data-set="mode" data-value="ad" aria-pressed={String(st.mode === 'ad')}>
-          Ad-monetised
+        <button
+          type="button"
+          class="calc__mode"
+          data-set="mode"
+          data-value="ad"
+          aria-pressed={String(st.mode === 'ad')}
+        >
+          <span class="calc__mode-mark" aria-hidden="true"></span>
+          <span class="calc__mode-text">
+            <span class="calc__mode-title">Ad revenue</span>
+            <span class="calc__mode-sub">Daily active users and ad earnings</span>
+          </span>
         </button>
       </div>
     </div>
 
     {/* Subscription only: the ad model has no trial funnel to preset. */}
-    <div class="calc__presets" data-when="isSub" data-added="bento" role="group" aria-label="Cohort preset">
+    <div class="calc__presets" data-when="isSub" data-added="bento" role="group" aria-label="Example scenario">
+      <span class="calc__presets-label">Example scenario</span>
       {
         PRESETS.map((p) => (
           <button type="button" class="calc__preset" data-preset={p.key} aria-pressed={String(p.key === 'typical')}>
@@ -124,6 +150,9 @@ const assumptions = [
           </button>
         ))
       }
+      {/* Shown by the script whenever the five funnel fields match no scenario,
+          so a named one is never lit against numbers it does not describe. */}
+      <span class="calc__custom" data-custom-chip hidden>Custom</span>
     </div>
 
     <div class="calc__horizon-row">
@@ -267,11 +296,31 @@ const assumptions = [
       </div>
     </div>
 
-    {/* Every control, and the model's own caveats, behind one disclosure. */}
+    {/* Always visible under the chart: the heading, what the model is currently
+        assuming, and the control that opens the editor in place. A native
+        <details> because it needs no modal, no navigation and no Apply step —
+        edits land on the chart as they are made. */}
     <details class="calc__adjust">
       <summary class="calc__adjust-summary">
-        <span>Adjust the assumptions</span>
-        <Icon name="caret-down" size={14} />
+        <span class="calc__adjust-text">
+          <span class="calc__adjust-title">Adjust assumptions</span>
+          <span class="calc__adjust-now">
+            <span data-when="isSub" hidden={!view.isSub}>
+              <span data-bind="i2tLabel">{v('i2tLabel')}</span> install &#8594; trial &#183;{' '}
+              <span data-bind="t2pLabel">{v('t2pLabel')}</span> trial &#8594; paid &#183;{' '}
+              <span data-bind="priceLabel">{v('priceLabel')}</span> &#183;{' '}
+              <span data-bind="cpiLabel">{v('cpiLabel')}</span> CPI
+            </span>
+            <span data-when="isAd" hidden={!view.isAd}>
+              <span data-bind="arpdauLabel">{v('arpdauLabel')}</span> ARPDAU &#183;{' '}
+              <span data-bind="adCpiLabel">{v('adCpiLabel')}</span> CPI
+            </span>
+          </span>
+        </span>
+        <span class="calc__adjust-cta">
+          Edit inputs
+          <span class="calc__adjust-sign" aria-hidden="true"></span>
+        </span>
       </summary>
       <div class="calc__adjust-panel">
     {/* --- controls ------------------------------------------------------ */}
@@ -449,15 +498,22 @@ const assumptions = [
               <div class="calc__crosscheck-val" data-bind="predD7Label">{v('predD7Label')}</div>
             </div>
             <div class="calc__crosscheck-input">
-              <label for="i-d7">Your actual D7 (%)</label>
+              <label for="i-d7">Your measured D7 (%)</label>
+              {/* Empty on purpose. Prefilling the engine's own default and
+                  labelling it "your measured D7" would be presenting an
+                  invented figure as the visitor's data, and the comparison
+                  below would then be the model checked against itself. */}
               <input
                 id="i-d7"
                 type="number"
+                inputmode="decimal"
                 min="0"
                 max="60"
                 step="0.1"
-                value={st.realD7}
+                value=""
+                placeholder="Optional"
                 data-number="realD7"
+                data-optional
                 class="calc__number"
               />
             </div>
@@ -466,9 +522,10 @@ const assumptions = [
             Fitted decay exponent b = <span data-bind="bLabel">{v('bLabel')}</span> &#183; cumulative
             active days by D30 = <span data-bind="activeD30Label">{v('activeD30Label')}</span>
           </div>
-          <p class="calc__warn calc__warn--tight" data-when="d7Mismatch" hidden={!view.d7Mismatch}>
-            Your curve isn't a power law. That usually means a broken onboarding step, not a bad
-            model.
+          <p class="calc__warn calc__warn--tight" data-d7-compare hidden>
+            Your measured D7 is some way from what this curve predicts. Worth checking the
+            retention figures and whether a power-law decay fits your app &#8212; the gap says the
+            model and the data disagree, not which of them is wrong.
           </p>
         </div>
       </div>
@@ -480,6 +537,12 @@ const assumptions = [
         <div class="calc__caveats-title">A MODEL, NOT A MEASUREMENT.</div>
         <ul class="calc__caveats-list">
           {assumptions.map((a) => <li>{a}</li>)}
+        </ul>
+        <div class="calc__reset-row">
+          <button type="button" class="calc__reset" data-reset>Reset example</button>
+          <span class="calc__reset-note">Restores this model&#8217;s example inputs. Your other model keeps its edits.</span>
+        </div>
+        <ul hidden>
         </ul>
         <p class="calc__caveats-note">
           Real retention isn't perfectly geometric &#8212; month one churns harder, then the curve

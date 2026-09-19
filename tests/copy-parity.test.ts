@@ -138,6 +138,10 @@ const distExists = fs.existsSync(PORT);
  */
 const REPLACED: { text: string; why: string }[] = [
   {
+    text: "Your curve isn't a power law. That usually means a broken onboarding step, not a bad model.",
+    why: 'D7 cross-check copy — the revision brief forbids claiming a mismatch proves an onboarding defect; it now says the model and the data disagree without asserting which is wrong',
+  },
+  {
     text: "Four stations. The output of the last one is the input to the first. That's the point.",
     why: 'Loop section lead replaced by the approved circular design — loop-circular-revision.png',
   },
