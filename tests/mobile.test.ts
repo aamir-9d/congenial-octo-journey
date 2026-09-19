@@ -122,13 +122,21 @@ test('blog rows are stacked blocks closing on a Read affordance', { skip }, () =
   assert.ok(/\.blog__read[^{}]*\{[^{}]*display:none/.test(desktop), '"Read" is not hidden on desktop');
 });
 
-test('the calculator becomes one column with 44px targets', { skip }, () => {
-  const css = phoneCss(640);
+test('the payback map becomes one column with 44px targets', { skip }, () => {
+  // The two-column composition is a min-width query, so below it the map is
+  // already one column; what matters is that the controls stay tappable.
+  const all = html.replace(/\s+/g, '');
 
-  assert.ok(has(css, '.calc__head', 'text-align:left'), 'the header is still centred');
-  assert.ok(/grid-template-columns:1fr/.test(css), 'controls do not stack to one column');
-  assert.ok(/min-height:44px/.test(css), 'segmented controls are under 44px');
-  assert.ok(has(css, '.calc__horizon-label', 'display:none'), 'the redundant label still shows');
+  assert.ok(
+    /\.pm__cols\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(all.replace(/\s+/g, '')) ||
+      /\.pm__cols\{[^}]*grid-template-columns:minmax\(0,1fr\)/.test(all.replace(/\s+/g, '')),
+    'the map does not start as one column',
+  );
+
+  for (const sel of ['.pm__model', '.pm__preset', '.pm__horizon', '.pm__entry', '.pm__action']) {
+    const re = new RegExp(sel.replace('.', '\\.') + '\\{[^}]*min-height:44px');
+    assert.ok(re.test(all.replace(/\s+/g, '')), `${sel} is under the 44px touch floor`);
+  }
 });
 
 test('no phone-width rule sets a touch target under 44px', { skip }, () => {

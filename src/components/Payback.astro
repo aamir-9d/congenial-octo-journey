@@ -1,0 +1,635 @@
+---
+/**
+ * The Payback Map.
+ *
+ * Built to docs/design-explorations/payback-map-{subscription,ad-revenue,
+ * comparison,mobile}.png. It replaces the old hero-style calculator card in
+ * the same position, keeping `id="payback"` and the nav anchor.
+ *
+ * ── What it is, and what it is careful not to claim ──────────────────────
+ *
+ * A public, illustrative planning tool. It answers "what happens under these
+ * assumptions?" — not "what will my campaign do". Every result is labelled as
+ * modelled, no output is called actual or validated, and surplus is stated as
+ * before operating costs rather than as profit. Account-connected forecasting
+ * is a separate private product and nothing here pretends to be it.
+ *
+ * ── The engine is not touched ────────────────────────────────────────────
+ *
+ * Revenue comes from `calc-model.ts` via `payback-model.ts`, which validates
+ * inputs in front of the engine instead of changing it. The engine has real
+ * boundary defects — NaN at 100% renewal retention, a silently flattened
+ * curve when D30 >= D1, a day-1 search that misses day-0 revenue, and a finite
+ * search that reports "never" — and all of them are refused or relabelled
+ * here. `tests/payback-model.test.ts` pins both halves: the six validated
+ * figures unchanged, and each boundary handled.
+ *
+ * ── Server render ────────────────────────────────────────────────────────
+ *
+ * The default scenario is computed at build time and shipped as real markup,
+ * so the section is readable and correct before the controller runs. The
+ * controller then re-renders in place on the first interaction.
+ */
+import { INITIAL_STATE } from '../scripts/calc-model.ts';
+import { computePayback, crossingLabel, crossingNote } from '../scripts/payback-model.ts';
+import { buildChart, BOX } from '../scripts/payback-chart.ts';
+import { PRESETS } from '../data/presets.ts';
+import { computeView } from '../scripts/calc-model.ts';
+import '../styles/payback.css';
+
+const H0 = 365;
+const initial = computePayback(INITIAL_STATE, H0);
+const chart0 = buildChart(initial.series, true);
+
+const pct = (f: number) => (f * 100).toFixed(4) + '%';
+const money = (v: number) => (v < 0 ? '−$' : '$') + Math.abs(v).toFixed(2);
+const signed = (v: number) => (v < 0 ? '−$' : '+$') + Math.abs(v).toFixed(2);
+
+const crossDay = initial.crossing.kind === 'beyond-range' ? null : initial.crossing.day;
+
+/* Signed-off copy, kept. These are the export's own model limits, and this
+   disclosure is where they belong — they were a list beside the old chart.
+   `chartSummary` is the export's worked description of the example scenario,
+   rendered from the engine so it stays true rather than transcribed. It is
+   stated as describing the example, because that is what it describes: the
+   live accessible summary is the chart's own <desc>, which the controller
+   keeps in step with whatever is on screen. */
+const ASSUMPTIONS = [
+  'Geometric per-cycle retention — a constant renewal rate every billing cycle.',
+  'Constant ARPDAU across tenure.',
+  'No seasonality in eCPM.',
+  'No organic uplift from paid spend.',
+  'No involuntary-churn recovery (failed payments never retried).',
+  'Steady-state approximation — no cohort-size or price changes over the horizon.',
+];
+
+const exampleSummary = computeView(INITIAL_STATE).chartSummary;
+
+/* The ad panel renders hidden on first paint, but its derived figures are real
+   and are rendered as such — a placeholder dash here would ship the export's
+   sentence with nothing in it. */
+const adView = computeView({ ...INITIAL_STATE, mode: 'ad' });
+
+/** The three subscription fields shown in the open panel, in drawn order. */
+const SUB_FIELDS = [
+  { key: 'i2t', label: 'Install → trial', unit: '%', min: 0, max: 100, step: 0.1 },
+  { key: 't2p', label: 'Trial → paid', unit: '%', min: 0, max: 100, step: 0.1 },
+  { key: 'retention', label: 'Renewal retention', unit: '%', min: 0, max: 99.9, step: 0.1 },
+  { key: 'price', label: 'Plan price', unit: '$', min: 0, max: 999, step: 0.01 },
+] as const;
+
+const AD_FIELDS = [
+  { key: 'arpdau', label: 'Revenue per active user / day', unit: '$', min: 0, max: 100, step: 0.001 },
+  { key: 'd1', label: 'Day 1 retention', unit: '%', min: 0.1, max: 100, step: 0.1 },
+  { key: 'd30', label: 'Day 30 retention', unit: '%', min: 0.1, max: 100, step: 0.1 },
+] as const;
+---
+
+<section id="payback" class="section" data-section="payback">
+  <div class="wrap">
+    <div data-reveal="1">
+      <p class="eyebrow eyebrow--amber pm__eyebrow">02 / The payback map</p>
+      <h2 class="pm__h2">See when your spend comes back.</h2>
+      <p class="pm__lead">Set the inputs. Find the crossing. Explore what changes the outcome.</p>
+    </div>
+
+    <div class="pm" data-payback data-reveal="1">
+      {/* --- model + scenario bar ------------------------------------- */}
+      <div class="pm__bar">
+        <div class="pm__models" role="radiogroup" aria-label="Revenue model">
+          <button type="button" class="pm__model" role="radio" aria-checked="true" data-mode="sub">
+            <span class="pm__dot" aria-hidden="true"></span>Subscription
+          </button>
+          <button type="button" class="pm__model" role="radio" aria-checked="false" data-mode="ad">
+            <span class="pm__dot" aria-hidden="true"></span>Ad revenue
+          </button>
+        </div>
+
+        <p class="pm__scenario-label" data-scenario-label>Example scenario</p>
+
+        <div class="pm__presets" role="group" aria-label="Example scenario" data-presets data-when="sub">
+          {
+            PRESETS.map((p) => (
+              <button
+                type="button"
+                class="pm__preset"
+                data-preset={p.key}
+                aria-pressed={p.key === 'typical' ? 'true' : 'false'}
+              >
+                <span data-preset-label>{p.label}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="pm__cols">
+        {/* --- inputs ------------------------------------------------- */}
+        <div class="pm__panel pm__side">
+          <p class="pm__step">01 / Set the inputs</p>
+
+          <h3 class="pm__group">Acquire users</h3>
+          <div class="pm__field" data-field="cpi">
+            <label class="pm__label" for="pm-cpi">Cost per install</label>
+            <div class="pm__entry">
+              <span class="pm__prefix" aria-hidden="true">$</span>
+              <input
+                class="pm__num"
+                id="pm-cpi"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                max="999"
+                step="0.01"
+                value={INITIAL_STATE.cpi}
+                data-input="cpi"
+              />
+            </div>
+            <input
+              class="pm__range"
+              type="range"
+              min="0.1"
+              max="8"
+              step="0.05"
+              value={INITIAL_STATE.cpi}
+              aria-label="Cost per install, slider"
+              data-range="cpi"
+            />
+            <p class="pm__error" data-error="cpi" hidden></p>
+          </div>
+
+          <div data-when="sub">
+            <h3 class="pm__group">Earn from renewals</h3>
+            {
+              SUB_FIELDS.map((f) => (
+                <div class="pm__field" data-field={f.key}>
+                  <label class="pm__label" for={`pm-${f.key}`}>
+                    {f.label}
+                  </label>
+                  <div class="pm__entry">
+                    {f.unit === '$' && (
+                      <span class="pm__prefix" aria-hidden="true">
+                        $
+                      </span>
+                    )}
+                    <input
+                      class="pm__num"
+                      id={`pm-${f.key}`}
+                      type="number"
+                      inputmode="decimal"
+                      min={f.min}
+                      max={f.max}
+                      step={f.step}
+                      value={INITIAL_STATE[f.key]}
+                      data-input={f.key}
+                    />
+                    {f.unit === '%' && (
+                      <span class="pm__suffix" aria-hidden="true">
+                        %
+                      </span>
+                    )}
+                  </div>
+                  <p class="pm__error" data-error={f.key} hidden />
+                </div>
+              ))
+            }
+            <p class="pm__meta" data-plan-summary>Monthly plan · 7-day trial</p>
+          </div>
+
+          <div data-when="ad" hidden>
+            <h3 class="pm__group">Earn from ads</h3>
+            {
+              AD_FIELDS.map((f) => (
+                <div class="pm__field" data-field={f.key}>
+                  <label class="pm__label" for={`pm-${f.key}`}>
+                    {f.label}
+                  </label>
+                  <div class="pm__entry">
+                    {f.unit === '$' && (
+                      <span class="pm__prefix" aria-hidden="true">
+                        $
+                      </span>
+                    )}
+                    <input
+                      class="pm__num"
+                      id={`pm-${f.key}`}
+                      type="number"
+                      inputmode="decimal"
+                      min={f.min}
+                      max={f.max}
+                      step={f.step}
+                      value={INITIAL_STATE[f.key]}
+                      data-input={f.key}
+                    />
+                    {f.unit === '%' && (
+                      <span class="pm__suffix" aria-hidden="true">
+                        %
+                      </span>
+                    )}
+                  </div>
+                  <p class="pm__error" data-error={f.key} hidden />
+                </div>
+              ))
+            }
+
+            <p class="pm__meta">
+              ARPDAU is average revenue per <em>active</em> user per day — not per install.
+            </p>
+
+            <div class="pm__readout">
+              <span class="pm__label">Modelled D7 retention</span>
+              <output class="pm__readout-val" data-bind="predD7">{adView.predD7Label}</output>
+            </div>
+
+            <p class="pm__meta">
+              Fitted decay exponent b = <span data-bind="bLabel">{adView.bLabel}</span> &#183; cumulative
+              active days by D30 = <span data-bind="activeD30">{adView.activeD30Label}</span>
+            </p>
+
+            <p class="pm__meta">
+              Two anchors define an assumed declining curve. It is a model of retention, not a
+              measurement of it.
+            </p>
+          </div>
+
+          <details class="pm__more">
+            <summary class="pm__summary">
+              <span data-advanced-label>Fees, trial &amp; coverage</span>
+              <span class="pm__sign" aria-hidden="true"></span>
+            </summary>
+            <div class="pm__more-body" data-advanced-body>
+              <div data-when="sub">
+                <div class="pm__field">
+                  <label class="pm__label" for="pm-period">Billing period</label>
+                  <div class="pm__entry">
+                    <select class="pm__num pm__num--select" id="pm-period" data-select="period">
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly" selected>Monthly</option>
+                      <option value="annual">Annual</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="pm__field">
+                  <label class="pm__label" for="pm-trialDays">Trial length (days)</label>
+                  <div class="pm__entry">
+                    <input
+                      class="pm__num"
+                      id="pm-trialDays"
+                      type="number"
+                      inputmode="numeric"
+                      min="0"
+                      max="90"
+                      step="1"
+                      value={INITIAL_STATE.trialDays}
+                      data-input="trialDays"
+                    />
+                  </div>
+                </div>
+
+                <div class="pm__field">
+                  <label class="pm__label" for="pm-commission">Store commission</label>
+                  <div class="pm__entry">
+                    <input
+                      class="pm__num"
+                      id="pm-commission"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={INITIAL_STATE.commission}
+                      data-input="commission"
+                    />
+                    <span class="pm__suffix" aria-hidden="true">%</span>
+                  </div>
+                  <p class="pm__error" data-error="commission" hidden />
+                </div>
+
+                <div class="pm__field">
+                  <label class="pm__label" for="pm-refund">Refund rate</label>
+                  <div class="pm__entry">
+                    <input
+                      class="pm__num"
+                      id="pm-refund"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      value={INITIAL_STATE.refund}
+                      data-input="refund"
+                    />
+                    <span class="pm__suffix" aria-hidden="true">%</span>
+                  </div>
+                  <p class="pm__error" data-error="refund" hidden />
+                </div>
+
+                <p class="pm__meta" data-annual-warn hidden>
+                  Annual SKU: one payment at trial end, then nothing until day 365. The whole bet
+                  rides on a single charge and one renewal decision a year later.
+                </p>
+              </div>
+
+              <p class="pm__more-label">What your dashboard currently sees</p>
+
+              <label class="pm__check" for="pm-renewal">
+                <input id="pm-renewal" type="checkbox" class="pm__box" data-toggle="renewalCapture" />
+                <span>
+                  Server-side renewal capture
+                  <span class="pm__check-note">Off: only the first payment is ever counted.</span>
+                </span>
+              </label>
+
+              <label class="pm__check" for="pm-skan">
+                <input id="pm-skan" type="checkbox" class="pm__box" data-toggle="skanMapped" />
+                <span>
+                  SKAN schema mapped to revenue
+                  <span class="pm__check-note">Off: null conversion values report zero revenue.</span>
+                </span>
+              </label>
+
+              <label class="pm__check" for="pm-web">
+                <input id="pm-web" type="checkbox" class="pm__box" data-toggle="webStitched" />
+                <span>
+                  Web-to-app click stitching
+                  <span class="pm__check-note">Off: paid installs get miscredited to organic.</span>
+                </span>
+              </label>
+
+              <p class="pm__meta">
+                These change the <em>simulated reported</em> figure only. The payback day above is
+                unaffected: what a report fails to see does not change what the cohort earned.
+              </p>
+            </div>
+          </details>
+
+          <p class="pm__foot-note">Illustrative inputs. Edit them to fit your app.</p>
+        </div>
+
+        {/* --- the map ------------------------------------------------ */}
+        <div class="pm__panel pm__main">
+          <div class="pm__main-head">
+            <p class="pm__step">02 / Follow the payback</p>
+            <div class="pm__horizons">
+              <span class="pm__horizons-label" id="pm-horizon-label">View</span>
+              <div role="group" aria-labelledby="pm-horizon-label">
+                {
+                  [90, 180, 365].map((h) => (
+                    <button
+                      type="button"
+                      class="pm__horizon"
+                      data-horizon={h}
+                      aria-pressed={h === H0 ? 'true' : 'false'}
+                    >
+                      {h}d
+                    </button>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="pm__results">
+            <div>
+              <p class="pm__result-label">Acquisition cost recovered</p>
+              <p class="pm__result-val" data-bind="crossing">
+                {crossingLabel(initial.crossing, H0)}
+              </p>
+            </div>
+            <div>
+              <p class="pm__result-label">
+                Revenue / spend at D<span data-bind="hLabelA">{H0}</span>
+              </p>
+              <p class="pm__result-val" data-bind="roas">
+                {initial.roas === null ? '—' : (initial.roas * 100).toFixed(1) + '%'}
+              </p>
+            </div>
+            <div>
+              <p class="pm__result-label">
+                <span data-bind="surplusLabel">Surplus</span> / install at D<span
+                  data-bind="hLabelB">{H0}</span
+                >
+              </p>
+              <p class="pm__result-val pm__result-val--accent" data-bind="surplus">
+                {signed(initial.surplusAt)}
+              </p>
+            </div>
+          </div>
+
+          {/* A blocked scenario replaces the plot rather than drawing a curve
+              the model cannot stand behind. */}
+          <div class="pm__invalid" data-invalid hidden>
+            <p class="pm__invalid-title">This scenario cannot be modelled</p>
+            <ul class="pm__invalid-list" data-invalid-list></ul>
+          </div>
+
+          <div class="pm__plot" data-plot>
+            <div class="pm__chip" data-chip style={`--x:${crossDay === null ? 0.5 : chart0.xOf(crossDay)}`}>
+              Payback · day <span data-bind="chipDay">{crossDay}</span>
+            </div>
+
+            <div class="pm__yaxis" aria-hidden="true">
+              <span class="pm__tick" data-tick="max" style="--y:0">{money(chart0.max)}</span>
+              <span class="pm__tick pm__tick--zero" data-tick="zero" style={`--y:${chart0.zero}`}
+                >$0.00</span
+              >
+              <span class="pm__tick" data-tick="min" style="--y:1">{money(chart0.min)}</span>
+            </div>
+
+            <svg
+              class="pm__svg"
+              viewBox={`0 0 ${BOX.w} ${BOX.h}`}
+              preserveAspectRatio="none"
+              role="img"
+              aria-labelledby="pm-chart-title pm-chart-desc"
+            >
+              <title id="pm-chart-title">Cumulative revenue minus acquisition cost, per install</title>
+              <desc id="pm-chart-desc" data-chart-desc>
+                {`Under the example subscription inputs, cumulative revenue per install passes the $${INITIAL_STATE.cpi.toFixed(2)} acquisition cost on day ${crossDay}, reaching ${money(initial.revenueAt)} by day ${H0}.`}
+              </desc>
+
+              <path class="pm__area" data-area d={initial.surplusAt > 0 ? chart0.fill : ''}></path>
+              <path class="pm__pinned" data-pinned-path d="" hidden></path>
+              <path class="pm__curve" data-curve d={chart0.path}></path>
+
+              <line
+                class="pm__zero"
+                data-zero
+                x1={BOX.left}
+                x2={BOX.w - BOX.right}
+                y1={BOX.top + chart0.zero * (BOX.h - BOX.top - BOX.bottom)}
+                y2={BOX.top + chart0.zero * (BOX.h - BOX.top - BOX.bottom)}></line>
+
+              <line class="pm__guide" data-guide x1="0" x2="0" y1={BOX.top} y2={BOX.h - BOX.bottom}
+              ></line>
+              <circle class="pm__marker" data-marker r="7" cx="0" cy="0"></circle>
+            </svg>
+
+            <div class="pm__xaxis" aria-hidden="true" data-xaxis>
+              <span class="pm__tick" style="--x:0">Day 0</span>
+              <span class="pm__tick pm__tick--mid" style="--x:0.2466">Day 90</span>
+              <span class="pm__tick pm__tick--mid" style="--x:0.4932">Day 180</span>
+              <span class="pm__tick" style="--x:1">Day 365</span>
+            </div>
+          </div>
+
+          <p class="pm__caption">Cumulative revenue minus acquisition cost, per install.</p>
+
+          <div class="pm__legend" data-legend hidden>
+            <span class="pm__legend-item"
+              ><span class="pm__swatch pm__swatch--now" aria-hidden="true"></span
+              ><span data-legend-now>Current</span></span
+            >
+            <span class="pm__legend-item"
+              ><span class="pm__swatch pm__swatch--pin" aria-hidden="true"></span
+              ><span data-legend-pin>Pinned</span></span
+            >
+          </div>
+
+          <div class="pm__actions">
+            <button type="button" class="pm__action" data-pin>
+              Pin this scenario
+              <span class="pm__action-sign" aria-hidden="true">+</span>
+            </button>
+            <button type="button" class="pm__action pm__action--quiet" data-clear hidden>
+              Clear comparison
+            </button>
+          </div>
+
+          <p class="pm__note" data-bind="crossingNote">{crossingNote(initial.crossing, H0)}</p>
+
+          <details class="pm__more">
+            <summary class="pm__summary">
+              Compare dashboard reporting
+              <span class="pm__sign" aria-hidden="true"></span>
+            </summary>
+            <div class="pm__more-body">
+              <p class="pm__more-label">
+                Cumulative net revenue per install, true versus dashboard-measured
+              </p>
+              <p class="pm__more-text">
+                A simulation of what a dashboard might miss — unmapped SKAdNetwork postbacks and
+                web-to-app clicks that never stitch. It changes the <em>simulated reported</em>
+                line only. The economics above, and the payback day, do not move: what a report fails
+                to see does not change what the cohort earned.
+              </p>
+              <p class="pm__more-text" data-when="sub">
+                On the numbers your dashboard reports, you would pause this campaign. On the real
+                numbers it returns <span data-bind="lifeRoas">{computeView(INITIAL_STATE).lifeRoas}</span> over the subscription's
+                life. That decision is what the gap costs.
+              </p>
+              <p class="pm__more-text" data-when="ad" hidden>
+                At this ARPDAU and this decay, an install returns
+                <span data-bind="adHorizonRoas">{adView.adHorizonRoas}</span> by day
+                <span data-bind="hLabelD">365</span>. Everything after that is the part nobody waits
+                for.
+              </p>
+              <p class="pm__more-text pm__more-text--quiet">
+                The two gaps are applied as independent factors, which is an assumption, not a
+                measurement. Treat the size of the gap as illustrative.
+              </p>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      {/* --- arithmetic strip ----------------------------------------- */}
+      <div class="pm__panel pm__strip">
+        <div>
+          <p class="pm__step">03 / Put it in context</p>
+          <p class="pm__strip-title">
+            1,000 installs.<br />D<span data-bind="hLabelC">{H0}</span>.
+          </p>
+        </div>
+
+        <div class="pm__ledger">
+          <div class="pm__ledger-cell">
+            <p class="pm__result-label">Acquisition cost</p>
+            <p class="pm__ledger-val" data-bind="ledgerCost">
+              {'$' + (INITIAL_STATE.cpi * 1000).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+            </p>
+          </div>
+          <span class="pm__ledger-arrow" aria-hidden="true">&#8594;</span>
+          <div class="pm__ledger-cell">
+            <p class="pm__result-label">Modelled revenue</p>
+            <p class="pm__ledger-val" data-bind="ledgerRev">
+              {'$' + (initial.revenueAt * 1000).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+            </p>
+          </div>
+          <span class="pm__ledger-arrow" aria-hidden="true">&#8594;</span>
+          <div class="pm__ledger-cell">
+            <p class="pm__result-label">After acquisition cost</p>
+            <p class="pm__ledger-val pm__ledger-val--accent" data-bind="ledgerNet">
+              {(initial.surplusAt < 0 ? '−$' : '+$') +
+                Math.abs(initial.surplusAt * 1000).toLocaleString('en-US', {
+                  maximumFractionDigits: 0,
+                })}
+            </p>
+          </div>
+        </div>
+
+        <p class="pm__foot-note" data-bind="ledgerNote">
+          Illustrative cohort; values scale from the per-install model.
+        </p>
+      </div>
+
+      <div class="pm__foot">
+        <p class="pm__qualify">
+          Surplus is before operating costs. It is not a forecast of total business profit.
+        </p>
+        <button type="button" class="pm__action pm__action--quiet" data-reset>
+          Reset example
+        </button>
+      </div>
+
+      <details class="pm__more pm__more--wide">
+        <summary class="pm__summary">
+          All assumptions &amp; model limits
+          <span class="pm__sign" aria-hidden="true"></span>
+        </summary>
+        <div class="pm__more-body">
+          <p class="pm__more-text">
+            <strong>Subscription.</strong> Expected revenue per install is (install → trial) ×
+            (trial → paid) × net payment × the sum of renewal retention over the payment dates
+            reached. Net payment is the plan price after store commission and refunds. Payments land
+            on billing dates, so the curve is a staircase rather than a smooth line.
+          </p>
+          <p class="pm__more-text">
+            <strong>Ad revenue.</strong> Expected revenue per install through day H is the sum over
+            days of retention × revenue per active user. Retention is a power curve fitted through
+            the day 1 and day 30 anchors, with day 0 at 100%. ARPDAU is held constant.
+          </p>
+          <p class="pm__more-text">
+            <strong>What this is not.</strong> There is no account data here and no fitted cohort
+            history — these are assumptions you typed, carried forward. It produces a modelled
+            outcome under those assumptions, not a forecast, and it has no confidence interval
+            because nothing here has been calibrated against observed results.
+          </p>
+          <p class="pm__more-text pm__more-text--quiet">
+            Payback is searched to day 3,650. A scenario with no crossing inside that range is
+            reported as having none found, not as never paying back.
+          </p>
+
+          <p class="pm__more-text pm__more-text--quiet">
+            Real retention isn't perfectly geometric &#8212; month one churns harder, then the curve
+            flattens. This model will be slightly pessimistic past month six.
+          </p>
+
+          <p class="pm__more-label">What the model assumes</p>
+          <ul class="pm__limits">
+            {ASSUMPTIONS.map((a) => <li class="pm__limit">{a}</li>)}
+          </ul>
+
+          <p class="pm__more-label">The example scenario, in full</p>
+          <p class="pm__more-text pm__more-text--quiet">{exampleSummary}</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initPayback } from '../scripts/payback';
+  initPayback();
+</script>

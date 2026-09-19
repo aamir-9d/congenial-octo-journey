@@ -39,24 +39,30 @@ function rule(selector: string): string | null {
   return m ? m[2]! : null;
 }
 
-test('1. no row container forbids its own label from wrapping', { skip }, () => {
-  const row = rule('.calc__row');
-  const label = rule('.calc__row-label');
-  const value = rule('.calc__row-val');
+test('1. no field container forbids its own label from wrapping', { skip }, () => {
+  const field = rule('.pm__field');
+  const label = rule('.pm__label');
+  const entry = rule('.pm__entry');
 
-  assert.ok(row, '.calc__row has no rule at all');
-  assert.ok(!/white-space:\s*nowrap/.test(row!), '.calc__row still forbids wrapping — this is the bug');
+  assert.ok(field, '.pm__field has no rule at all');
+  assert.ok(
+    !/white-space:\s*nowrap/.test(field!),
+    '.pm__field forbids wrapping — the label cannot shrink and the panel scrolls',
+  );
 
-  // min-width:0 is the load-bearing half: a flex child defaults to
-  // min-width:auto and refuses to shrink below its content.
-  assert.match(label!, /min-width:\s*0/, '.calc__row-label cannot shrink below its content');
-  assert.match(value!, /white-space:\s*nowrap/, 'the value may not wrap — nowrap belongs here');
+  // The label sits in a minmax(0, 1fr) track, which is the grid equivalent of
+  // the flex min-width:0 this originally pinned: without it the track refuses
+  // to go below the label's intrinsic width.
+  assert.match(field!, /minmax\(0,\s*1fr\)/, '.pm__field lets its label set a floor');
+  assert.ok(label, '.pm__label has no rule');
+  assert.ok(entry, '.pm__entry has no rule');
 });
 
-test('1. the slider readout rows have the same shape', { skip }, () => {
-  const value = rule('.calc__field-val');
-  assert.match(value!, /white-space:\s*nowrap/, 'slider readouts must not wrap');
-  assert.match(value!, /flex:\s*none/, 'slider readouts must not be squeezed');
+test('1. the numeric entries keep their shape', { skip }, () => {
+  const num = rule('.pm__num');
+  assert.ok(num, '.pm__num has no rule');
+  assert.match(num!, /tabular-nums/, 'figures must not jitter as they change');
+  assert.match(num!, /text-align:\s*right/, 'the value should sit against its unit');
 });
 
 test('2. UA margins on native controls are zeroed', { skip }, () => {
@@ -65,62 +71,72 @@ test('2. UA margins on native controls are zeroed', { skip }, () => {
   assert.match(decl!, /margin:\s*0/, 'a width:100% range input will overflow its container by 4px');
 });
 
-test('3. long labels have a phone form, and only one is ever shown', { skip }, () => {
-  assert.ok(html.includes('Invisible / 1,000<'), 'the shortened row label is missing');
-  assert.ok(html.includes('iOS installs with null CV'), 'the shortened slider label is missing');
+test('3. no axis label is drawn as SVG text', { skip }, () => {
+  // SVG <text> scales with the viewBox: an 11px label in a 920-wide box lands
+  // near 7px once the box is phone width, which is how a previous chart
+  // shipped unreadable. Every label on this plot is HTML positioned from a
+  // fraction the chart module returns.
+  const plot = /<div class="pm__plot"[\s\S]*?<\/svg>/.exec(html);
+  assert.ok(plot, 'the plot did not render');
+  assert.ok(
+    !/<text[\s>]/.test(plot![0]),
+    'an axis label is SVG <text> — it will shrink with the viewBox on a phone',
+  );
 
-  const narrow = rule('.narrow-only');
-  assert.match(narrow!, /display:\s*none/, 'both label forms would render at once');
+  /* `rule()` matches its argument as a substring, so `.pm__tick` would find
+     `.pm__yaxis .pm__tick` first and read the wrong body. Look for the
+     standalone rule directly: a font size on the label element itself is the
+     whole point — inherited from a container it would be the viewBox problem
+     again, in CSS. */
+  const css = [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1]!).join('');
+  assert.match(
+    css,
+    /(?:^|[,}])\.pm__tick\{[^}]*font-size/,
+    'the HTML tick has no font size of its own',
+  );
 });
 
 test('4. the chart summary is out of the visual tree and in the a11y one', { skip }, () => {
-  const decl = rule('.calc__summary');
-  assert.ok(decl, '.calc__summary has no rule — it will render as visible body copy');
-  assert.match(decl!, /clip-path:\s*inset\(50%\)/, 'not clipped');
-  assert.match(decl!, /position:\s*absolute/, 'still in flow');
-
-  // Clipped, not removed: it is the chart's live region.
-  assert.ok(
-    /class="calc__summary"/.test(html) && /aria-live="polite"[^>]*calc__summary|calc__summary[^>]*aria-live="polite"/.test(html),
-    'the summary lost its live region',
-  );
-  assert.ok(!/display:\s*none/.test(decl!), 'display:none would drop it from the a11y tree');
+  // The old summary was a clipped live region. This one is the SVG's own
+  // <desc>, referenced by aria-labelledby: never painted, always announced,
+  // and impossible to accidentally render as body copy.
+  assert.match(html, /<svg[^>]*class="pm__svg"[^>]*aria-labelledby="([^"]+)"/, 'the plot has no accessible name');
+  const ids = /aria-labelledby="([^"]+)"/.exec(html)![1]!.split(/\s+/);
+  for (const id of ids) {
+    assert.ok(html.includes(`id="${id}"`), `aria-labelledby points at a missing ${id}`);
+  }
+  assert.match(html, /<desc id="pm-chart-desc"[^>]*>[^<]{40,}/, 'the chart description is empty or missing');
+  assert.match(html, /role="img"/, 'the plot is not exposed as an image');
 });
 
-test('5. the plot drops its own annotations at phone width', { skip }, () => {
-  const css = [...html.matchAll(/@media[^{]*max-width:\s*767px[^{]*\{([\s\S]*?)\}\s*(?=@media|<\/style>|\.)/g)]
-    .map((m) => m[1]!)
-    .join('');
-  const anywhere = html;
-
-  // The breakeven is stated in the card header, so on the plot it only collides.
-  assert.ok(/#lbl-day7/.test(anywhere), 'the day-7 label element is gone entirely');
-  assert.ok(
-    /\.chart__lbl--be,\s*#lbl-day7,\s*#lbl-tmid\{display:none\}/.test(anywhere.replace(/\s+/g, ' ')) ||
-      /chart__lbl--be[^}]*#lbl-day7/.test(anywhere),
-    'the colliding annotations are not hidden on a phone',
-  );
-  assert.ok(/class="calc__breakeven/.test(anywhere), 'the header no longer carries the breakeven');
+test('5. the crossing annotation cannot float without a crossing', { skip }, () => {
+  // The old bug drew the breakeven label on top of the day-7 tick. The new
+  // failure mode is worse: a marker left at the frame when the curve never
+  // crosses, implying a payback that did not happen.
+  const chip = rule('.pm__chip');
+  assert.ok(chip, '.pm__chip has no rule');
+  assert.ok(rule('.pm__chip[hidden]'), 'the chip cannot be hidden — it will show with no crossing');
+  assert.match(chip!, /--x/, 'the chip is not positioned from the crossing fraction');
 });
 
 test('6. the chart is on the dark palette, not the cream one', { skip }, () => {
   // The cream values, if they survive as the effective colour, render a teal
   // line with a brown wash on the dark ground.
-  for (const [id, token] of [
-    ['#p-true', '--chart-true'],
-    ['#p-meas', '--chart-measured'],
-    ['#ax-y,#ax-x', '--chart-axis'],
-    ['#zero-line', '--chart-rule'],
+  for (const [selector, token] of [
+    ['.pm__curve', '--color-accent'],
+    ['.pm__pinned', '--color-text-4'],
+    ['.pm__zero', '--color-text-3'],
+    ['.pm__marker', '--color-accent'],
   ] as const) {
-    const decl = rule(id);
-    assert.ok(decl, `${id} has no palette rule — it falls back to the cream attribute`);
-    assert.ok(decl!.includes(`var(${token})`), `${id} is not painted from ${token}`);
+    const decl = rule(selector);
+    assert.ok(decl, `${selector} has no palette rule`);
+    assert.ok(decl!.includes(`var(${token})`), `${selector} is not painted from ${token}`);
   }
 
-  const dot = rule('#cross-dot');
-  assert.match(dot!, /stroke:\s*var\(--color-surface\)/, 'the marker ring is still white');
+  // The comparison must not rest on colour alone.
+  const pinned = rule('.pm__pinned');
+  assert.match(pinned!, /stroke-dasharray/, 'the pinned curve is distinguished by colour only');
 });
-
 test('6. the OG image generator did not drift to the old palette', { skip }, () => {
   const gen = path.resolve(import.meta.dirname, '..', 'scripts', 'build-og-image.mjs');
   if (!fs.existsSync(gen)) return;

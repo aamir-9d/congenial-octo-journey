@@ -99,34 +99,32 @@ test('every class on every page is reachable by a rule that can match it', { ski
   );
 });
 
-test('slider fields carry their layout, not the browser default', { skip }, () => {
+test('payback fields carry their layout, not the browser default', { skip }, () => {
   const css = styleText(html);
 
-  // The three declarations whose absence produced the visible bug: the field
-  // head loses its flex row, and the input loses its full width.
-  assert.match(css, /\.calc__field-head[^{]*\{[^}]*display:\s*flex/, 'field head has no flex row');
-  assert.match(
-    css,
-    /\.calc__field-head[^{]*\{[^}]*justify-content:\s*space-between/,
-    'field head does not space its label and value apart',
-  );
-  assert.match(css, /\.calc__range[^{]*\{[^}]*width:\s*100%/, 'range input is not full width');
+  // The declarations whose absence produced the visible bug: the field loses
+  // its row layout, and the range input loses its full width.
+  assert.match(css, /\.pm__field[^{]*\{[^}]*display:\s*grid/, 'the field has no row layout');
+  assert.match(css, /\.pm__entry[^{]*\{[^}]*align-items:\s*center/, 'the entry does not align its unit');
+  assert.match(css, /\.pm__range[^{]*\{[^}]*width:\s*100%/, 'range input is not full width');
 
-  // And that those rules are not gated behind a component scope again.
-  for (const cls of ['calc__field-head', 'calc__range', 'calc__field', 'calc__field-val']) {
+  // And that those rules are not gated behind a component scope. The Payback
+  // controller creates nodes at runtime which carry no scope attribute, so a
+  // scoped rule would silently fail to reach them -- the Slider.astro failure
+  // this originally pinned, in a new place.
+  for (const cls of ['pm__field', 'pm__range', 'pm__entry', 'pm__num', 'pm__invalid-item']) {
     const scoped = new RegExp(`\\.${cls}(?![\\w-])[^,{]*data-astro-cid`).test(css);
-    assert.ok(!scoped, `.${cls} is scope-gated; Slider.astro's markup cannot receive it`);
+    assert.ok(!scoped, `.${cls} is scope-gated; runtime-created markup cannot receive it`);
   }
 });
 
 test('every data-bind sits inside the element the calculator binds against', { skip }, () => {
-  // calculator.ts binds to `.calc`. In the cream build the hero carried a
-  // summary card and a mini chart outside it, which is why the root had to
-  // widen to `#top` — bound narrowly they were server-rendered and then frozen.
-  // The Bento hero has neither, so the narrow root is correct again, and this
-  // is what stops a stray binding drifting back outside it.
-  const start = html.indexOf('class="calc"');
-  assert.ok(start > -1, 'no .calc root in the built page');
+  // payback.ts binds inside `[data-payback]`. A binding outside that root is
+  // server-rendered once and then frozen for the life of the page — it will
+  // show the example scenario's figure against whatever the visitor typed,
+  // which is the worst failure this section can have.
+  const start = html.indexOf('data-payback');
+  assert.ok(start > -1, 'no [data-payback] root in the built page');
 
   const end = html.indexOf('</section>', start);
   assert.ok(end > start, 'could not find the end of the payback section');
@@ -138,9 +136,9 @@ test('every data-bind sits inside the element the calculator binds against', { s
   assert.equal(
     within,
     total,
-    `${total - within} data-bind element(s) fall outside .calc and would never update`,
+    `${total - within} data-bind element(s) fall outside [data-payback] and would never update`,
   );
-  assert.ok(total > 30, `expected the calculator's bindings, found only ${total}`);
+  assert.ok(total > 15, `expected the payback map's bindings, found only ${total}`);
 });
 
 test('the payback model is its own section, not a child of the hero', { skip }, () => {

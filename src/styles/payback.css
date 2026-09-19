@@ -1,0 +1,934 @@
+/**
+ * The Payback Map.
+ *
+ * A plain stylesheet rather than a component <style> block, because the markup
+ * spans Payback.astro and nodes the controller creates at runtime. Astro scopes
+ * component styles with a data-astro-cid attribute that a scripted element does
+ * not carry, which is the failure mode tests/styles.test.ts exists to catch.
+ *
+ * Reference: docs/design-explorations/payback-map-*.png
+ */
+
+.pm__eyebrow {
+  margin-bottom: var(--s6);
+}
+
+.pm__h2 {
+  max-width: 24ch;
+  font-size: var(--t-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  color: var(--color-text);
+}
+
+.pm__lead {
+  margin-top: var(--s4);
+  max-width: 58ch;
+  font-size: var(--t-card);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+.pm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  margin-top: clamp(28px, 3.5vw, 48px);
+}
+
+/* --- model + scenario bar ------------------------------------------------ */
+
+.pm__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4) var(--s8);
+  padding: 14px;
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+  box-shadow: var(--ring);
+}
+
+.pm__models {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pm__model {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: 0 0 0 1px transparent;
+  font-family: var(--font-body);
+  font-size: var(--t-card);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-3);
+  cursor: pointer;
+}
+
+.pm__model[aria-checked='true'] {
+  background: var(--color-surface-sunk);
+  box-shadow: var(--ring-accent);
+  color: var(--color-text);
+}
+
+/* A filled ring, so the choice does not rest on colour alone. */
+.pm__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--color-line-hover);
+}
+
+.pm__model[aria-checked='true'] .pm__dot {
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.pm__scenario-label {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.pm__presets {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pm__preset {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunk);
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  font-family: var(--font-body);
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.pm__preset:hover {
+  color: var(--color-text);
+}
+
+.pm__preset[aria-pressed='true'] {
+  background: var(--color-accent);
+  box-shadow: none;
+  color: var(--color-ink);
+}
+
+.pm__presets[hidden] {
+  display: none;
+}
+
+/* --- the two columns ----------------------------------------------------- */
+
+.pm__cols {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* On a phone the map comes first and the inputs follow it, which is the order
+   payback-map-mobile.png sets: the visitor sees the answer, then what they can
+   change about it. The DOM keeps inputs first because that is the reading
+   order the two-column desktop composition wants. */
+.pm__main {
+  order: -1;
+}
+
+@media (min-width: 1000px) {
+  .pm__cols {
+    /* 320px of controls against the rest for the map: the chart is the point
+       of the section, so it takes the room. */
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .pm__main {
+    order: 0;
+  }
+}
+
+.pm__panel {
+  padding: clamp(20px, 2vw, 28px);
+  border-radius: var(--radius-panel);
+  background: var(--color-surface);
+  box-shadow: var(--ring);
+  min-width: 0;
+}
+
+.pm__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.pm__step {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.pm__group {
+  font-size: var(--t-h3-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-h3);
+  color: var(--color-text);
+}
+
+.pm__side [data-when] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* An author display beats the UA sheet's [hidden] rule, so it needs a partner. */
+.pm__side [data-when][hidden] {
+  display: none;
+}
+
+/* --- fields -------------------------------------------------------------- */
+
+.pm__field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px var(--s4);
+}
+
+.pm__label {
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+.pm__entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 12px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunk);
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+}
+
+.pm__entry:focus-within {
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.pm__prefix,
+.pm__suffix {
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-2);
+}
+
+/* Direct numeric entry is the primary control; the slider is a second way in. */
+.pm__num {
+  width: 5.5ch;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--t-card);
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  text-align: right;
+}
+
+.pm__num:focus {
+  outline: none;
+}
+
+.pm__num[aria-invalid='true'] {
+  color: var(--color-accent);
+}
+
+/* The spinners crowd a 5ch box and are redundant next to a slider. */
+.pm__num::-webkit-outer-spin-button,
+.pm__num::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.pm__num[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.pm__range {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.pm__range:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+.pm__error {
+  grid-column: 1 / -1;
+  font-size: var(--t-body-sm);
+  line-height: var(--lh-card);
+  color: var(--color-accent);
+}
+
+.pm__error[hidden] {
+  display: none;
+}
+
+.pm__meta,
+.pm__foot-note {
+  font-size: var(--t-body-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-4);
+}
+
+.pm__readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s4);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--color-line);
+}
+
+.pm__readout-val {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+/* --- disclosures --------------------------------------------------------- */
+
+.pm__more {
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--s4);
+}
+
+.pm__more--wide {
+  border: 0;
+  padding: 0;
+}
+
+.pm__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+  min-height: 44px;
+  list-style: none;
+  cursor: pointer;
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-2);
+}
+
+.pm__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pm__summary:hover {
+  color: var(--color-text);
+}
+
+.pm__summary:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.pm__sign::before {
+  content: '+';
+  color: var(--color-accent);
+}
+
+.pm__more[open] .pm__sign::before {
+  content: '−';
+}
+
+.pm__more-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  padding-bottom: var(--s4);
+}
+
+.pm__more-text {
+  max-width: 78ch;
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+.pm__more-text--quiet {
+  color: var(--color-text-4);
+}
+
+/* --- the map ------------------------------------------------------------- */
+
+.pm__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.pm__main-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.pm__horizons {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.pm__horizons > div {
+  display: flex;
+  gap: 8px;
+}
+
+.pm__horizons-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.pm__horizon {
+  min-height: 44px;
+  min-width: 62px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunk);
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  font-family: var(--font-body);
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.pm__horizon[aria-pressed='true'] {
+  background: var(--color-accent);
+  box-shadow: none;
+  color: var(--color-ink);
+}
+
+/* --- results ------------------------------------------------------------- */
+
+.pm__results {
+  display: grid;
+  gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  padding-bottom: var(--s4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.pm__result-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  line-height: var(--lh-snug);
+  color: var(--color-text-4);
+}
+
+.pm__result-val {
+  margin-top: 6px;
+  font-size: var(--t-stat);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.pm__result-val--accent {
+  color: var(--color-accent);
+}
+
+/* --- the plot ------------------------------------------------------------ */
+
+.pm__plot {
+  position: relative;
+  /* Room at the top for the crossing chip and on the left for the y labels. */
+  padding: 34px 0 26px 62px;
+}
+
+.pm__plot[hidden] {
+  display: none;
+}
+
+.pm__svg {
+  display: block;
+  width: 100%;
+  height: clamp(210px, 26vw, 300px);
+  overflow: visible;
+}
+
+.pm__curve {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Grey and dashed, and named in the legend: the comparison never rests on a
+   colour difference alone. */
+.pm__pinned {
+  fill: none;
+  stroke: var(--color-text-4);
+  stroke-width: 1.8;
+  stroke-dasharray: 7 5;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.pm__pinned[hidden] {
+  display: none;
+}
+
+.pm__area {
+  fill: var(--color-accent);
+  opacity: 0.1;
+}
+
+.pm__zero {
+  stroke: var(--color-text-3);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.pm__guide {
+  stroke: var(--color-accent);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.pm__marker {
+  fill: var(--color-accent);
+  stroke: var(--color-bg);
+  stroke-width: 3;
+}
+
+/* Axis labels are HTML, positioned from fractions the chart module returns.
+   As SVG <text> an 11px label renders near 7px once the viewBox is phone
+   width, which is how a previous chart shipped unreadable. */
+.pm__yaxis {
+  position: absolute;
+  inset: 34px auto 26px 0;
+  width: 56px;
+}
+
+.pm__yaxis .pm__tick {
+  position: absolute;
+  right: 0;
+  top: calc(var(--y) * 100%);
+  transform: translateY(-50%);
+}
+
+/* No left offset of its own: this sits inside .pm__plot, which already pads
+   62px for the y labels. Adding the same inset here slid every tick a full
+   gutter right of the point it labels. */
+.pm__xaxis {
+  position: relative;
+  height: 20px;
+}
+
+.pm__xaxis .pm__tick {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.pm__xaxis .pm__tick:first-child {
+  transform: none;
+}
+
+.pm__xaxis .pm__tick:last-child {
+  transform: translateX(-100%);
+}
+
+/* Four ticks do not fit a phone-width plot; they overlap into an unreadable
+   run. The first and last carry the range, which is what the axis is for. */
+@media (max-width: 639px) {
+  .pm__tick--mid {
+    display: none;
+  }
+}
+
+.pm__tick {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-4);
+}
+
+.pm__tick--zero {
+  color: var(--color-text-2);
+}
+
+.pm__chip {
+  position: absolute;
+  top: 0;
+  left: calc(62px + var(--x) * (100% - 62px));
+  transform: translateX(-50%);
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunk);
+  box-shadow: 0 0 0 1px var(--color-line-strong);
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-meta);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-accent);
+}
+
+.pm__chip[hidden] {
+  display: none;
+}
+
+.pm__caption {
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+.pm__note {
+  font-size: var(--t-body-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-4);
+}
+
+/* --- legend and actions -------------------------------------------------- */
+
+.pm__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s4) var(--s8);
+}
+
+.pm__legend[hidden] {
+  display: none;
+}
+
+.pm__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--t-card-sm);
+  color: var(--color-text-2);
+}
+
+.pm__swatch {
+  width: 22px;
+  height: 0;
+  border-top: 2px solid var(--color-accent);
+}
+
+.pm__swatch--now {
+  border-top-color: var(--color-accent);
+}
+
+.pm__swatch--pin {
+  border-top: 2px dashed var(--color-text-4);
+}
+
+.pm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s4) var(--s8);
+}
+
+.pm__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--color-accent);
+  cursor: pointer;
+}
+
+.pm__action:hover {
+  color: var(--color-accent-hover);
+}
+
+.pm__action:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+.pm__action[hidden] {
+  display: none;
+}
+
+.pm__action:disabled {
+  color: var(--color-text-4);
+  cursor: not-allowed;
+}
+
+.pm__action--quiet {
+  color: var(--color-text-2);
+}
+
+.pm__action--quiet:hover {
+  color: var(--color-text);
+}
+
+.pm__action-sign {
+  color: var(--color-accent);
+}
+
+/* --- refused scenario ---------------------------------------------------- */
+
+.pm__invalid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--s6);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-sunk);
+  box-shadow: var(--ring-accent);
+}
+
+.pm__invalid[hidden] {
+  display: none;
+}
+
+.pm__invalid-title {
+  font-size: var(--t-card);
+  font-weight: var(--fw-semibold);
+  color: var(--color-text);
+}
+
+.pm__invalid-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pm__invalid-item {
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+/* --- arithmetic strip ---------------------------------------------------- */
+
+.pm__strip {
+  display: grid;
+  gap: var(--s6) var(--s16);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+}
+
+@media (min-width: 860px) {
+  .pm__strip {
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  }
+}
+
+.pm__strip-title {
+  margin-top: var(--s4);
+  font-size: var(--t-h3);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+  color: var(--color-text);
+}
+
+.pm__ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+  align-items: center;
+}
+
+@media (min-width: 620px) {
+  .pm__ledger {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+}
+
+.pm__ledger-cell {
+  min-width: 0;
+}
+
+.pm__ledger-val {
+  margin-top: 6px;
+  font-size: var(--t-h2-card);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+
+.pm__ledger-val--accent {
+  color: var(--color-accent);
+}
+
+.pm__ledger-arrow {
+  font-size: var(--t-card);
+  color: var(--color-text-4);
+}
+
+@media (max-width: 619px) {
+  .pm__ledger-arrow {
+    display: none;
+  }
+}
+
+/* --- foot ---------------------------------------------------------------- */
+
+.pm__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.pm__qualify {
+  max-width: 70ch;
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+/* --- motion -------------------------------------------------------------- */
+
+.pm__curve,
+.pm__pinned,
+.pm__marker,
+.pm__guide,
+.pm__area {
+  transition:
+    d 240ms var(--ease-out-soft),
+    cx 240ms var(--ease-out-soft),
+    cy 240ms var(--ease-out-soft),
+    x1 240ms var(--ease-out-soft),
+    x2 240ms var(--ease-out-soft),
+    opacity 240ms var(--ease-out-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pm__curve,
+  .pm__pinned,
+  .pm__marker,
+  .pm__guide,
+  .pm__area {
+    transition: none;
+  }
+}
+
+.pm__more-label {
+  font-family: var(--font-mono);
+  font-size: var(--t-mono-2xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-4);
+}
+
+.pm__limits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pm__limit {
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+/* --- coverage switches ---------------------------------------------------- */
+
+.pm__check {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 6px 0;
+  cursor: pointer;
+  font-size: var(--t-card-sm);
+  line-height: var(--lh-card);
+  color: var(--color-text-2);
+}
+
+.pm__box {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.pm__box:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.pm__check-note {
+  display: block;
+  margin-top: 3px;
+  font-size: var(--t-body-sm);
+  color: var(--color-text-4);
+}
+
+.pm__num--select {
+  width: auto;
+  min-width: 9ch;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* The disclosure paragraphs use the same model gate as the input groups. */
+.pm__more-body [data-when][hidden] {
+  display: none;
+}

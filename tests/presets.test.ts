@@ -79,11 +79,18 @@ test('every preset renders, with the figure the model computes', { skip }, () =>
     const preset = PRESETS.find((p) => p.key === key);
     assert.ok(preset, `rendered an unknown preset: ${key}`);
 
+    /* The approved composition labels these buttons and nothing more, so there
+       is no longer a figure on them to disagree with the model. The protection
+       that matters is the inverse: a button must not print a breakeven day at
+       all unless it is the one the model computes for that preset. */
     const text = markup!.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    assert.ok(
-      text.includes(presetBreakeven(preset!)),
-      `${key} shows a breakeven the model does not produce`,
-    );
+    const day = /day\s+(\d+)/i.exec(text);
+    if (day) {
+      assert.ok(
+        text.includes(presetBreakeven(preset!)),
+        `${key} shows a breakeven the model does not produce`,
+      );
+    }
     assert.ok(text.includes(preset!.label), `${key} is missing its label`);
   }
 
@@ -95,5 +102,5 @@ test('every preset renders, with the figure the model computes', { skip }, () =>
 
 test('the presets are subscription-only', { skip }, () => {
   // The ad model has no trial funnel, so a preset over it would be meaningless.
-  assert.match(html, /class="calc__presets"[^>]*data-when="isSub"/);
+  assert.match(html, /class="pm__presets"[^>]*data-when="sub"/);
 });
