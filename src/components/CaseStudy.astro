@@ -321,7 +321,10 @@ const shown = CASE_STUDY.cardFigures.map(
      the sentence. */
   .case__more-link {
     display: inline;
-    min-height: 44px;
+    /* `min-height` does nothing on an inline box. Vertical padding does grow
+       the hit area though, which is what the 44px floor is actually about:
+       19px of line box plus 13px either side clears it. */
+    padding-block: 13px;
     font-size: var(--t-card);
     font-weight: var(--fw-medium);
     line-height: var(--lh-card);

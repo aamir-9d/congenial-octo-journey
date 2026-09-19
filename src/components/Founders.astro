@@ -217,7 +217,10 @@ const founders = [
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    margin-top: 20px;
+    /* The 44px floor applied only under the phone breakpoint, so on a desktop
+       or a tablet this was a 22px target. It is the same link either way. */
+    min-height: 44px;
+    margin-top: 12px;
     align-self: flex-start;
     font-size: var(--t-card-sm);
     font-weight: var(--fw-semibold);
