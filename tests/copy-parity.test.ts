@@ -138,6 +138,10 @@ const distExists = fs.existsSync(PORT);
  */
 const REPLACED: { text: string; why: string }[] = [
   {
+    text: "Four stations. The output of the last one is the input to the first. That's the point.",
+    why: 'Loop section lead replaced by the approved circular design — loop-circular-revision.png',
+  },
+  {
     text: "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. I did it last week and I'll do it next week.",
     why: 'founder bio condensed from three paragraphs to one — new copy, awaiting sign-off',
   },
