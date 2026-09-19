@@ -1,0 +1,539 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+/**
+ * The 19 September website audit, as a page.
+ *
+ * `noindex` and absent from the sitemap, like /brand-book and /logo-directions:
+ * this is an internal working document that happens to be easier to read at a
+ * URL than in a markdown file. The canonical copy is
+ * docs/redesign-audit-2026-09-19.md.
+ *
+ * Every figure quoted here is either measured (layout-findings.json, recorded at
+ * eight viewport widths) or already published elsewhere on this site — the case
+ * study numbers are on the homepage and in the article. Nothing new is disclosed
+ * by this page existing.
+ *
+ * Two findings are marked as not having survived verification. They stay on the
+ * page rather than being quietly deleted, because an audit that edits away its
+ * own misses is worth less than one that shows them.
+ */
+
+const title = 'Website audit — E2E Apps';
+const description =
+  'The 19 September 2026 audit of this site: ranked findings, measured layout data, the proposed redesign, and what the automation integrations actually support.';
+
+interface Finding {
+  pri: 'P0' | 'P1' | 'P2';
+  finding: string;
+  change: string;
+  state: 'Fixed' | 'Open' | 'Needs assets';
+}
+
+const findings: Finding[] = [
+  {
+    pri: 'P0',
+    finding:
+      'No Calendly embed and no GTM loader in the build. Both are still commented out in deploy.yml.',
+    change:
+      '"Book a call" leads to a form. Verify the production configuration, or label the action honestly.',
+    state: 'Open',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'Sticky navigation fails. At scrollY 3000 the bar’s top was −3000, because an ancestor computed overflow-y: auto.',
+    change: 'The only booking action on screen disappears down a 9,254px page.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'Shift+Tab from the mobile menu’s close button moved focus to the opener behind the overlay. No dialog role.',
+    change: 'Full modal behaviour: a name, focus containment, inert background, Escape, restoration.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'The calculator begins ~2,172px down on desktop and ~2,637px at narrow width. Problems alone is 1,441–2,019px tall.',
+    change: 'Compress problem recognition; move the calculator directly after the hero.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'The hero combined a centred pill, headline, two buttons, seven chips, dot texture and two drifting blooms.',
+    change: 'A quieter split composition, a clear service category, and a real work artifact.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'Most sections repeated one centred eyebrow → h2 → lead → cards pattern at near-identical padding.',
+    change: 'Give the hero, calculator, case study, process and people layouts tied to their purpose.',
+    state: 'Open',
+  },
+  {
+    pri: 'P1',
+    finding: 'Automation had no route, navigation entry or explicit service scope.',
+    change: 'A dedicated page and one homepage section demonstrating a concrete workflow.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P1',
+    finding:
+      'The fixed-price audit and the retainer are explained mainly in FAQ content, while /services opens with problems.',
+    change: 'State the engagement options, deliverables and next step on Services.',
+    state: 'Open',
+  },
+  {
+    pri: 'P2',
+    finding: 'No founder photographs. Generic icons stand in for two named people.',
+    change: 'Real portraits and shorter, direct introductions.',
+    state: 'Needs assets',
+  },
+  {
+    pri: 'P2',
+    finding: 'Case-study results were compressed into 12.5px monospace rows inside a large card.',
+    change: 'Enlarge one result, pair it with the artifact, keep the qualifiers beside it.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P2',
+    finding:
+      'No main landmark on the homepage, Services, Products or FAQ. The booking control measured 42.4px.',
+    change: 'A landmark and skip link on every route; meet the project’s own 44px floor.',
+    state: 'Fixed',
+  },
+  {
+    pri: 'P2',
+    finding: 'Product cards link straight to PDFs, implying self-serve access.',
+    change: 'Keep the PDFs; explain each tool’s availability in HTML first.',
+    state: 'Open',
+  },
+  {
+    pri: 'P2',
+    finding: 'The brand book still describes logo selection as pending; the code selects 1f.',
+    change: 'Update current documentation, mark archived guidance. Design exports stay unchanged.',
+    state: 'Open',
+  },
+];
+
+const shots = [
+  {
+    src: 'home-desktop.png',
+    w: 1440,
+    h: 900,
+    alt: 'The homepage hero at 1440px before the redesign: a centred badge, large headline, two buttons and a row of seven platform chips.',
+    cap: 'Desktop, 1440. A centred pill, headline, two buttons, seven chips, dot texture and two drifting blooms — with roughly 200px of dead space beneath.',
+    wide: true,
+  },
+  {
+    src: 'home-narrow.png',
+    w: 390,
+    h: 900,
+    alt: 'The same homepage at 390px wide, elements stacked vertically.',
+    cap: 'Narrow, 390. The same composition, stacked.',
+    wide: false,
+  },
+];
+---
+
+<Base title={title} description={description} path="/audit" noindex>
+  <div class="page">
+    <Nav />
+
+    <main id="main">
+      <section class="section section--lead">
+        <div class="wrap audit">
+          <div class="eyebrow">Internal · 19 September 2026 · revision 3f4ef61</div>
+          <h1 class="audit__h1">Shorten the distance between the promise and the proof.</h1>
+          <p class="section-lead audit__lead">
+            Keep the logo, the amber, the dark palette and the typefaces. Recompose the site around
+            visible evidence, specific services, and the people doing the work.
+          </p>
+
+          <p class="audit__meta">
+            Reviewed against a fresh local build with the suite passing. Headless Chrome at 360 ·
+            390 · 430 · 640 · 641 · 768 · 1024 · 1440. External requests blocked; no form submitted;
+            production booking, email delivery and analytics collection not verified.
+          </p>
+
+          <div class="callout callout--ok">
+            <span class="callout__tag">Since the audit was written</span>
+            <p>
+              The four browser-confirmed defects are fixed, the calculator has moved to position two,
+              the hero is recomposed around a real result, and automation has a section and a page.
+              <strong>Two findings did not survive verification</strong> and are marked in place
+              rather than deleted.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="audit-shots">
+        <div class="wrap audit">
+          <h2 class="audit__h2">What the page looked like</h2>
+          <div class="shots">
+            {
+              shots.map((s) => (
+                <figure class:list={['shot', { 'shot--wide': s.wide }]}>
+                  <img
+                    src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/img/audit/${s.src}`}
+                    alt={s.alt}
+                    width={s.w}
+                    height={s.h}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <figcaption>{s.cap}</figcaption>
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="audit-findings">
+        <div class="wrap audit">
+          <h2 class="audit__h2">Findings, ranked</h2>
+          <p class="audit__note">
+            Priority reflects task importance, not a quantified conversion-loss estimate.
+          </p>
+
+          <div class="table-wrap">
+            <table class="ftable">
+              <thead>
+                <tr>
+                  <th>Pri</th>
+                  <th>Finding</th>
+                  <th>Change</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  findings.map((f) => (
+                    <tr>
+                      <td><span class={`pri pri--${f.pri.toLowerCase()}`}>{f.pri}</span></td>
+                      <td class="ftable__finding">{f.finding}</td>
+                      <td>{f.change}</td>
+                      <td>
+                        <span class={`state state--${f.state.split(' ')[0].toLowerCase()}`}>
+                          {f.state}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout callout--bad">
+            <span class="callout__tag">Did not survive verification</span>
+            <p>
+              The audit recorded the hero&#8217;s blue bloom as hardcoded drift against the
+              one-accent rule. It is not. <code>rgba(64,86,140,0.34)</code> at 50px blur on a 36s
+              drift is <strong>verbatim from the signed-off design export</strong>, beside the amber
+              one. The implementation was faithful; the design document was too absolute and has
+              been amended. Acting on the finding would have deleted approved design.
+            </p>
+            <p>
+              It also noted that the local harness could not resolve the blog directory route. True
+              as a harness note &#8212; and it exposed something real: a dead-anchor test had been
+              looking for <code>blog/index.html</code>, a path this build format never produces, so
+              the blog index was silently exempt from it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="audit-open">
+        <div class="wrap audit">
+          <h2 class="audit__h2">What is still open</h2>
+          <ul class="audit__list">
+            <li>
+              <strong>Founder portraits.</strong> Two named people are still represented by generic
+              icons. This is the strongest human evidence on the site and it is missing.
+            </li>
+            <li>
+              <strong>The booking destination.</strong>
+              <code>PUBLIC_CALENDLY_URL</code> is commented out in the deploy workflow, so
+              &#8220;Book a call&#8221; currently reaches a form rather than a calendar.
+            </li>
+            <li>
+              <strong>Which automation workflows are deliverable today</strong> versus still to be
+              piloted. The page published alongside this one states read-only reporting only, which
+              is what the integrations actually support.
+            </li>
+            <li>
+              <strong>Section rhythm.</strong> Spacing and column width are still largely uniform
+              outside the hero and the calculator.
+            </li>
+            <li>
+              <strong>The engagement offers.</strong> The fixed-price audit and the retainer are
+              still explained mainly through FAQ content.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" data-section="audit-source">
+        <div class="wrap audit">
+          <h2 class="audit__h2">Provenance</h2>
+          <p class="audit__note">
+            The canonical copy is <code>docs/redesign-audit-2026-09-19.md</code>, with the measured
+            section geometry in <code>docs/audit-assets/2026-09-19/layout-findings.json</code> —
+            recorded at eight viewport widths. Every case-study figure referenced by the redesign is
+            already published on the homepage and in the article; nothing new is disclosed here.
+          </p>
+          <p class="audit__note">
+            This page records observed behaviour and design recommendations. It does not claim that
+            production integrations or account automations have been implemented.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .audit {
+    max-width: 920px;
+  }
+
+  .audit__h1 {
+    margin-top: var(--s6);
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .audit__h2 {
+    font-size: var(--t-h3);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .audit__lead {
+    margin-top: var(--s8);
+    max-width: 60ch;
+  }
+
+  .audit__meta,
+  .audit__note {
+    margin-top: var(--s8);
+    max-width: 72ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
+  .audit__list {
+    margin-top: var(--s8);
+    padding-left: var(--s6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    max-width: 72ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  .audit__list strong {
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+  }
+
+  /* --- callouts ---------------------------------------------------------- */
+
+  .callout {
+    margin-top: var(--s12);
+    padding: var(--s8);
+    border-left: 2px solid var(--color-accent);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    background: var(--color-band);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .callout--bad {
+    border-left-color: var(--color-text-4);
+  }
+
+  .callout__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .callout--bad .callout__tag {
+    color: var(--color-text-4);
+  }
+
+  .callout p {
+    margin: 0;
+    max-width: 70ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .callout strong {
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+  }
+
+  /* --- screenshots ------------------------------------------------------- */
+
+  .shots {
+    margin-top: var(--s12);
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(min(280px, 100%), 1fr);
+  }
+
+  @media (min-width: 900px) {
+    .shots {
+      grid-template-columns: 2fr 1fr;
+      align-items: start;
+    }
+  }
+
+  .shot {
+    margin: 0;
+  }
+
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+    box-shadow: var(--ring);
+  }
+
+  .shot figcaption {
+    margin-top: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  /* --- findings table ---------------------------------------------------- */
+
+  .table-wrap {
+    margin-top: var(--s12);
+    overflow-x: auto;
+    border-radius: var(--radius-card);
+    box-shadow: var(--ring);
+    background: var(--color-surface);
+  }
+
+  .ftable {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 640px;
+    font-size: var(--t-card);
+  }
+
+  .ftable th {
+    text-align: left;
+    padding: var(--s4) var(--s6);
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+    white-space: nowrap;
+  }
+
+  .ftable td {
+    padding: var(--s4) var(--s6);
+    border-bottom: 1px solid var(--color-line-soft);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+    vertical-align: top;
+  }
+
+  .ftable tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ftable__finding {
+    color: var(--color-text-2);
+  }
+
+  .pri,
+  .state {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Priority reads as weight, not as alarm: this system has no red, so the
+     three levels separate by how much amber they carry. */
+  .pri--p0 {
+    color: var(--color-ink);
+    background: var(--color-accent);
+  }
+
+  .pri--p1 {
+    color: var(--color-accent);
+    background: var(--color-accent-dim);
+  }
+
+  .pri--p2 {
+    color: var(--color-text-4);
+    background: var(--color-surface-sunk);
+  }
+
+  .state--fixed {
+    color: var(--color-text);
+    background: var(--color-surface-sunk);
+  }
+
+  .state--open {
+    color: var(--color-accent);
+    background: var(--color-accent-dim);
+  }
+
+  .state--needs {
+    color: var(--color-text-4);
+    background: var(--color-surface-sunk);
+  }
+
+  .audit code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    color: var(--color-text-2);
+    background: var(--color-surface-sunk);
+    border-radius: 3px;
+    padding: 0.12em 0.35em;
+  }
+</style>

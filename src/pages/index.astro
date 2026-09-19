@@ -2,8 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Problems from '../components/Problems.astro';
 import Calculator from '../components/Calculator.astro';
+import Automation from '../components/Automation.astro';
 import Proof from '../components/Proof.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
@@ -21,21 +21,30 @@ import Schema from '../components/Schema.astro';
  * one; between them that was 40% of the words and 29 of the 35 disclosures.
  * Nothing was deleted in the move.
  *
- * The order is the funnel rather than the inventory:
+ * The September audit measured the calculator starting 2,172px down on desktop
+ * and 2,637px at narrow width, behind a Problems section that was on its own
+ * 1,441-2,019px tall. The most persuasive object on the site, and the only one
+ * a competitor cannot copy, arrived after two full screens of preamble.
  *
- *   Hero        the claim, and one action
- *   Problems    one beat of why it matters, compressed
- *   Calculator  prove it with your own numbers — moved up from position four,
- *               because it is the one object here a competitor cannot copy
- *   Proof       three findings, as the lead-in to the case study
- *   CaseStudy   one of them shown all the way down
+ * So the order is now evidence-led rather than argument-led:
+ *
+ *   Hero        the claim, one action, and one real result beside it
+ *   Calculator  prove it with your own numbers, at position two
+ *   CaseStudy   one engagement shown all the way down
+ *   Proof       three more findings, as the tail of that movement
+ *   Automation  how the monitoring continues after the fix
  *   Loop        how the work is sequenced
  *   Founders    who you would actually be talking to
  *   Contact     the one action, again
  *
- * Proof sits directly above CaseStudy on purpose: three one-line findings then
- * the one that can be evidenced in full reads as a single movement, where two
- * separate credibility sections read as repetition.
+ * Problems has left the homepage. It is not deleted -- /services opens with it
+ * in full, where someone looking for the diagnosis will find it. The hero lead
+ * now carries the compressed version, which is what the audit asked for: fold
+ * problem recognition into an introduction rather than a section.
+ *
+ * CaseStudy before Proof, inverting the old order: the engagement that can be
+ * evidenced in full earns the three one-line findings that follow it, where the
+ * reverse made the reader wait through assertions for the proof.
  */
 
 const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
@@ -49,10 +58,10 @@ const description =
     <Nav />
     <main id="main">
       <Hero />
-      <Problems compact />
       <Calculator />
-      <Proof />
       <CaseStudy />
+      <Proof />
+      <Automation />
       <Loop />
       <Founders />
       <Contact />

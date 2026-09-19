@@ -1,0 +1,241 @@
+---
+import Icon from './Icon.astro';
+import { PLATFORMS, EXAMPLES } from '../data/automation.ts';
+
+/**
+ * The automation section.
+ *
+ * NEW SECTION, not in the Bento export — the September audit's finding was that
+ * automation had no route, no navigation entry and no stated scope, so a buyer
+ * had no way to recognise the capability. Marked `data-added` throughout so the
+ * copy-parity test lifts it out rather than failing on copy the design file
+ * never contained.
+ *
+ * It sits after the case study on purpose. A visitor sees the problem, explores
+ * it with their own numbers, and sees one engagement evidenced in full before
+ * being told how the monitoring continues. Leading with it would imply a mature
+ * platform in front of a consulting service.
+ *
+ * The section deliberately breaks the page's rhythm: left-aligned header rather
+ * than centred, and a question as the lead object rather than a grid of cards.
+ * That is the audit's "three scales of emphasis" applied to the one section
+ * that is genuinely new.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section id="automation" class="section" data-section="automation" data-added="audit">
+  <div class="wrap">
+    <div class="auto__head">
+      <div class="eyebrow eyebrow--amber">After the fix, the watching</div>
+      <h2 class="auto__h2">Ask one question across your growth stack.</h2>
+      <p class="auto__lead">
+        We connect Google Ads, AdMob and RevenueCat to Claude, so a question that used to mean three
+        exports and a spreadsheet returns one answer with the source figures attached &#8212; and
+        with the joins that do not exist named rather than papered over.
+      </p>
+    </div>
+
+    <div class="auto__body">
+      <ul class="auto__examples">
+        {
+          EXAMPLES.map((e) => (
+            <li class="ex">
+              <p class="ex__q">
+                <span class="ex__mark" aria-hidden="true">&#8250;</span>
+                {e.q}
+              </p>
+              <p class="ex__a">{e.a}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="auto__side">
+        <p class="auto__side-label">What connects today</p>
+        <ul class="auto__platforms">
+          {
+            PLATFORMS.map((p) => (
+              <li class="plat">
+                <span class="plat__name">{p.name}</span>
+                <span class="plat__boundary">{p.boundary.split('.')[0]}.</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="auto__honest">
+          Reporting and investigation, with every account change held for approval. Nothing runs
+          unattended.
+        </p>
+
+        <a href={`${base}/automation`} class="auto__link">
+          How it works, and what it needs
+          <Icon name="arrow-right" size={14} />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* A left-aligned header, against a page of centred ones. The section is the
+     newest thing on the site and the only one with no signed-off precedent, so
+     it is also where breaking the rhythm costs nothing. */
+  .auto__head {
+    max-width: 62ch;
+  }
+
+  .auto__h2 {
+    margin-top: var(--s4);
+    font-size: var(--t-h2-card);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2-card);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .auto__lead {
+    margin-top: var(--s8);
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .auto__body {
+    margin-top: var(--s16);
+    display: grid;
+    gap: var(--s12);
+    grid-template-columns: minmax(min(280px, 100%), 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .auto__body {
+      grid-template-columns: 1.45fr 1fr;
+      gap: var(--s16);
+    }
+  }
+
+  /* --- the questions ----------------------------------------------------- */
+
+  .auto__examples {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s8);
+  }
+
+  /* Open rows with a rule, not another grid of rounded cards — the audit's
+     count of card containers on this page was six. */
+  .ex {
+    padding-bottom: var(--s8);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .ex:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .ex__q {
+    display: flex;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  .ex__mark {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  .ex__a {
+    margin-top: var(--s4);
+    padding-left: calc(var(--s4) + 0.6em);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  /* --- the boundary panel ------------------------------------------------ */
+
+  .auto__side {
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .auto__side-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .auto__platforms {
+    list-style: none;
+    margin: var(--s6) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+  }
+
+  .plat {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .plat__name {
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text);
+  }
+
+  .plat__boundary {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-4);
+  }
+
+  .auto__honest {
+    margin-top: var(--s8);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  .auto__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s3);
+    margin-top: var(--s8);
+    min-height: 44px;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .auto__link:hover {
+    color: var(--color-accent-hover);
+  }
+
+  @media (max-width: 640px) {
+    .auto__body {
+      margin-top: var(--s12);
+      gap: var(--s8);
+    }
+  }
+</style>

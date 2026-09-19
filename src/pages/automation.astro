@@ -1,0 +1,430 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { PLATFORMS, STAGES, EXAMPLES, CAVEAT } from '../data/automation.ts';
+
+/**
+ * /automation
+ *
+ * The audit's finding was that automation had no route, no navigation entry and
+ * no explicit scope, so a buyer could not recognise the capability. This is the
+ * page; the homepage section is the summary of it.
+ *
+ * The hard rule for this page: it describes what the integrations verifiably
+ * support and nothing else. Every boundary in src/data/automation.ts came from
+ * the providers' own documentation, and the two that cost us the most are the
+ * ones stated most plainly -- Google Ads MCP is read-only, and there is no
+ * official AdMob MCP server. Writing around either would be the exact failure
+ * this site sells against.
+ *
+ * There is deliberately no "Connect your accounts" button. The scope is a
+ * consulting engagement with operator-held credentials, not a self-serve portal,
+ * and a button implying otherwise would be a promise nothing behind it can keep.
+ */
+
+const title = 'Automation — E2E Apps';
+const description =
+  'We connect Google Ads, AdMob and RevenueCat to Claude so one question returns one answer with the source data attached. Reporting and investigation, with every account change held for approval.';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** What an engagement needs from the client, and who keeps control of it. */
+const ACCESS = [
+  {
+    need: 'Google Ads',
+    detail: 'Read access to the named customer IDs, through your MCC or a direct grant.',
+  },
+  {
+    need: 'AdMob',
+    detail: 'API access to the publisher account, scoped to reporting.',
+  },
+  {
+    need: 'RevenueCat',
+    detail: 'A project-scoped key with only the tools an engagement needs enabled.',
+  },
+  {
+    need: 'Definitions',
+    detail:
+      'Your reporting timezone and currency, and which app maps to which Ads customer, AdMob app and RevenueCat project.',
+  },
+];
+---
+
+<Base title={title} description={description} path="/automation">
+  <div class="page">
+    <Nav />
+
+    <main id="main">
+      <section class="section section--lead" data-section="automation-lead">
+        <div class="wrap">
+          <div class="section-head" data-reveal="1">
+            <div class="eyebrow">Automation</div>
+            <h1 class="auto__h1">Ask one question across your growth stack.</h1>
+            <p class="section-lead">
+              Three platforms, one answer, and the source figures attached. Reporting and
+              investigation first &#8212; every account change is held for a decision.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="automation-examples">
+        <div class="wrap auto">
+          <h2 class="auto__h2">The questions it answers</h2>
+          <ul class="ex-list">
+            {
+              EXAMPLES.map((e) => (
+                <li class="ex">
+                  <p class="ex__q">
+                    <span class="ex__mark" aria-hidden="true">&#8250;</span>
+                    {e.q}
+                  </p>
+                  <p class="ex__a">{e.a}</p>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" data-section="automation-stages">
+        <div class="wrap auto">
+          <h2 class="auto__h2">How one investigation runs</h2>
+          <ol class="stages">
+            {
+              STAGES.map((s) => (
+                <li class="stage">
+                  <span class="stage__n">{s.n}</span>
+                  <div class="stage__text">
+                    <span class="stage__title">{s.title}</span>
+                    <p class="stage__body">{s.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="auto__note">
+            Stages 01 to 03 run on read access alone. Stage 04 is the only one that can touch an
+            account, and it does not proceed without a named approval.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" data-section="automation-platforms">
+        <div class="wrap auto">
+          <h2 class="auto__h2">What each platform actually supports</h2>
+          <p class="auto__note auto__note--top">
+            Checked against the providers&#8217; own documentation. The boundaries are limits, not a
+            roadmap.
+          </p>
+          <div class="table-wrap">
+            <table class="ptable">
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>What we can do today</th>
+                  <th>The boundary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  PLATFORMS.map((p) => (
+                    <tr>
+                      <td class="ptable__name">{p.name}</td>
+                      <td>{p.scope}</td>
+                      <td class="ptable__boundary">{p.boundary}</td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="automation-caveat">
+        <div class="wrap auto">
+          <h2 class="auto__h2">The arithmetic nobody checks</h2>
+          <p class="auto__pull">{CAVEAT}</p>
+          <p class="auto__note">
+            This is the most common way a cross-source revenue report is wrong, and it is also the
+            argument for having someone do it properly. A number that cannot be supported is not
+            reported as a number.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" data-section="automation-access">
+        <div class="wrap auto">
+          <h2 class="auto__h2">What it needs from you</h2>
+          <ul class="access">
+            {
+              ACCESS.map((a) => (
+                <li class="access__row">
+                  <span class="access__need">{a.need}</span>
+                  <span class="access__detail">{a.detail}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="auto__note">
+            Access is granted to named accounts, held by us as the operator, and revocable by you at
+            any time. Restrictions are enforced in the tools and the backend, not by instructing a
+            model to stay inside them. <strong>There is no self-serve connection here</strong> &#8212;
+            this is a consulting engagement, not a portal.
+          </p>
+
+          <a href={`${base}/#contact`} class="btn-primary access__cta">
+            Talk about your stack
+            <Icon name="arrow-right" size={15} />
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .auto {
+    max-width: 900px;
+  }
+
+  .auto__h1 {
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .auto__h2 {
+    font-size: var(--t-h3);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .auto__note {
+    margin-top: var(--s12);
+    max-width: 72ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
+  .auto__note--top {
+    margin-top: var(--s8);
+  }
+
+  .auto__note strong {
+    color: var(--color-text-2);
+    font-weight: var(--fw-medium);
+  }
+
+  /* One pull quote on the page, at the one place the argument turns. */
+  .auto__pull {
+    margin-top: var(--s12);
+    max-width: 58ch;
+    font-size: var(--t-pull);
+    line-height: var(--lh-pull);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text);
+  }
+
+  /* --- examples ---------------------------------------------------------- */
+
+  .ex-list {
+    list-style: none;
+    margin: var(--s12) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s8);
+  }
+
+  .ex {
+    padding-bottom: var(--s8);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .ex:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .ex__q {
+    display: flex;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  .ex__mark {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  .ex__a {
+    margin-top: var(--s4);
+    padding-left: calc(var(--s4) + 0.6em);
+    max-width: 68ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  /* --- stages ------------------------------------------------------------ */
+
+  .stages {
+    list-style: none;
+    margin: var(--s12) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s8);
+  }
+
+  .stage {
+    display: flex;
+    gap: var(--s6);
+    align-items: baseline;
+  }
+
+  .stage__n {
+    flex: none;
+    width: 2.4em;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-accent);
+  }
+
+  .stage__text {
+    min-width: 0;
+  }
+
+  .stage__title {
+    display: block;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text);
+  }
+
+  .stage__body {
+    margin-top: var(--s3);
+    max-width: 66ch;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  /* --- platform table ---------------------------------------------------- */
+
+  .table-wrap {
+    margin-top: var(--s12);
+    overflow-x: auto;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .ptable {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 620px;
+    font-size: var(--t-card);
+  }
+
+  .ptable th {
+    text-align: left;
+    padding: var(--s4) var(--s6);
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+    white-space: nowrap;
+  }
+
+  .ptable td {
+    padding: var(--s6);
+    border-bottom: 1px solid var(--color-line-soft);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+    vertical-align: top;
+  }
+
+  .ptable tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .ptable__name {
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+    white-space: nowrap;
+  }
+
+  /* The boundary is the column a client should read first, so it is not the
+     one set in the quietest grey. */
+  .ptable__boundary {
+    color: var(--color-text-2);
+  }
+
+  /* --- access ------------------------------------------------------------ */
+
+  .access {
+    list-style: none;
+    margin: var(--s12) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .access__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s8);
+    padding: var(--s6) 0;
+    border-bottom: 1px solid var(--color-line-soft);
+  }
+
+  .access__need {
+    flex: none;
+    width: 8.5em;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text);
+  }
+
+  /* flex:1 with min-width:0 on the side that must wrap, per the two-ended row
+     rule -- nowrap here would push the page sideways at phone width. */
+  .access__detail {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
+  .access__cta {
+    margin-top: var(--s16);
+  }
+
+  @media (max-width: 640px) {
+    .access__need {
+      width: auto;
+    }
+  }
+</style>

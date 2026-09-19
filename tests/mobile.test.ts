@@ -86,7 +86,12 @@ test('the hero uses the mobile design, not a shrunken desktop one', { skip }, ()
 });
 
 test('bento cards get the phone padding and type', { skip }, () => {
-  const css = phoneCss(640);
+  // The bento left the homepage in the evidence-led restructure — the calculator
+  // was starting 2,172px down behind it. It still exists in full on /services,
+  // which is where its phone rules now ship, so that is where this reads.
+  const services = path.resolve(import.meta.dirname, '..', 'dist', 'services.html');
+  const doc = fs.existsSync(services) ? fs.readFileSync(services, 'utf8') : html;
+  const css = phoneCssOf(doc, 640);
 
   assert.ok(has(css, '.problems__card', 'padding:var(--s6)'), 'cards keep desktop padding');
   assert.ok(
