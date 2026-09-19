@@ -1,30 +1,50 @@
 /**
- * The Full Loop's station details.
+ * The Full Loop's station scopes.
  *
- * Progressive enhancement, deliberately in that order: the four panels render
- * open in the markup and this collapses them. With scripting off a visitor
- * gets four headed sections of service detail below the diagram — longer than
- * intended, but complete and readable. Nothing is behind a script.
+ * Progressive enhancement, in that order: all four panels render open and this
+ * collapses them on load. With scripting off a visitor reads four headed
+ * sections of full service scope below the diagram — longer than intended, and
+ * complete. Nothing is behind the script.
  *
- * One panel at a time, in a shared row below the ring. Opening a station never
- * changes the card geometry, which is the whole reason the panel is not inside
- * the card.
+ * One station open at a time, in a shared panel below the diagram on desktop.
+ * Opening a station never resizes its card or moves the ring, which is why the
+ * panel is a sibling of the cards rather than a child of one.
+ *
+ * On a phone the same panel moves: `--scope-order` places it directly after the
+ * selected card in the flex stack, so the scope reads where it belongs without
+ * a second copy of the content existing anywhere.
  */
 export function initLoop(): void {
-  const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-loop-trigger]'));
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-loop-panel]'));
+  const orbit = document.querySelector<HTMLElement>('[data-orbit]');
+  if (!orbit) return;
+
+  const triggers = Array.from(orbit.querySelectorAll<HTMLButtonElement>('[data-loop-trigger]'));
+  const panels = Array.from(orbit.querySelectorAll<HTMLElement>('[data-loop-panel]'));
+  const closers = Array.from(orbit.querySelectorAll<HTMLButtonElement>('[data-loop-close]'));
+  const nodes = Array.from(orbit.querySelectorAll<SVGGElement>('[data-node]'));
   if (triggers.length === 0 || panels.length === 0) return;
 
-  /** Which station is open, or null for none. */
   let open: string | null = null;
+
+  const triggerFor = (id: string) => triggers.find((t) => t.dataset.loopTrigger === id) ?? null;
 
   const render = () => {
     for (const t of triggers) {
       const on = t.dataset.loopTrigger === open;
       t.setAttribute('aria-expanded', String(on));
-      t.closest('.st')?.classList.toggle('st--open', on);
+      t.closest('.card')?.classList.toggle('card--open', on);
     }
+
     for (const p of panels) p.hidden = p.dataset.loopPanel !== open;
+
+    // The ring says which scope is open, so the diagram and the panel agree.
+    for (const n of nodes) n.classList.toggle('orbit__node--on', n.dataset.node === open);
+
+    /* Place the panel after the selected card in the phone stack. Cards carry
+       order 2, 4, 6, 8; the panel takes the odd number just above its own. */
+    const card = open ? orbit.querySelector<HTMLElement>(`[data-card="${open}"]`) : null;
+    const cardOrder = card ? Number(getComputedStyle(card).order) : NaN;
+    orbit.style.setProperty('--scope-order', Number.isFinite(cardOrder) ? String(cardOrder + 1) : '99');
   };
 
   // Collapse what the server rendered open.
@@ -33,13 +53,20 @@ export function initLoop(): void {
   for (const t of triggers) {
     t.addEventListener('click', () => {
       const id = t.dataset.loopTrigger ?? null;
-      // Clicking the open station closes it, so the diagram can be seen whole.
+      // Selecting the open station closes it, so the diagram can be seen whole.
       open = open === id ? null : id;
       render();
+    });
+  }
 
-      /* Focus stays on the trigger. The panel is associated through
-         aria-controls and aria-expanded, so a screen-reader user is told what
-         happened without being moved somewhere they did not ask to go. */
+  for (const c of closers) {
+    c.addEventListener('click', () => {
+      const id = c.dataset.loopClose ?? null;
+      open = null;
+      render();
+      // Focus goes back to the control that opened it, not to the top of the
+      // document, which is where a closed panel would otherwise drop it.
+      if (id) triggerFor(id)?.focus();
     });
   }
 }
