@@ -11,9 +11,18 @@ import { getCollection } from 'astro:content';
  * Posts carry their own publication date as `lastmod` rather than today's,
  * so a rebuild does not tell crawlers that year-old articles just changed.
  */
+/* Every indexable route, not a subset. /services, /automation, /products and
+   /faq were missing from this list for weeks while being linked from the nav
+   on every page of the site — real content pages that no crawler was being
+   told about. `tests/pages.test.ts` now walks dist/ and fails if a built,
+   indexable page is not here, so the omission cannot repeat silently. */
 const PAGES = [
   { path: '/', priority: '1.0', changefreq: 'monthly' },
+  { path: '/services', priority: '0.9', changefreq: 'monthly' },
+  { path: '/automation', priority: '0.9', changefreq: 'monthly' },
+  { path: '/products', priority: '0.7', changefreq: 'monthly' },
   { path: '/blog', priority: '0.8', changefreq: 'weekly' },
+  { path: '/faq', priority: '0.6', changefreq: 'monthly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly' },
 ];

@@ -23,11 +23,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const DIST = path.resolve(import.meta.dirname, '..', 'dist');
+/* public/, not dist/. This is where `scripts/build-design-docs.mjs` writes the
+   two documents, so it is the honest thing to assert against — and it keeps
+   the check independent of whether the build shipped them. It does not: both
+   are internal review documents, and `scripts/prune-internal.mjs` takes them
+   out of dist/ unless BUILD_INTERNAL=1. */
+const PUBLIC = path.resolve(import.meta.dirname, '..', 'public');
 
 const DOCS = {
-  'brand-book': path.join(DIST, 'brand-book', 'index.html'),
-  'logo-directions': path.join(DIST, 'logo-directions', 'index.html'),
+  'brand-book': path.join(PUBLIC, 'brand-book', 'index.html'),
+  'logo-directions': path.join(PUBLIC, 'logo-directions', 'index.html'),
 };
 
 const built = fs.existsSync(DOCS['brand-book']);
