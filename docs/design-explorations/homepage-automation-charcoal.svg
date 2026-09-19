@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1200" viewBox="0 0 1440 1200"><rect x="0" y="0" width="1440" height="1200" rx="0" fill="#0e1014"/>
+<text x="80" y="43" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#e39a1f">E2E APPS / HOMEPAGE PLACEMENT STUDY</text>
+<text x="80" y="81" font-family="Arial,sans-serif" font-size="30" font-weight="700" fill="#e8eaed">The same layout, in your existing palette.</text>
+<text x="80" y="109" font-family="Arial,sans-serif" font-size="14" font-weight="400" fill="#a8aeb6">Proposed automation section in context • neighbouring sections condensed • sample report</text>
+<rect x="80" y="147" width="1280" height="196" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="108" y="179" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#a8aeb6">EXISTING CASE STUDY — PRECEDING SECTION</text>
+<text x="108" y="217" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#e8eaed">A dialog nobody had questioned, for four months.</text>
+<text x="108" y="249" font-family="Arial,sans-serif" font-size="15" font-weight="400" fill="#a8aeb6">PDF scanner app · case study</text>
+<text x="108" y="304" font-family="Arial,sans-serif" font-size="15" font-weight="700" fill="#e39a1f">Read the case study  ↗</text>
+<text x="947" y="218" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#a8aeb6">Install → trial</text>
+<text x="947" y="256" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#e8eaed">0.62% → 4.00%</text>
+<text x="80" y="407" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#e39a1f">AI REPORTING &amp; AUTOMATION</text>
+<text x="80" y="469" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#e8eaed">Your numbers.</text>
+<text x="80" y="523" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#e8eaed">A clearer picture.</text>
+<text x="80" y="571" font-family="Arial,sans-serif" font-size="18" font-weight="400" fill="#a8aeb6">Ask about spend, user behavior and revenue.</text>
+<text x="80" y="600" font-family="Arial,sans-serif" font-size="18" font-weight="400" fill="#a8aeb6">Get an answer with the source figures attached.</text>
+<text x="80" y="645" font-family="Arial,sans-serif" font-size="16" font-weight="400" fill="#a8aeb6">Use Claude, ChatGPT or Gemini.</text>
+<rect x="80" y="676" width="228" height="52" rx="8" fill="#e39a1f"/>
+<text x="101" y="709" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#0e1014">Explore automation  ↗</text>
+<rect x="650" y="391" width="710" height="366" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="678" y="422" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#e39a1f">EXAMPLE INVESTIGATION</text>
+<text x="1250" y="422" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#a8aeb6">Sample data</text>
+<text x="678" y="458" font-family="Arial,sans-serif" font-size="24" font-weight="700" fill="#e8eaed">Where did the extra ad spend go?</text>
+<path d="M 678 478 h 654" stroke="#2c3138"/>
+<text x="678" y="507" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#a8aeb6">US · UAC / WEEKLY SPEND</text>
+<text x="678" y="544" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#a8aeb6">Previous</text>
+<rect x="755" y="526" width="185" height="24" rx="3" fill="#5f666f"/>
+<text x="951" y="544" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#e8eaed">$6,720</text>
+<text x="678" y="584" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#a8aeb6">Current</text>
+<rect x="755" y="566" width="272" height="24" rx="3" fill="#e39a1f"/>
+<text x="1038" y="584" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#e8eaed">$9,860</text>
+<rect x="1136" y="500" width="196" height="105" rx="8" fill="#1d2128"/>
+<text x="1152" y="526" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#a8aeb6">THE CHANGE</text>
+<text x="1152" y="569" font-family="Arial,sans-serif" font-size="32" font-weight="700" fill="#e8eaed">+$3,140</text>
+<text x="1152" y="590" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#a8aeb6">this campaign</text>
+<path d="M 678 626 h 654" stroke="#2c3138"/>
+<text x="678" y="653" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#e39a1f">NEXT CHECK</text>
+<text x="678" y="679" font-family="Arial,sans-serif" font-size="16" font-weight="400" fill="#e8eaed">Check installs and cost per install before increasing budget.</text>
+<text x="678" y="731" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#a8aeb6">Google Ads  ·  Previous 7 days vs current 7 days</text>
+<path d="M 80 797 h 1280" stroke="#2c3138"/>
+<text x="80" y="834" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#a8aeb6">CONNECTED SOURCES</text>
+<text x="266" y="834" font-family="Arial,sans-serif" font-size="15" font-weight="400" fill="#e8eaed">Google Ads     ·     GA4     ·     AdMob     ·     RevenueCat</text>
+<text x="999" y="834" font-family="Arial,sans-serif" font-size="12" font-weight="400" fill="#a8aeb6">Configured for your reporting needs.</text>
+<path d="M 80 892 h 1280" stroke="#23272e"/>
+<text x="80" y="938" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#a8aeb6">EXISTING SECTION CONTINUES</text>
+<text x="80" y="982" font-family="Arial,sans-serif" font-size="35" font-weight="700" fill="#e8eaed">The Full Loop</text>
+<text x="80" y="1014" font-family="Arial,sans-serif" font-size="17" font-weight="400" fill="#a8aeb6">Four stations. The output of the last one is the input to the first.</text>
+<rect x="80" y="1048" width="299" height="66" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="101" y="1088" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#e8eaed">01   Instrument</text>
+<rect x="407" y="1048" width="299" height="66" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="428" y="1088" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#e8eaed">02   Attribute</text>
+<rect x="734" y="1048" width="299" height="66" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="755" y="1088" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#e8eaed">03   Decide</text>
+<rect x="1061" y="1048" width="299" height="66" rx="12" fill="#16191f" stroke="#23272e"/>
+<text x="1082" y="1088" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#e8eaed">04   Deploy</text>
+<text x="80" y="1165" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#e39a1f">SAME 1280 PX ALIGNMENT</text>
+<text x="374" y="1165" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#e39a1f">CHARCOAL SURFACES</text>
+<text x="670" y="1165" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#e39a1f">ONE AMBER ACTION</text>
+<text x="991" y="1165" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#a8aeb6">ILLUSTRATIVE LAYOUT — NOT DEPLOYED</text></svg>

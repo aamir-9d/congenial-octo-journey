@@ -83,26 +83,30 @@ export interface Chart {
 
 export interface ExampleState {
   id: 'spend' | 'behaviour' | 'earnings' | 'subs';
+  /** Selector label. */
   tab: string;
-  question: string;
+  /** The single source this example draws on. */
   source: string;
+  question: string;
   period: string;
   chart: Chart;
-  /** Both must be derivable from `chart`. Tested. */
-  findings: [string, string];
-  /** A check to run. This is where anything the data cannot show belongs. */
+  /** The headline movement, set large beside the chart. Derivable. Tested. */
+  change: { value: string; note: string };
+  /** One concise finding, per the approved layout. Derivable. Tested. */
+  finding: string;
+  /** A check to run. Anything the data cannot show belongs here, not above. */
   next: string;
-  /** The measurement basis — what the numbers are, so they can be argued with. */
-  basis: string;
+  /** Measurement basis and qualifications, behind "View method". */
+  method: string[];
   limit: string;
 }
 
 export const EXAMPLES: ExampleState[] = [
   {
     id: 'spend',
-    tab: 'Spend',
-    question: 'Which campaigns spent more this week?',
+    tab: 'Ad spend',
     source: 'Google Ads',
+    question: 'Where did the extra ad spend go?',
     period: 'Last 7 days vs the 7 before',
     chart: {
       kind: 'paired',
@@ -118,20 +122,23 @@ export const EXAMPLES: ExampleState[] = [
       ],
       focus: 1,
     },
-    findings: [
-      'US · UAC rose $3,140, from $6,720 to $9,860 — nearly all of the $3,180 net increase across the five campaigns.',
-      'DE and IN each spent less than the week before, by $70 and $110, so the rise is concentrated rather than portfolio-wide.',
+    change: { value: '+$3,140', note: 'in this campaign' },
+    finding: 'US · UAC rose from $6,720 to $9,860 — an increase of $3,140 in one campaign.',
+    next: 'Check installs and cost per install before increasing the budget.',
+    method: [
+      'Campaign-level cost, two consecutive 7-day windows, account currency.',
+      'Across all five campaigns the net increase was $3,180, so this one accounts for nearly all of it.',
+      'DE and IN each spent less than the week before, by $70 and $110, so the increase is concentrated rather than portfolio-wide.',
+      'Spend alone cannot say whether this bought more volume or a worse auction.',
     ],
-    next: 'Pull installs and cost per install for US · UAC. Spend alone cannot say whether this bought more volume or a worse auction.',
-    basis: 'Campaign-level cost, two consecutive 7-day windows, account currency.',
     limit:
       'Reporting only. The official Google Ads MCP server is read-only — a budget change is a separate authorised step.',
   },
   {
     id: 'behaviour',
     tab: 'User behavior',
-    question: 'Where are users dropping out of onboarding?',
     source: 'GA4',
+    question: 'Where are users dropping out of onboarding?',
     period: 'Last 28 days',
     chart: {
       kind: 'funnel',
@@ -146,21 +153,23 @@ export const EXAMPLES: ExampleState[] = [
       ],
       focus: 2,
     },
-    findings: [
-      'The permission step loses the most: 3,770 of the 9,920 who start onboarding never reach it — 38%.',
+    change: { value: '3,770 lost', note: 'at the permission step, 38%' },
+    finding:
+      'The permission step loses the most: 3,770 of the 9,920 who start onboarding never reach it.',
+    next: 'Read what the permission prompt says, and when in the session it fires.',
+    method: [
+      'A GA4 funnel exploration over five ordered events, one row per user, 28-day window, each user counted once at their furthest step.',
       'The two steps after it hold at 94% and 95%, so once permission is granted the rest of the funnel is not the problem.',
+      'The counts locate the step. They do not explain the refusal.',
     ],
-    next: 'Look at what the permission prompt says and when it fires. The counts locate the step; they do not explain the refusal.',
-    basis:
-      'A GA4 funnel exploration over five ordered events, one row per user, 28-day window, users counted once at their furthest step.',
     limit:
       'The official Google Analytics MCP server serves reporting reads. It does not edit Analytics configuration, so the events have to exist before they can be read.',
   },
   {
     id: 'earnings',
     tab: 'Ad earnings',
-    question: 'What moved ad revenue?',
     source: 'AdMob',
+    question: 'What moved ad revenue?',
     period: 'Last 7 days',
     chart: {
       kind: 'trend',
@@ -179,20 +188,23 @@ export const EXAMPLES: ExampleState[] = [
       focus: 3,
       splitAfter: 2,
     },
-    findings: [
-      'Earnings stepped down on Thursday: $1,815 a day on average Monday to Wednesday, $1,402 from Thursday on — a 23% fall.',
-      'It has held at the lower level for four consecutive days, so this is a level change rather than one bad day.',
+    change: { value: '\u2212$413 / day', note: 'a 23% fall' },
+    finding:
+      'Earnings stepped down on Thursday: $1,815 a day Monday to Wednesday, $1,402 from Thursday on.',
+    next: 'Break the four days down by country and ad unit, with impressions beside eCPM.',
+    method: [
+      'Estimated earnings by day, publisher account total, account currency.',
+      'It has held at the lower level for four consecutive days, so this reads as a level change rather than one bad day.',
+      'A daily total cannot separate a price change from a fill change.',
     ],
-    next: 'Break the four days down by country and ad unit, and pull impressions alongside eCPM — the daily total cannot separate a price change from a fill change.',
-    basis: 'Estimated earnings by day, publisher account total, account currency.',
     limit:
       'Through an audited adapter over the documented REST API. There is no official Google-maintained AdMob MCP server.',
   },
   {
     id: 'subs',
     tab: 'Subscriptions',
-    question: 'How are renewals changing?',
     source: 'RevenueCat',
+    question: 'How are renewals changing?',
     period: 'Four consecutive weeks',
     chart: {
       kind: 'periods',
@@ -206,12 +218,13 @@ export const EXAMPLES: ExampleState[] = [
       ],
       focus: 3,
     },
-    findings: [
-      'Renewals fell 12% week on week, 1,184 to 1,042, and are 17.6% below week one.',
+    change: { value: '\u2212142 renewals', note: 'week on week, \u221212%' },
+    finding: 'Renewals fell from 1,184 to 1,042 week on week, and are 17.6% below week one.',
+    next: 'Separate billing-retry and grace-period states from real cancellations before reading this as churn.',
+    method: [
+      'Renewal transactions per calendar week, one project, four consecutive weeks.',
       'The fall runs across the last two weeks rather than a single one — week three was already down 8.8% on week two.',
     ],
-    next: 'Separate billing-retry and grace-period states from real cancellations before reading any of this as churn.',
-    basis: 'Renewal transactions per calendar week, one project, four consecutive weeks.',
     limit:
       'Subscription events are per project. Tying them to a campaign needs an MMP or impression-level join that may not exist.',
   },
@@ -222,26 +235,18 @@ export const STEPS = [
   {
     n: '01',
     title: 'Connect',
-    body: 'Read access to the accounts you name, revocable at any time.',
+    body: 'Choose your reporting sources.',
   },
   {
     n: '02',
     title: 'Investigate',
-    body: 'Ask a question. Get an answer with its source figures and its unknowns.',
+    body: 'Ask a business question.',
   },
   {
     n: '03',
     title: 'Review',
-    body: 'Anything that would change an account is written up for your decision.',
+    body: 'Agree on the next action.',
   },
-] as const;
-
-/** Four outcomes, one per source. */
-export const OUTCOMES = [
-  { title: 'Spend', body: 'What moved across campaigns and markets, without three exports first.' },
-  { title: 'User behavior', body: 'Which onboarding step loses people, with the event basis stated.' },
-  { title: 'Ad earnings', body: 'A revenue change traced to the day, country and ad unit behind it.' },
-  { title: 'Subscriptions', body: 'A cancellation told apart from a failed payment, before either becomes churn.' },
 ] as const;
 
 export interface Disclosure {
@@ -282,11 +287,13 @@ export const DISCLOSURES: Disclosure[] = [
 ];
 
 /** The homepage section. Copy lives here so both surfaces cannot drift. */
+/** The homepage section, from homepage-automation-charcoal.png. */
 export const TEASER = {
   eyebrow: 'AI reporting & automation',
-  heading: 'Your growth stack. Your choice of AI.',
-  body: 'Bring Google Ads, GA4, AdMob and RevenueCat into one reporting workflow. Investigate spend, user behavior and revenue with Claude, ChatGPT or Gemini.',
+  heading: ['Your numbers.', 'A clearer picture.'],
+  body: 'Ask about spend, user behavior and revenue. Get an answer with the source figures attached.',
+  support: 'Use Claude, ChatGPT or Gemini.',
   primary: 'Explore automation',
-  secondary: 'Discuss your setup',
-  note: 'Connections are configured around your accounts and reporting needs. Reporting and investigation first — anything that would change an account is written up for your decision.',
+  sourcesLabel: 'Connected sources',
+  note: 'Configured for your reporting needs.',
 } as const;

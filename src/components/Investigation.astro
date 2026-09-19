@@ -1,39 +1,42 @@
 ---
-import { EXAMPLES, SOURCES, ASSISTANTS } from '../data/automation.ts';
+import { EXAMPLES } from '../data/automation.ts';
 
 /**
- * The reporting demonstration.
+ * The example report.
  *
- * Revision 2 replaced the 40/60 split with a centred introduction above a
- * full-width demonstration: the short copy column used to end while the panel
- * beside it ran on for another 500px, leaving a large empty lower-left region
- * that made the opening read as unfinished.
+ * Built to docs/design-explorations/automation-layout-v3-charcoal.png, which
+ * supersedes the earlier source-diagram-first composition: one strong headline,
+ * one useful visual, and integrations supporting the story rather than standing
+ * in front of it. The connected-source and assistant labels now sit *below* the
+ * report on the page, so the evidence arrives first.
  *
- * The composition is horizontal rows now, each doing one job — four equal
- * source tiles, the reporting line, three equal assistant options, four example
- * selectors, chart beside finding as equal columns, then source and period.
+ * ── The card ────────────────────────────────────────────────────────────
  *
- * ── Four chart kinds, not one ────────────────────────────────────────────
+ *   EXAMPLE INVESTIGATION                              Sample data
+ *   One business question
+ *   ─────────────────────────────────────────────────────────────────
+ *   chart                              │  THE CHANGE
+ *                                      │  +$3,140
+ *   ─────────────────────────────────────────────────────────────────
+ *   NEXT CHECK — one thing to do next
+ *   Source · period                                    View method +
  *
- * `paired` `funnel` `trend` `periods`. The previous build drew the same bars
- * for every question, which is what made the demonstration feel templated — and
- * worse, a single-period bar chart cannot substantiate a week-on-week claim.
- * Each kind draws what its question needs, and every figure a finding quotes is
- * now visible on the chart it sits beside.
+ * ── Charts ──────────────────────────────────────────────────────────────
  *
- * ── On the platform marks ───────────────────────────────────────────────
+ * `paired` draws the focused campaign only — two horizontal bars on a common
+ * zero baseline, as the sketch shows. That constrains the copy: a finding may
+ * not cite the other four campaigns, because they are not on screen. The
+ * portfolio context lives in `method` instead.
  *
- * The brief asks for official marks and says to use text where a suitable asset
- * is unavailable. None of the seven are in this repository and each carries its
- * own usage terms, so all seven are text in equal containers. Equal is the part
- * that carries the meaning: no source and no assistant is the headline one.
+ * `funnel` is horizontal for the same reason as before — the labels are event
+ * names. `trend` and `periods` are vertical bars, with `trend` drawing the two
+ * period averages its finding quotes.
  *
  * ── Without JavaScript ──────────────────────────────────────────────────
  *
- * All four panels render; the first is visible and the rest carry `hidden`,
- * with a companion `display: none` rule because an author `display` beats the
- * UA sheet's. That rule is not optional — without it every state renders at
- * once, which is exactly what shipped last time.
+ * Every panel renders. The first is visible, the rest carry `hidden` plus a
+ * companion `display: none` rule, because an author `display` beats the UA
+ * sheet's and without it all four render at once.
  */
 
 interface Props {
@@ -42,37 +45,11 @@ interface Props {
 
 const { headingId = 'demo' } = Astro.props;
 
-/** Drawing box. Bars are proportions, so it stretches horizontally. */
 const W = 560;
-const H = 150;
+const H = 132;
 ---
 
-<div class="demo" data-investigation>
-  <ul class="tiles" aria-label="Connected reporting sources">
-    {
-      SOURCES.map((s) => (
-        <li class="tile">
-          <span class="tile__name">{s.name}</span>
-          <span class="tile__note">{s.note}</span>
-        </li>
-      ))
-    }
-  </ul>
-
-  <div class="bridge">
-    <span class="bridge__rule" aria-hidden="true"></span>
-    <span class="bridge__label">Connected reporting</span>
-    <span class="bridge__rule" aria-hidden="true"></span>
-  </div>
-
-  <ul class="assistants" aria-label="Assistant options">
-    {
-      ASSISTANTS.map((a) => (
-        <li class="asst">{a.name}</li>
-      ))
-    }
-  </ul>
-
+<div class="inv" data-investigation>
   <div class="tabs" role="tablist" aria-label="Example investigations">
     {
       EXAMPLES.map((e, i) => (
@@ -86,7 +63,9 @@ const H = 150;
           tabindex={i === 0 ? 0 : -1}
           data-tab={e.id}
         >
-          {e.tab}
+          <span class="tab__n">{`0${i + 1}`}</span>
+          <span class="tab__label">{e.tab}</span>
+          <span class="tab__src">{e.source}</span>
         </button>
       ))
     }
@@ -95,20 +74,20 @@ const H = 150;
   {
     EXAMPLES.map((e, i) => {
       const c = e.chart;
-      const max = Math.max(...c.points.map((p) => Math.max(p.v, p.prev ?? 0)));
-      const n = c.points.length;
+      const pts = c.points;
+      const max = Math.max(...pts.map((p) => Math.max(p.v, p.prev ?? 0)));
       const money = (v: number) => `${c.prefix ?? ''}${v.toLocaleString('en-US')}`;
 
+      const n = pts.length;
       const gap = 12;
       const bw = (W - gap * (n - 1)) / n;
 
-      /* `trend` draws the two period averages the finding quotes, so the claim
-         is readable off the chart instead of only asserted beside it. */
       const split = c.splitAfter ?? -1;
-      const mean = (from: number, to: number) =>
-        c.points.slice(from, to).reduce((s, p) => s + p.v, 0) / (to - from);
+      const mean = (f: number, t: number) => pts.slice(f, t).reduce((s, p) => s + p.v, 0) / (t - f);
       const avgA = split >= 0 ? mean(0, split + 1) : 0;
       const avgB = split >= 0 ? mean(split + 1, n) : 0;
+
+      const focus = pts[c.focus]!;
 
       return (
         <div
@@ -120,18 +99,44 @@ const H = 150;
           hidden={i !== 0}
           tabindex="0"
         >
-          <p class="panel__q">{e.question}</p>
+          <p class="rep__meta">
+            <span class="rep__kicker">Example investigation</span>
+            <span class="rep__sample">Sample data</span>
+          </p>
 
-          <div class="split">
-            <figure class="ev">
-              <figcaption class="ev__cap">
-                <span>{c.caption}</span>
-                <span class="ev__sample">Sample data</span>
-              </figcaption>
+          <p class="rep__q">{e.question}</p>
 
-              {c.kind === 'funnel' ? (
+          <div class="rep__body">
+            <figure class="rep__chart">
+              <figcaption class="rep__cap">{c.caption}</figcaption>
+
+              {c.kind === 'paired' ? (
+                /* Two bars, one campaign, common zero baseline. */
+                <div class="pair">
+                  <div class="pair__row">
+                    <span class="pair__label">Previous</span>
+                    <span class="pair__track">
+                      <span
+                        class="pair__bar pair__bar--prev"
+                        style={`width:${(((focus.prev ?? 0) / max) * 100).toFixed(1)}%`}
+                      />
+                    </span>
+                    <span class="pair__v">{money(focus.prev ?? 0)}</span>
+                  </div>
+                  <div class="pair__row">
+                    <span class="pair__label">Current</span>
+                    <span class="pair__track">
+                      <span
+                        class="pair__bar pair__bar--now"
+                        style={`width:${((focus.v / max) * 100).toFixed(1)}%`}
+                      />
+                    </span>
+                    <span class="pair__v">{money(focus.v)}</span>
+                  </div>
+                </div>
+              ) : c.kind === 'funnel' ? (
                 <div class="funnel">
-                  {c.points.map((p, bi) => (
+                  {pts.map((p, bi) => (
                     <div class:list={['fstep', { 'fstep--focus': bi === c.focus }]}>
                       <span class="fstep__label">{p.label}</span>
                       <span class="fstep__track">
@@ -147,12 +152,7 @@ const H = 150;
                     viewBox={`0 0 ${W} ${H}`}
                     preserveAspectRatio="none"
                     role="img"
-                    aria-label={`${c.caption}. ${c.points
-                      .map(
-                        (p) =>
-                          `${p.label} ${money(p.v)}${p.prev !== undefined ? `, previously ${money(p.prev)}` : ''}`,
-                      )
-                      .join('. ')}.`}
+                    aria-label={`${c.caption}. ${pts.map((p) => `${p.label} ${money(p.v)}`).join('. ')}.`}
                   >
                     {split >= 0 && (
                       <Fragment>
@@ -179,48 +179,25 @@ const H = 150;
                       </Fragment>
                     )}
 
-                    {c.points.map((p, bi) => {
-                      const x = bi * (bw + gap);
+                    {pts.map((p, bi) => {
                       const hv = (p.v / max) * H;
-                      const on = bi === c.focus;
-
-                      if (p.prev === undefined) {
-                        return (
-                          <rect
-                            x={x}
-                            y={H - hv}
-                            width={bw}
-                            height={hv}
-                            rx="2"
-                            fill={on ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
-                          />
-                        );
-                      }
-
-                      /* Both periods on screen, so a week-on-week claim can be
-                         read off the chart rather than taken on trust. */
-                      const hp = (p.prev / max) * H;
-                      const half = (bw - 4) / 2;
                       return (
-                        <Fragment>
-                          <rect x={x} y={H - hp} width={half} height={hp} rx="2" fill="var(--chart-bar-dim)" />
-                          <rect
-                            x={x + half + 4}
-                            y={H - hv}
-                            width={half}
-                            height={hv}
-                            rx="2"
-                            fill={on ? 'var(--color-accent)' : 'var(--chart-measured)'}
-                          />
-                        </Fragment>
+                        <rect
+                          x={bi * (bw + gap)}
+                          y={H - hv}
+                          width={bw}
+                          height={hv}
+                          rx="2"
+                          fill={bi === c.focus ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
+                        />
                       );
                     })}
                   </svg>
 
-                  {/* Labels are HTML. Inside the viewBox they scale with the
-                      container and arrive at roughly 7px on a phone. */}
+                  {/* HTML, not SVG <text>: inside the viewBox a label scales
+                      with the container and lands near 7px on a phone. */}
                   <ul class="ticks">
-                    {c.points.map((p, bi) => (
+                    {pts.map((p, bi) => (
                       <li class:list={['tick', { 'tick--focus': bi === c.focus }]}>
                         <span class="tick__v">{money(p.v)}</span>
                         <span class="tick__l">{p.label}</span>
@@ -228,18 +205,9 @@ const H = 150;
                     ))}
                   </ul>
 
-                  {c.points[0]?.prev !== undefined && (
-                    <p class="legend">
-                      <span class="legend__k legend__k--prev" aria-hidden="true" />
-                      Previous week
-                      <span class="legend__k legend__k--now" aria-hidden="true" />
-                      This week
-                    </p>
-                  )}
-
                   {split >= 0 && (
-                    <p class="legend">
-                      <span class="legend__k legend__k--dash" aria-hidden="true" />
+                    <p class="rep__legend">
+                      <span class="rep__key" aria-hidden="true" />
                       Period averages, {money(Math.round(avgA))} then {money(Math.round(avgB))}
                     </p>
                   )}
@@ -247,28 +215,34 @@ const H = 150;
               )}
             </figure>
 
-            <div class="read">
-              <p class="read__finding">{e.findings[0]}</p>
-              <p class="read__second">{e.findings[1]}</p>
-
-              <p class="read__next">
-                <span class="read__next-label">Next check</span>
-                {e.next}
-              </p>
-
-              <details class="read__basis">
-                <summary>How this is measured</summary>
-                <p>{e.basis}</p>
-                <p>{e.limit}</p>
-              </details>
+            <div class="rep__change">
+              <span class="rep__change-label">The change</span>
+              <span class="rep__change-v">{e.change.value}</span>
+              <span class="rep__change-note">{e.change.note}</span>
             </div>
           </div>
 
-          <p class="panel__foot">
-            <span>{e.source}</span>
-            <span>{e.period}</span>
-            <span class="panel__foot-tag">Example workflow</span>
+          <p class="rep__finding">{e.finding}</p>
+
+          <p class="rep__next">
+            <span class="rep__next-label">Next check</span>
+            {e.next}
           </p>
+
+          <div class="rep__foot">
+            <span class="rep__src">
+              {e.source} · {e.period}
+            </span>
+            <details class="rep__method">
+              <summary>View method</summary>
+              <div>
+                {e.method.map((m) => (
+                  <p>{m}</p>
+                ))}
+                <p class="rep__limit">{e.limit}</p>
+              </div>
+            </details>
+          </div>
         </div>
       );
     })
@@ -281,193 +255,152 @@ const H = 150;
 </script>
 
 <style>
-  .demo {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s8);
+  .inv {
     min-width: 0;
   }
 
-  /* --- sources: four equal tiles, 2x2 on a phone -------------------------- */
+  /* --- selectors: numbered, underlined, per the approved sketch ----------- */
 
-  .tiles {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .tabs {
     display: grid;
-    gap: var(--s4);
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s3);
+    border-bottom: 1px solid var(--color-line);
   }
 
-  @media (min-width: 720px) {
-    .tiles {
+  @media (min-width: 760px) {
+    .tabs {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
     }
   }
 
-  .tile {
+  .tab {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    align-items: center;
-    text-align: center;
-    padding: var(--s4) var(--s3);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    align-items: flex-start;
+    gap: 1px;
+    min-height: 56px;
+    padding: var(--s3) var(--s4) var(--s4) 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font-family: var(--font-body);
+    text-align: left;
+    cursor: pointer;
     min-width: 0;
+    transition: color 160ms var(--ease-out-soft);
   }
 
-  .tile__name {
-    font-size: var(--t-card);
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
-  }
-
-  .tile__note {
+  .tab__n {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-meta);
     color: var(--color-text-4);
   }
 
-  /* --- the reporting line -------------------------------------------------- */
-
-  .bridge {
-    display: flex;
-    align-items: center;
-    gap: var(--s4);
-  }
-
-  .bridge__rule {
-    flex: 1;
-    height: 1px;
-    background: var(--color-line-strong);
-  }
-
-  .bridge__label {
-    flex: none;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--color-accent);
-  }
-
-  /* --- assistants ---------------------------------------------------------- */
-
-  /* Three columns at every width. The names are short enough to read at
-     390px -- roughly 118px each -- and stacking them cost three rows of
-     height in front of the evidence, which is the thing a visitor came for. */
-  .assistants {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s4);
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  /* Names only. Each provider's setup genuinely differs, but a three-way
-     technical comparison beside the hero is the brief's explicit "no" -- the
-     routes live in the Supported connections disclosure instead. */
-  .asst {
-    text-align: center;
+  .tab__label {
     font-size: var(--t-card);
     font-weight: var(--fw-medium);
-    color: var(--color-text-2);
-    min-width: 0;
-  }
-
-  /* --- selectors: 2x2 on a phone, four across above 720 -------------------- */
-
-  .tabs {
-    display: grid;
-    gap: var(--s3);
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding-top: var(--s6);
-    border-top: 1px solid var(--color-line);
-  }
-
-  @media (min-width: 720px) {
-    .tabs {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-
-  .tab {
-    min-height: 44px;
-    padding: 0 var(--s4);
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: transparent;
-    box-shadow: 0 0 0 1px var(--color-line-strong);
-    font-family: var(--font-body);
-    font-size: var(--t-card-sm);
-    font-weight: var(--fw-medium);
     color: var(--color-text-3);
-    cursor: pointer;
-    transition:
-      color 160ms var(--ease-out-soft),
-      background 160ms var(--ease-out-soft);
   }
 
-  .tab:hover {
+  .tab__src {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  .tab:hover .tab__label {
     color: var(--color-text);
   }
 
   .tab[aria-selected='true'] {
-    color: var(--color-accent);
-    background: var(--color-accent-dim);
-    box-shadow: var(--ring-accent);
+    border-bottom-color: var(--color-accent);
   }
 
-  /* --- one state ----------------------------------------------------------- */
+  .tab[aria-selected='true'] .tab__n,
+  .tab[aria-selected='true'] .tab__label {
+    color: var(--color-accent);
+  }
+
+  .tab:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- the report card ---------------------------------------------------- */
 
   .panel {
     display: flex;
     flex-direction: column;
     gap: var(--s6);
+    margin-top: var(--s8);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-sunk);
+    box-shadow: var(--ring);
     min-width: 0;
   }
 
-  /* An author `display` beats the UA sheet's `[hidden] { display: none }`.
-     Without this, every state renders at once. */
+  /* An author `display` beats `[hidden] { display: none }` in the UA sheet. */
   .panel[hidden] {
     display: none;
   }
 
   .panel:focus-visible {
     outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
+    outline-offset: 3px;
   }
 
-  .panel__q {
+  .rep__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
     margin: 0;
     font-family: var(--font-mono);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
   }
 
-  /* Equal columns, top-aligned: balanced by content rather than clipped. */
-  .split {
+  .rep__kicker {
+    color: var(--color-accent);
+  }
+
+  .rep__sample {
+    color: var(--color-text-4);
+    letter-spacing: var(--ls-chip);
+    text-transform: none;
+  }
+
+  .rep__q {
+    margin: 0;
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--t-h3-sm);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .rep__body {
     display: grid;
     gap: var(--s8);
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
   }
 
-  @media (min-width: 860px) {
-    .split {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  @media (min-width: 760px) {
+    .rep__body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
       gap: var(--s12);
     }
   }
 
-  /* --- evidence ------------------------------------------------------------ */
-
-  .ev {
+  .rep__chart {
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -475,108 +408,195 @@ const H = 150;
     min-width: 0;
   }
 
-  .ev__cap {
+  .rep__cap {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  /* The one figure that carries the story. */
+  .rep__change {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: var(--s6);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .rep__change-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .rep__change-v {
+    font-size: var(--t-stat);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-tight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .rep__change-note {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  .rep__finding {
+    margin: 0;
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .rep__next {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s4);
+    margin: 0;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .rep__next-label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-top: 2px;
+  }
+
+  .rep__foot {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--s3) var(--s4);
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .rep__src {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-meta);
     color: var(--color-text-4);
   }
 
-  .ev__sample {
-    padding: 2px 7px;
-    border-radius: var(--radius-pill);
-    background: var(--color-surface-sunk);
+  .rep__method summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-disclosure);
     color: var(--color-text-3);
-    letter-spacing: var(--ls-chip);
-  }
-
-  .ev svg {
-    display: block;
-    width: 100%;
-    height: 150px;
-  }
-
-  .ticks {
     list-style: none;
-    display: flex;
-    gap: 12px;
-    margin: 0;
-    padding: 0;
-    align-items: start;
   }
 
-  .tick {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    text-align: center;
+  .rep__method summary::-webkit-details-marker {
+    display: none;
   }
 
-  .tick__v {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text-3);
-  }
-
-  .tick__l {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    line-height: var(--lh-snug);
-    color: var(--color-text-4);
-    overflow-wrap: anywhere;
-  }
-
-  .tick--focus .tick__v,
-  .tick--focus .tick__l {
+  .rep__method summary::after {
+    content: '+';
+    margin-left: 0.4em;
     color: var(--color-accent);
   }
 
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s3);
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
+  .rep__method[open] summary::after {
+    content: ' \2212';
+  }
+
+  .rep__method summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .rep__method p {
+    margin: 0 0 var(--s4);
+    max-width: 68ch;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-body);
     color: var(--color-text-4);
   }
 
-  .legend__k {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    flex: none;
+  .rep__limit {
+    color: var(--color-text-3);
   }
 
-  .legend__k--prev {
+  /* --- paired bars --------------------------------------------------------- */
+
+  .pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .pair__row {
+    display: grid;
+    grid-template-columns: minmax(0, 5.5em) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .pair__label {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-3);
+  }
+
+  .pair__track,
+  .fstep__track {
+    display: block;
+    min-width: 0;
+  }
+
+  .pair__bar {
+    display: block;
+    height: 22px;
+    border-radius: 2px;
+  }
+
+  .pair__bar--prev {
     background: var(--chart-bar-dim);
   }
 
-  .legend__k--now {
+  .pair__bar--now {
     background: var(--color-accent);
-    margin-left: var(--s4);
   }
 
-  .legend__k--dash {
-    height: 0;
-    border-top: 1px dashed var(--color-accent);
-    border-radius: 0;
+  .pair__v {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-2);
+    white-space: nowrap;
   }
 
-  /* --- funnel: horizontal, because the labels are event names -------------- */
+  /* --- funnel -------------------------------------------------------------- */
 
   .funnel {
     display: flex;
     flex-direction: column;
-    gap: var(--s4);
+    gap: var(--s3);
   }
 
   .fstep {
@@ -592,11 +612,6 @@ const H = 150;
     line-height: var(--lh-snug);
     color: var(--color-text-4);
     overflow-wrap: anywhere;
-  }
-
-  .fstep__track {
-    display: block;
-    min-width: 0;
   }
 
   .fstep__bar {
@@ -623,106 +638,73 @@ const H = 150;
     white-space: nowrap;
   }
 
-  /* --- reading ------------------------------------------------------------- */
+  /* --- vertical bars ------------------------------------------------------- */
 
-  .read {
+  .rep__chart svg {
+    display: block;
+    width: 100%;
+    height: 132px;
+  }
+
+  .ticks {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    align-items: start;
+  }
+
+  .tick {
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--s6);
-    min-width: 0;
+    gap: 1px;
+    text-align: center;
   }
 
-  .read__finding {
-    margin: 0;
-    font-size: var(--t-section-lead);
-    line-height: var(--lh-tight);
-    letter-spacing: var(--ls-snug);
-    color: var(--color-text);
-    text-wrap: balance;
+  .tick__v,
+  .tick__l {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-snug);
+    overflow-wrap: anywhere;
   }
 
-  .read__second {
-    margin: 0;
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
+  .tick__v {
+    font-variant-numeric: tabular-nums;
     color: var(--color-text-3);
   }
 
-  .read__next {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s3) var(--s4);
-    margin: 0;
-    padding-top: var(--s6);
-    border-top: 1px solid var(--color-line-soft);
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
+  .tick__l {
+    color: var(--color-text-4);
   }
 
-  .read__next-label {
-    flex: none;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
+  .tick--focus .tick__v,
+  .tick--focus .tick__l {
     color: var(--color-accent);
-    padding-top: 2px;
   }
 
-  .read__basis summary {
-    min-height: 44px;
+  .rep__legend {
     display: flex;
     align-items: center;
-    cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-disclosure);
-    color: var(--color-text-4);
-    list-style: none;
-  }
-
-  .read__basis summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .read__basis summary::before {
-    content: '+';
-    width: 1.3em;
-    color: var(--color-accent);
-  }
-
-  .read__basis[open] summary::before {
-    content: '\2212';
-  }
-
-  .read__basis summary:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-  }
-
-  .read__basis p {
-    margin: 0 0 var(--s4) 1.3em;
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-body);
-    color: var(--color-text-4);
-  }
-
-  .panel__foot {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s3) var(--s6);
+    gap: var(--s3);
     margin: 0;
-    padding-top: var(--s4);
-    border-top: 1px solid var(--color-line-soft);
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-meta);
-    text-transform: uppercase;
     color: var(--color-text-4);
   }
 
-  .panel__foot-tag {
-    color: var(--color-accent);
+  .rep__key {
+    width: 12px;
+    flex: none;
+    border-top: 1px dashed var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .panel {
+      padding: var(--s6);
+    }
   }
 </style>

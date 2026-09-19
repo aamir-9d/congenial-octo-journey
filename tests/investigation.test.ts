@@ -51,7 +51,11 @@ test('every figure quoted in a finding is derivable from its own chart', { skip 
   const derived: Record<string, Set<string>> = {};
 
   for (const e of EXAMPLES) {
-    const pts = e.chart.points;
+    /* `paired` draws the focused campaign only -- two bars. So only that
+       campaign's numbers are on screen, and only they may be quoted. The other
+       four stay in the dataset for the method note, and are deliberately not
+       admitted here. */
+    const pts = e.chart.kind === 'paired' ? [e.chart.points[e.chart.focus]!] : e.chart.points;
     const vals = new Set<string>();
     const add = (n: number) => {
       // Both signs: a finding says "17.6% below week one", not "-17.6%".
@@ -99,6 +103,8 @@ test('every figure quoted in a finding is derivable from its own chart', { skip 
       const b = mean(split + 1, pts.length);
       add(a);
       add(b);
+      // The gap between the two drawn averages, and it as a percentage.
+      add(a - b);
       add(((a - b) / a) * 100);
     }
 
@@ -108,9 +114,10 @@ test('every figure quoted in a finding is derivable from its own chart', { skip 
   const unsupported: string[] = [];
 
   for (const e of EXAMPLES) {
-    for (const finding of e.findings) {
-      for (const fig of figures(finding)) {
-        if (!derived[e.id]!.has(fig)) unsupported.push(`${e.id}: "${fig}" in — ${finding}`);
+    // The headline change figure is a displayed claim too, so it is checked.
+    for (const claim of [e.finding, e.change.value, e.change.note]) {
+      for (const fig of figures(claim)) {
+        if (!derived[e.id]!.has(fig)) unsupported.push(`${e.id}: "${fig}" in — ${claim}`);
       }
     }
   }
@@ -132,11 +139,9 @@ test('a finding never names an input the chart does not contain', { skip }, () =
 
   for (const e of EXAMPLES) {
     const measured = (e.chart.measure + ' ' + e.chart.caption).toLowerCase();
-    for (const finding of e.findings) {
-      for (const word of inputs) {
-        if (finding.toLowerCase().includes(word.toLowerCase()) && !measured.includes(word.toLowerCase())) {
-          offenders.push(`${e.id}: "${word}" — chart measures ${e.chart.measure}`);
-        }
+    for (const word of inputs) {
+      if (e.finding.toLowerCase().includes(word.toLowerCase()) && !measured.includes(word.toLowerCase())) {
+        offenders.push(`${e.id}: "${word}" — chart measures ${e.chart.measure}`);
       }
     }
   }
@@ -164,7 +169,11 @@ test('GA4 has a real example, not just a tile', { skip }, () => {
   const ga4 = EXAMPLES.filter((e) => e.source === 'GA4');
   assert.equal(ga4.length, 1, 'GA4 must own one of the examples');
   assert.ok(ga4[0]!.chart.points.length >= 4, 'the GA4 funnel needs its steps');
-  assert.match(ga4[0]!.basis, /funnel|ordered|sequence/i, 'the GA4 example states no measurement basis');
+  assert.match(
+    ga4[0]!.method.join(' '),
+    /funnel|ordered|sequence/i,
+    'the GA4 example states no measurement basis',
+  );
 });
 
 test('each example uses a chart suited to its question', { skip }, () => {
@@ -228,7 +237,7 @@ test('a hidden panel is actually hidden', { skip }, () => {
 
 test('each state changes the question and the finding', { skip }, () => {
   assert.equal(new Set(EXAMPLES.map((e) => e.question)).size, STATES.length, 'two states ask the same question');
-  assert.equal(new Set(EXAMPLES.map((e) => e.findings[0])).size, STATES.length, 'two states report the same finding');
+  assert.equal(new Set(EXAMPLES.map((e) => e.finding)).size, STATES.length, 'two states report the same finding');
 });
 
 test('every state labels its sample data and carries its own limit', { skip }, () => {
