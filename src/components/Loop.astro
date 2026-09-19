@@ -1,471 +1,696 @@
 ---
-import Icon from './Icon.astro';
 /**
- * The Full Loop, as an actual cycle.
+ * The Full Loop, as an orbit.
  *
- * The rounded-rectangle diagram is gone, and so is the separate stacked
- * fallback it needed below 1024px. One 3x3 grid at every width: the circle in
- * the centre cell, the four stations at N / E / S / W, so reading order runs
- * clockwise and each card points at the circle. That also removes the "back to
- * 01" marker, which was failing contrast — NOTES.md flagged item 1.
+ * Built to docs/design-explorations/loop-orbit-{desktop,mobile,detail}.png,
+ * which supersede the north/east/south/west diamond and the four-column
+ * arrangement before it.
  *
- * One dot travels the ring on `animateMotion`, with a wider outline circle on
- * the same path as a halo. Deliberately no rotating dashed arc: a moving dashed
- * line reads as a broken connection, not a flowing one.
+ * ── Why the ring and the connectors are one SVG ─────────────────────────
  *
- * Station copy is the export's, in full. The design file abbreviates it; the
- * outcome lines especially are the point of the section.
+ * The connectors have to meet the nodes at every width. Drawing them in a
+ * separate coordinate space from the ring means two systems that agree only at
+ * the width they were tuned at, and the first resize separates them. So the
+ * ring, its nodes, its arrowheads and all four connectors live in one viewBox
+ * that fills the centre grid column: a connector running to the SVG's own edge
+ * necessarily meets the card beside it, whatever that column is currently
+ * measuring.
+ *
+ * Every coordinate below is computed from the circle rather than typed. The
+ * previous diamond had its arrowheads placed by eye and all four sat off the
+ * ring.
+ *
+ * ── Copy ────────────────────────────────────────────────────────────────
+ *
+ * Cards carry the short description and outcome the sketch shows. The full
+ * signed-off service prose is preserved verbatim as the detail lead — it is
+ * what a buyer scopes against, and it is not something to summarise away.
  */
 
 const stations = [
   {
     n: '01',
     title: 'Instrument',
+    desc: 'Get events, consent and server delivery working together.',
+    out: 'A reliable source signal.',
+    headline: 'Get the raw signal right.',
     body: 'Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.',
     outcome:
-      'Outcome: Events fire when they should, named what they should be, carrying what they should carry.',
-    lead: 'Event taxonomy, a written tracking plan, SDK integration and QA, consent and ATT sequencing.',
-    out: 'Events fire when they should, carrying what they should.',
-    delay: '0s',
+      'Events fire when they should, named what they should be, carrying what they should carry.',
+    included: [
+      'Event taxonomy and naming',
+      'A written tracking plan',
+      'SDK integration and QA',
+      'Consent and ATT sequencing',
+      'Debug and sandbox validation',
+    ],
   },
   {
     n: '02',
     title: 'Attribute',
+    desc: 'Connect installs and revenue to sources. Check the gaps in reporting.',
+    out: 'Attribution you can inspect.',
+    headline: 'Trace the money to its source.',
     body: 'Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.',
-    outcome: 'Outcome: Every install and every dollar traceable to the click that caused it.',
-    lead: 'MMP audit, SKAN and AdAttributionKit schemas, server-to-server events, web-to-app capture.',
-    out: 'Every dollar traceable to the click that caused it.',
-    delay: '1.3s',
+    outcome: 'Every install and every dollar traceable to the click that caused it.',
+    included: [
+      'MMP configuration and audit',
+      'SKAN and AdAttributionKit schemas',
+      'Attribution window alignment',
+      'Server-to-server events and deep linking',
+      'Conversion APIs and web-to-app capture',
+    ],
   },
   {
     n: '03',
     title: 'Decide',
+    desc: 'Use retention, LTV and payback to set spending limits by market.',
+    out: 'A defensible acquisition ceiling.',
+    headline: 'Turn clean data into a limit.',
     body: 'Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.',
     outcome:
-      'Outcome: A defensible number for what you can afford to pay for a user — market by market.',
-    lead: 'Cohort LTV, payback curves by channel and country, breakeven ceilings per market.',
-    out: 'A defensible number for what a user is worth.',
-    delay: '2.6s',
+      'A defensible number for what you can afford to pay for a user — market by market.',
+    included: [
+      'Cohort LTV and retention decay',
+      'Payback curves by channel and country',
+      'Trial-to-paid economics',
+      'Breakeven ceilings per market',
+      'Paywall funnel diagnosis',
+    ],
   },
   {
     n: '04',
     title: 'Deploy',
+    desc: 'Run campaigns and monetisation tests. Feed the results back into measurement.',
+    out: 'Spend informed by evidence.',
+    headline: 'Spend against those numbers.',
     body: 'Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.',
     outcome:
-      'Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.',
-    lead: 'Google, Apple Ads, Meta, TikTok, ASO and pricing — spent against those numbers.',
-    out: 'Budget where the arithmetic says it works.',
-    delay: '3.9s',
+      'Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.',
+    included: [
+      'Google Ads app and web-to-app campaigns',
+      'Apple Ads, Meta and TikTok',
+      'ASO and store listing strategy',
+      'Paywall and pricing tests',
+      'Ad monetisation and mediation',
+    ],
   },
 ];
 
-const byNumber = Object.fromEntries(stations.map((s) => [s.n, s]));
+/* --- ring geometry, derived ---------------------------------------------- */
 
-/* Node geometry on the 112px ring, plus a small tangent arrowhead just past
-   each node showing the direction of travel. */
-const nodes = [
-  { n: '01', cx: 150, cy: 38, ny: 43, arrow: '196,46 186,38 190,50' },
-  { n: '02', cx: 262, cy: 150, ny: 155, arrow: '254,196 262,186 250,190' },
-  { n: '03', cx: 150, cy: 262, ny: 267, arrow: '104,254 114,262 110,250' },
-  { n: '04', cx: 38, cy: 150, ny: 155, arrow: '46,104 38,114 50,110' },
-];
+const CX = 160;
+const CY = 220;
+const R = 122; // 244px diameter at the reference size
+const NR = 17; // node radius
+const VW = 320;
 
-/* One full turn of the ring, closed. Both the dot and its halo ride this. */
-const RING = 'M 150 38 A 112 112 0 1 1 149.9 38 Z';
+const polar = (deg: number, radius = R) => {
+  const rad = (deg * Math.PI) / 180;
+  return { x: CX + radius * Math.cos(rad), y: CY + radius * Math.sin(rad) };
+};
+
+/** Diagonals, so each node points at the card in its corner. */
+const NODE_ANGLE: Record<string, number> = { '01': 225, '02': 315, '03': 45, '04': 135 };
+
+const round = (n: number) => Math.round(n * 10) / 10;
+
+const ring = stations.map((s) => {
+  const p = polar(NODE_ANGLE[s.n]!);
+  const left = s.n === '01' || s.n === '04';
+  const top = s.n === '01' || s.n === '02';
+
+  /* The connector runs past the SVG's own edge at the height of that card's
+     row, so it meets the card whatever width the centre column resolves to.
+
+     The overshoot covers the grid's column gap: the SVG's own edge sits one
+     gutter short of the card, so a connector ending exactly at the viewBox
+     boundary stops visibly short of the thing it is meant to be connecting.
+     The SVG renders with `overflow: visible` so the tail is drawn. */
+  const OVER = 20;
+  const edge = { x: left ? -OVER : VW + OVER, y: top ? 110 : 330 };
+  const dx = edge.x - p.x;
+  const dy = edge.y - p.y;
+  const len = Math.hypot(dx, dy);
+
+  return {
+    n: s.n,
+    x: round(p.x),
+    y: round(p.y),
+    // Start at the node's edge, not its centre, so the line never crosses it.
+    sx: round(p.x + (dx / len) * NR),
+    sy: round(p.y + (dy / len) * NR),
+    ex: edge.x,
+    ey: edge.y,
+  };
+});
+
+/** Stationary arrowheads at the cardinal points, pointing clockwise. */
+const arrows = [270, 0, 90, 180].map((deg) => {
+  const p = polar(deg);
+  return { x: round(p.x), y: round(p.y), rot: (deg + 90) % 360 };
+});
 ---
 
-<section id="loop" class="loop section" data-section="loop">
+<section id="loop" class="section" data-section="loop">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow">HOW THE WORK IS SEQUENCED</div>
-      <h2 class="loop__h2">The Full Loop</h2>
-      <p class="section-lead">
-        Four stations. The output of the last one is the input to the first. That's the point.
+    <div class="orbit__head">
+      <div>
+        <p class="orbit__eyebrow">05 / How we work</p>
+        <h2 class="orbit__h2">The Full Loop</h2>
+      </div>
+      <p class="orbit__lead">
+        Measurement informs the spend.<br />The results improve the next decision.
       </p>
     </div>
 
-    <div class="loop__grid">
+    <div class="orbit" data-orbit>
       {
-        (['01', '02', '03', '04'] as const).map((n) => (
-          <div class:list={['loop__cell', `loop__cell--${n}`]}>
-            <div class="loop__card" data-reveal="1">
-              {/* The rail is the loop on a phone. It is inside the card rather
-                  than a second copy of the section, so the station content
-                  exists once and the accessibility tree stays clean. */}
-              <div class="loop__rail" aria-hidden="true">
-                <span class="loop__node" style={`--node-delay:${byNumber[n]!.delay}`}>
-                  {byNumber[n]!.n}
-                </span>
-                <span class="loop__line"></span>
-              </div>
-              <div class="loop__content">
-                <div class="loop__station">STATION {byNumber[n]!.n}</div>
-                <h3 class="loop__title">{byNumber[n]!.title}</h3>
-                <p class="loop__body wide-only">{byNumber[n]!.body}</p>
-                <p class="loop__lead narrow-only">{byNumber[n]!.lead}</p>
-                <p class="loop__outcome wide-only">{byNumber[n]!.outcome}</p>
-                <p class="loop__out narrow-only">{byNumber[n]!.out}</p>
-              </div>
+        stations.map((s, i) => (
+          <article class={`card card--${s.n}`} data-card={s.n} style={`--card-order:${(i + 1) * 2}`}>
+            <div class="card__top">
+              <span class="card__badge">{s.n}</span>
+              <h3 class="card__title">{s.title}</h3>
             </div>
-          </div>
+
+            <p class="card__desc">{s.desc}</p>
+
+            <p class="card__out">{s.out}</p>
+
+            <button
+              type="button"
+              class="card__more"
+              data-loop-trigger={s.n}
+              aria-expanded="true"
+              aria-controls={`loop-scope-${s.n}`}
+            >
+              Explore scope
+              <span class="card__sign" aria-hidden="true"></span>
+            </button>
+          </article>
         ))
       }
 
-      {/* The circle never showed the return on a phone. This does: the path
-          drops out of station 04 and turns back toward 01. */}
-      <div class="loop__return" data-reveal="1">
-        <svg viewBox="0 0 36 76" role="img" aria-label="The output of Station 04 returns to Station 01">
-          <path d="M18 0 L18 44 Q18 60 34 60" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.75"></path>
-        </svg>
-        <p class="loop__return-note">
-          <Icon name="arrow-u-left-up" size={17} />
-          <span>Fresh signal flows back into Station 01. That's the loop closing.</span>
-        </p>
-      </div>
+      {/* Decorative. Every number, name and relationship is real text in the
+          cards and the sequence line, so nothing here is the only source of
+          anything. */}
+      <div class="orbit__ring" aria-hidden="true">
+        <svg viewBox={`0 0 ${VW} 440`} preserveAspectRatio="xMidYMid meet" focusable="false">
+          {
+            ring.map((r) => (
+              <line
+                x1={r.sx}
+                y1={r.sy}
+                x2={r.ex}
+                y2={r.ey}
+                stroke="var(--color-line-strong)"
+                stroke-width="1"
+              />
+            ))
+          }
 
-      <div class="loop__cell loop__cell--ring">
-        <svg
-          class="loop__svg"
-          viewBox="0 0 300 300"
-          role="img"
-          aria-label="The loop: Instrument, Attribute, Decide, Deploy, feeding back to Instrument"
-        >
-          <circle cx="150" cy="150" r="112" fill="none" stroke="var(--color-line-strong)" stroke-width="1.5"></circle>
+          <circle cx={CX} cy={CY} r={R} fill="none" stroke="var(--color-line-strong)" stroke-width="1" />
+          <circle cx={CX} cy={CY} r={R - 32} fill="none" stroke="var(--color-line)" stroke-width="1" />
 
-          <circle r="5.5" fill="var(--color-accent)">
-            <animateMotion dur="11s" repeatCount="indefinite" path={RING}></animateMotion>
-          </circle>
-          <circle r="11" fill="none" stroke="var(--color-accent)" stroke-width="1" opacity="0.35">
-            <animateMotion dur="11s" repeatCount="indefinite" path={RING}></animateMotion>
+          <g fill="var(--color-accent)">
+            {
+              arrows.map((a) => (
+                <path d="M-4.5 -3.5 L 4.5 0 L -4.5 3.5 Z" transform={`translate(${a.x} ${a.y}) rotate(${a.rot})`} />
+              ))
+            }
+          </g>
+
+          <circle class="orbit__dot" r="3.5" fill="var(--color-accent)">
+            <animateMotion
+              dur="20s"
+              repeatCount="indefinite"
+              path={`M ${CX} ${CY - R} A ${R} ${R} 0 1 1 ${CX - 0.1} ${CY - R}`}
+            />
           </circle>
 
           {
-            nodes.map((nd) => (
-              <g>
-                <circle
-                  cx={nd.cx}
-                  cy={nd.cy}
-                  r="19"
-                  fill="var(--color-surface)"
-                  stroke="var(--color-accent)"
-                  stroke-width="1.5"
-                />
-                <text
-                  x={nd.cx}
-                  y={nd.ny}
-                  text-anchor="middle"
-                  font-family="IBM Plex Mono, monospace"
-                  font-size="12"
-                  font-weight="500"
-                  fill="var(--color-accent)"
-                >
-                  {nd.n}
+            ring.map((r) => (
+              <g class="orbit__node" data-node={r.n}>
+                <circle cx={r.x} cy={r.y} r={NR} fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="1" />
+                <text x={r.x} y={r.y + 4} text-anchor="middle" class="orbit__node-n">
+                  {r.n}
                 </text>
-                <polygon points={nd.arrow} fill="var(--color-accent)" />
               </g>
             ))
           }
 
-          <text x="150" y="144" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="var(--color-text-4)">SIGNAL IN</text>
-          <text x="150" y="163" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="1.8" fill="var(--color-text-4)">SPEND OUT</text>
+          <text x={CX} y={CY - 18} text-anchor="middle" class="orbit__centre">Learn.</text>
+          <text x={CX} y={CY + 8} text-anchor="middle" class="orbit__centre">Improve.</text>
+          <text x={CX} y={CY + 34} text-anchor="middle" class="orbit__centre">Repeat.</text>
         </svg>
+      </div>
+
+      {/* One shared panel. Open in the markup so the scope survives with
+          scripting off; the script collapses them and wires the triggers. */}
+      <div class="scopes">
+        {
+          stations.map((s) => (
+            <div
+              class="scope"
+              id={`loop-scope-${s.n}`}
+              data-loop-panel={s.n}
+              role="region"
+              aria-label={`Station ${s.n}, ${s.title} — full scope`}
+            >
+              <div class="scope__main">
+                <p class="scope__eyebrow">
+                  Station {s.n} / {s.title}
+                </p>
+                <h4 class="scope__h4">{s.headline}</h4>
+                <p class="scope__body">{s.body}</p>
+                <p class="scope__outcome">Outcome: {s.outcome}</p>
+              </div>
+
+              <div class="scope__side">
+                <p class="scope__side-label">Included in this stage</p>
+                <ul class="scope__list">
+                  {s.included.map((item) => (
+                    <li>{item}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <button type="button" class="scope__close" data-loop-close={s.n}>
+                <span class="visually-hidden">Close the {s.title} scope</span>
+                <span aria-hidden="true">&#215;</span>
+              </button>
+            </div>
+          ))
+        }
       </div>
     </div>
 
-    <p data-reveal="1" class="pull loop__pull">
-      Most consultants stop after Station 02. The loop only closes when the same person walks all
-      four.
-    </p>
+    <div class="orbit__foot">
+      <p class="orbit__seq">01 &#8594; 02 &#8594; 03 &#8594; 04 &#8594; 01</p>
+      <p class="orbit__close">Fresh results flow back into measurement. That closes the loop.</p>
+      {/* Signed-off copy. The line above describes the mechanism; this is the
+          claim the section is making, and dropping it would cost the argument. */}
+      <p class="orbit__claim">
+        Most consultants stop after Station 02. The loop only closes when the same person walks all
+        four.
+      </p>
+    </div>
   </div>
 </section>
 
+<script>
+  import { initLoop } from '../scripts/loop';
+  initLoop();
+</script>
+
 <style>
-  .loop {
-    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
+  /* --- header --------------------------------------------------------------- */
+
+  .orbit__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--s8) var(--s16);
   }
 
-
-  .loop__h2 {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-  }
-
-  .loop__grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(min(260px, 100%), 340px) minmax(0, 1fr);
-    gap: clamp(16px, 2vw, 28px);
-    margin: clamp(40px, 4vw, 64px) auto 0;
-    max-width: var(--wrap-loop);
-    align-items: center;
-  }
-
-  /* Each cell is only a positioning hook; the card inside carries the surface. */
-  .loop__cell {
-    min-width: 0;
-  }
-
-  /* N / E / S / W around the ring, so reading order runs clockwise. */
-  .loop__cell--01 {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .loop__cell--02 {
-    grid-column: 3;
-    grid-row: 2;
-  }
-  .loop__cell--03 {
-    grid-column: 2;
-    grid-row: 3;
-  }
-  .loop__cell--04 {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .loop__cell--ring {
-    grid-column: 2;
-    grid-row: 2;
-    display: grid;
-    place-items: center;
-    padding: clamp(8px, 1.5vw, 20px);
-  }
-
-  /* Each card points at the circle it sits beside. */
-  .loop__cell--01 .loop__card,
-  .loop__cell--03 .loop__card {
-    text-align: center;
-  }
-  .loop__cell--04 .loop__card {
-    text-align: right;
-  }
-
-  .loop__card {
-    background: var(--color-surface);
-    border-radius: var(--radius-card);
-    padding: 20px;
-    box-shadow: var(--ring);
-  }
-
-  .loop__station {
+  .orbit__eyebrow {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-kicker);
+    letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--color-accent);
   }
 
-  .loop__title {
-    margin-top: 8px;
-    font-size: var(--t-h3-station);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-h3);
+  .orbit__h2 {
+    margin-top: var(--s4);
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
   }
 
-  .loop__body {
-    margin-top: 8px;
-    font-size: 13.5px;
+  .orbit__lead {
+    margin-left: auto;
+    max-width: 38ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  /* --- the arrangement ------------------------------------------------------ */
+
+  /* Mobile first: ring, then the four cards in order, then the scope. The
+     desktop composition is not shrunk — below 1024px it becomes a stack, which
+     is what loop-orbit-mobile.png shows. */
+  .orbit {
+    /* Declared here so it always resolves. The script overwrites it with the
+       selected card's order; 99 keeps the panel last until one is chosen. */
+    --scope-order: 99;
+
+    margin-top: clamp(32px, 4vw, 56px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+  }
+
+  .orbit__ring {
+    order: 0;
+    max-width: 300px;
+    margin: 0 auto var(--s4);
+  }
+
+  .orbit__ring svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* The connector tails are drawn outside the viewBox on purpose. */
+    overflow: visible;
+  }
+
+  .card {
+    order: var(--card-order);
+  }
+
+  /* On a phone the scope opens directly beneath the card it belongs to. The
+     script sets --scope-order from the selected card. */
+  .scopes {
+    order: var(--scope-order);
+  }
+
+  @media (min-width: 1024px) {
+    .orbit {
+      display: grid;
+      grid-template-columns: minmax(0, 34fr) minmax(min(260px, 100%), 32fr) minmax(0, 34fr);
+      grid-template-rows: auto auto auto;
+      column-gap: var(--s6);
+      row-gap: 52px;
+      align-items: stretch;
+    }
+
+    .card {
+      order: 0;
+    }
+
+    .card--01 { grid-column: 1; grid-row: 1; }
+    .card--02 { grid-column: 3; grid-row: 1; }
+    .card--03 { grid-column: 3; grid-row: 2; }
+    .card--04 { grid-column: 1; grid-row: 2; }
+
+    .orbit__ring {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      order: 0;
+      max-width: none;
+      margin: 0;
+      align-self: stretch;
+      display: flex;
+      align-items: center;
+    }
+
+    .scopes {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      order: 0;
+    }
+  }
+
+  /* --- station cards -------------------------------------------------------- */
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+    padding: 24px;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .card__top {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .card__badge {
+    flex: none;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-accent);
+  }
+
+  .card__title {
+    font-size: var(--t-h3);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .card__desc {
+    font-size: var(--t-card);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .loop__outcome {
-    margin-top: var(--s4);
+  /* Pushed to the foot so the four cards line up their outcome and action even
+     when the descriptions run to different lengths. */
+  .card__out {
+    margin-top: auto;
     padding-top: var(--s4);
     border-top: 1px solid var(--color-line);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-card-sm);
     line-height: var(--lh-card);
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
-  .loop__svg {
+  .card__more {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
     width: 100%;
-    height: auto;
-    overflow: visible;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-accent);
+    text-align: left;
+    cursor: pointer;
   }
 
-  .loop__pull {
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
+  .card__more:hover {
+    color: var(--color-accent-hover);
   }
 
-  /* Below 900px the ring cannot hold four cards around it. One column, the
-     diagram first, then the stations in order — the same reading order the
-     ring encodes. */
-  @media (max-width: 900px) {
-    .loop__grid {
-      grid-template-columns: 1fr;
-      gap: var(--s4);
-    }
+  .card__more:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
 
-    .loop__cell--ring {
-      grid-column: 1;
-      grid-row: 1;
-      max-width: 300px;
-      margin: 0 auto;
-    }
+  .card__sign::before {
+    content: '+';
+    font-size: 1.1em;
+  }
 
-    .loop__cell--01 {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .loop__cell--02 {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    .loop__cell--03 {
-      grid-column: 1;
-      grid-row: 4;
-    }
-    .loop__cell--04 {
-      grid-column: 1;
-      grid-row: 5;
-    }
+  .card__more[aria-expanded='true'] .card__sign::before {
+    content: '\2212';
+  }
 
-    .loop__cell--01 .loop__card,
-    .loop__cell--03 .loop__card,
-    .loop__cell--04 .loop__card {
-      text-align: left;
+  .card--open {
+    box-shadow: var(--ring-accent);
+  }
+
+  /* --- the ring ------------------------------------------------------------- */
+
+  /* A hook for the script and the selected-state modifier below. */
+  .orbit__node circle {
+    transition: fill 160ms var(--ease-out-soft);
+  }
+
+  .orbit__node-n {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    fill: var(--color-accent);
+  }
+
+  /* The selected station's node fills, so the diagram says which scope is open. */
+  .orbit__node--on circle {
+    fill: var(--color-accent);
+  }
+
+  .orbit__node--on .orbit__node-n {
+    fill: var(--color-bg);
+  }
+
+  .orbit__centre {
+    font-family: var(--font-heading);
+    font-size: 21px;
+    font-weight: var(--fw-semibold);
+    fill: var(--color-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orbit__dot {
+      display: none;
     }
   }
 
-  /* --- the phone: a rail, not a circle -------------------------------------
+  /* --- the shared scope panel ----------------------------------------------- */
 
-     Below 768px the ring stops being a diagram and becomes decoration sitting
-     above four unrelated cards, so the animation and the content explain each
-     other to nobody. The rail replaces it: the stations sit ON the line, the
-     signal lights each node in turn, and the dashed return path closes it back
-     to 01. Same idea, legible at 402px.
-     ---------------------------------------------------------------------- */
+  .scopes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    min-width: 0;
+  }
 
-  .loop__rail,
-  .loop__return {
+  .scope {
+    position: relative;
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--s12);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-sunk);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  @media (min-width: 860px) {
+    .scope {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: var(--s16);
+    }
+  }
+
+  .scope[hidden] {
     display: none;
   }
 
-  @media (max-width: 767px) {
-    /* One continuous line, so no gap between rows and no card ground. */
-    .loop__grid {
-      display: block;
-    }
-
-    .loop__cell--ring {
-      display: none;
-    }
-
-    .loop__card {
-      display: grid;
-      grid-template-columns: 36px minmax(0, 1fr);
-      gap: 14px;
-      padding: 0;
-      background: none;
-      box-shadow: none;
-      text-align: left;
-    }
-
-    .loop__rail {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .loop__node {
-      width: 36px;
-      height: 36px;
-      flex: none;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      border: 1.5px solid var(--color-accent);
-      background: var(--color-surface);
-      font-family: var(--font-mono);
-      font-size: var(--t-mono-sm);
-      color: var(--color-accent);
-      animation: loop-node 5.2s ease-in-out var(--node-delay) infinite;
-    }
-
-    .loop__line {
-      width: 2px;
-      flex: 1;
-      min-height: 20px;
-      background: linear-gradient(180deg, rgba(var(--rgb-accent), 0.5), var(--color-line));
-    }
-
-    .loop__content {
-      padding-bottom: var(--s8);
-    }
-
-    .loop__title {
-      margin-top: 0;
-      font-size: 21px;
-      line-height: 1.2;
-    }
-
-    .loop__lead {
-      margin-top: var(--s2);
-      font-size: 13.5px;
-      line-height: var(--lh-body);
-      color: var(--color-text-2);
-    }
-
-    .loop__out {
-      margin-top: var(--s3);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      line-height: var(--lh-body);
-      color: var(--color-accent);
-    }
-
-    /* The station kicker is redundant once the number is on the rail. */
-    .loop__station {
-      display: none;
-    }
-
-    .loop__return {
-      display: grid;
-      grid-template-columns: 36px minmax(0, 1fr);
-      gap: 14px;
-    }
-
-    .loop__return svg {
-      width: 36px;
-      height: 76px;
-    }
-
-    .loop__return-note {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      align-self: center;
-      padding: 12px 14px;
-      border-radius: var(--radius-md);
-      background: rgba(var(--rgb-accent), 0.09);
-      box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.28);
-      font-size: 13.5px;
-      line-height: var(--lh-tight);
-      color: var(--color-text);
-    }
-
-    .loop__return-note svg {
-      flex: none;
-      color: var(--color-accent);
-    }
-
-    .loop__pull {
-      margin-top: var(--s8);
-      text-align: left;
-    }
+  /* Both grid children need a zero floor or a long unbroken token in either
+     one widens the panel instead of wrapping. */
+  .scope__main,
+  .scope__side {
+    min-width: 0;
   }
 
-  /* The travelling dot is the only continuous motion here. */
-  @media (prefers-reduced-motion: reduce) {
-    .loop__svg :global(animateMotion) {
-      display: none;
-    }
+  .scope__eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
 
-    .loop__node {
-      animation: none;
-    }
+  .scope__h4 {
+    margin-top: var(--s4);
+    font-size: var(--t-h2-card);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2-card);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .scope__body {
+    margin-top: var(--s6);
+    max-width: 64ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .scope__outcome {
+    margin-top: var(--s6);
+    max-width: 64ch;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+  }
+
+  .scope__side-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .scope__list {
+    list-style: none;
+    margin: var(--s6) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .scope__close {
+    position: absolute;
+    top: var(--s6);
+    right: var(--s6);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--color-text-3);
+    cursor: pointer;
+  }
+
+  .scope__close:hover {
+    color: var(--color-text);
+  }
+
+  .scope__close:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- foot ----------------------------------------------------------------- */
+
+  .orbit__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s4) var(--s16);
+    margin-top: clamp(32px, 4vw, 56px);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .orbit__seq {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-accent);
+  }
+
+  .orbit__close {
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .orbit__claim {
+    flex-basis: 100%;
+    max-width: 92ch;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
   }
 </style>

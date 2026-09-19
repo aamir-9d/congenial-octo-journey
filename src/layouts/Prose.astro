@@ -18,7 +18,7 @@ const { title, description, path, heading, updated, noindex = false } = Astro.pr
 <Base title={title} description={description} path={path} noindex={noindex}>
   <div class="page">
     <Nav />
-    <main class="prose section">
+    <main id="main" class="prose section">
       <div class="prose__inner">
         <h1 class="prose__h1">{heading}</h1>
         {updated && <div class="prose__updated">Last updated {updated}</div>}
@@ -35,7 +35,9 @@ const { title, description, path, heading, updated, noindex = false } = Astro.pr
   .page {
     min-height: 100vh;
     background: var(--color-bg);
-    overflow-x: hidden;
+    /* `clip`, not `hidden` — see global.css. `hidden` makes this a scroll
+       container and the sticky nav sticks to it instead of the viewport. */
+    overflow-x: clip;
   }
 
   .prose {

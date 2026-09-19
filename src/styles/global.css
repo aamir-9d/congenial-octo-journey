@@ -17,7 +17,24 @@
 
 html,
 body {
-  overflow-x: hidden;
+  /* `clip`, not `hidden`.
+
+     These are the same in what they draw and completely different in what they
+     do to everything inside them. `overflow-x: hidden` makes the other axis
+     compute from `visible` to `auto`, which turns the element into a scroll
+     container — and a `position: sticky` descendant sticks to its nearest
+     scroll container, not the viewport. So the nav was sticky to a box that
+     scrolls with the page, which is the same as not being sticky at all: the
+     bar, and the only "Book a call" on screen, left at the top of a 9,254px
+     page. Measured at scrollY 3000, the nav's top was -3000.
+
+     `clip` has no scroll container semantics, so the other axis stays
+     `visible` and sticky positioning resolves against the viewport again.
+
+     Neither is a fix for horizontal overflow — that is what overflow.test.ts
+     and layout-402.test.ts are for. This only stops a stray decorative element
+     widening the page. */
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -578,6 +595,37 @@ select,
 textarea,
 button {
   margin: 0;
+}
+
+/* Off-screen until focused, then a real amber control at the top left. It sits
+   above the nav's z-index: 90 so it is not covered by the bar it skips. */
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+  transform: translateY(calc(-100% - 20px));
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-ink);
+  font-size: var(--t-card-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: transform 0.16s var(--ease-out-soft);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
 }
 
 .visually-hidden {

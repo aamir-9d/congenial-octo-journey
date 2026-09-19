@@ -37,6 +37,7 @@ const anchor = (href: string) => (href.startsWith('#') ? `${base}/${href}` : hre
 const links = [
   { href: '#loop', label: 'Approach' },
   { href: `${base}/services`, label: 'Services' },
+  { href: `${base}/automation`, label: 'Automation' },
   { href: `${base}/products`, label: 'Products' },
   { href: `${base}/blog`, label: 'Blog' },
   { href: `${base}/faq`, label: 'FAQ' },
@@ -48,6 +49,7 @@ const links = [
 const sheetLinks: { href: string; label: string; note: string; icon: IconName }[] = [
   { href: '#loop', label: 'Approach', note: 'Four stations, one cycle', icon: 'arrows-clockwise' },
   { href: `${base}/services`, label: 'Services', note: 'What breaks, and the work that fixes it', icon: 'stack' },
+  { href: `${base}/automation`, label: 'Automation', note: 'One question across the whole stack', icon: 'plugs-connected' },
   { href: `${base}/products`, label: 'Products', note: 'Tools built for this work', icon: 'cube' },
   { href: `${base}/blog`, label: 'Blog', note: 'Findings from live stacks', icon: 'article' },
   { href: `${base}/faq`, label: 'FAQ', note: 'Before you book', icon: 'question' },
@@ -79,7 +81,15 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
 {/* A real element, shown and hidden by CSS. Rendered on every page so the
     sheet works with scripting off as a plain hidden list rather than a
     control that does nothing. */}
-<div id="nav-sheet" class="sheet" hidden data-added="bento">
+<div
+  id="nav-sheet"
+  class="sheet"
+  hidden
+  data-added="bento"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site menu"
+>
   <div class="sheet__bloom" aria-hidden="true"></div>
 
   <div class="sheet__bar">
@@ -175,9 +185,16 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     color: var(--color-accent);
   }
 
+  /* 44px is a touch-target floor, and this control is the primary action on
+     every page, so it holds the floor everywhere rather than only on a phone —
+     a 42.4px button is also a small target for a trackpad. The mark beside it
+     stays 40px: the comment below is about optical weight, not about matching
+     this height to the pixel. */
   .nav__cta {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-height: 44px;
     gap: 7px;
     font-size: var(--t-card-sm);
     font-weight: var(--fw-semibold);

@@ -20,6 +20,9 @@ export type EventName =
   | 'calc_gap_toggle'
   | 'calc_breakeven_computed'
   | 'calc_preset_select'
+  // Reset says the visitor tried their own numbers and went back to the example,
+  // which is a different signal from never having touched the controls.
+  | 'calc_reset'
   // Engagement
   | 'scroll_depth'
   | 'section_view'

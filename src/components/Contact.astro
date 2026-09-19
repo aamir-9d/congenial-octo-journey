@@ -13,6 +13,8 @@
  * view, because it is heavy enough to decide the mobile Lighthouse score.
  */
 
+import Icon from './Icon.astro';
+
 const CALENDLY_URL = import.meta.env.PUBLIC_CALENDLY_URL ?? '';
 const FORM_ENDPOINT = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
 
@@ -32,41 +34,24 @@ const spendOptions = [
   <div class="contact__bloom" aria-hidden="true"></div>
 
   <div class="contact__inner">
-    <div class="section-head contact__close" data-reveal="1">
-      <h2 class="contact__close-h2">Send me your MMP setup. I'll tell you what's broken in it.</h2>
-      <p class="contact__close-lead">
-        A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is
-        likely costing. If there's nothing wrong, I'll tell you that too &#8212; it's the fastest
-        way for both of us to find out whether this is worth a conversation.
-      </p>
-    </div>
+    <div class="contact__cols">
+      <div class="contact__close" data-reveal="1">
+        <p class="eyebrow eyebrow--amber contact__eyebrow" data-added="redesign">
+          Let's look at your setup
+        </p>
+        <h2 class="contact__close-h2">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+        <p class="contact__close-lead">
+          A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is
+          likely costing. If there's nothing wrong, I'll tell you that too &#8212; it's the fastest
+          way for both of us to find out whether this is worth a conversation.
+        </p>
+        <a class="contact__email" href="mailto:hello@e2eapps.com" data-added="redesign">
+          hello@e2eapps.com
+          <Icon name="arrow-up-right" size={13} />
+        </a>
+      </div>
 
-    {
-      hasCalendly && (
-        <div>
-          <div class="eyebrow eyebrow--amber">PICK A TIME</div>
-          <h2 class="contact__head">Thirty minutes, no pitch.</h2>
-          <p class="contact__lead">
-            If a slot works, take it. You'll get a calendar invite and nothing else &#8212; no
-            sequence, no newsletter.
-          </p>
-          <div
-            id="calendly-embed"
-            class="contact__calendly"
-            data-calendly-url={CALENDLY_URL}
-            aria-label="Booking calendar"
-          >
-            <noscript>
-              <a href={CALENDLY_URL} class="link" target="_blank" rel="noopener">
-                Open the booking calendar
-              </a>
-            </noscript>
-          </div>
-        </div>
-      )
-    }
-
-    <div class="contact__panel">
+      <div class="contact__panel">
       <div class="contact__panel-head">
         <div class="eyebrow eyebrow--amber">OR SEND IT OVER</div>
         <h2 class="contact__head">Tell me what you're running.</h2>
@@ -138,7 +123,33 @@ const spendOptions = [
 
         <p class="form__status" data-status role="status" aria-live="polite" hidden></p>
       </form>
+      </div>
     </div>
+
+    {
+      hasCalendly && (
+        <div>
+          <div class="eyebrow eyebrow--amber">PICK A TIME</div>
+          <h2 class="contact__head">Thirty minutes, no pitch.</h2>
+          <p class="contact__lead">
+            If a slot works, take it. You'll get a calendar invite and nothing else &#8212; no
+            sequence, no newsletter.
+          </p>
+          <div
+            id="calendly-embed"
+            class="contact__calendly"
+            data-calendly-url={CALENDLY_URL}
+            aria-label="Booking calendar"
+          >
+            <noscript>
+              <a href={CALENDLY_URL} class="link" target="_blank" rel="noopener">
+                Open the booking calendar
+              </a>
+            </noscript>
+          </div>
+        </div>
+      )
+    }
   </div>
 </section>
 
@@ -176,8 +187,52 @@ const spendOptions = [
     position: relative;
   }
 
+  /* The approved composition puts the closing argument beside the form rather
+     than above it: at 1,440px the old stack spent a full screen on a centred
+     heading before the visitor reached a single field. */
+  .contact__cols {
+    display: grid;
+    gap: var(--s8) var(--s16);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .contact__cols {
+      grid-template-columns: minmax(0, 42fr) minmax(0, 55fr);
+    }
+  }
+
   .contact__close {
     max-width: 56ch;
+  }
+
+  .contact__eyebrow {
+    margin-bottom: var(--s6);
+  }
+
+  .contact__email {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+
+  .contact__email:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  .contact__email:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
   }
 
   .contact__close-h2 {
@@ -193,12 +248,12 @@ const spendOptions = [
     color: var(--color-text-2);
   }
 
-  /* The form card. 760px and centred, with its own centred sub-header — the
-     design's shape, and the fix for the form being left-aligned while its
-     neighbours were centred. */
+  /* The form card. Centred and measure-limited while it is the only thing on
+     its row; in the two-column composition it simply fills its column, and its
+     sub-header aligns left with everything else. */
   .contact__panel {
     max-width: var(--wrap-form);
-    margin: clamp(36px, 4vw, 56px) auto 0;
+    margin: 0 auto;
     background: var(--color-surface);
     border-radius: var(--radius-panel);
     padding: clamp(26px, 3vw, 40px);
@@ -207,6 +262,17 @@ const spendOptions = [
 
   .contact__panel-head {
     text-align: center;
+  }
+
+  @media (min-width: 900px) {
+    .contact__panel {
+      max-width: none;
+      margin: 0;
+    }
+
+    .contact__panel-head {
+      text-align: left;
+    }
   }
 
   .contact {
@@ -223,7 +289,8 @@ const spendOptions = [
 
   .contact__head {
     margin-top: 12px;
-    font-size: var(--t-h2);
+    font-size: var(--t-h3);
+    line-height: var(--lh-h3);
     color: var(--color-text);
     max-width: 20em;
   }

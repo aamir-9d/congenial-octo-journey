@@ -1,0 +1,710 @@
+---
+import { EXAMPLES } from '../data/automation.ts';
+
+/**
+ * The example report.
+ *
+ * Built to docs/design-explorations/automation-layout-v3-charcoal.png, which
+ * supersedes the earlier source-diagram-first composition: one strong headline,
+ * one useful visual, and integrations supporting the story rather than standing
+ * in front of it. The connected-source and assistant labels now sit *below* the
+ * report on the page, so the evidence arrives first.
+ *
+ * ── The card ────────────────────────────────────────────────────────────
+ *
+ *   EXAMPLE INVESTIGATION                              Sample data
+ *   One business question
+ *   ─────────────────────────────────────────────────────────────────
+ *   chart                              │  THE CHANGE
+ *                                      │  +$3,140
+ *   ─────────────────────────────────────────────────────────────────
+ *   NEXT CHECK — one thing to do next
+ *   Source · period                                    View method +
+ *
+ * ── Charts ──────────────────────────────────────────────────────────────
+ *
+ * `paired` draws the focused campaign only — two horizontal bars on a common
+ * zero baseline, as the sketch shows. That constrains the copy: a finding may
+ * not cite the other four campaigns, because they are not on screen. The
+ * portfolio context lives in `method` instead.
+ *
+ * `funnel` is horizontal for the same reason as before — the labels are event
+ * names. `trend` and `periods` are vertical bars, with `trend` drawing the two
+ * period averages its finding quotes.
+ *
+ * ── Without JavaScript ──────────────────────────────────────────────────
+ *
+ * Every panel renders. The first is visible, the rest carry `hidden` plus a
+ * companion `display: none` rule, because an author `display` beats the UA
+ * sheet's and without it all four render at once.
+ */
+
+interface Props {
+  headingId?: string;
+}
+
+const { headingId = 'demo' } = Astro.props;
+
+const W = 560;
+const H = 132;
+---
+
+<div class="inv" data-investigation>
+  <div class="tabs" role="tablist" aria-label="Example investigations">
+    {
+      EXAMPLES.map((e, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${headingId}-tab-${e.id}`}
+          class="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`${headingId}-panel-${e.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={e.id}
+        >
+          <span class="tab__n">{`0${i + 1}`}</span>
+          <span class="tab__label">{e.tab}</span>
+          <span class="tab__src">{e.source}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  {
+    EXAMPLES.map((e, i) => {
+      const c = e.chart;
+      const pts = c.points;
+      const max = Math.max(...pts.map((p) => Math.max(p.v, p.prev ?? 0)));
+      const money = (v: number) => `${c.prefix ?? ''}${v.toLocaleString('en-US')}`;
+
+      const n = pts.length;
+      const gap = 12;
+      const bw = (W - gap * (n - 1)) / n;
+
+      const split = c.splitAfter ?? -1;
+      const mean = (f: number, t: number) => pts.slice(f, t).reduce((s, p) => s + p.v, 0) / (t - f);
+      const avgA = split >= 0 ? mean(0, split + 1) : 0;
+      const avgB = split >= 0 ? mean(split + 1, n) : 0;
+
+      const focus = pts[c.focus]!;
+
+      return (
+        <div
+          role="tabpanel"
+          id={`${headingId}-panel-${e.id}`}
+          aria-labelledby={`${headingId}-tab-${e.id}`}
+          class="panel"
+          data-panel={e.id}
+          hidden={i !== 0}
+          tabindex="0"
+        >
+          <p class="rep__meta">
+            <span class="rep__kicker">Example investigation</span>
+            <span class="rep__sample">Sample data</span>
+          </p>
+
+          <p class="rep__q">{e.question}</p>
+
+          <div class="rep__body">
+            <figure class="rep__chart">
+              <figcaption class="rep__cap">{c.caption}</figcaption>
+
+              {c.kind === 'paired' ? (
+                /* Two bars, one campaign, common zero baseline. */
+                <div class="pair">
+                  <div class="pair__row">
+                    <span class="pair__label">Previous</span>
+                    <span class="pair__track">
+                      <span
+                        class="pair__bar pair__bar--prev"
+                        style={`width:${(((focus.prev ?? 0) / max) * 100).toFixed(1)}%`}
+                      />
+                    </span>
+                    <span class="pair__v">{money(focus.prev ?? 0)}</span>
+                  </div>
+                  <div class="pair__row">
+                    <span class="pair__label">Current</span>
+                    <span class="pair__track">
+                      <span
+                        class="pair__bar pair__bar--now"
+                        style={`width:${((focus.v / max) * 100).toFixed(1)}%`}
+                      />
+                    </span>
+                    <span class="pair__v">{money(focus.v)}</span>
+                  </div>
+                </div>
+              ) : c.kind === 'funnel' ? (
+                <div class="funnel">
+                  {pts.map((p, bi) => (
+                    <div class:list={['fstep', { 'fstep--focus': bi === c.focus }]}>
+                      <span class="fstep__label">{p.label}</span>
+                      <span class="fstep__track">
+                        <span class="fstep__bar" style={`width:${((p.v / max) * 100).toFixed(1)}%`} />
+                      </span>
+                      <span class="fstep__v">{p.v.toLocaleString('en-US')}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
+                  <svg
+                    viewBox={`0 0 ${W} ${H}`}
+                    preserveAspectRatio="none"
+                    role="img"
+                    aria-label={`${c.caption}. ${pts.map((p) => `${p.label} ${money(p.v)}`).join('. ')}.`}
+                  >
+                    {split >= 0 && (
+                      <Fragment>
+                        <line
+                          x1="0"
+                          y1={H - (avgA / max) * H}
+                          x2={(split + 1) * (bw + gap) - gap}
+                          y2={H - (avgA / max) * H}
+                          stroke="var(--chart-rule)"
+                          stroke-width="1"
+                          stroke-dasharray="4 4"
+                          vector-effect="non-scaling-stroke"
+                        />
+                        <line
+                          x1={(split + 1) * (bw + gap)}
+                          y1={H - (avgB / max) * H}
+                          x2={W}
+                          y2={H - (avgB / max) * H}
+                          stroke="var(--color-accent)"
+                          stroke-width="1"
+                          stroke-dasharray="4 4"
+                          vector-effect="non-scaling-stroke"
+                        />
+                      </Fragment>
+                    )}
+
+                    {pts.map((p, bi) => {
+                      const hv = (p.v / max) * H;
+                      return (
+                        <rect
+                          x={bi * (bw + gap)}
+                          y={H - hv}
+                          width={bw}
+                          height={hv}
+                          rx="2"
+                          fill={bi === c.focus ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
+                        />
+                      );
+                    })}
+                  </svg>
+
+                  {/* HTML, not SVG <text>: inside the viewBox a label scales
+                      with the container and lands near 7px on a phone. */}
+                  <ul class="ticks">
+                    {pts.map((p, bi) => (
+                      <li class:list={['tick', { 'tick--focus': bi === c.focus }]}>
+                        <span class="tick__v">{money(p.v)}</span>
+                        <span class="tick__l">{p.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {split >= 0 && (
+                    <p class="rep__legend">
+                      <span class="rep__key" aria-hidden="true" />
+                      Period averages, {money(Math.round(avgA))} then {money(Math.round(avgB))}
+                    </p>
+                  )}
+                </>
+              )}
+            </figure>
+
+            <div class="rep__change">
+              <span class="rep__change-label">The change</span>
+              <span class="rep__change-v">{e.change.value}</span>
+              <span class="rep__change-note">{e.change.note}</span>
+            </div>
+          </div>
+
+          <p class="rep__finding">{e.finding}</p>
+
+          <p class="rep__next">
+            <span class="rep__next-label">Next check</span>
+            {e.next}
+          </p>
+
+          <div class="rep__foot">
+            <span class="rep__src">
+              {e.source} · {e.period}
+            </span>
+            <details class="rep__method">
+              <summary>View method</summary>
+              <div>
+                {e.method.map((m) => (
+                  <p>{m}</p>
+                ))}
+                <p class="rep__limit">{e.limit}</p>
+              </div>
+            </details>
+          </div>
+        </div>
+      );
+    })
+  }
+</div>
+
+<script>
+  import { initInvestigation } from '../scripts/investigation';
+  initInvestigation();
+</script>
+
+<style>
+  .inv {
+    min-width: 0;
+  }
+
+  /* --- selectors: numbered, underlined, per the approved sketch ----------- */
+
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s3);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  @media (min-width: 760px) {
+    .tabs {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+    }
+  }
+
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    min-height: 56px;
+    padding: var(--s3) var(--s4) var(--s4) 0;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font-family: var(--font-body);
+    text-align: left;
+    cursor: pointer;
+    min-width: 0;
+    transition: color 160ms var(--ease-out-soft);
+  }
+
+  .tab__n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-text-4);
+  }
+
+  .tab__label {
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-3);
+  }
+
+  .tab__src {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  .tab:hover .tab__label {
+    color: var(--color-text);
+  }
+
+  .tab[aria-selected='true'] {
+    border-bottom-color: var(--color-accent);
+  }
+
+  .tab[aria-selected='true'] .tab__n,
+  .tab[aria-selected='true'] .tab__label {
+    color: var(--color-accent);
+  }
+
+  .tab:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- the report card ---------------------------------------------------- */
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    margin-top: var(--s8);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-sunk);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  /* An author `display` beats `[hidden] { display: none }` in the UA sheet. */
+  .panel[hidden] {
+    display: none;
+  }
+
+  .panel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .rep__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .rep__kicker {
+    color: var(--color-accent);
+  }
+
+  .rep__sample {
+    color: var(--color-text-4);
+    letter-spacing: var(--ls-chip);
+    text-transform: none;
+  }
+
+  .rep__q {
+    margin: 0;
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--t-h3-sm);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .rep__body {
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 760px) {
+    .rep__body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.42fr);
+      gap: var(--s12);
+    }
+  }
+
+  .rep__chart {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+    min-width: 0;
+  }
+
+  .rep__cap {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  /* The one figure that carries the story. */
+  .rep__change {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: var(--s6);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .rep__change-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .rep__change-v {
+    font-size: var(--t-stat);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-tight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .rep__change-note {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  .rep__finding {
+    margin: 0;
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .rep__next {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s4);
+    margin: 0;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .rep__next-label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-top: 2px;
+  }
+
+  .rep__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .rep__src {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-text-4);
+  }
+
+  .rep__method summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-text-3);
+    list-style: none;
+  }
+
+  .rep__method summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .rep__method summary::after {
+    content: '+';
+    margin-left: 0.4em;
+    color: var(--color-accent);
+  }
+
+  .rep__method[open] summary::after {
+    content: ' \2212';
+  }
+
+  .rep__method summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .rep__method p {
+    margin: 0 0 var(--s4);
+    max-width: 68ch;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
+  .rep__limit {
+    color: var(--color-text-3);
+  }
+
+  /* --- paired bars --------------------------------------------------------- */
+
+  .pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .pair__row {
+    display: grid;
+    grid-template-columns: minmax(0, 5.5em) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .pair__label {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-3);
+  }
+
+  .pair__track,
+  .fstep__track {
+    display: block;
+    min-width: 0;
+  }
+
+  .pair__bar {
+    display: block;
+    height: 22px;
+    border-radius: 2px;
+  }
+
+  .pair__bar--prev {
+    background: var(--chart-bar-dim);
+  }
+
+  .pair__bar--now {
+    background: var(--color-accent);
+  }
+
+  .pair__v {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-2);
+    white-space: nowrap;
+  }
+
+  /* --- funnel -------------------------------------------------------------- */
+
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s3);
+  }
+
+  .fstep {
+    display: grid;
+    grid-template-columns: minmax(0, 9em) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .fstep__label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+    overflow-wrap: anywhere;
+  }
+
+  .fstep__bar {
+    display: block;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--chart-bar-dim);
+  }
+
+  .fstep--focus .fstep__bar {
+    background: var(--color-accent);
+  }
+
+  .fstep--focus .fstep__label,
+  .fstep--focus .fstep__v {
+    color: var(--color-accent);
+  }
+
+  .fstep__v {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-3);
+    white-space: nowrap;
+  }
+
+  /* --- vertical bars ------------------------------------------------------- */
+
+  .rep__chart svg {
+    display: block;
+    width: 100%;
+    height: 132px;
+  }
+
+  .ticks {
+    list-style: none;
+    display: flex;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    align-items: start;
+  }
+
+  .tick {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    text-align: center;
+  }
+
+  .tick__v,
+  .tick__l {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-snug);
+    overflow-wrap: anywhere;
+  }
+
+  .tick__v {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-3);
+  }
+
+  .tick__l {
+    color: var(--color-text-4);
+  }
+
+  .tick--focus .tick__v,
+  .tick--focus .tick__l {
+    color: var(--color-accent);
+  }
+
+  .rep__legend {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  .rep__key {
+    width: 12px;
+    flex: none;
+    border-top: 1px dashed var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .panel {
+      padding: var(--s6);
+    }
+  }
+</style>

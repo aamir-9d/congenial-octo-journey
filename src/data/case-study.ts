@@ -73,6 +73,36 @@ export const CASE_STUDY = {
     { label: 'Monthly recurring revenue', labelShort: 'MRR', before: '~$31k', after: '~$52k' },
   ] satisfies CaseFigure[],
 
+  /* --- the homepage card ---------------------------------------------------
+     The approved composition shows this case compactly: a claim, a sentence of
+     what changed, and three of the five figures. MRR is deliberately left off.
+     It is the one figure whose honest reading needs a second sentence -- most
+     of the lift is billing frequency, not subscriber growth -- and a number
+     that needs a footnote to not mislead does not belong on a summary card.
+     The full five, and that explanation, are in the article. */
+
+  /** The section heading on the homepage. */
+  homeHeadline: 'A dialog stood between the trial and the user.',
+
+  /** The claim the card makes, in the card. */
+  cardHeadline: ['The button worked.', 'The funnel barely did.'],
+
+  /** `summary`, compressed to what the card has room for. */
+  cardSummary:
+    'We removed the confirmation dialog, rebuilt the paywall comparison and changed the plan structure. Daily spend and installs remained broadly stable.',
+
+  /** The three figures the card shows, by `figures[].label`. */
+  cardFigures: ['Install → trial', 'Payers per day', 'Cost per payer'],
+
+  /* What qualifies the three figures above. Each is derivable from RAW or from
+     `changes` -- the windows and their lengths, the trial-to-paid movement, and
+     the fact that three changes shipped together so none is isolated. */
+  cardNotes: [
+    'Trial-to-paid fell: 26.5% → 18.5%.',
+    '18-day before / 9-day after windows; trials aged to resolution.',
+    'Changes were bundled; this does not isolate one causal effect.',
+  ],
+
   /* Stated on the card, not just in the article. A reader who takes only the
      figures away should still take away the caveat that qualifies them. */
   caveat:

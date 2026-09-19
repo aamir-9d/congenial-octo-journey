@@ -1,0 +1,136 @@
+[
+  {
+    "url": "https://aamir-9d.github.io/congenial-octo-journey/next/automation",
+    "width": 1440,
+    "clientWidth": 1425,
+    "height": 4346,
+    "words": 621,
+    "images": 0,
+    "text": "AUTOMATION\nAsk one question across your growth stack.\n\nThree platforms, one answer, and the source figures attached. Reporting and investigation first — every account change is held for a decision.\n\nThe questions it answers\n\n›\nWhat changed in spend, ad earnings and subscription revenue last week?\n\nOne brief across all three sources, with the periods and currencies reconciled and the joins that do not exist called out.\n\n›\nWhy did estimated earnings drop on Tuesday?\n\nBroken down through impressions, eCPM, match rate, country, app and ad unit until the change has a named cause.\n\n›\nWhich campaigns moved after the paywall change?\n\nCampaign reporting beside subscription events, with an explicit statement of what attribution can and cannot support.\n\nHow one investigation runs\n01\nConnect\n\nNamed accounts only, with access you grant and can revoke. Restrictions are enforced in the tools, not in an instruction.\n\n02\nValidate\n\nDates, currencies, account mappings and data freshness are checked before a single number is quoted.\n\n03\nExplain\n\nA written finding with the source figures attached — and the unknowns named, rather than smoothed over.\n\n04\nPropose\n\nAny supported change is presented for approval. Nothing touches an account without a decision behind it.\n\n05\nRecord\n\nWhat was changed, by whom, and what happened afterwards. The part that makes the next investigation faster.\n\nStages 01 to 03 run on read access alone. Stage 04 is the only one that can touch an account, and it does not proceed without a named approval.\n\nWhat each platform actually supports\n\nChecked against the providers’ own documentation. The boundaries are limits, not a roadmap.\n\nPLATFORM\tWHAT WE CAN DO TODAY\tTHE BOUNDARY\nGoogle Ads\tAccount discovery, campaign and asset reporting, budget and status inspection, and GAQL queries, through the official MCP server.\tRead-only. It cannot change bids, pause campaigns or create assets — those need a separately authorised API path with its own approval record.\nAdMob\tApps, ad units and mediation groups, plus network and mediation reporting — impressions, eCPM, match rate and estimated earnings by country, app and ad unit.\tThrough an audited adapter over the documented REST API. There is no official Google-maintained MCP server for AdMob, and each management operation is validated individually before it is offered.\nRevenueCat\tProjects, products, offerings and subscription analytics through the official hosted MCP server — trials, renewals, refunds and billing issues.\tIt also exposes configuration changes. Only the tools a given engagement needs are enabled, scoped to named projects.\nThe arithmetic nobody checks\n\nGoogle Ads conversion value often already represents revenue that also appears in RevenueCat or in ad earnings. Summing the dashboards double-counts it. And a shared date or country is not an attribution key: without impression-level revenue or an MMP join, the honest output is an aggregate comparison and a stated limitation, not a ROAS figure.\n\nThis is the most common way a cross-source revenue report is wrong, and it is also the argument for having someone do it properly. A number that cannot be supported is not reported as a number.\n\nWhat it needs from you\nGoogle Ads\nRead access to the named customer IDs, through your MCC or a direct grant.\nAdMob\nAPI access to the publisher account, scoped to reporting.\nRevenueCat\nA project-scoped key with only the tools an engagement needs enabled.\nDefinitions\nYour reporting timezone and currency, and which app maps to which Ads customer, AdMob app and RevenueCat project.\n\nAccess is granted to named accounts, held by us as the operator, and revocable by you at any time. Restrictions are enforced in the tools and the backend, not by instructing a model to stay inside them. There is no self-serve connection here — this is a consulting engagement, not a portal.\n\nTalk about your stack",
+    "sections": [
+      {
+        "name": "automation-lead",
+        "y": 73,
+        "height": 416
+      },
+      {
+        "name": "automation-examples",
+        "y": 489,
+        "height": 638
+      },
+      {
+        "name": "automation-stages",
+        "y": 1127,
+        "height": 871
+      },
+      {
+        "name": "automation-platforms",
+        "y": 1998,
+        "height": 763
+      },
+      {
+        "name": "automation-caveat",
+        "y": 2761,
+        "height": 537
+      },
+      {
+        "name": "automation-access",
+        "y": 3298,
+        "height": 767
+      }
+    ],
+    "cta": [
+      {
+        "text": "Talk about your stack",
+        "y": 3895,
+        "href": "/congenial-octo-journey/next/#contact"
+      }
+    ]
+  },
+  {
+    "url": "https://aamir-9d.github.io/congenial-octo-journey/next/automation",
+    "width": 390,
+    "clientWidth": 390,
+    "height": 4996,
+    "words": 621,
+    "images": 0,
+    "text": "AUTOMATION\nAsk one question across your growth stack.\n\nThree platforms, one answer, and the source figures attached. Reporting and investigation first — every account change is held for a decision.\n\nThe questions it answers\n\n›\nWhat changed in spend, ad earnings and subscription revenue last week?\n\nOne brief across all three sources, with the periods and currencies reconciled and the joins that do not exist called out.\n\n›\nWhy did estimated earnings drop on Tuesday?\n\nBroken down through impressions, eCPM, match rate, country, app and ad unit until the change has a named cause.\n\n›\nWhich campaigns moved after the paywall change?\n\nCampaign reporting beside subscription events, with an explicit statement of what attribution can and cannot support.\n\nHow one investigation runs\n01\nConnect\n\nNamed accounts only, with access you grant and can revoke. Restrictions are enforced in the tools, not in an instruction.\n\n02\nValidate\n\nDates, currencies, account mappings and data freshness are checked before a single number is quoted.\n\n03\nExplain\n\nA written finding with the source figures attached — and the unknowns named, rather than smoothed over.\n\n04\nPropose\n\nAny supported change is presented for approval. Nothing touches an account without a decision behind it.\n\n05\nRecord\n\nWhat was changed, by whom, and what happened afterwards. The part that makes the next investigation faster.\n\nStages 01 to 03 run on read access alone. Stage 04 is the only one that can touch an account, and it does not proceed without a named approval.\n\nWhat each platform actually supports\n\nChecked against the providers’ own documentation. The boundaries are limits, not a roadmap.\n\nPLATFORM\tWHAT WE CAN DO TODAY\tTHE BOUNDARY\nGoogle Ads\tAccount discovery, campaign and asset reporting, budget and status inspection, and GAQL queries, through the official MCP server.\tRead-only. It cannot change bids, pause campaigns or create assets — those need a separately authorised API path with its own approval record.\nAdMob\tApps, ad units and mediation groups, plus network and mediation reporting — impressions, eCPM, match rate and estimated earnings by country, app and ad unit.\tThrough an audited adapter over the documented REST API. There is no official Google-maintained MCP server for AdMob, and each management operation is validated individually before it is offered.\nRevenueCat\tProjects, products, offerings and subscription analytics through the official hosted MCP server — trials, renewals, refunds and billing issues.\tIt also exposes configuration changes. Only the tools a given engagement needs are enabled, scoped to named projects.\nThe arithmetic nobody checks\n\nGoogle Ads conversion value often already represents revenue that also appears in RevenueCat or in ad earnings. Summing the dashboards double-counts it. And a shared date or country is not an attribution key: without impression-level revenue or an MMP join, the honest output is an aggregate comparison and a stated limitation, not a ROAS figure.\n\nThis is the most common way a cross-source revenue report is wrong, and it is also the argument for having someone do it properly. A number that cannot be supported is not reported as a number.\n\nWhat it needs from you\nGoogle Ads\nRead access to the named customer IDs, through your MCC or a direct grant.\nAdMob\nAPI access to the publisher account, scoped to reporting.\nRevenueCat\nA project-scoped key with only the tools an engagement needs enabled.\nDefinitions\nYour reporting timezone and currency, and which app maps to which Ads customer, AdMob app and RevenueCat project.\n\nAccess is granted to named accounts, held by us as the operator, and revocable by you at any time. Restrictions are enforced in the tools and the backend, not by instructing a model to stay inside them. There is no self-serve connection here — this is a consulting engagement, not a portal.\n\nTalk about your stack",
+    "sections": [
+      {
+        "name": "automation-lead",
+        "y": 73,
+        "height": 343
+      },
+      {
+        "name": "automation-examples",
+        "y": 416,
+        "height": 688
+      },
+      {
+        "name": "automation-stages",
+        "y": 1105,
+        "height": 975
+      },
+      {
+        "name": "automation-platforms",
+        "y": 2079,
+        "height": 950
+      },
+      {
+        "name": "automation-caveat",
+        "y": 3029,
+        "height": 604
+      },
+      {
+        "name": "automation-access",
+        "y": 3633,
+        "height": 942
+      }
+    ],
+    "cta": [
+      {
+        "text": "Talk about your stack",
+        "y": 4449,
+        "href": "/congenial-octo-journey/next/#contact"
+      }
+    ]
+  },
+  {
+    "page": "homepage",
+    "sections": [
+      {
+        "name": "hero",
+        "y": 73
+      },
+      {
+        "name": "payback",
+        "y": 733
+      },
+      {
+        "name": "case-study",
+        "y": 1941
+      },
+      {
+        "name": "proof",
+        "y": 3171
+      },
+      {
+        "name": "automation",
+        "y": 3875
+      },
+      {
+        "name": "loop",
+        "y": 4810
+      },
+      {
+        "name": "founders",
+        "y": 6316
+      },
+      {
+        "name": "contact",
+        "y": 7166
+      }
+    ],
+    "automation": "AFTER THE FIX, THE WATCHING\nAsk one question across your growth stack.\n\nWe connect Google Ads, AdMob and RevenueCat to Claude, so a question that used to mean three exports and a spreadsheet returns one answer with the source figures attached — and with the joins that do not exist named rather than papered over.\n\n›\nWhat changed in spend, ad earnings and subscription revenue last week?\n\nOne brief across all three sources, with the periods and currencies reconciled and the joins that do not exist called out.\n\n›\nWhy did estimated earnings drop on Tuesday?\n\nBroken down through impressions, eCPM, match rate, country, app and ad unit until the change has a named cause.\n\n›\nWhich campaigns moved after the paywall change?\n\nCampaign reporting beside subscription events, with an explicit statement of what attribution can and cannot support.\n\nWHAT CONNECTS TODAY\n\nGoogle Ads\nRead-only.\nAdMob\nThrough an audited adapter over the documented REST API.\nRevenueCat\nIt also exposes configuration changes.\n\nReporting and investigation, with every account change held for approval. Nothing runs unattended.\n\nHow it works, and what it needs"
+  }
+]

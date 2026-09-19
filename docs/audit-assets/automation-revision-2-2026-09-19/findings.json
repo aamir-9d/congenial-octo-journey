@@ -1,0 +1,123 @@
+[
+  {
+    "url": "https://aamir-9d.github.io/congenial-octo-journey/next/automation",
+    "width": 1440,
+    "clientWidth": 1425,
+    "height": 2808,
+    "words": 344,
+    "images": 0,
+    "sections": [
+      {
+        "name": "automation-hero",
+        "y": 73,
+        "height": 1039
+      },
+      {
+        "name": "automation-outcomes",
+        "y": 1112,
+        "height": 320
+      },
+      {
+        "name": "automation-process",
+        "y": 1432,
+        "height": 624
+      },
+      {
+        "name": "automation-cta",
+        "y": 2056,
+        "height": 472
+      }
+    ],
+    "cta": [
+      {
+        "text": "Discuss your setup",
+        "y": 453,
+        "href": "/congenial-octo-journey/next/#contact"
+      },
+      {
+        "text": "Book a call",
+        "y": 2358,
+        "href": "/congenial-octo-journey/next/#contact"
+      }
+    ]
+  },
+  {
+    "url": "https://aamir-9d.github.io/congenial-octo-journey/next/automation",
+    "width": 390,
+    "clientWidth": 390,
+    "height": 3872,
+    "words": 344,
+    "images": 0,
+    "sections": [
+      {
+        "name": "automation-hero",
+        "y": 73,
+        "height": 1694
+      },
+      {
+        "name": "automation-outcomes",
+        "y": 1767,
+        "height": 462
+      },
+      {
+        "name": "automation-process",
+        "y": 2230,
+        "height": 809
+      },
+      {
+        "name": "automation-cta",
+        "y": 3039,
+        "height": 413
+      }
+    ],
+    "cta": [
+      {
+        "text": "Discuss your setup",
+        "y": 396,
+        "href": "/congenial-octo-journey/next/#contact"
+      },
+      {
+        "text": "Book a call",
+        "y": 3325,
+        "href": "/congenial-octo-journey/next/#contact"
+      }
+    ]
+  },
+  {
+    "page": "homepage",
+    "sections": [
+      {
+        "name": "hero",
+        "y": 71
+      },
+      {
+        "name": "problems",
+        "y": 731
+      },
+      {
+        "name": "payback",
+        "y": 2172
+      },
+      {
+        "name": "proof",
+        "y": 3380
+      },
+      {
+        "name": "case-study",
+        "y": 4084
+      },
+      {
+        "name": "loop",
+        "y": 5314
+      },
+      {
+        "name": "founders",
+        "y": 6821
+      },
+      {
+        "name": "contact",
+        "y": 7671
+      }
+    ]
+  }
+]

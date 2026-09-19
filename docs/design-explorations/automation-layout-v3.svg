@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1370" viewBox="0 0 1600 1370"><rect x="0" y="0" width="1600" height="1370" rx="0" fill="#202429"/>
+<text x="48" y="46" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#eca51a">E2E APPS / LAYOUT EXPLORATION</text>
+<text x="48" y="87" font-family="Arial, sans-serif" font-size="35" font-weight="700" fill="#f1f0ec">Put the answer in the spotlight.</text>
+<text x="48" y="117" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#a5adb3">Rough composition • proposed visual direction • illustrative data • no website changes</text>
+<text x="48" y="165" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#a5adb3">01  AUTOMATION PAGE — DESKTOP</text>
+<text x="1072" y="165" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#a5adb3">02  HOMEPAGE — COMPACT SECTION</text>
+<rect x="48" y="187" width="978" height="1052" rx="10" fill="#0e1114" stroke="#32383d"/>
+<rect x="72" y="210" width="33" height="33" rx="7" fill="#eca51a"/>
+<text x="78" y="231" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0e1114">E2E</text>
+<text x="118" y="232" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#f1f0ec">E2E Apps</text>
+<text x="617" y="231" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Services     Automation     About</text>
+<rect x="858" y="209" width="140" height="38" rx="5" fill="#eca51a"/>
+<text x="872" y="234" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0e1114">Book a call  ↗</text>
+<path d="M72 261H998" stroke="#32383d"/>
+<text x="92" y="311" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#eca51a">AI REPORTING &amp; AUTOMATION</text>
+<text x="92" y="367" font-family="Arial, sans-serif" font-size="43" font-weight="700" fill="#f1f0ec">See what changed.</text>
+<text x="92" y="418" font-family="Arial, sans-serif" font-size="43" font-weight="700" fill="#f1f0ec">Know what to check.</text>
+<text x="679" y="335" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#a5adb3">Connect your growth data.</text>
+<text x="679" y="361" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#a5adb3">Get answers with the</text>
+<text x="679" y="387" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#a5adb3">source figures attached.</text>
+<rect x="679" y="409" width="194" height="38" rx="5" fill="#eca51a"/>
+<text x="693" y="434" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0e1114">Discuss your setup  ↗</text>
+<text x="92" y="493" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#eca51a">01  Ad spend</text>
+<text x="283" y="493" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#a5adb3">02  User behavior</text>
+<text x="505" y="493" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#a5adb3">03  Ad earnings</text>
+<text x="725" y="493" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#a5adb3">04  Subscriptions</text>
+<path d="M92 508H982" stroke="#32383d"/>
+<path d="M92 508H232" stroke="#eca51a"/>
+<rect x="92" y="526" width="890" height="373" rx="8" fill="#f3efe5"/>
+<text x="118" y="557" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#666e70">EXAMPLE INVESTIGATION</text>
+<text x="862" y="557" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#666e70">Sample data</text>
+<text x="118" y="592" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#20282d">Where did the extra ad spend go?</text>
+<path d="M118 611H956" stroke="#d9d4c8"/>
+<text x="118" y="644" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#666e70">US · UAC / WEEKLY SPEND</text>
+<text x="118" y="682" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#20282d">Previous</text>
+<rect x="197" y="662" width="226" height="30" rx="3" fill="#a6aaa6"/>
+<text x="436" y="683" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#20282d">$6,720</text>
+<text x="118" y="728" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#20282d">Current</text>
+<rect x="197" y="708" width="332" height="30" rx="3" fill="#eca51a"/>
+<text x="543" y="729" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#20282d">$9,860</text>
+<text x="651" y="658" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#666e70">THE CHANGE</text>
+<text x="651" y="707" font-family="Arial, sans-serif" font-size="40" font-weight="700" fill="#20282d">+$3,140</text>
+<text x="651" y="738" font-family="Arial, sans-serif" font-size="16" font-weight="400" fill="#20282d">in this campaign.</text>
+<path d="M118 770H956" stroke="#d9d4c8"/>
+<text x="118" y="800" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#666e70">NEXT CHECK</text>
+<text x="118" y="826" font-family="Arial, sans-serif" font-size="17" font-weight="400" fill="#20282d">Check installs and cost per install before increasing the budget.</text>
+<text x="118" y="873" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#666e70">Source: Google Ads   ·   Previous 7 days vs current 7 days</text>
+<text x="825" y="873" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#20282d">View method  +</text>
+<text x="92" y="936" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#a5adb3">DATA SOURCES</text>
+<text x="234" y="937" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#f1f0ec">Google Ads     ·     GA4     ·     AdMob     ·     RevenueCat</text>
+<text x="92" y="968" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#a5adb3">ASSISTANT OPTIONS</text>
+<text x="234" y="969" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#f1f0ec">Claude     ·     ChatGPT     ·     Gemini</text>
+<path d="M92 1004H982" stroke="#32383d"/>
+<text x="92" y="1045" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#f1f0ec">A simple working relationship.</text>
+<text x="92" y="1090" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#f1f0ec">01  Connect</text>
+<text x="406" y="1090" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#f1f0ec">02  Investigate</text>
+<text x="720" y="1090" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#f1f0ec">03  Review</text>
+<text x="92" y="1118" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Choose your reporting sources.</text>
+<text x="406" y="1118" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Ask a business question.</text>
+<text x="720" y="1118" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Agree on the next action.</text>
+<path d="M92 1150H982" stroke="#32383d"/>
+<text x="92" y="1184" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#a5adb3">Connection details  +</text>
+<text x="401" y="1184" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#a5adb3">Access &amp; approvals  +</text>
+<text x="712" y="1184" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#eca51a">Discuss your setup  ↗</text>
+<rect x="1072" y="187" width="480" height="379" rx="10" fill="#0e1114" stroke="#32383d"/>
+<text x="1096" y="219" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#a5adb3">AFTER CASE STUDY / BEFORE THE LOOP</text>
+<path d="M1096 236H1528" stroke="#32383d"/>
+<text x="1096" y="269" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#eca51a">AI REPORTING &amp; AUTOMATION</text>
+<text x="1096" y="306" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#f1f0ec">Your numbers.</text>
+<text x="1096" y="337" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#f1f0ec">A clearer picture.</text>
+<text x="1096" y="371" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Ask about spend, behavior</text>
+<text x="1096" y="391" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">and revenue in the AI</text>
+<text x="1096" y="411" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">your team already uses.</text>
+<rect x="1096" y="435" width="168" height="38" rx="5" fill="#eca51a"/>
+<text x="1110" y="460" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0e1114">Explore automation  ↗</text>
+<rect x="1340" y="263" width="188" height="210" rx="6" fill="#f3efe5"/>
+<text x="1355" y="288" font-family="Arial, sans-serif" font-size="8" font-weight="700" fill="#666e70">ILLUSTRATIVE REPORT</text>
+<text x="1355" y="315" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#20282d">What changed?</text>
+<rect x="1356" y="335" width="98" height="15" rx="2" fill="#a6aaa6"/>
+<rect x="1356" y="359" width="142" height="15" rx="2" fill="#eca51a"/>
+<text x="1355" y="407" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#20282d">+$3,140</text>
+<text x="1355" y="433" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#20282d">US · UAC weekly spend</text>
+<path d="M1096 496H1528" stroke="#32383d"/>
+<text x="1096" y="520" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#a5adb3">Google Ads  ·  GA4  ·  AdMob  ·  RevenueCat</text>
+<text x="1096" y="541" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#a5adb3">Claude  ·  ChatGPT  ·  Gemini</text>
+<text x="1072" y="614" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#a5adb3">03  MOBILE — SAME PRIORITIES</text>
+<rect x="1072" y="636" width="310" height="603" rx="14" fill="#0e1114" stroke="#32383d"/>
+<rect x="1090" y="653" width="29" height="29" rx="6" fill="#eca51a"/>
+<text x="1095" y="672" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#0e1114">E2E</text>
+<text x="1333" y="674" font-family="Arial, sans-serif" font-size="18" font-weight="400" fill="#a5adb3">☰</text>
+<text x="1090" y="716" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#eca51a">AI REPORTING &amp; AUTOMATION</text>
+<text x="1090" y="755" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#f1f0ec">See what changed.</text>
+<text x="1090" y="787" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#f1f0ec">Know what to check.</text>
+<text x="1090" y="818" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#a5adb3">Answers with the source figures attached.</text>
+<rect x="1090" y="836" width="185" height="38" rx="5" fill="#eca51a"/>
+<text x="1104" y="861" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0e1114">Discuss your setup  ↗</text>
+<text x="1090" y="901" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#a5adb3">Ad spend     Behavior     Earnings     Subs</text>
+<rect x="1090" y="918" width="274" height="209" rx="6" fill="#f3efe5"/>
+<text x="1104" y="941" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#20282d">Where did the extra spend go?</text>
+<text x="1104" y="960" font-family="Arial, sans-serif" font-size="8" font-weight="400" fill="#666e70">US · UAC / SAMPLE DATA</text>
+<rect x="1104" y="977" width="109" height="15" rx="2" fill="#a6aaa6"/>
+<text x="1221" y="989" font-family="Arial, sans-serif" font-size="9" font-weight="400" fill="#20282d">$6,720</text>
+<rect x="1104" y="1002" width="160" height="15" rx="2" fill="#eca51a"/>
+<text x="1272" y="1014" font-family="Arial, sans-serif" font-size="9" font-weight="400" fill="#20282d">$9,860</text>
+<text x="1104" y="1050" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#20282d">+$3,140</text>
+<text x="1104" y="1077" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#20282d">Next: check installs and cost per install.</text>
+<text x="1104" y="1108" font-family="Arial, sans-serif" font-size="9" font-weight="400" fill="#666e70">Google Ads  ·  7-day comparison</text>
+<text x="1090" y="1154" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#a5adb3">Google Ads  ·  GA4  ·  AdMob  ·  RevenueCat</text>
+<text x="1090" y="1178" font-family="Arial, sans-serif" font-size="10" font-weight="400" fill="#a5adb3">Claude  ·  ChatGPT  ·  Gemini</text>
+<text x="1090" y="1215" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#f1f0ec">Connect → Investigate → Review</text>
+<text x="1401" y="675" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f1f0ec">Keep:</text>
+<text x="1401" y="702" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Dark brand</text>
+<text x="1401" y="725" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Amber accent</text>
+<text x="1401" y="748" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Clear type</text>
+<text x="1401" y="797" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#f1f0ec">Change:</text>
+<text x="1401" y="824" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Result first</text>
+<text x="1401" y="847" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Shorter hero</text>
+<text x="1401" y="870" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">Fewer boxes</text>
+<text x="1401" y="893" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">One focal point</text>
+<text x="48" y="1290" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#eca51a">LAYOUT RULE</text>
+<text x="48" y="1320" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#f1f0ec">One strong headline. One useful visual. Integrations support the story.</text>
+<text x="1072" y="1301" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#a5adb3">Rough proportions, not final UI.</text>
+<text x="1072" y="1324" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#a5adb3">No fabricated client results or AI outputs.</text></svg>

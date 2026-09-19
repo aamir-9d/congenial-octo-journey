@@ -89,3 +89,42 @@ test('the opening section clears the fixed nav without a screen of dead space', 
     assert.match(body(page), /class="[^"]*section--lead/, `/${page} does not mark its opening section`);
   }
 });
+
+/**
+ * Every indexable page is in the sitemap.
+ *
+ * /services, /automation, /products and /faq shipped for weeks as real content
+ * pages, linked from the nav on every page of the site, and none of them was in
+ * sitemap.xml — which listed four static paths and the blog. Nothing caught it,
+ * because nothing was checking the two against each other.
+ *
+ * So this walks what was actually built rather than a second hand-kept list. A
+ * new page is either in the sitemap or it is deliberately `noindex`; there is
+ * no third state where it quietly isn't in either.
+ */
+test('every indexable page that was built is in the sitemap', { skip }, () => {
+  const sitemap = fs.readFileSync(path.join(DIST, 'sitemap.xml'), 'utf8');
+  const listed = new Set(
+    [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname.replace(/\/$/, '')),
+  );
+
+  const base = (process.env.SITE_BASE ?? '/congenial-octo-journey').replace(/\/$/, '');
+  const missing: string[] = [];
+
+  for (const file of fs.readdirSync(DIST)) {
+    if (!file.endsWith('.html')) continue;
+
+    const html = fs.readFileSync(path.join(DIST, file), 'utf8');
+    // A page that asks not to be indexed has no business in the sitemap.
+    if (/name="robots"[^>]*content="noindex/.test(html)) continue;
+
+    const route = file === 'index.html' ? '' : `/${file.replace(/\.html$/, '')}`;
+    if (!listed.has(`${base}${route}`)) missing.push(route || '/');
+  }
+
+  assert.deepEqual(
+    missing,
+    [],
+    `built, indexable, and absent from sitemap.xml: ${missing.join(', ')}`,
+  );
+});

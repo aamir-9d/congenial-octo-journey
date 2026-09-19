@@ -162,12 +162,25 @@ test('no shared-component anchor is dead outside the homepage', { skip }, () => 
   // nothing. That was true of the whole nav on five pages before it was found.
   const offenders: string[] = [];
 
-  for (const page of PAGES.concat(['blog/index.html'])) {
+  // `blog.html`, not `blog/index.html` — the build format is `file`, so the
+  // index of a directory route is a sibling file. The old spelling existed but
+  // never matched, so the blog index was silently exempt from this check.
+  for (const page of PAGES.concat(['blog.html'])) {
     const file = path.join(DIST, page);
     if (!fs.existsSync(file) || page === 'index.html') continue;
 
-    for (const m of fs.readFileSync(file, 'utf8').matchAll(/href="(#[a-zA-Z][\w-]*)"/g)) {
-      offenders.push(`${page}  ${m[1]}`);
+    const html = fs.readFileSync(file, 'utf8');
+
+    for (const m of html.matchAll(/href="(#[a-zA-Z][\w-]*)"/g)) {
+      const hash = m[1]!;
+
+      // A same-page target is the exception the rule is built to allow: the
+      // skip link points at this page's own <main>, which every route renders.
+      // Checking the target actually exists here is stricter than exempting
+      // the name, and keeps a genuinely dead anchor failing.
+      if (html.includes(`id="${hash.slice(1)}"`)) continue;
+
+      offenders.push(`${page}  ${hash}`);
     }
   }
 

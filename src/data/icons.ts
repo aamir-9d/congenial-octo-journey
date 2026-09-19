@@ -3,9 +3,17 @@
  *
  * The design files load @phosphor-icons/web from unpkg. This repo forbids
  * third-party hosts at runtime (tests/copy-parity.test.ts asserts it), and the
- * regular-weight font is ~180KB for the 25 icons this design uses. These are
- * the same icons as inline paths, for a few KB, with no network dependency and
- * no npm package.
+ * regular-weight font is ~180KB for the icons this design uses. These are the
+ * same icons as inline paths, for a few KB, with no network dependency and no
+ * npm package.
+ *
+ * TWO CONSUMERS, which is why the set is larger than what the site renders.
+ * `Icon.astro` draws 22 of these. The other four — arrow-u-left-up,
+ * paper-plane-tilt, user and warning-diamond — are needed by
+ * `scripts/build-design-docs.mjs`, which resolves icon names out of
+ * `design/*.dc.html` when it builds the brand book and the logo directions,
+ * and fails the build outright if a name has no vendored path. Grepping only
+ * `src/` will say all four are dead. They are not.
  *
  * Phosphor Icons, MIT licensed — https://github.com/phosphor-icons/core
  * Regular weight, 256x256 viewBox. Regenerate with scratchpad/geticons.mjs.

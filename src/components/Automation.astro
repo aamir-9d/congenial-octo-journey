@@ -1,0 +1,368 @@
+---
+import Icon from './Icon.astro';
+import { TEASER, SOURCES, EXAMPLES } from '../data/automation.ts';
+
+/**
+ * The homepage automation section.
+ *
+ * Built to docs/design-explorations/homepage-automation-charcoal.png: copy on
+ * the left at roughly 44%, one sample report on the right at roughly 56%, tops
+ * aligned, and a quiet source strip beneath both.
+ *
+ * The brief is explicit about what this is not — no integration cards, no
+ * connector diagram, no assistant buttons, no second dashboard. The offer is
+ * carried by one report a visitor can actually read.
+ *
+ * The report reuses the `spend` example, so the homepage and /automation cannot
+ * disagree about the same numbers: $6,720 → $9,860 is one figure in one file.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const spend = EXAMPLES.find((e) => e.id === 'spend')!;
+const campaign = spend.chart.points[spend.chart.focus]!;
+const max = Math.max(campaign.v, campaign.prev ?? 0);
+const money = (v: number) => `$${v.toLocaleString('en-US')}`;
+---
+
+<section id="automation" class="section" data-section="automation" data-added="audit">
+  <div class="wrap">
+    <div class="auto">
+      <div class="auto__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">{TEASER.eyebrow}</p>
+
+        <h2 class="auto__h2">
+          {TEASER.heading[0]}<br />{TEASER.heading[1]}
+        </h2>
+
+        <p class="auto__body">{TEASER.body}</p>
+        <p class="auto__support">{TEASER.support}</p>
+
+        <a href={`${base}/automation`} class="btn-primary auto__cta">
+          {TEASER.primary}
+          <Icon name="arrow-up-right" size={14} />
+        </a>
+      </div>
+
+      <div class="rep" data-reveal="1">
+        <p class="rep__meta">
+          <span class="rep__kicker">Example investigation</span>
+          <span class="rep__sample">Sample data</span>
+        </p>
+
+        <p class="rep__q">{spend.question}</p>
+
+        <div class="rep__body">
+          <div class="rep__chart">
+            <p class="rep__cap">{campaign.label} / weekly spend</p>
+
+            <div class="pair">
+              <div class="pair__row">
+                <span class="pair__label">Previous</span>
+                <span class="pair__track">
+                  <span
+                    class="pair__bar pair__bar--prev"
+                    style={`width:${(((campaign.prev ?? 0) / max) * 100).toFixed(1)}%`}
+                  />
+                </span>
+                <span class="pair__v">{money(campaign.prev ?? 0)}</span>
+              </div>
+              <div class="pair__row">
+                <span class="pair__label">Current</span>
+                <span class="pair__track">
+                  <span class="pair__bar pair__bar--now" style={`width:${((campaign.v / max) * 100).toFixed(1)}%`} />
+                </span>
+                <span class="pair__v">{money(campaign.v)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rep__change">
+            <span class="rep__change-label">The change</span>
+            <span class="rep__change-v">{spend.change.value}</span>
+            <span class="rep__change-note">{spend.change.note}</span>
+          </div>
+        </div>
+
+        <p class="rep__next">
+          <span class="rep__next-label">Next check</span>
+          {spend.next}
+        </p>
+
+        <p class="rep__src">{spend.source} · {spend.period}</p>
+      </div>
+    </div>
+
+    <div class="strip">
+      <span class="strip__label">{TEASER.sourcesLabel}</span>
+      <span class="strip__names">{SOURCES.map((s) => s.name).join(' · ')}</span>
+      <span class="strip__note">{TEASER.note}</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Two columns, tops aligned, 44/56 in favour of the report. The previous
+     version put short copy beside a much taller panel; the sketch fixes that by
+     giving the copy less width and the report less height. */
+  .auto {
+    display: grid;
+    gap: var(--s12);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .auto {
+      grid-template-columns: minmax(0, 0.79fr) minmax(0, 1fr);
+      gap: var(--s16);
+    }
+  }
+
+  .auto__copy {
+    min-width: 0;
+  }
+
+  .auto__h2 {
+    margin-top: var(--s4);
+    font-size: var(--t-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    color: var(--color-text);
+  }
+
+  .auto__body {
+    margin-top: var(--s8);
+    max-width: 42ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .auto__support {
+    margin-top: var(--s6);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-4);
+  }
+
+  .auto__cta {
+    margin-top: var(--s12);
+  }
+
+  /* --- the sample report --------------------------------------------------- */
+
+  .rep {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .rep__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .rep__kicker {
+    color: var(--color-accent);
+  }
+
+  .rep__sample {
+    color: var(--color-text-4);
+    letter-spacing: var(--ls-chip);
+    text-transform: none;
+  }
+
+  .rep__q {
+    margin: 0;
+    padding-bottom: var(--s6);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--t-h3-sm);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .rep__body {
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (min-width: 560px) {
+    .rep__body {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.46fr);
+    }
+  }
+
+  .rep__chart {
+    min-width: 0;
+  }
+
+  .rep__cap {
+    margin: 0 0 var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .pair {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  /* Common zero baseline: both tracks start at the same x and scale to the
+     same maximum, so the bars are comparable by length. */
+  .pair__row {
+    display: grid;
+    grid-template-columns: minmax(0, 5.2em) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--s3);
+  }
+
+  .pair__label {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-3);
+  }
+
+  .pair__track {
+    display: block;
+    min-width: 0;
+  }
+
+  .pair__bar {
+    display: block;
+    height: 20px;
+    border-radius: 2px;
+  }
+
+  .pair__bar--prev {
+    background: var(--chart-bar-dim);
+  }
+
+  .pair__bar--now {
+    background: var(--color-accent);
+  }
+
+  .pair__v {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-2);
+    white-space: nowrap;
+  }
+
+  .rep__change {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--s4) var(--s6);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
+    min-width: 0;
+  }
+
+  .rep__change-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .rep__change-v {
+    font-size: var(--t-stat);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-tight);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  .rep__change-note {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  .rep__next {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s4);
+    margin: 0;
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .rep__next-label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-top: 2px;
+  }
+
+  .rep__src {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-text-4);
+  }
+
+  /* --- the quiet source strip ---------------------------------------------- */
+
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s4) var(--s12);
+    margin-top: clamp(36px, 4vw, 60px);
+    padding: var(--s6) 0;
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .strip__label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .strip__names {
+    font-size: var(--t-card);
+    color: var(--color-text-2);
+  }
+
+  /* Pushed right where there is room, wrapping under where there is not. */
+  .strip__note {
+    margin-left: auto;
+    font-size: var(--t-card-sm);
+    color: var(--color-text-4);
+  }
+</style>

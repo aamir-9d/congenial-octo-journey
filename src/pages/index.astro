@@ -2,9 +2,10 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Problems from '../components/Problems.astro';
-import Calculator from '../components/Calculator.astro';
+import Diagnostics from '../components/Diagnostics.astro';
 import Proof from '../components/Proof.astro';
+import Calculator from '../components/Calculator.astro';
+import Automation from '../components/Automation.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
 import Founders from '../components/Founders.astro';
@@ -21,21 +22,31 @@ import Schema from '../components/Schema.astro';
  * one; between them that was 40% of the words and 29 of the 35 disclosures.
  * Nothing was deleted in the move.
  *
- * The order is the funnel rather than the inventory:
+ * Revision 2 of the automation brief sets this order:
  *
  *   Hero        the claim, and one action
- *   Problems    one beat of why it matters, compressed
- *   Calculator  prove it with your own numbers — moved up from position four,
- *               because it is the one object here a competitor cannot copy
- *   Proof       three findings, as the lead-in to the case study
- *   CaseStudy   one of them shown all the way down
- *   Loop        how the work is sequenced
+ *   Diagnostics three rows naming where the money goes missing
+ *   Calculator  prove it with your own numbers
+ *   CaseStudy   one case, shown all the way down
+ *   Proof       three more findings, as its tail
+ *   Automation  ongoing reporting, once the problem and the evidence have landed
+ *   Loop        the wider engagement
  *   Founders    who you would actually be talking to
  *   Contact     the one action, again
  *
- * Proof sits directly above CaseStudy on purpose: three one-line findings then
- * the one that can be evidenced in full reads as a single movement, where two
- * separate credibility sections read as repetition.
+ * Automation sits after the case study on purpose: a visitor meets the business
+ * problem and the evidence first, and only then the service that keeps watching.
+ * Leading with it would imply a platform in front of a consulting engagement.
+ *
+ * Proof now reads as the tail of the case-study movement, which is what the
+ * approved composition asks for, but it is a SIBLING of CaseStudy rather than a
+ * child of it. Folding it inside cannot work: CaseStudy is marked data-added
+ * and the copy-parity check strips such blocks whole, which would take Proof's
+ * signed-off copy with it. As a sibling it reads the same and survives.
+ *
+ * Problems is no longer on this page. It is not deleted -- /services renders it
+ * in full, and Diagnostics links each row there. The audit measured it at
+ * 1,441px here, a screen and a half spent before the calculator.
  */
 
 const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
@@ -47,14 +58,18 @@ const description =
   <Schema slot="head" />
   <div class="page">
     <Nav />
-    <Hero />
-    <Problems compact />
-    <Calculator />
-    <Proof />
-    <CaseStudy />
-    <Loop />
-    <Founders />
-    <Contact />
+    <main id="main">
+      <Hero />
+      <Diagnostics />
+      <Calculator />
+      <CaseStudy />
+      <Proof nested />
+      <Automation />
+      <Loop />
+      <Founders />
+      <Contact />
+    </main>
+
     <Footer />
   </div>
 </Base>
@@ -63,6 +78,8 @@ const description =
   .page {
     min-height: 100vh;
     background: var(--color-bg);
-    overflow-x: hidden;
+    /* `clip`, not `hidden` — see global.css. `hidden` makes this a scroll
+       container and the sticky nav sticks to it instead of the viewport. */
+    overflow-x: clip;
   }
 </style>

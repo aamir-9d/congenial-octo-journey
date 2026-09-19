@@ -1,7 +1,10 @@
 import { INITIAL_STATE, computeView, type CalcState } from '../scripts/calc-model.ts';
 
 /**
- * Three cohorts, so the model can be read without touching a slider.
+ * Three illustrative scenarios, so the model can be read without touching a
+ * slider. They are example inputs, not measured market percentiles -- "Typical"
+ * describes a middling funnel, and calling it a median would assert a
+ * population statistic nothing here establishes.
  *
  * New UI. `Typical` is the repo's own INITIAL_STATE verbatim — not a copy of
  * the numbers, the values themselves — so it necessarily reproduces breakeven
@@ -30,7 +33,7 @@ export const PRESETS: Preset[] = [
   {
     key: 'typical',
     label: 'Typical',
-    sub: 'The median subscription cohort',
+    sub: 'A middling funnel, for illustration',
     state: {
       i2t: INITIAL_STATE.i2t,
       t2p: INITIAL_STATE.t2p,

@@ -36,8 +36,12 @@ const fmt = (d: Date) =>
   <div class="page">
     <Nav />
 
-    <article class="section">
-      <div class="post">
+    {/* Both, nested, because they mean different things: `main` is "the content
+        of this page" and is what the skip link targets, `article` is "this is a
+        self-contained post". Swapping one for the other would have traded a
+        landmark for a semantic instead of gaining one. */}
+    <main id="main" class="section">
+      <article class="post">
         <a class="post__back" href={`${base}/blog`}>&#8592; All posts</a>
 
         <div class="post__meta">
@@ -70,8 +74,8 @@ const fmt = (d: Date) =>
             </p>
           )
         }
-      </div>
-    </article>
+      </article>
+    </main>
 
     <Footer />
   </div>

@@ -1,0 +1,344 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import Investigation from '../components/Investigation.astro';
+import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS } from '../data/automation.ts';
+
+/**
+ * /automation
+ *
+ * Built to docs/design-explorations/automation-layout-v3-charcoal.png, whose
+ * layout rule is written on the sketch itself: one strong headline, one useful
+ * visual, integrations supporting the story.
+ *
+ * That reverses the previous composition. The source tiles and assistant names
+ * used to stand between the introduction and the evidence; they now sit under
+ * the report as two quiet label rows, so the thing a visitor came to see
+ * arrives first.
+ *
+ * Sequence:
+ *   1  introduction — headline left, supporting copy and CTA right
+ *   2  four selectors and one prominent report
+ *   3  compact data-source and assistant labels
+ *   4  A simple working relationship: Connect, Investigate, Review
+ *   5  two disclosures and the closing action, on one line
+ *
+ * The outcomes row is gone. It repeated the four example categories directly
+ * under the four example tabs, which the brief called out.
+ */
+
+const title = 'Automation — E2E Apps';
+const description =
+  'Connect Google Ads, GA4, AdMob and RevenueCat, ask a business question, and get an answer with the source figures attached. Reporting and investigation; account changes are agreed before anything runs.';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Base title={title} description={description} path="/automation">
+  <div class="page">
+    <Nav />
+
+    <main id="main">
+      {/* ------------------------------------------------ 1 · introduction */}
+      <section class="section section--lead" data-section="automation-intro">
+        <div class="wrap">
+          <div class="intro">
+            <div class="intro__lede">
+              <p class="eyebrow eyebrow--amber">AI reporting &amp; automation</p>
+              <h1 class="intro__h1">See what changed.<br />Know what to check.</h1>
+            </div>
+
+            <div class="intro__aside">
+              <p class="intro__copy">
+                Connect your growth data. Get answers with the source figures attached.
+              </p>
+              <a href={`${base}/#contact`} class="btn-primary">
+                Discuss your setup
+                <Icon name="arrow-up-right" size={14} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --------------------------------------------- 2 · the evidence --- */}
+      <section class="section section--tight" data-section="automation-report">
+        <div class="wrap">
+          <Investigation headingId="demo" />
+
+          {/* 3 · integrations, supporting the story rather than fronting it */}
+          <dl class="labels">
+            <div class="labels__row">
+              <dt>Data sources</dt>
+              <dd>{SOURCES.map((s) => s.name).join(' · ')}</dd>
+            </div>
+            <div class="labels__row">
+              <dt>Assistant options</dt>
+              <dd>{ASSISTANTS.map((a) => a.name).join(' · ')}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {/* --------------------------------------------- 4 · how we work ---- */}
+      <section class="section" data-section="automation-process">
+        <div class="wrap">
+          <h2 class="work__h2">A simple working relationship.</h2>
+
+          <ol class="steps">
+            {
+              STEPS.map((s) => (
+                <li class="step">
+                  <span class="step__n">{s.n}</span>
+                  <span class="step__title">{s.title}</span>
+                  <p class="step__body">{s.body}</p>
+                </li>
+              ))
+            }
+          </ol>
+
+          {/* 5 · the detail, and the one action, on a single closing line */}
+          <div class="close">
+            {
+              DISCLOSURES.map((d) => (
+                <details class="close__item">
+                  <summary>{d.label}</summary>
+                  <div class="close__body">
+                    {d.body.map((para) => (
+                      <p>{para}</p>
+                    ))}
+                  </div>
+                </details>
+              ))
+            }
+
+            <a href={`${base}/#contact`} class="close__cta">
+              Discuss your setup
+              <Icon name="arrow-up-right" size={14} />
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  /* The report follows the introduction directly, so this section does not
+     restate a full section gap on top of the one above it. */
+  .section--tight {
+    padding-top: 0;
+  }
+
+  /* --- 1 · introduction ---------------------------------------------------- */
+
+  .intro {
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: end;
+  }
+
+  @media (min-width: 900px) {
+    .intro {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: var(--s16);
+    }
+  }
+
+  .intro__h1 {
+    margin-top: var(--s4);
+    font-size: clamp(34px, 4.2vw, 56px);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+    color: var(--color-text);
+    /* On the h1, not on a 16px ancestor: a ch measure resolves against the
+       element's own font size, and setting it on the container wrapped two
+       authored lines onto five. */
+    max-width: 18ch;
+  }
+
+  .intro__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s8);
+    min-width: 0;
+  }
+
+  .intro__copy {
+    margin: 0;
+    max-width: 34ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  /* --- 3 · integration labels ---------------------------------------------- */
+
+  .labels {
+    margin: var(--s12) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .labels__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s3) var(--s8);
+  }
+
+  .labels dt {
+    flex: none;
+    min-width: 10em;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .labels dd {
+    margin: 0;
+    font-size: var(--t-card);
+    color: var(--color-text-2);
+  }
+
+  /* --- 4 · how we work ----------------------------------------------------- */
+
+  .work__h2 {
+    font-size: var(--t-h2-card);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2-card);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .steps {
+    list-style: none;
+    margin: var(--s12) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s8);
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  }
+
+  .step {
+    min-width: 0;
+  }
+
+  .step__n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-accent);
+  }
+
+  .step__title {
+    display: block;
+    margin-top: var(--s3);
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .step__body {
+    margin-top: var(--s4);
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  /* --- 5 · closing line ---------------------------------------------------- */
+
+  .close {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--s6) var(--s12);
+    margin-top: var(--s16);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .close__item {
+    flex: 1 1 18em;
+    min-width: 0;
+  }
+
+  .close__item summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-text-3);
+    list-style: none;
+  }
+
+  .close__item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .close__item summary::after {
+    content: '+';
+    margin-left: 0.4em;
+    color: var(--color-accent);
+  }
+
+  .close__item[open] summary::after {
+    content: ' \2212';
+  }
+
+  .close__item[open] summary {
+    color: var(--color-text);
+  }
+
+  .close__item summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .close__body p {
+    margin: 0 0 var(--s4);
+    max-width: 70ch;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-4);
+  }
+
+  .close__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s3);
+    min-height: 44px;
+    margin-left: auto;
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .close__cta:hover {
+    color: var(--color-accent-hover);
+  }
+
+  @media (max-width: 640px) {
+    .close__cta {
+      margin-left: 0;
+    }
+  }
+</style>

@@ -8,18 +8,11 @@ interface Props {
   description: string;
   /** Path relative to the site root, e.g. "/privacy". Used for the canonical URL. */
   path?: string;
-  /** Suppress indexing — used by 404. */
+  /** Suppress indexing — used by 404 and by the internal review pages. */
   noindex?: boolean;
 }
 
 const { title, description, path = '/', noindex = false } = Astro.props;
-
-/* SITE_PREVIEW=1 marks a branch build served alongside the live site. Every
-   page in it is noindex,nofollow: a second full copy of the site competing in
-   search would be a real SEO problem, not a cosmetic one. Build-time only, so
-   process.env is the right read here. */
-const isPreview = process.env.SITE_PREVIEW === '1';
-const blockIndexing = noindex || isPreview;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const asset = (p: string) => `${base}${p}`;
@@ -57,7 +50,7 @@ const LATIN =
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {blockIndexing && <meta name="robots" content={isPreview ? 'noindex, nofollow' : 'noindex, follow'} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="E2E Apps" />
@@ -76,6 +69,7 @@ const LATIN =
         Safari still wants apple-touch-icon by name. All generated from the one
         mark by scripts/build-icons.mjs. */}
     <link rel="icon" href={asset('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={asset('/favicon-48.png')} sizes="48x48" type="image/png" />
     <link rel="icon" href={asset('/favicon-32.png')} sizes="32x32" type="image/png" />
     <link rel="icon" href={asset('/favicon-16.png')} sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} sizes="180x180" />
@@ -145,6 +139,13 @@ const LATIN =
   </head>
 
   <body>
+    {/* First thing in the tab order on every route. A landmark is only half the
+        fix: it lets assistive technology jump to the content, but a sighted
+        keyboard user still has to tab through the whole nav on every page. The
+        link is invisible until it is focused, and then it has to be visible —
+        a skip link that stays hidden while focused is the classic broken one. */}
+    <a href="#main" class="skip-link">Skip to content</a>
+
     <slot />
     <ConsentBanner />
 

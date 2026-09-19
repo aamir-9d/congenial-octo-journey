@@ -34,14 +34,37 @@ const findings = [
     short: 'Months of spend in countries that mathematically could not break even.',
   },
 ];
+
+/**
+ * `nested` folds this into the case-study movement rather than standing it up
+ * as its own section. The visual revision's finding was that a separate Proof
+ * section delayed the automation capability by a full screen, and that three
+ * one-line findings read better as the tail of the engagement shown in full
+ * than as a second credibility section before it.
+ *
+ * Nested, it renders a plain <div> with an h3: no <section>, no centred
+ * section-head, and no second landmark inside the case study's own.
+ */
+interface Props {
+  nested?: boolean;
+}
+
+const { nested = false } = Astro.props;
+
 ---
 
-<section class="section" data-section="proof">
+<section class:list={['section', { 'proof--nested': nested }]} data-section="proof">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow eyebrow--amber">WHAT THE AUDITS TURN UP</div>
-      <h2 class="proof__h2">Three findings, from real audits.</h2>
-    </div>
+    {
+      nested ? (
+        <h3 class="proof__h3" data-reveal="1">Three more, from other audits.</h3>
+      ) : (
+        <div class="section-head" data-reveal="1">
+          <div class="eyebrow eyebrow--amber">WHAT THE AUDITS TURN UP</div>
+          <h2 class="proof__h2">Three findings, from real audits.</h2>
+        </div>
+      )
+    }
 
     <div class="proof__grid">
       {
@@ -70,6 +93,29 @@ const findings = [
 </section>
 
 <style>
+  /* `nested` keeps this a sibling of the case study in the DOM -- it cannot
+     live inside it, because that section is marked data-added and the copy
+     parity check strips such blocks whole, taking this signed-off copy with it.
+     
+     So the two read as one movement through spacing instead: no section padding
+     on top, and a hairline where the beat falls. */
+  .proof--nested {
+    padding-top: 0;
+  }
+
+  .proof--nested .wrap {
+    padding-top: var(--s12);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .proof__h3 {
+    margin-bottom: var(--s12);
+    font-size: var(--t-h3-sm);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
 
   .proof__h2 {
     margin-top: 16px;
