@@ -1,0 +1,535 @@
+---
+import { EXAMPLES, SOURCES } from '../data/automation.ts';
+
+/**
+ * The investigation canvas.
+ *
+ * Three connected sources feed a Claude investigation; the investigation
+ * produces a question, a chart, two findings and a next check. Three selectors
+ * switch the whole state, not just an active colour.
+ *
+ * ── Why it is built in HTML and SVG rather than shipped as an image ──────
+ *
+ * The audit asked for a demonstration whose labels stay crisp and whose mobile
+ * arrangement genuinely changes. A PNG can do neither: it blurs when scaled,
+ * it cannot reflow from a left-to-right flow into a vertical stack, and its
+ * text is invisible to a screen reader and unselectable. So the diagram is
+ * real markup, and the phone layout is a different arrangement rather than the
+ * same picture made smaller.
+ *
+ * ── On the platform marks ───────────────────────────────────────────────
+ *
+ * The brief asked for official Google Ads, AdMob, RevenueCat and Claude marks.
+ * Those are third-party trademarks, their SVGs are not in this repository, and
+ * each carries its own usage terms — so this ships text labels on neutral nodes
+ * in the E2E palette instead. Dropping the real marks in is a small change once
+ * the approved assets and permission exist; inventing approximations of other
+ * companies' logos is not something to do on a page about accuracy.
+ *
+ * ── Without JavaScript ──────────────────────────────────────────────────
+ *
+ * All three panels render. The first is visible, the others carry `hidden`, and
+ * the selectors are real buttons. With scripting off a visitor sees a complete,
+ * labelled example rather than an empty frame — which is the same standard the
+ * rest of this site holds to.
+ */
+
+interface Props {
+  /** Heading level, so the canvas can sit under an h1 or an h2. */
+  headingId?: string;
+}
+
+const { headingId = 'investigation' } = Astro.props;
+
+/** Bar geometry. The chart is 5-7 bars; anything denser stops being readable. */
+const CHART_W = 520;
+const CHART_H = 104;
+---
+
+<div class="inv" data-investigation>
+  {/* --- the connected sources ------------------------------------------- */}
+  <div class="inv__flow">
+    <ul class="inv__sources" aria-label="Connected sources">
+      {
+        SOURCES.map((s) => (
+          <li class="src">
+            <span class="src__dot" aria-hidden="true"></span>
+            <span class="src__text">
+              <span class="src__name">{s.name}</span>
+              <span class="src__note">{s.note}</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="inv__join" aria-hidden="true">
+      <svg viewBox="0 0 64 120" preserveAspectRatio="none" focusable="false">
+        <path d="M0 20 C 40 20, 34 60, 64 60" fill="none" stroke="currentColor" stroke-width="1"></path>
+        <path d="M0 60 H 64" fill="none" stroke="currentColor" stroke-width="1"></path>
+        <path d="M0 100 C 40 100, 34 60, 64 60" fill="none" stroke="currentColor" stroke-width="1"></path>
+      </svg>
+    </div>
+
+    <div class="inv__engine">
+      <span class="inv__engine-label">Claude</span>
+      <span class="inv__engine-note">reads all three, reconciles, explains</span>
+    </div>
+  </div>
+
+  {/* --- the selectors ---------------------------------------------------- */}
+  <div class="inv__tabs" role="tablist" aria-label="Example investigations">
+    {
+      EXAMPLES.map((e, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`${headingId}-tab-${e.id}`}
+          class="tab"
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`${headingId}-panel-${e.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={e.id}
+        >
+          {e.tab}
+        </button>
+      ))
+    }
+  </div>
+
+  {/* --- one panel per state ---------------------------------------------- */}
+  {
+    EXAMPLES.map((e, i) => {
+      const max = Math.max(...e.chart.points.map((p) => p.v));
+      const n = e.chart.points.length;
+      const gap = 10;
+      const bw = (CHART_W - gap * (n - 1)) / n;
+
+      return (
+        <div
+          role="tabpanel"
+          id={`${headingId}-panel-${e.id}`}
+          aria-labelledby={`${headingId}-tab-${e.id}`}
+          class="panel"
+          data-panel={e.id}
+          hidden={i !== 0}
+          tabindex="0"
+        >
+          <p class="panel__q">{e.question}</p>
+
+          <figure class="panel__chart">
+            <figcaption class="chart__cap">
+              {e.chart.label}
+              <span class="chart__sample">Sample data</span>
+            </figcaption>
+
+            <svg
+              viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+              role="img"
+              preserveAspectRatio="none"
+              aria-label={`${e.chart.label}. ${e.chart.points.map((p) => `${p.note} ${e.chart.prefix ?? ''}${p.v.toLocaleString('en-US')}`).join(', ')}.`}
+            >
+              <line
+                x1="0"
+                y1={CHART_H}
+                x2={CHART_W}
+                y2={CHART_H}
+                stroke="var(--chart-axis)"
+                stroke-width="1"
+                vector-effect="non-scaling-stroke"
+              />
+              {e.chart.points.map((p, bi) => {
+                const h = Math.round((CHART_H * p.v) / max);
+                return (
+                  <rect
+                    x={bi * (bw + gap)}
+                    y={CHART_H - h}
+                    width={bw}
+                    height={h}
+                    rx="2"
+                    fill={bi === e.chart.focus ? 'var(--color-accent)' : 'var(--chart-bar-dim)'}
+                  />
+                );
+              })}
+            </svg>
+
+            {/* Axis labels are HTML, not SVG <text>.
+                
+                Inside the SVG they scale with the viewBox: at 390px the 520-unit
+                box renders about two thirds size, so an 11px label arrives at
+                roughly 7px and stops being readable. As HTML they stay the size
+                the type scale says, at every width -- and they are selectable
+                and translatable, which SVG text is not. */}
+            <ul class="chart__ticks">
+              {e.chart.points.map((p, bi) => (
+                <li class:list={['tick', { 'tick--focus': bi === e.chart.focus }]}>
+                  <span class="tick__val">
+                    {`${e.chart.prefix ?? ''}${p.v.toLocaleString('en-US')}${e.chart.unit}`}
+                  </span>
+                  <span class="tick__note">{p.note}</span>
+                </li>
+              ))}
+            </ul>
+          </figure>
+
+          <p class="panel__finding">{e.findings[0]}</p>
+          <p class="panel__qualify">{e.findings[1]}</p>
+
+          <p class="panel__next">
+            <span class="panel__next-label">Next check</span>
+            {e.next}
+          </p>
+
+          <p class="panel__limit">{e.limit}</p>
+
+          <p class="panel__foot">
+            <span>{e.sources.join(' · ')}</span>
+            <span>{e.period}</span>
+            <span class="panel__foot-tag">Example workflow</span>
+          </p>
+        </div>
+      );
+    })
+  }
+</div>
+
+<script>
+  import { initInvestigation } from '../scripts/investigation';
+  initInvestigation();
+</script>
+
+<style>
+  .inv {
+    background: var(--color-surface);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--ring);
+    padding: var(--s8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s8);
+    min-width: 0;
+  }
+
+  /* --- sources → engine --------------------------------------------------- */
+
+  .inv__flow {
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+
+  /* The left-to-right flow only exists where there is room for it. Below this
+     the connector is dropped entirely rather than squeezed — a 64px tangle of
+     curves at phone width reads as decoration, not as a diagram. */
+  @media (min-width: 620px) {
+    .inv__flow {
+      grid-template-columns: minmax(0, 1fr) 64px minmax(0, 0.9fr);
+    }
+  }
+
+  .inv__sources {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .src {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s4);
+    min-width: 0;
+  }
+
+  .src__dot {
+    flex: none;
+    width: 9px;
+    height: 9px;
+    margin-top: 5px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .src__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .src__name {
+    font-size: var(--t-card);
+    font-weight: var(--fw-medium);
+    color: var(--color-text);
+  }
+
+  .src__note {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  .inv__join {
+    display: none;
+    color: var(--color-line-hover);
+  }
+
+  @media (min-width: 620px) {
+    .inv__join {
+      display: block;
+      height: 96px;
+    }
+
+    .inv__join svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .inv__engine {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--s4) var(--s6);
+    border-radius: var(--radius-card);
+    background: var(--color-surface-sunk);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .inv__engine-label {
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
+  }
+
+  .inv__engine-note {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+  }
+
+  /* --- selectors ---------------------------------------------------------- */
+
+  .inv__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .tab {
+    min-height: 44px;
+    padding: 0 var(--s6);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    box-shadow: 0 0 0 1px var(--color-line-strong);
+    font-family: var(--font-body);
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition:
+      color 160ms var(--ease-out-soft),
+      background 160ms var(--ease-out-soft);
+  }
+
+  .tab:hover {
+    color: var(--color-text);
+  }
+
+  .tab[aria-selected='true'] {
+    color: var(--color-accent);
+    background: var(--color-accent-dim);
+    box-shadow: var(--ring-accent);
+  }
+
+  /* --- one state ---------------------------------------------------------- */
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    min-width: 0;
+  }
+
+  /* `display: flex` beats the UA sheet's `[hidden] { display: none }`, so
+     without this every state renders at once and the selectors appear to do
+     nothing. The markup was correct and the page was wrong -- which is why the
+     markup tests all passed while three panels stacked up on a phone. */
+  .panel[hidden] {
+    display: none;
+  }
+
+  .panel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .panel__q {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  .panel__chart {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .chart__cap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  /* Sample data is labelled where the chart is, not in a footnote. */
+  .chart__sample {
+    padding: 2px 7px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunk);
+    color: var(--color-text-3);
+    text-transform: none;
+    letter-spacing: var(--ls-chip);
+  }
+
+  /* A fixed render height with preserveAspectRatio="none": the bars are a
+     proportion comparison, so stretching them horizontally costs nothing, and a
+     fixed height stops the chart collapsing to a sliver at phone width. */
+  .panel__chart svg {
+    display: block;
+    width: 100%;
+    height: 104px;
+  }
+
+  .chart__ticks {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    margin: var(--s3) 0 0;
+    padding: 0;
+  }
+
+  .tick {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    text-align: center;
+  }
+
+  .chart__ticks {
+    align-items: start;
+  }
+
+  .tick__note {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    line-height: var(--lh-snug);
+    color: var(--color-text-4);
+    overflow-wrap: anywhere;
+  }
+
+  .tick__val {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-3);
+  }
+
+  .tick--focus .tick__note,
+  .tick--focus .tick__val {
+    color: var(--color-accent);
+  }
+
+  .panel__finding {
+    margin: 0;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text);
+    text-wrap: balance;
+  }
+
+  .panel__qualify,
+  .panel__limit {
+    margin: 0;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  .panel__limit {
+    padding-top: var(--s4);
+    border-top: 1px solid var(--color-line-soft);
+    color: var(--color-text-4);
+  }
+
+  .panel__next {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s4);
+    margin: 0;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .panel__next-label {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent);
+    padding-top: 2px;
+  }
+
+  .panel__foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3) var(--s6);
+    margin: 0;
+    padding-top: var(--s4);
+    border-top: 1px solid var(--color-line-soft);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .panel__foot-tag {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .inv {
+      padding: var(--s6);
+      gap: var(--s6);
+    }
+
+    .tab {
+      flex: 1 1 auto;
+      padding: 0 var(--s4);
+    }
+  }
+</style>

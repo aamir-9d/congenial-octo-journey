@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import Proof from '../components/Proof.astro';
 import Calculator from '../components/Calculator.astro';
 import Automation from '../components/Automation.astro';
-import Proof from '../components/Proof.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
 import Founders from '../components/Founders.astro';
@@ -30,9 +30,10 @@ import Schema from '../components/Schema.astro';
  *
  *   Hero        the claim, one action, and one real result beside it
  *   Calculator  prove it with your own numbers, at position two
- *   CaseStudy   one engagement shown all the way down
- *   Proof       three more findings, as the tail of that movement
- *   Automation  how the monitoring continues after the fix
+ *   CaseStudy   one engagement shown all the way down, with the three shorter
+ *               findings folded in as its tail rather than standing alone
+ *   Automation  what the monitoring looks like afterwards -- fourth, so it
+ *               arrives on the back of credible work rather than before it
  *   Loop        how the work is sequenced
  *   Founders    who you would actually be talking to
  *   Contact     the one action, again
@@ -60,7 +61,7 @@ const description =
       <Hero />
       <Calculator />
       <CaseStudy />
-      <Proof />
+      <Proof nested />
       <Automation />
       <Loop />
       <Founders />
