@@ -27,7 +27,7 @@
   --color-text: #e8eaed; /* 16.8:1 */
   --color-text-2: #a8aeb6; /*  8.6:1  body copy      */
   --color-text-3: #8e959e; /*  6.3:1  secondary      */
-  --color-text-4: #7c838d; /*  5.0:1  labels, meta   */
+  --color-text-4: #868d98; /*  4.8:1  labels, meta   */
 
   /* --- Brand accent — carried over from the cream site ------------------ */
   --color-accent: #e39a1f; /* 8.1:1 on --color-bg */

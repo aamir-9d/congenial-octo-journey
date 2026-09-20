@@ -354,8 +354,21 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
        of slack -- one longer word from wrapping. The mark alone carries the
        name here: the tile spells E2E, so nothing is lost by dropping the
        wordmark beside it. */
+    /* Clipped, not removed. `display: none` took the only text out of the
+       link, and the mark beside it is aria-hidden, so at this width the link
+       had no accessible name at all — Lighthouse's link-name failure, on
+       every page. Clipping keeps the name in the accessibility tree and out
+       of the layout. */
     .nav__bar .nav__logo span:not(.logo) {
-      display: none;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      clip-path: inset(50%);
     }
 
     /* :global because the mark is Logo.astro's own root element and carries

@@ -72,11 +72,26 @@ const PAIRS = [
   ['Secondary copy on surface', C.text3, C.surface, 'text'],
   ['Labels and meta on ground', C.text4, C.bg, 'text'],
   ['Labels and meta on surface', C.text4, C.surface, 'text'],
-  // Only text-2 and text-3 ever sit on the sunk surface — chips, tags and code
-  // blocks. Checking text-4 there would be auditing a pairing that does not
-  // exist, which is worse than not checking at all.
-  ['Chip label on sunk', C.text2, C.sunk, 'text'],
-  ['Code block on sunk', C.text3, C.sunk, 'text'],
+  /* The sunk surface, which is the hardest ground on the site.
+
+     This list used to say that only text-2 and text-3 ever sat here, and that
+     checking text-4 would be auditing a pairing that did not exist. That was a
+     claim about the markup, and the markup stopped honouring it: Automation's
+     sample/caption/source labels and the change-block labels are all text-4 on
+     sunk, at 4.22:1. This file reported a clean palette the whole time, because
+     it was only ever checking the pairings someone had remembered to list.
+
+     So every text token is checked against every ground now, whether or not
+     the design is believed to use that combination today. A pairing that does
+     not exist costs one line of output; a pairing that exists and is not
+     checked costs an accessibility failure nobody sees until CI. */
+  ['Body copy on sunk', C.text2, C.sunk, 'text'],
+  ['Secondary copy on sunk', C.text3, C.sunk, 'text'],
+  ['Labels and meta on sunk', C.text4, C.sunk, 'text'],
+  ['Body text on sunk', C.text, C.sunk, 'text'],
+  ['Body text on band', C.text, C.band, 'text'],
+  ['Secondary copy on band', C.text3, C.band, 'text'],
+  ['Labels and meta on band', C.text4, C.band, 'text'],
 
   // The pairing that failed seven times on the cream ground. Inverting the
   // ground is what resolved it — amber is 8.1:1 on #0E1014.
