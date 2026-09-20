@@ -183,6 +183,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     color: var(--color-text-2);
   }
 
+  /* Align the desktop copy and CTA with the report's outer right edge. */
+  @media (min-width: 900px) {
+    .intro__aside {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
   /* --- 3 · integration labels ---------------------------------------------- */
 
   .labels {
