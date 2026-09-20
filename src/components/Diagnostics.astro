@@ -84,7 +84,8 @@ const CHECKS = [
       </div>
 
       <p class="gaps__lead">
-        Follow the revenue, the purchase journey, and the economics behind your next decision.
+        Follow the revenue, the purchase journey,<br class="gaps__br" /> and the economics behind
+        your next decision.
       </p>
     </div>
 
@@ -169,10 +170,33 @@ const CHECKS = [
   .gaps__lead {
     /* The measure belongs on the element that owns the font size: in `ch` on
        the grid cell it would resolve against 16px and cut this to a third. */
-    max-width: 44ch;
+    max-width: 46ch;
     font-size: 17px;
     line-height: 1.65;
     color: var(--color-text-2);
+  }
+
+  /* The reference breaks this line after "journey,", leaving the second line
+     the longer of the two. No max-width can produce that: measured at 17px,
+     "and the economics behind your next decision." and "…the purchase
+     journey, and" are both 378px, so any width that fits the second line also
+     fits the extra word onto the first. The break has to be explicit.
+
+     Not the global .wide-only, which switches at 767px — this layout goes to
+     two columns at 900px, and between those widths the line is full width and
+     should wrap on its own. */
+  .gaps__br {
+    display: none;
+  }
+
+  /* 1120px, not the 900px the columns split at: below this the lead's own
+     column is narrower than the 378px its second line needs, so forcing the
+     break there buys a tidy first line and a ragged third. Let it wrap on its
+     own until there is room for the break to be an improvement. */
+  @media (min-width: 1120px) {
+    .gaps__br {
+      display: inline;
+    }
   }
 
   @media (min-width: 900px) {
@@ -223,16 +247,22 @@ const CHECKS = [
   }
 
   @media (min-width: 860px) {
+    /* Measured, not guessed. At 49px a side the longest description was 49px
+       short of one line and wrapped against its neighbours, which is the one
+       thing the reference is unambiguous about. A 1,280 container and 17px
+       body cannot hold both the reference's gutters and its single-line
+       descriptions, so the gutters give: the wrap is what the eye reads as
+       wrong, the gutter width is not. */
     .gaps__item + .gaps__item {
       margin-top: 0;
       padding-top: 0;
-      padding-left: clamp(28px, 3.4vw, 56px);
+      padding-left: clamp(14px, 1.4vw, 20px);
       border-top: 0;
       border-left: 1px solid var(--color-line-strong);
     }
 
     .gaps__item:not(:last-child) {
-      padding-right: clamp(28px, 3.4vw, 56px);
+      padding-right: clamp(14px, 1.4vw, 20px);
     }
   }
 
