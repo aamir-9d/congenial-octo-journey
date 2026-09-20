@@ -289,19 +289,26 @@ const CHECKS = [
   /* Outlined, and decorative. If a browser cannot stroke text it keeps the
      solid fill rather than rendering nothing — the @supports guard is what
      makes the transparent fill safe. */
+  /* Outlined, decorative, and light enough to actually be seen.
+
+     --color-line-strong is a border colour, 1.45:1 against the ground, and as
+     a 1.3px hairline on an 82px glyph it disappeared. A contrast ratio assumes
+     a solid fill; an outline covers a fraction of the glyph's area, so it
+     reads far lighter than the number implies. --color-text-4 at 5.69:1 fill
+     lands about right as a stroke — present, still well under the title. */
   .gaps__n {
     font-family: var(--font-heading);
     font-size: clamp(56px, 6.4vw, 82px);
     font-weight: var(--fw-bold);
     line-height: 0.9;
     letter-spacing: 0.01em;
-    color: var(--color-line-strong);
+    color: var(--color-line-hover);
   }
 
   @supports (-webkit-text-stroke: 1px currentColor) {
     .gaps__n {
       color: transparent;
-      -webkit-text-stroke: 1.3px var(--color-line-strong);
+      -webkit-text-stroke: 1.5px var(--color-text-4);
     }
   }
 
