@@ -20,6 +20,31 @@ import { computePayback, validate, crossingLabel, SEARCH_MAX } from '../src/scri
 
 const S = (o: Partial<CalcState> = {}): CalcState => ({ ...INITIAL_STATE, ...o });
 
+/**
+ * Compare a computed figure to a recorded one.
+ *
+ * NOT strict equality, and the distinction matters. The ad model sums 365
+ * terms of Math.pow(d, -b), and Math.pow is not required by IEEE-754 to be
+ * correctly rounded — V8's result can differ by one unit in the last place
+ * between platforms and versions. Asserting the exact double meant this suite
+ * passed on the machine the literal was captured on and failed everywhere
+ * else, which is what it did: 0.5921476457773432 on Windows/Node 24,
+ * 0.5921476457773431 on Linux/Node 22.
+ *
+ * 1e-12 is eleven orders of magnitude tighter than anything displayed — the
+ * page shows cents and one decimal place of a percentage — so this still
+ * catches any real drift in the engine while surviving the last bit.
+ *
+ * Engine-to-engine comparisons inside one process stay strictly equal: there
+ * the point is to prove this layer reads the engine rather than reimplementing
+ * it, and any difference at all would be a reimplementation.
+ */
+const near = (actual: number, expected: number, what: string) =>
+  assert.ok(
+    Math.abs(actual - expected) < 1e-12,
+    `${what}: expected ~${expected}, got ${actual} (drift ${Math.abs(actual - expected)})`,
+  );
+
 /* --- 1. the engine's numbers, unchanged ---------------------------------- */
 
 test('the subscription example still reports the validated figures', () => {
@@ -27,9 +52,9 @@ test('the subscription example still reports the validated figures', () => {
 
   assert.equal(p.blocked, false);
   assert.deepEqual(p.crossing, { kind: 'within', day: 277 }, 'breakeven day 277 moved');
-  assert.equal(p.revenueAt, 1.3188269725306383, 'revenue per install moved');
-  assert.equal(p.surplusAt, 0.11882697253063834, 'surplus per install moved');
-  assert.equal(p.roas, 1.0990224771088652, 'revenue/spend moved');
+  near(p.revenueAt, 1.3188269725306383, 'revenue per install');
+  near(p.surplusAt, 0.11882697253063834, 'surplus per install');
+  near(p.roas!, 1.0990224771088652, 'revenue/spend');
 });
 
 test('the 85% -> 90% renewal comparison still moves payback by exactly 90 days', () => {
@@ -40,17 +65,17 @@ test('the 85% -> 90% renewal comparison still moves payback by exactly 90 days',
   assert.equal(better.crossing.kind, 'within');
   assert.equal((base.crossing as { day: number }).day, 277);
   assert.equal((better.crossing as { day: number }).day, 187);
-  assert.equal(better.revenueAt, 1.6549265889078835);
-  assert.equal(better.roas, 1.3791054907565696);
+  near(better.revenueAt, 1.6549265889078835, 'revenue per install at 90% renewal');
+  near(better.roas!, 1.3791054907565696, 'revenue/spend at 90% renewal');
 });
 
 test('the ad example still reports the validated figures', () => {
   const p = computePayback(S({ mode: 'ad' }), 365);
 
   assert.deepEqual(p.crossing, { kind: 'within', day: 122 }, 'ad breakeven day 122 moved');
-  assert.equal(p.revenueAt, 0.5921476457773432);
-  assert.equal(p.surplusAt, 0.24214764577734327);
-  assert.equal(p.roas, 1.691850416506695);
+  near(p.revenueAt, 0.5921476457773432, 'ad revenue per install');
+  near(p.surplusAt, 0.24214764577734327, 'ad surplus per install');
+  near(p.roas!, 1.691850416506695, 'ad revenue/spend');
 });
 
 test('every point on the curve is the engine value minus acquisition cost', () => {
