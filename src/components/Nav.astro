@@ -148,7 +148,8 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     display: flex;
     align-items: center;
     gap: clamp(16px, 3vw, 40px);
-    max-width: var(--wrap);
+    /* Match section content edges: this box also includes both side gutters. */
+    max-width: calc(var(--wrap) + 2 * var(--gutter));
     margin: 0 auto;
     padding: 14px var(--gutter);
   }
