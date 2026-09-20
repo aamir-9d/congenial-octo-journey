@@ -1,453 +1,350 @@
 ---
-import Icon from './Icon.astro';
-
 /**
- * "01 / Where we look" — one worked example, then the other two checks.
+ * "01 / Find the gaps" — three checks as open editorial columns.
  *
- * Rebuilt to docs/design-explorations/diagnostics-hierarchy-{desktop,mobile}.png,
- * which give this section the same shape as Automation: copy and one clear
- * action on the left, a single framed visual with one focal point on the right.
+ * Rebuilt to the approved reference: a left-aligned header with the supporting
+ * line set against it on the right, then three equal columns divided by
+ * hairlines. No cards, no panels, no fills — the columns are held apart by
+ * rules and whitespace alone.
  *
- * The previous version was three rows of equal weight. Three equal things ask
- * the reader to choose, and none of them was shown — only named. So this leads
- * with one check drawn out in full and lets the other two sit quieter under a
- * divider, still linked and still reachable.
+ * ── Palette ──────────────────────────────────────────────────────────────
  *
- * The bento this replaced is not deleted: /services renders it in full, which
- * is where every link here goes.
+ * The brief lists hex values; they are within a shade of the site's own
+ * tokens, so the tokens are what ship. #2C333D is --color-line-strong to the
+ * eye, #F5AD25 is --color-accent, and so on down the list. Introducing a
+ * second near-identical palette would be drift, and `tests/tokens.test.ts`
+ * exists to catch exactly that.
  *
- * ── The diagram is an explanation, not a reading ─────────────────────────
+ * ── The icons are drawn here, not vendored ───────────────────────────────
  *
- * First payment / Renewals / Refunds carries no figures and is not campaign
- * data. It is the shape of the arithmetic, so the amber on Renewals marks the
- * term people forget to count rather than a measured quantity. The steps are
- * static text and are deliberately not styled as controls: nothing there is
- * clickable, and making it look clickable would promise an interaction that
- * does not exist.
+ * The site's icon set is Phosphor, filled, and has no bars, node tree or
+ * globe in it. The reference draws all three as thin outlines, which is a
+ * different weight from the vendored set anyway, so they are authored here as
+ * plain geometry — rectangles, circles and arcs. That keeps the change inside
+ * this section and avoids inventing path data for glyphs I would be
+ * transcribing from memory.
  *
- * All copy here is new, from the approved composition, so the section root
- * carries `data-added` — the copy-parity check lifts it out whole and goes on
- * comparing the export's own strings, which ship in full on /services.
+ * Numbers and icons are decorative and hidden from assistive technology: each
+ * column is already named by its own heading, and "01" announced before it
+ * would be noise.
+ *
+ * All copy here is new, so the section root carries `data-added` — the
+ * copy-parity check lifts it out whole and goes on comparing the export's own
+ * strings, which ship in full on /services.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const services = `${base}/services`;
 
-/** The worked example. Qualitative: a sign and a name, never a number. */
-const FLOW = [
-  { sign: '+', name: 'First payment', note: 'The starting point', lead: false },
-  { sign: '+', name: 'Renewals', note: 'Value over time', lead: true },
-  { sign: '−', name: 'Refunds', note: 'Subtract returns', lead: false },
-];
+/** Line icons, 24×24, stroked with currentColor so the amber comes from CSS. */
+const ICONS: Record<string, string> = {
+  bars: `
+    <rect x="3"  y="14" width="4" height="7"  rx="1" />
+    <rect x="10" y="9"  width="4" height="12" rx="1" />
+    <rect x="17" y="4"  width="4" height="17" rx="1" />`,
+  nodes: `
+    <circle cx="12" cy="5"  r="2.6" />
+    <circle cx="5"  cy="19" r="2.6" />
+    <circle cx="19" cy="19" r="2.6" />
+    <path d="M12 7.6 v3.4 M5 16.4 v-2.2 a1.2 1.2 0 0 1 1.2-1.2 h11.6 a1.2 1.2 0 0 1 1.2 1.2 v2.2" />`,
+  globe: `
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12 h18" />
+    <path d="M12 3 a13 13 0 0 1 0 18 a13 13 0 0 1 0 -18 z" />`,
+};
 
-/** The two checks that sit under the divider. */
-const MORE = [
+const CHECKS = [
+  {
+    n: '01',
+    icon: 'bars',
+    title: 'Revenue after install',
+    desc: 'Count renewals, refunds and server events.',
+  },
   {
     n: '02',
+    icon: 'nodes',
     title: 'The route to purchase',
-    desc: 'Where do installs stop becoming trials and paying customers?',
+    desc: 'Find where installs stop becoming customers.',
   },
   {
     n: '03',
+    icon: 'globe',
     title: 'Economics by market',
-    desc: 'Does retention and monetisation support the acquisition cost?',
+    desc: 'Know which markets can support your spend.',
   },
 ];
 ---
 
 <section id="services" class="section" data-section="diagnostics" data-added="redesign">
   <div class="wrap">
-    <div class="dg">
-      <div class="dg__copy" data-reveal="1">
-        <p class="eyebrow eyebrow--amber">01 / Where we look</p>
-
-        <h2 class="dg__h2">Find the gap.<br />Follow the money.</h2>
-
-        <p class="dg__body">
-          We trace the revenue, the purchase journey and the economics behind your next spending
-          decision.
-        </p>
-
-        <a href={services} class="btn-primary dg__cta">
-          Explore the checks
-          <Icon name="arrow-up-right" size={14} />
-        </a>
-
-        <p class="dg__support">Three checks. One connected picture.</p>
+    <div class="gaps__head" data-reveal="1">
+      <div>
+        <p class="eyebrow eyebrow--amber gaps__eyebrow">01 / Find the gaps</p>
+        <h2 class="gaps__h2">Three checks.<br />One connected picture.</h2>
       </div>
 
-      <div class="dg__panel" data-reveal="1">
-        <p class="dg__meta">
-          <span class="dg__kicker">Example check</span>
-          <span class="dg__index">01 / Revenue</span>
-        </p>
-
-        <div>
-          <h3 class="dg__title">Revenue after install</h3>
-          <p class="dg__desc">Renewals, refunds and server events.</p>
-        </div>
-
-        <div class="dg__rule" role="presentation"></div>
-
-        {/* Static. Not a control, and styled so it does not read as one. */}
-        <ol class="dg__flow">
-          {
-            FLOW.map((f) => (
-              <li class:list={['dg__step', { 'dg__step--lead': f.lead }]}>
-                <span class="dg__step-name">{f.name}</span>
-                <span class="dg__step-foot">
-                  <span
-                    class:list={['dg__sign', { 'dg__sign--minus': f.sign === '−' }]}
-                    aria-hidden="true"
-                  >
-                    {f.sign}
-                  </span>
-                  <span class="dg__step-note">{f.note}</span>
-                </span>
-              </li>
-            ))
-          }
-        </ol>
-
-        <div>
-          <p class="dg__decision-label">The decision</p>
-          <p class="dg__decision-text">Count the revenue before judging the campaign.</p>
-        </div>
-
-        <div class="dg__rule" role="presentation"></div>
-
-        <ul class="dg__more">
-          {
-            MORE.map((m) => (
-              <li class="dg__more-item">
-                <a class="dg__more-link" href={services}>
-                  <span class="dg__more-n">{m.n}</span>
-                  <span class="dg__more-title">
-                    {m.title}
-                    <Icon name="arrow-up-right" size={13} />
-                  </span>
-                  <span class="dg__more-desc">{m.desc}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
+      <p class="gaps__lead">
+        Follow the revenue, the purchase journey, and the economics behind your next decision.
+      </p>
     </div>
 
-    {/* A quiet handover to the section that does the arithmetic. */}
-    <div class="dg__next" data-reveal="1">
-      <p class="dg__next-label">Next / Test the economics</p>
-      <p class="dg__next-text">See when acquisition spend comes back.</p>
-      <a class="dg__next-link" href="#payback">
+    <ol class="gaps__list" data-reveal="2">
+      {
+        CHECKS.map((c) => (
+          <li class="gaps__item">
+            <div class="gaps__mark">
+              <span class="gaps__n" aria-hidden="true">
+                {c.n}
+              </span>
+              <svg
+                class="gaps__icon"
+                viewBox="0 0 24 24"
+                width="38"
+                height="38"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                focusable="false"
+                set:html={ICONS[c.icon]}
+              />
+            </div>
+
+            <h3 class="gaps__title">{c.title}</h3>
+            <p class="gaps__desc">{c.desc}</p>
+
+            <a class="gaps__link" href={services}>
+              Learn more
+              <span class="gaps__arrow" aria-hidden="true">&#8594;</span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+
+    {/* A quiet handover to the section that does the arithmetic. Kept from the
+        previous composition: it is the only route from here to the payback
+        model, and the reference neither shows nor removes it. */}
+    <div class="gaps__next" data-reveal="2">
+      <p class="gaps__next-label">Next / Test the economics</p>
+      <p class="gaps__next-text">See when acquisition spend comes back.</p>
+      <a class="gaps__next-link" href="#payback">
         Explore the payback model
-        <span class="dg__next-arrow" aria-hidden="true">&#8595;</span>
+        <span class="gaps__next-arrow" aria-hidden="true">&#8595;</span>
       </a>
     </div>
   </div>
 </section>
 
 <style>
-  /* Same shape as Automation: copy left, one framed visual right, tops aligned.
-     42/58 in favour of the panel, which is where the focal point is. */
-  .dg {
+  /* --- header --------------------------------------------------------------- */
+
+  .gaps__head {
     display: grid;
-    gap: var(--s12);
+    gap: var(--s6);
     grid-template-columns: minmax(0, 1fr);
-    align-items: start;
   }
 
   @media (min-width: 900px) {
-    .dg {
-      grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+    .gaps__head {
+      grid-template-columns: minmax(0, 58fr) minmax(0, 42fr);
       gap: var(--s16);
+      align-items: start;
     }
   }
 
-  .dg__copy {
-    min-width: 0;
+  .gaps__eyebrow {
+    margin-bottom: var(--s6);
   }
 
-  .dg__h2 {
-    margin-top: var(--s4);
-    font-size: var(--t-h2);
-    line-height: var(--lh-h2);
+  .gaps__h2 {
+    font-size: clamp(32px, 4.2vw, 54px);
+    line-height: 1.1;
     letter-spacing: var(--ls-h2);
     color: var(--color-text);
   }
 
-  .dg__body {
-    margin-top: var(--s8);
-    /* The measure sits on the element that owns the font size. In `ch` on a
-       container it would resolve against 16px and cut this to a third. */
-    max-width: 42ch;
-    font-size: var(--t-section-lead);
-    line-height: var(--lh-body);
+  .gaps__lead {
+    /* The measure belongs on the element that owns the font size: in `ch` on
+       the grid cell it would resolve against 16px and cut this to a third. */
+    max-width: 44ch;
+    font-size: 17px;
+    line-height: 1.65;
     color: var(--color-text-2);
   }
 
-  .dg__cta {
-    margin-top: var(--s12);
+  @media (min-width: 900px) {
+    .gaps__lead {
+      /* Set against the heading, as drawn, rather than ranged left under it. */
+      justify-self: end;
+      text-align: right;
+      margin-top: 6px;
+    }
   }
 
-  .dg__support {
-    margin-top: var(--s6);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-4);
+  /* --- the three columns ---------------------------------------------------- */
+
+  .gaps__list {
+    list-style: none;
+    margin: clamp(48px, 6vw, 84px) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  /* --- the framed example -------------------------------------------------- */
+  @media (min-width: 860px) {
+    .gaps__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
 
-  .dg__panel {
+  .gaps__item {
     display: flex;
     flex-direction: column;
-    gap: var(--s6);
-    padding: var(--s8);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    align-items: flex-start;
     min-width: 0;
   }
 
-  .dg__meta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: var(--s3) var(--s6);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-  }
-
-  .dg__kicker {
-    color: var(--color-accent);
-  }
-
-  .dg__index {
-    color: var(--color-text-4);
-  }
-
-  .dg__title {
-    font-size: var(--t-h3);
-    line-height: var(--lh-h3);
-    letter-spacing: var(--ls-h3);
-    color: var(--color-text);
-  }
-
-  .dg__desc {
-    margin-top: 6px;
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
-
-  .dg__rule {
-    height: 1px;
-    background: var(--color-line);
-  }
-
-  /* --- the qualitative flow ------------------------------------------------ */
-
-  .dg__flow {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s4);
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  @media (min-width: 720px) {
-    .dg__flow {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--s6);
+  @media (min-width: 860px) {
+    .gaps__item {
+      height: 100%;
     }
   }
 
-  /* No pointer, no hover, no raised look: these are labels on a diagram, and
-     dressing them as controls would promise an interaction that is not there. */
-  .dg__step {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    gap: var(--s4);
-    padding: 14px var(--s6);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-sunk);
-    box-shadow: inset 0 0 0 1px var(--color-line);
-    min-width: 0;
+  /* Hairlines between the columns, and horizontal ones once they stack. No
+     boxes: the rule and the whitespace do the separating. */
+  .gaps__item + .gaps__item {
+    margin-top: clamp(36px, 5vw, 48px);
+    padding-top: clamp(36px, 5vw, 48px);
+    border-top: 1px solid var(--color-line-strong);
   }
 
-  @media (min-width: 720px) {
-    .dg__step {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 10px;
-      padding: var(--s6);
-    }
-  }
-
-  /* The term people forget to count, marked without shouting. */
-  .dg__step--lead {
-    box-shadow: inset 0 0 0 1px var(--color-accent);
-  }
-
-  .dg__step-name {
-    font-size: var(--t-card);
-    font-weight: var(--fw-semibold);
-    line-height: var(--lh-snug);
-    color: var(--color-text);
-  }
-
-  .dg__step-foot {
-    display: flex;
-    align-items: baseline;
-    gap: 9px;
-    margin-left: auto;
-    min-width: 0;
-  }
-
-  @media (min-width: 720px) {
-    .dg__step-foot {
-      margin-left: 0;
-    }
-  }
-
-  .dg__sign {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    font-weight: var(--fw-semibold);
-    line-height: 1;
-    color: var(--color-accent);
-  }
-
-  .dg__sign--minus {
-    color: var(--color-text-3);
-  }
-
-  .dg__step-note {
-    font-size: var(--t-body-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-3);
-  }
-
-  /* --- the decision -------------------------------------------------------- */
-
-  .dg__decision-label {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--color-accent);
-  }
-
-  .dg__decision-text {
-    margin-top: 8px;
-    max-width: 46ch;
-    font-size: var(--t-card);
-    font-weight: var(--fw-semibold);
-    line-height: var(--lh-card);
-    color: var(--color-text);
-  }
-
-  /* --- the other two checks ------------------------------------------------ */
-
-  .dg__more {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: var(--s4);
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  @media (min-width: 720px) {
-    .dg__more {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--s8);
-    }
-  }
-
-  .dg__more-item + .dg__more-item {
-    padding-top: var(--s4);
-    border-top: 1px solid var(--color-line);
-  }
-
-  @media (min-width: 720px) {
-    /* The divider turns vertical when the pair sits side by side, rather than
-       cutting across the row it no longer separates. */
-    .dg__more-item + .dg__more-item {
+  @media (min-width: 860px) {
+    .gaps__item + .gaps__item {
+      margin-top: 0;
       padding-top: 0;
-      padding-left: var(--s8);
+      padding-left: clamp(28px, 3.4vw, 56px);
       border-top: 0;
-      border-left: 1px solid var(--color-line);
+      border-left: 1px solid var(--color-line-strong);
+    }
+
+    .gaps__item:not(:last-child) {
+      padding-right: clamp(28px, 3.4vw, 56px);
     }
   }
 
-  /* These ARE links, and look like it. */
-  .dg__more-link {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: baseline;
-    gap: 6px var(--s4);
-    min-height: 44px;
-    padding: 4px 0;
-    text-decoration: none;
-    color: inherit;
-  }
+  /* --- number and icon ------------------------------------------------------ */
 
-  .dg__more-n {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-meta);
-    color: var(--color-accent);
-  }
-
-  .dg__more-title {
+  .gaps__mark {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--s4);
-    font-size: var(--t-h3-sm);
-    font-weight: var(--fw-semibold);
-    line-height: var(--lh-snug);
+    gap: var(--s6);
+    width: 100%;
+  }
+
+  @media (min-width: 860px) {
+    /* Stacked on desktop, as drawn; side by side once the column is full width
+       and the number would otherwise leave a lot of empty air beside it. */
+    .gaps__mark {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: clamp(18px, 2vw, 30px);
+    }
+  }
+
+  /* Outlined, and decorative. If a browser cannot stroke text it keeps the
+     solid fill rather than rendering nothing — the @supports guard is what
+     makes the transparent fill safe. */
+  .gaps__n {
+    font-family: var(--font-heading);
+    font-size: clamp(56px, 6.4vw, 82px);
+    font-weight: var(--fw-bold);
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    color: var(--color-line-strong);
+  }
+
+  @supports (-webkit-text-stroke: 1px currentColor) {
+    .gaps__n {
+      color: transparent;
+      -webkit-text-stroke: 1.3px var(--color-line-strong);
+    }
+  }
+
+  .gaps__icon {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  /* --- column copy ---------------------------------------------------------- */
+
+  .gaps__title {
+    margin-top: clamp(22px, 2.6vw, 34px);
+    font-size: clamp(22px, 1.9vw, 26px);
+    font-weight: var(--fw-bold);
+    line-height: 1.2;
     letter-spacing: var(--ls-h3);
     color: var(--color-text);
   }
 
-  .dg__more-link:hover .dg__more-title {
+  .gaps__desc {
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--color-text-2);
+  }
+
+  .gaps__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    /* Pushed to the foot of an equal-height column so all three links sit on
+       one line, whatever the description above them does. */
+    margin-top: auto;
+    padding-top: clamp(14px, 1.6vw, 22px);
+    font-size: 16px;
+    font-weight: var(--fw-medium);
+    text-decoration: none;
     color: var(--color-accent);
   }
 
-  .dg__more-desc {
-    grid-column: 2;
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-3);
+  .gaps__link:hover {
+    color: var(--color-accent-hover);
   }
 
-  .dg__more-link:focus-visible {
+  .gaps__link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 4px;
     border-radius: var(--radius-sm);
   }
 
-  /* --- handover ------------------------------------------------------------ */
+  .gaps__arrow {
+    transition: transform 180ms var(--ease-out-soft);
+  }
 
-  .dg__next {
+  .gaps__link:hover .gaps__arrow {
+    transform: translateX(3px);
+  }
+
+  /* --- handover ------------------------------------------------------------- */
+
+  .gaps__next {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
     gap: var(--s4) var(--s8);
-    margin-top: var(--s12);
+    margin-top: clamp(48px, 6vw, 84px);
     padding-top: var(--s8);
     border-top: 1px solid var(--color-line);
   }
 
-  .dg__next-label {
+  .gaps__next-label {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-eyebrow);
@@ -455,13 +352,13 @@ const MORE = [
     color: var(--color-accent);
   }
 
-  .dg__next-text {
+  .gaps__next-text {
     font-size: var(--t-card);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .dg__next-link {
+  .gaps__next-link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -472,30 +369,32 @@ const MORE = [
     color: var(--color-accent);
   }
 
-  .dg__next-link:hover {
+  .gaps__next-link:hover {
     color: var(--color-accent-hover);
   }
 
-  .dg__next-link:focus-visible {
+  .gaps__next-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 4px;
     border-radius: var(--radius-sm);
   }
 
-  .dg__next-arrow {
+  .gaps__next-arrow {
     transition: transform 180ms var(--ease-out-soft);
   }
 
-  .dg__next-link:hover .dg__next-arrow {
+  .gaps__next-link:hover .gaps__next-arrow {
     transform: translateY(2px);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .dg__next-arrow {
+    .gaps__arrow,
+    .gaps__next-arrow {
       transition: none;
     }
 
-    .dg__next-link:hover .dg__next-arrow {
+    .gaps__link:hover .gaps__arrow,
+    .gaps__next-link:hover .gaps__next-arrow {
       transform: none;
     }
   }
