@@ -4,104 +4,157 @@ import Icon from './Icon.astro';
 /**
  * "03 / A case you can inspect" — one case, shown all the way down.
  *
- * Rebuilt to the approved composition
- * (docs/design-explorations/homepage-redesign-evidence.png): a left-aligned
- * head, one card whose left half makes the claim and whose right half is the
- * evidence, and a single line of further field notes beneath it.
+ * Rebuilt to docs/design-explorations/case-study-hierarchy-{desktop,mobile}.png,
+ * which give this section the same shape as Automation and Diagnostics: copy
+ * and one action on the left, one framed panel with a single focal point on
+ * the right.
  *
- * Three figures, not five. MRR is left off here on purpose — it is the one
- * figure whose honest reading needs a second sentence, and the card has no room
- * to give it one. Cost per trial is dropped for space. Both are in the article,
- * with the rest of the country tables.
+ * The previous version ran two headlines against each other — a section
+ * heading and a card heading, both large, one immediately under the other.
+ * There is one headline now, and the panel leads with one number.
  *
- * The figures are the article's, not restated by hand: if the post changes,
- * these change with it, because both read from `src/data/case-study.ts`.
- * `tests/case-study.test.ts` recomputes every one of them from the raw period
- * totals and fails if a displayed figure and its arithmetic disagree.
+ * ── Every figure is derived, none is typed ───────────────────────────────
  *
- * The card is no longer one big anchor. It was, and that put the three notes
- * that qualify the figures inside the link — so a screen reader announced the
- * caveats as part of the link name, and a reader could not select the numbers
- * without following it. The action is now a real link at the end of the claim,
- * which is also what the composition draws.
+ * The 77.5% is computed here from RAW, the raw period totals, not written
+ * down. A percentage transcribed beside figures it was derived from is a
+ * number waiting to disagree with them: change a total and the prose would
+ * keep asserting the old reduction. The comparison bars are scaled from the
+ * same ratio, so the picture cannot drift from the arithmetic either.
+ * `tests/case-study.test.ts` recomputes the lot.
+ *
+ * It is described as lower cost in the after window. Three changes shipped
+ * together, so it is not evidence that any one of them caused it, and the
+ * qualifications say so in the panel rather than behind a disclosure — a
+ * reader who takes the numbers away should take the caveats with them.
  *
  * Entirely new to the page, so the whole section is `data-added`.
  */
-import { CASE_STUDY, MORE_CASES } from '../data/case-study.ts';
+import { CASE_STUDY, MORE_CASES, RAW } from '../data/case-study.ts';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = `${base}/blog/${CASE_STUDY.slug}`;
 
-/** The three the card shows, in the order the composition sets. */
-const shown = CASE_STUDY.cardFigures.map(
+/* --- the observed change, from the period totals ------------------------- */
+
+const cppBefore = RAW.before.cost / RAW.before.paid;
+const cppAfter = RAW.after.cost / RAW.after.paid;
+
+/** How much lower the after window ran, as a share of the before window. */
+const reduction = (1 - cppAfter / cppBefore) * 100;
+
+/** The after bar as a share of the before bar, which is the same ratio. */
+const afterBar = (cppAfter / cppBefore) * 100;
+
+const money = (v: number) => '$' + v.toFixed(2);
+
+/** The two supporting figures, in the order the composition sets. */
+const support = ['Install → trial', 'Payers per day'].map(
   (label) => CASE_STUDY.figures.find((f) => f.label === label)!,
 );
+
+const [tradeOff, ...limits] = CASE_STUDY.cardNotes;
 ---
 
 <section id="case-study" class="case section" data-section="case-study" data-added="bento">
   <div class="wrap">
-    <div data-reveal="1">
-      <p class="eyebrow eyebrow--amber case__eyebrow">03 / A case you can inspect</p>
-      <h2 class="case__h2">{CASE_STUDY.homeHeadline}</h2>
-    </div>
+    <div class="cs">
+      <div class="cs__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">03 / A case you can inspect</p>
 
-    <div class="case__card" data-reveal="1">
-      <div class="case__claim">
-        <p class="case__kicker">{CASE_STUDY.kicker}</p>
+        <h2 class="cs__h2">
+          {CASE_STUDY.cardHeadline.map((line) => <span class="cs__h2-line">{line}</span>)}
+        </h2>
 
-        <h3 class="case__title">
-          {CASE_STUDY.cardHeadline.map((line) => <span class="case__title-line">{line}</span>)}
-        </h3>
+        <p class="cs__kicker">{CASE_STUDY.kicker}</p>
 
-        <p class="case__summary">{CASE_STUDY.cardSummary}</p>
+        <p class="cs__body">{CASE_STUDY.cardSummary}</p>
 
-        <a class="case__cta" href={href}>
-          Read the full case study
-          <Icon name="arrow-up-right" size={13} />
-        </a>
+        <p class="cs__stability">{CASE_STUDY.cardStability}</p>
       </div>
 
-      <div class="case__evidence">
-        <p class="case__evidence-label">Before &#8594; after</p>
+      <div class="cs__panel" data-reveal="1">
+        <p class="cs__meta">
+          <span class="cs__meta-kicker">The observed change</span>
+          <span class="cs__meta-range">Before &#8594; after</span>
+        </p>
 
-        <div class="case__rows">
-          {
-            shown.map((f) => (
-              <p class="case__row">
-                <span class="case__row-label">
-                  <span class="wide-only">{f.label}</span>
-                  <span class="narrow-only">{f.labelShort ?? f.label}</span>
-                </span>
-                <span class="case__before tabular">{f.before}</span>
-                <span class="case__arrow" aria-hidden="true">
-                  &#8594;
-                </span>
-                <span class="case__after tabular">{f.after}</span>
-              </p>
-            ))
-          }
+        <div>
+          <p class="cs__lede-label">Cost per payer</p>
+
+          <div class="cs__figures">
+            <p class="cs__after tabular">
+              {money(cppAfter)}
+              <span class="cs__after-tag">After</span>
+            </p>
+            <p class="cs__before tabular">
+              {money(cppBefore)}
+              <span class="cs__before-tag">Before</span>
+            </p>
+          </div>
         </div>
 
-        <ul class="case__notes">
-          {CASE_STUDY.cardNotes.map((n) => <li class="case__note">{n}</li>)}
-        </ul>
+        {/* Two bars, each labelled where it sits. The after bar is scaled from
+            the same ratio the percentage below is, so they cannot disagree. */}
+        <div class="cs__bars">
+          <span class="cs__bar-label">Before</span>
+          <span class="cs__track"><span class="cs__bar cs__bar--before"></span></span>
+          <span class="cs__bar-label">After</span>
+          <span class="cs__track">
+            <span class="cs__bar cs__bar--after" style={`--w:${afterBar.toFixed(2)}%`}></span>
+          </span>
+        </div>
+
+        <p class="cs__delta">
+          {reduction.toFixed(1)}% lower cost per payer in the after window
+        </p>
+
+        <div class="cs__rule" role="presentation"></div>
+
+        <dl class="cs__support">
+          {
+            support.map((f) => (
+              <div class="cs__support-cell">
+                <dt class="cs__support-label">{f.label}</dt>
+                <dd class="cs__support-val tabular">{f.after}</dd>
+                <dd class="cs__support-before">Before: {f.before}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="cs__rule" role="presentation"></div>
+
+        <div>
+          <p class="cs__trade-label">The trade-off</p>
+          <p class="cs__trade-text">{tradeOff}</p>
+          <ul class="cs__limits">
+            {limits.map((n) => <li class="cs__limit">{n}</li>)}
+          </ul>
+        </div>
       </div>
+
+      {/* Third grid child, after the panel in the DOM. On a phone that puts the
+          action after the evidence it refers to, which is the order the mobile
+          composition sets; on desktop it is placed back under the copy. */}
+      <a class="btn-primary cs__cta" href={href} data-reveal="1">
+        Read the full case study
+        <Icon name="arrow-up-right" size={14} />
+      </a>
     </div>
 
-    <div class="case__more" data-reveal="1">
-      <p class="case__more-label">More field notes</p>
-      <ul class="case__more-list">
-        {
-          MORE_CASES.map((c) => (
-            <li>
-              <a class="case__more-link" href={`${base}/blog/${c.slug}`}>
-                {c.title}
-                <Icon name="arrow-up-right" size={13} />
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+    <div class="cs__notes" data-reveal="1">
+      <p class="cs__notes-label">More field notes</p>
+      {
+        MORE_CASES.map((c) => (
+          <>
+            <p class="cs__notes-title">{c.title}</p>
+            <a class="cs__notes-link" href={`${base}/blog/${c.slug}`}>
+              Read the story
+              <Icon name="arrow-up-right" size={13} />
+            </a>
+          </>
+        ))
+      }
     </div>
   </div>
 </section>
@@ -111,49 +164,59 @@ const shown = CASE_STUDY.cardFigures.map(
     background: linear-gradient(180deg, var(--color-bg), var(--color-band) 55%, var(--color-bg));
   }
 
-  .case__eyebrow {
-    margin-bottom: var(--s6);
+  /* Copy left, one framed panel right, tops aligned — the Automation shape. */
+  .cs {
+    display: grid;
+    gap: var(--s12);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
   }
 
-  .case__h2 {
-    /* The measure belongs on the element that owns the font size. On the
-       container it would resolve against 16px and cut a 44px heading to about
-       nineteen characters a line. */
-    max-width: 28ch;
+  @media (min-width: 900px) {
+    .cs {
+      grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+      grid-template-rows: auto 1fr;
+      gap: var(--s8) var(--s16);
+    }
+
+    .cs__copy {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .cs__cta {
+      grid-column: 1;
+      grid-row: 2;
+      align-self: start;
+    }
+
+    /* The panel spans both rows so its top aligns with the copy and its height
+       is its own content rather than a row it was forced into. */
+    .cs__panel {
+      grid-column: 2;
+      grid-row: 1 / 3;
+    }
+  }
+
+  .cs__copy {
+    min-width: 0;
+  }
+
+  .cs__h2 {
+    margin-top: var(--s4);
     font-size: var(--t-h2);
     line-height: var(--lh-h2);
     letter-spacing: var(--ls-h2);
     color: var(--color-text);
   }
 
-  .case__card {
-    display: grid;
-    gap: var(--s8) var(--s16);
-    grid-template-columns: minmax(0, 1fr);
-    margin-top: clamp(32px, 4vw, 56px);
-    padding: clamp(24px, 3vw, 40px);
-    border-radius: var(--radius-panel);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+  /* Each sentence on its own line without a <br> a narrow column cannot undo. */
+  .cs__h2-line {
+    display: block;
   }
 
-  @media (min-width: 900px) {
-    .case__card {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    }
-  }
-
-  /* --- the claim ------------------------------------------------------------ */
-
-  .case__claim {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--s6);
-    min-width: 0;
-  }
-
-  .case__kicker {
+  .cs__kicker {
+    margin-top: var(--s8);
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-eyebrow);
@@ -161,58 +224,198 @@ const shown = CASE_STUDY.cardFigures.map(
     color: var(--color-accent);
   }
 
-  .case__title {
-    font-size: var(--t-h2-card);
-    line-height: var(--lh-h2-closing);
-    letter-spacing: var(--ls-h2-card);
-    color: var(--color-text);
-  }
-
-  /* Each sentence on its own line, as drawn — without a <br> that a narrow
-     column cannot undo. */
-  .case__title-line {
-    display: block;
-  }
-
-  .case__summary {
-    max-width: 46ch;
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
+  .cs__body {
+    margin-top: var(--s6);
+    max-width: 42ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
-  .case__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    margin-top: auto;
-    padding: 0 20px;
-    border-radius: var(--radius-md);
-    box-shadow: 0 0 0 1px var(--color-line-strong);
-    font-size: var(--t-card-sm);
-    font-weight: var(--fw-semibold);
-    text-decoration: none;
-    color: var(--color-text);
+  .cs__stability {
+    margin-top: var(--s6);
+    max-width: 42ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-4);
   }
 
-  .case__cta:hover {
-    box-shadow: 0 0 0 1px var(--color-line-hover);
-    background: var(--color-surface-sunk);
+  .cs__cta {
+    justify-self: start;
+    margin-top: var(--s4);
   }
 
-  .case__cta:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+  @media (min-width: 900px) {
+    .cs__cta {
+      margin-top: var(--s8);
+    }
   }
 
-  /* --- the evidence --------------------------------------------------------- */
+  /* --- the evidence panel -------------------------------------------------- */
 
-  .case__evidence {
+  .cs__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
     min-width: 0;
   }
 
-  .case__evidence-label {
+  .cs__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .cs__meta-kicker {
+    color: var(--color-accent);
+  }
+
+  .cs__meta-range {
+    color: var(--color-text-4);
+  }
+
+  .cs__lede-label {
+    font-size: var(--t-h3);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .cs__figures {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4) var(--s6);
+    margin-top: var(--s4);
+  }
+
+  /* The after figure is the focal point of the whole section. */
+  .cs__after {
+    font-size: clamp(44px, 6vw, 72px);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    letter-spacing: var(--ls-tight);
+    color: var(--color-text);
+  }
+
+  .cs__after-tag {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .cs__before {
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    letter-spacing: var(--ls-tight);
+    text-align: right;
+    color: var(--color-text-4);
+  }
+
+  .cs__before-tag {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  /* --- the comparison bars ------------------------------------------------- */
+
+  .cs__bars {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px var(--s4);
+  }
+
+  .cs__bar-label {
+    font-size: var(--t-body-sm);
+    color: var(--color-text-3);
+  }
+
+  .cs__track {
+    display: block;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunk);
+    overflow: hidden;
+  }
+
+  .cs__bar {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+  }
+
+  .cs__bar--before {
+    width: 100%;
+    background: var(--color-text-4);
+  }
+
+  .cs__bar--after {
+    width: var(--w);
+    background: var(--color-accent);
+  }
+
+  .cs__delta {
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-card);
+    color: var(--color-accent);
+  }
+
+  .cs__rule {
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* --- supporting figures -------------------------------------------------- */
+
+  .cs__support {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
+    margin: 0;
+  }
+
+  @media (min-width: 480px) {
+    .cs__support {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s8);
+    }
+
+    .cs__support-cell + .cs__support-cell {
+      padding-left: var(--s8);
+      border-left: 1px solid var(--color-line);
+    }
+  }
+
+  .cs__support-cell {
+    min-width: 0;
+  }
+
+  .cs__support-label {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-eyebrow);
@@ -220,71 +423,50 @@ const shown = CASE_STUDY.cardFigures.map(
     color: var(--color-text-4);
   }
 
-  .case__rows {
-    margin: var(--s6) 0 0;
-  }
-
-  /* A grid, not a flex row, so the three arrows land in one column and the
-     before and after figures each align to their own edge. Flex would put every
-     pair flush right and leave the arrows scattered across three x-positions. */
-  .case__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto auto;
-    align-items: baseline;
-    column-gap: var(--s4);
-    padding: var(--s6) 0;
-  }
-
-  .case__row + .case__row {
-    border-top: 1px solid var(--color-line);
-  }
-
-  .case__row-label {
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
-
-  /* Each row is one sentence — "Install → trial 0.62% → 4.00%" — so it is a
-     paragraph of four grid items rather than a definition list. A <dl> would
-     have needed `display: contents` on the <dd> to get the four into one grid,
-     and that has a long history of dropping list semantics from the
-     accessibility tree. */
-  .case__before {
-    justify-self: end;
-  }
-
-  /* The before figure is deliberately the quieter of the two: the card is about
-     where the number ended up. */
-  .case__before {
-    font-size: var(--t-h3);
-    line-height: var(--lh-snug);
-    color: var(--color-text-4);
-  }
-
-  .case__arrow {
-    font-size: var(--t-card);
-    color: var(--color-text-4);
-  }
-
-  .case__after {
-    font-size: var(--t-h3);
+  .cs__support-val {
+    margin: 6px 0 0;
+    font-size: var(--t-h2-card);
     font-weight: var(--fw-bold);
-    line-height: var(--lh-snug);
+    line-height: var(--lh-tight);
     letter-spacing: var(--ls-tight);
     color: var(--color-text);
   }
 
-  .case__notes {
+  .cs__support-before {
+    margin: 4px 0 0;
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  /* --- qualifications, visible ---------------------------------------------- */
+
+  .cs__trade-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .cs__trade-text {
+    margin-top: 8px;
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  .cs__limits {
     list-style: none;
-    margin: var(--s6) 0 0;
+    margin: var(--s4) 0 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
 
-  .case__note {
+  .cs__limit {
     font-size: var(--t-body-sm);
     line-height: var(--lh-card);
     color: var(--color-text-4);
@@ -292,56 +474,66 @@ const shown = CASE_STUDY.cardFigures.map(
 
   /* --- further notes -------------------------------------------------------- */
 
-  .case__more {
+  .cs__notes {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s4) var(--s16);
-    margin-top: var(--s8);
-  }
-
-  .case__more-label {
-    font-size: var(--t-card-sm);
-    color: var(--color-text-4);
-  }
-
-  .case__more-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: var(--s4) var(--s8);
-    min-width: 0;
+    margin-top: var(--s12);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
   }
 
-  /* Inline, not inline-flex. As a flex box the title wraps inside the link and
-     the arrow is left stranded at the far right of the first line instead of
-     following the last word. Inline keeps it in the text flow, so it wraps with
-     the sentence. */
-  .case__more-link {
-    display: inline;
-    /* `min-height` does nothing on an inline box. Vertical padding does grow
-       the hit area though, which is what the 44px floor is actually about:
-       19px of line box plus 13px either side clears it. */
-    padding-block: 13px;
-    font-size: var(--t-card);
-    font-weight: var(--fw-medium);
-    line-height: var(--lh-card);
-    text-decoration: none;
-    color: var(--color-text);
+  @media (min-width: 720px) {
+    .cs__notes {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
   }
 
-  .case__more-link svg {
-    margin-left: 6px;
-    vertical-align: -1px;
-  }
-
-  .case__more-link:hover {
+  .cs__notes-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
     color: var(--color-accent);
   }
 
-  .case__more-link:focus-visible {
+  /* `flex: 1` against two siblings on a 390px row left this squeezed to about
+     six characters and breaking one word per line. It only takes the spare
+     room once there is spare room to take. */
+  .cs__notes-title {
+    min-width: 0;
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  @media (min-width: 720px) {
+    .cs__notes-title {
+      flex: 1;
+    }
+  }
+
+  .cs__notes-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+
+  .cs__notes-link:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .cs__notes-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 4px;
     border-radius: var(--radius-sm);

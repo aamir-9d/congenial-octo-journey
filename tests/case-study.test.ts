@@ -137,3 +137,44 @@ test('further case studies link to posts that exist, and claim no figures', { sk
     assert.equal(claim, null, `${c.slug} summary makes a numeric claim: "${claim?.[0]}"`);
   }
 });
+
+/**
+ * The reduction on the card is derived, not transcribed.
+ *
+ * The brief for the evidence panel is explicit that the percentage must come
+ * from the source values rather than being written down beside them. A typed
+ * percentage is a number waiting to disagree with the figures it was derived
+ * from: change a period total and the prose keeps asserting the old one.
+ *
+ * So this recomputes it from RAW and asserts the page shows that, and that the
+ * comparison bar is scaled from the same ratio — a bar drawn to a different
+ * number than the caption would be the same failure, drawn instead of written.
+ */
+test('the cost-per-payer reduction on the card is the one RAW supports', { skip }, () => {
+  const before = RAW.before.cost / RAW.before.paid;
+  const after = RAW.after.cost / RAW.after.paid;
+
+  const reduction = (1 - after / before) * 100;
+  const ratio = (after / before) * 100;
+
+  assert.ok(
+    html.includes(`${reduction.toFixed(1)}% lower cost per payer in the after window`),
+    `the card does not state the ${reduction.toFixed(1)}% the period totals give`,
+  );
+
+  // The two figures it is derived from have to be on the card as well, or the
+  // reader is asked to take the percentage on trust.
+  assert.ok(html.includes(`$${after.toFixed(2)}`), 'the after figure is missing');
+  assert.ok(html.includes(`$${before.toFixed(2)}`), 'the before figure is missing');
+
+  assert.ok(
+    html.includes(`--w:${ratio.toFixed(2)}%`),
+    `the comparison bar is not scaled to ${ratio.toFixed(2)}% — the picture and the caption disagree`,
+  );
+
+  // Stated as an observation about the window, never as isolated causation.
+  assert.ok(
+    /Changes were bundled; this does not isolate one causal effect/.test(html),
+    'the bundled-changes qualification is not on the card',
+  );
+});

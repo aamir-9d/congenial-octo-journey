@@ -89,7 +89,12 @@ export const CASE_STUDY = {
 
   /** `summary`, compressed to what the card has room for. */
   cardSummary:
-    'We removed the confirmation dialog, rebuilt the paywall comparison and changed the plan structure. Daily spend and installs remained broadly stable.',
+    'We removed the confirmation dialog, rebuilt the paywall comparison and changed the plan structure.',
+
+  /* Held apart from the summary because it is doing different work: the
+     sentence above says what changed, this one says what did not, and that is
+     the whole reason the before/after read is worth anything. */
+  cardStability: 'Daily spend and installs remained broadly stable.',
 
   /** The three figures the card shows, by `figures[].label`. */
   cardFigures: ['Install → trial', 'Payers per day', 'Cost per payer'],

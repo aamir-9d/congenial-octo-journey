@@ -1,156 +1,415 @@
 ---
+import Icon from './Icon.astro';
+
 /**
- * "01 / Where we look" — three diagnostic rows.
+ * "01 / Where we look" — one worked example, then the other two checks.
  *
- * This replaces the twelve-column bento on the homepage. The bento is not
- * deleted: it still renders in full on /services, where a visitor has already
- * decided they want the detail. Here the visitor has not yet been given a
- * reason to care, so the section's job is to name the three places money goes
- * missing and get out of the way. The audit measured the bento at 1,441px on
- * the homepage, which is a screen and a half spent before the calculator.
+ * Rebuilt to docs/design-explorations/diagnostics-hierarchy-{desktop,mobile}.png,
+ * which give this section the same shape as Automation: copy and one clear
+ * action on the left, a single framed visual with one focal point on the right.
  *
- * Each row links to the section of /services that explains it, so nothing is
- * behind a disclosure that a search engine or a keyboard cannot reach.
+ * The previous version was three rows of equal weight. Three equal things ask
+ * the reader to choose, and none of them was shown — only named. So this leads
+ * with one check drawn out in full and lets the other two sit quieter under a
+ * divider, still linked and still reachable.
+ *
+ * The bento this replaced is not deleted: /services renders it in full, which
+ * is where every link here goes.
+ *
+ * ── The diagram is an explanation, not a reading ─────────────────────────
+ *
+ * First payment / Renewals / Refunds carries no figures and is not campaign
+ * data. It is the shape of the arithmetic, so the amber on Renewals marks the
+ * term people forget to count rather than a measured quantity. The steps are
+ * static text and are deliberately not styled as controls: nothing there is
+ * clickable, and making it look clickable would promise an interaction that
+ * does not exist.
  *
  * All copy here is new, from the approved composition, so the section root
  * carries `data-added` — the copy-parity check lifts it out whole and goes on
- * comparing the export's own strings, which now ship on /services.
+ * comparing the export's own strings, which ship in full on /services.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const services = `${base}/services`;
 
-const rows = [
-  {
-    n: '01',
-    title: 'Revenue after install',
-    desc: 'Renewals, refunds and server events.',
-    href: `${base}/services`,
-  },
+/** The worked example. Qualitative: a sign and a name, never a number. */
+const FLOW = [
+  { sign: '+', name: 'First payment', note: 'The starting point', lead: false },
+  { sign: '+', name: 'Renewals', note: 'Value over time', lead: true },
+  { sign: '−', name: 'Refunds', note: 'Subtract returns', lead: false },
+];
+
+/** The two checks that sit under the divider. */
+const MORE = [
   {
     n: '02',
     title: 'The route to purchase',
-    desc: 'What happens between an install and a trial?',
-    href: `${base}/services`,
+    desc: 'Where do installs stop becoming trials and paying customers?',
   },
   {
     n: '03',
-    title: 'The economics by market',
-    desc: 'Retention, monetisation and the payback horizon.',
-    href: `${base}/services`,
+    title: 'Economics by market',
+    desc: 'Does retention and monetisation support the acquisition cost?',
   },
 ];
 ---
 
 <section id="services" class="section" data-section="diagnostics" data-added="redesign">
   <div class="wrap">
-    <div class="diag">
-      <div data-reveal="1">
-        <p class="eyebrow eyebrow--amber diag__eyebrow">01 / Where we look</p>
-        <h2 class="diag__h2">Find the gap.<br />Follow the money.</h2>
-        <p class="diag__lead">
-          A few examples of what gets checked. Each one changes a spending decision.
+    <div class="dg">
+      <div class="dg__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">01 / Where we look</p>
+
+        <h2 class="dg__h2">Find the gap.<br />Follow the money.</h2>
+
+        <p class="dg__body">
+          We trace the revenue, the purchase journey and the economics behind your next spending
+          decision.
         </p>
+
+        <a href={services} class="btn-primary dg__cta">
+          Explore the checks
+          <Icon name="arrow-up-right" size={14} />
+        </a>
+
+        <p class="dg__support">Three checks. One connected picture.</p>
       </div>
 
-      <ol class="diag__rows" data-reveal="2">
-        {
-          rows.map((r) => (
-            <li class="diag__row">
-              <a class="diag__link" href={r.href}>
-                <span class="diag__n" aria-hidden="true">
-                  {r.n}
+      <div class="dg__panel" data-reveal="1">
+        <p class="dg__meta">
+          <span class="dg__kicker">Example check</span>
+          <span class="dg__index">01 / Revenue</span>
+        </p>
+
+        <div>
+          <h3 class="dg__title">Revenue after install</h3>
+          <p class="dg__desc">Renewals, refunds and server events.</p>
+        </div>
+
+        <div class="dg__rule" role="presentation"></div>
+
+        {/* Static. Not a control, and styled so it does not read as one. */}
+        <ol class="dg__flow">
+          {
+            FLOW.map((f) => (
+              <li class:list={['dg__step', { 'dg__step--lead': f.lead }]}>
+                <span class="dg__step-name">{f.name}</span>
+                <span class="dg__step-foot">
+                  <span
+                    class:list={['dg__sign', { 'dg__sign--minus': f.sign === '−' }]}
+                    aria-hidden="true"
+                  >
+                    {f.sign}
+                  </span>
+                  <span class="dg__step-note">{f.note}</span>
                 </span>
-                <span class="diag__text">
-                  <span class="diag__title">{r.title}</span>
-                  <span class="diag__desc">{r.desc}</span>
-                </span>
-              </a>
-            </li>
-          ))
-        }
-      </ol>
+              </li>
+            ))
+          }
+        </ol>
+
+        <div>
+          <p class="dg__decision-label">The decision</p>
+          <p class="dg__decision-text">Count the revenue before judging the campaign.</p>
+        </div>
+
+        <div class="dg__rule" role="presentation"></div>
+
+        <ul class="dg__more">
+          {
+            MORE.map((m) => (
+              <li class="dg__more-item">
+                <a class="dg__more-link" href={services}>
+                  <span class="dg__more-n">{m.n}</span>
+                  <span class="dg__more-title">
+                    {m.title}
+                    <Icon name="arrow-up-right" size={13} />
+                  </span>
+                  <span class="dg__more-desc">{m.desc}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    {/* A quiet handover to the section that does the arithmetic. */}
+    <div class="dg__next" data-reveal="1">
+      <p class="dg__next-label">Next / Test the economics</p>
+      <p class="dg__next-text">See when acquisition spend comes back.</p>
+      <a class="dg__next-link" href="#payback">
+        Explore the payback model
+        <span class="dg__next-arrow" aria-hidden="true">&#8595;</span>
+      </a>
     </div>
   </div>
 </section>
 
 <style>
-  /* Stacked on a phone, two columns from 900px. The intro is not sticky: the
-     rows are short enough that the whole section fits one screen at every width
-     it is two columns at, and a sticky column inside a section that short only
-     produces a pane that never moves. */
-  .diag {
+  /* Same shape as Automation: copy left, one framed visual right, tops aligned.
+     42/58 in favour of the panel, which is where the focal point is. */
+  .dg {
     display: grid;
-    gap: var(--s8) var(--s16);
+    gap: var(--s12);
     grid-template-columns: minmax(0, 1fr);
+    align-items: start;
   }
 
   @media (min-width: 900px) {
-    .diag {
-      grid-template-columns: minmax(0, 40fr) minmax(0, 55fr);
-      align-items: start;
+    .dg {
+      grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+      gap: var(--s16);
     }
   }
 
-  .diag__eyebrow {
-    margin-bottom: var(--s6);
+  .dg__copy {
+    min-width: 0;
   }
 
-  .diag__h2 {
+  .dg__h2 {
+    margin-top: var(--s4);
     font-size: var(--t-h2);
     line-height: var(--lh-h2);
     letter-spacing: var(--ls-h2);
     color: var(--color-text);
   }
 
-  .diag__lead {
+  .dg__body {
+    margin-top: var(--s8);
+    /* The measure sits on the element that owns the font size. In `ch` on a
+       container it would resolve against 16px and cut this to a third. */
+    max-width: 42ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .dg__cta {
+    margin-top: var(--s12);
+  }
+
+  .dg__support {
     margin-top: var(--s6);
-    /* On the element that owns the font size: `ch` resolves against its own
-       font, so a measure set on the grid cell would be counting 16px units
-       against whatever this actually renders at. */
-    max-width: 34ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-4);
+  }
+
+  /* --- the framed example -------------------------------------------------- */
+
+  .dg__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s6);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    min-width: 0;
+  }
+
+  .dg__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .dg__kicker {
+    color: var(--color-accent);
+  }
+
+  .dg__index {
+    color: var(--color-text-4);
+  }
+
+  .dg__title {
+    font-size: var(--t-h3);
+    line-height: var(--lh-h3);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .dg__desc {
+    margin-top: 6px;
     font-size: var(--t-card);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .diag__rows {
+  .dg__rule {
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  /* --- the qualitative flow ------------------------------------------------ */
+
+  .dg__flow {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .diag__row + .diag__row {
+  @media (min-width: 720px) {
+    .dg__flow {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--s6);
+    }
+  }
+
+  /* No pointer, no hover, no raised look: these are labels on a diagram, and
+     dressing them as controls would promise an interaction that is not there. */
+  .dg__step {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--s4);
+    padding: 14px var(--s6);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    min-width: 0;
+  }
+
+  @media (min-width: 720px) {
+    .dg__step {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      padding: var(--s6);
+    }
+  }
+
+  /* The term people forget to count, marked without shouting. */
+  .dg__step--lead {
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+  }
+
+  .dg__step-name {
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+    color: var(--color-text);
+  }
+
+  .dg__step-foot {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-left: auto;
+    min-width: 0;
+  }
+
+  @media (min-width: 720px) {
+    .dg__step-foot {
+      margin-left: 0;
+    }
+  }
+
+  .dg__sign {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  .dg__sign--minus {
+    color: var(--color-text-3);
+  }
+
+  .dg__step-note {
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-3);
+  }
+
+  /* --- the decision -------------------------------------------------------- */
+
+  .dg__decision-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .dg__decision-text {
+    margin-top: 8px;
+    max-width: 46ch;
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-card);
+    color: var(--color-text);
+  }
+
+  /* --- the other two checks ------------------------------------------------ */
+
+  .dg__more {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--s4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 720px) {
+    .dg__more {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s8);
+    }
+  }
+
+  .dg__more-item + .dg__more-item {
+    padding-top: var(--s4);
     border-top: 1px solid var(--color-line);
   }
 
-  /* The whole row is the target, so the hit area is the full width rather than
-     the width of the title. */
-  .diag__link {
-    display: flex;
+  @media (min-width: 720px) {
+    /* The divider turns vertical when the pair sits side by side, rather than
+       cutting across the row it no longer separates. */
+    .dg__more-item + .dg__more-item {
+      padding-top: 0;
+      padding-left: var(--s8);
+      border-top: 0;
+      border-left: 1px solid var(--color-line);
+    }
+  }
+
+  /* These ARE links, and look like it. */
+  .dg__more-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: baseline;
-    gap: var(--s6);
+    gap: 6px var(--s4);
     min-height: 44px;
-    padding: var(--s6) 0;
+    padding: 4px 0;
     text-decoration: none;
     color: inherit;
   }
 
-  .diag__n {
-    flex: none;
+  .dg__more-n {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-meta);
     color: var(--color-accent);
   }
 
-  .diag__text {
+  .dg__more-title {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    min-width: 0;
-  }
-
-  .diag__title {
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
     font-size: var(--t-h3-sm);
     font-weight: var(--fw-semibold);
     line-height: var(--lh-snug);
@@ -158,19 +417,86 @@ const rows = [
     color: var(--color-text);
   }
 
-  .diag__link:hover .diag__title {
+  .dg__more-link:hover .dg__more-title {
     color: var(--color-accent);
   }
 
-  .diag__desc {
+  .dg__more-desc {
+    grid-column: 2;
     font-size: var(--t-card-sm);
     line-height: var(--lh-card);
     color: var(--color-text-3);
   }
 
-  .diag__link:focus-visible {
+  .dg__more-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 4px;
     border-radius: var(--radius-sm);
+  }
+
+  /* --- handover ------------------------------------------------------------ */
+
+  .dg__next {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4) var(--s8);
+    margin-top: var(--s12);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
+  }
+
+  .dg__next-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .dg__next-text {
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .dg__next-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    text-decoration: none;
+    color: var(--color-accent);
+  }
+
+  .dg__next-link:hover {
+    color: var(--color-accent-hover);
+  }
+
+  .dg__next-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+  }
+
+  .dg__next-arrow {
+    transition: transform 180ms var(--ease-out-soft);
+  }
+
+  .dg__next-link:hover .dg__next-arrow {
+    transform: translateY(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dg__next-arrow {
+      transition: none;
+    }
+
+    .dg__next-link:hover .dg__next-arrow {
+      transform: none;
+    }
   }
 </style>
