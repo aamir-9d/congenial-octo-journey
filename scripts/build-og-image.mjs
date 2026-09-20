@@ -142,8 +142,8 @@ function chartSvg(x0, y0, w, h) {
   <line x1="${beX.toFixed(1)}" y1="${(zeroY - 46).toFixed(1)}" x2="${beX.toFixed(1)}" y2="${zeroY.toFixed(1)}" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="2 3"/>
   <circle cx="${beX.toFixed(1)}" cy="${zeroY.toFixed(1)}" r="7" fill="#E39A1F" stroke="#0E1014" stroke-width="2.5"/>
   <text x="${(beX - 12).toFixed(1)}" y="${(zeroY - 56).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="19" fill="#E8EAED">breakeven: day ${be}</text>
-  <text x="${sx(7).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" font-family="IBM Plex Mono" font-size="17" fill="#7C838D">day 7</text>
-  <text x="${(x0 + w).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="17" fill="#7C838D">day 365</text>`;
+  <text x="${sx(7).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" font-family="IBM Plex Mono" font-size="17" fill="#868D98">day 7</text>
+  <text x="${(x0 + w).toFixed(1)}" y="${(y0 + h + 26).toFixed(1)}" text-anchor="end" font-family="IBM Plex Mono" font-size="17" fill="#868D98">day 365</text>`;
 }
 
 /* --- card ----------------------------------------------------------------- */
@@ -153,17 +153,17 @@ function card() {
   <rect width="${W}" height="${H}" fill="#0E1014"/>
   <rect x="0" y="0" width="${W}" height="8" fill="#E39A1F"/>
 
-  <text x="72" y="92" font-family="IBM Plex Mono" font-size="19" letter-spacing="3.4" fill="#7C838D">MOBILE GROWTH &amp; MEASUREMENT</text>
+  <text x="72" y="92" font-family="IBM Plex Mono" font-size="19" letter-spacing="3.4" fill="#868D98">MOBILE GROWTH &amp; MEASUREMENT</text>
 
-  <text x="72" y="184" font-family="Be Vietnam Pro" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#E8EAED">It broke even in month nine.</text>
-  <text x="72" y="252" font-family="Be Vietnam Pro" font-weight="700" font-size="56" letter-spacing="-1.4" fill="#E39A1F">You killed it in week one.</text>
+  <text x="72" y="184" font-family="Be Vietnam Pro" font-weight="700" font-size="52" letter-spacing="-1.4" fill="#E8EAED">Better signals. Smarter ad spend.</text>
+  <text x="72" y="252" font-family="Be Vietnam Pro" font-weight="700" font-size="52" letter-spacing="-1.4" fill="#E39A1F">Real app growth.</text>
 
   ${chartSvg(72, 316, 1056, 196)}
 
   <line x1="72" y1="566" x2="1128" y2="566" stroke="#23272E" stroke-width="1"/>
   <g transform="translate(72 578) scale(0.38)">${markup(100)}</g>
   <text x="122" y="600" font-family="Be Vietnam Pro" font-weight="700" font-size="26" letter-spacing="-0.5" fill="#E8EAED">E2E Apps</text>
-  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#7C838D">e2eapps.com</text>
+  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#868D98">e2eapps.com</text>
 </svg>`;
 }
 
