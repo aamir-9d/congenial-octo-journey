@@ -4,20 +4,20 @@ import { defineConfig } from 'astro/config';
 // ---------------------------------------------------------------------------
 // Deployment target.
 //
-// GitHub Pages project site (current):
+// Custom domain (current; public/CNAME holds `e2eapp.com`):
+//   SITE = 'https://e2eapp.com'
+//   BASE = '/'
+//
+// GitHub Pages project site (before the domain; it now redirects):
 //   SITE = 'https://aamir-9d.github.io'
 //   BASE = '/congenial-octo-journey'
-//
-// Custom domain (flip both lines, add public/CNAME containing `e2eapps.com`):
-//   SITE = 'https://e2eapps.com'
-//   BASE = '/'
 //
 // Everything downstream — canonical URLs, Open Graph, sitemap.xml, robots.txt
 // and every internal link — reads from these two constants. Nothing else needs
 // to change.
 // ---------------------------------------------------------------------------
-const SITE = process.env.SITE_URL ?? 'https://aamir-9d.github.io';
-const BASE = process.env.SITE_BASE ?? '/congenial-octo-journey';
+const SITE = process.env.SITE_URL ?? 'https://e2eapp.com';
+const BASE = process.env.SITE_BASE ?? '/';
 
 export default defineConfig({
   site: SITE,

@@ -24,8 +24,8 @@ const MAX_BODY_BYTES = 64 * 1024;
 
 /** Only these origins may post here. */
 const ALLOWED_ORIGINS = [
-  'https://e2eapps.com',
-  'https://www.e2eapps.com',
+  'https://e2eapp.com',
+  'https://www.e2eapp.com',
   'https://aamir-9d.github.io',
 ];
 
@@ -121,8 +121,8 @@ async function sendEmail(env, clean, attribution, meta) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.RESEND_FROM || 'forms@e2eapps.com',
-      to: [env.RESEND_TO || 'hello@e2eapps.com'],
+      from: env.RESEND_FROM || 'forms@e2eapp.com',
+      to: [env.RESEND_TO || 'hello@e2eapp.com'],
       reply_to: clean.email,
       subject: `${clean.name} — ${clean.spend}`,
       html,

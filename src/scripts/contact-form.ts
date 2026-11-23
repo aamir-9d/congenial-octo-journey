@@ -108,7 +108,7 @@ export function initContactForm(): void {
     if (!endpoint) {
       // Nothing configured yet — say so rather than pretending it sent.
       say(
-        "The form isn't wired up on this build. Email hello@e2eapps.com and it reaches the same inbox.",
+        "The form isn't wired up on this build. Email hello@e2eapp.com and it reaches the same inbox.",
         'error',
       );
       return;
@@ -178,7 +178,7 @@ export function initContactForm(): void {
       });
     } catch {
       say(
-        "That didn't send — something between here and the server. Email hello@e2eapps.com and it reaches the same inbox.",
+        "That didn't send — something between here and the server. Email hello@e2eapp.com and it reaches the same inbox.",
         'error',
       );
       track('form_error', { form_name: 'contact', error_fields: 'transport' });

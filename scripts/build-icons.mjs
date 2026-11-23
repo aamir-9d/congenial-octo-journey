@@ -92,7 +92,7 @@ async function main() {
 
 /** The PWA manifest. Base-path aware, like every other asset URL here. */
 function manifest() {
-  const base = (process.env.SITE_BASE ?? '/congenial-octo-journey').replace(/\/$/, '');
+  const base = (process.env.SITE_BASE ?? '/').replace(/\/$/, '');
   return {
     name: 'E2E Apps',
     short_name: 'E2E Apps',
