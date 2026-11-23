@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 # One site, one branch, one deployment.
 #
-#   /congenial-octo-journey/   main   the live site
+#   https://e2eapp.com/   main   the live site
 #
 # This used to build a second copy of the site from a `redesign` branch and
 # serve it at /next/. That redesign has landed on main, so the preview is gone:
@@ -32,11 +32,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Flip these two to move to the custom domain (and add public/CNAME).
-  #   SITE_URL: https://e2eapps.com
-  #   SITE_BASE: /
-  SITE_URL: https://aamir-9d.github.io
-  SITE_BASE: /congenial-octo-journey
+  # The custom domain. public/CNAME holds the same name, and the repo's
+  # Settings › Pages must list it too. The old project URL,
+  # aamir-9d.github.io/congenial-octo-journey/, redirects here.
+  SITE_URL: https://e2eapp.com
+  SITE_BASE: /
 
   # Not a secret: the browser posts here, so it is visible in any network tab.
   # The Worker is what holds the keys. Deployed from worker/ — see

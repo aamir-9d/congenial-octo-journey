@@ -6,7 +6,7 @@ ad-monetised apps.
 **Start here:** [`docs/prd.md`](docs/prd.md) — what the site is for, what each
 section must do, and the full design system in one document.
 
-**Live:** https://aamir-9d.github.io/congenial-octo-journey/
+**Live:** https://e2eapp.com/
 
 Ported from a Claude Design export (`E2E Apps Homepage.dc.html`) to Astro. The
 export depended on Claude Design's internal runtime — `support.js`, which
@@ -75,11 +75,12 @@ by `SITE_URL` / `SITE_BASE`:
 
 | Target | `SITE_URL` | `SITE_BASE` |
 | --- | --- | --- |
-| Pages project site (current) | `https://aamir-9d.github.io` | `/congenial-octo-journey` |
-| Custom domain | `https://e2eapps.com` | `/` |
+| Custom domain (current) | `https://e2eapp.com` | `/` |
+| Pages project site (before the domain) | `https://aamir-9d.github.io` | `/congenial-octo-journey` |
 
-For the custom domain, change both in `deploy.yml` and add `public/CNAME`
-containing `e2eapps.com`.
+`public/CNAME` holds `e2eapp.com`. The old project URL redirects to the custom
+domain once it is set under the repo's Settings › Pages. (`e2eapps.com`, with
+an s, belongs to someone else; see PRODUCT.md.)
 
 ## The form endpoint
 

@@ -5,8 +5,8 @@ compatibility_date = "2025-01-01"
 # Non-secret config. Secrets go in with `wrangler secret put NAME`:
 #   RESEND_API_KEY  META_CAPI_TOKEN  LINKEDIN_CAPI_TOKEN  GA4_API_SECRET
 [vars]
-RESEND_TO = "hello@e2eapps.com"
-RESEND_FROM = "forms@e2eapps.com"
+RESEND_TO = "hello@e2eapp.com"
+RESEND_FROM = "forms@e2eapp.com"
 META_PIXEL_ID = ""
 LINKEDIN_CONVERSION_ID = ""
 GA4_MEASUREMENT_ID = ""

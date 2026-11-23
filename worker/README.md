@@ -41,17 +41,17 @@ already there.
 ```sh
 # Honeypot filled — expect 200 with no email sent.
 curl -X POST "$WORKER_URL" -H 'Content-Type: application/json' \
-  -H 'Origin: https://e2eapps.com' \
+  -H 'Origin: https://e2eapp.com' \
   -d '{"company_website":"x","elapsedMs":9000}'
 
 # Too fast — same.
 curl -X POST "$WORKER_URL" -H 'Content-Type: application/json' \
-  -H 'Origin: https://e2eapps.com' \
+  -H 'Origin: https://e2eapp.com' \
   -d '{"name":"A","email":"a@b.co","spend":"Under $10k / month","message":"ten chars ok","elapsedMs":10}'
 
 # Bad field — expect 422 naming the field.
 curl -X POST "$WORKER_URL" -H 'Content-Type: application/json' \
-  -H 'Origin: https://e2eapps.com' \
+  -H 'Origin: https://e2eapp.com' \
   -d '{"name":"A","email":"nope","spend":"Under $10k / month","message":"ten chars ok","elapsedMs":9000}'
 
 # Wrong origin — expect 403.

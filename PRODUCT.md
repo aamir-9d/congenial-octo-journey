@@ -71,8 +71,9 @@ match across the MMP, the ad platform, and the subscription platform.
   ad decay exponent 0.492; predicted D7 12.3%; ad breakeven day 122).
 - Static hosting on GitHub Pages, which permits one deployment per repository;
   the form endpoint therefore lives on a separate Cloudflare Worker.
-- **Undecided:** the production domain. `e2eapps.com` is registered but dormant
-  and broker-listed; no replacement chosen. Founder photographs have not been
+- **Production domain: `e2eapp.com`** (registered 2026-11-20 on Cloudflare).
+  `e2eapps.com`, with an s, is someone else's: dormant and broker-listed.
+- **Undecided:** founder photographs have not been
   supplied. Whether games are in scope alongside apps is unresolved and must not
   be claimed either way until it is.
 

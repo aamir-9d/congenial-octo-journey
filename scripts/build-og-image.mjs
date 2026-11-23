@@ -163,7 +163,7 @@ function card() {
   <line x1="72" y1="566" x2="1128" y2="566" stroke="#23272E" stroke-width="1"/>
   <g transform="translate(72 578) scale(0.38)">${markup(100)}</g>
   <text x="122" y="600" font-family="Be Vietnam Pro" font-weight="700" font-size="26" letter-spacing="-0.5" fill="#E8EAED">E2E Apps</text>
-  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#868D98">e2eapps.com</text>
+  <text x="1128" y="600" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="#868D98">e2eapp.com</text>
 </svg>`;
 }
 

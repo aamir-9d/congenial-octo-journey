@@ -108,7 +108,7 @@ test('every indexable page that was built is in the sitemap', { skip }, () => {
     [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]!).pathname.replace(/\/$/, '')),
   );
 
-  const base = (process.env.SITE_BASE ?? '/congenial-octo-journey').replace(/\/$/, '');
+  const base = (process.env.SITE_BASE ?? '/').replace(/\/$/, '');
   const missing: string[] = [];
 
   for (const file of fs.readdirSync(DIST)) {

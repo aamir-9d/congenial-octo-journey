@@ -34,7 +34,7 @@ jobs:
       # production will not have.
       - run: npm run build
         env:
-          SITE_URL: https://e2eapps.com
+          SITE_URL: https://e2eapp.com
           SITE_BASE: /
 
       - name: Run Lighthouse CI

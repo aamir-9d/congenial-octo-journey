@@ -105,11 +105,13 @@ test('each href resolves under the deployed base path', { skip }, () => {
   for (const p of PRODUCTS) {
     const href = new RegExp(`href="([^"]*${p.file.replace(/\./g, '\\.')})"`).exec(html);
     assert.ok(href, `${p.name} has no link in the built page`);
-    // Astro is configured with base "/congenial-octo-journey"; a bare "/pdf/…"
-    // would 404 on the project URL.
-    assert.match(href[1]!, /^\/[^/].*\/pdf\//, `href does not carry the base path: ${href[1]}`);
+    // The link must carry whatever base the site was built under: "/" on the
+    // custom domain, "/congenial-octo-journey/" on the old project URL. A link
+    // missing the base 404s on the project URL.
+    const base = (process.env.SITE_BASE ?? '/').replace(/\/$/, '');
+    assert.ok(href[1]!.startsWith(`${base}/pdf/`), `href does not carry the base path "${base}/": ${href[1]}`);
 
-    const onDisk = path.join(ROOT, 'dist', href[1]!.replace(/^\/[^/]+/, ''));
+    const onDisk = path.join(ROOT, 'dist', href[1]!.slice(base.length));
     assert.ok(fs.existsSync(onDisk), `built page links to ${href[1]} which is not in dist/`);
   }
 });

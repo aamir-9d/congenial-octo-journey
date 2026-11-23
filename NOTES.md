@@ -3,7 +3,7 @@
 Findings, deliberate deviations, and verification results from porting the
 Claude Design export to a shipped Astro site.
 
-**Deployed:** https://aamir-9d.github.io/congenial-octo-journey/
+**Deployed:** https://e2eapp.com/ (custom domain from 2026-11-20; the old project URL redirects)
 
 Anything in **Flagged, not fixed** is a decision waiting on you. Nothing in that
 list has been changed.
