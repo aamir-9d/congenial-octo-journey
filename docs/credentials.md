@@ -104,8 +104,8 @@ npx wrangler secret put RESEND_API_KEY     # paste when prompted
 Also set the addresses in `worker/wrangler.toml` (these are not secrets):
 
 ```toml
-RESEND_TO   = "hello@e2eapps.com"
-RESEND_FROM = "forms@e2eapps.com"
+RESEND_TO   = "hello@e2eapp.com"
+RESEND_FROM = "forms@send.e2eapp.com"
 ```
 
 `RESEND_FROM` must be on the domain you verified. `RESEND_TO` can be anything.

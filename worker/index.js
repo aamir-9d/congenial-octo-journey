@@ -121,7 +121,7 @@ async function sendEmail(env, clean, attribution, meta) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: env.RESEND_FROM || 'forms@e2eapp.com',
+      from: env.RESEND_FROM || 'forms@send.e2eapp.com',
       to: [env.RESEND_TO || 'hello@e2eapp.com'],
       reply_to: clean.email,
       subject: `${clean.name} — ${clean.spend}`,
