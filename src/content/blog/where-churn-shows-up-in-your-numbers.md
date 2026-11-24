@@ -1,7 +1,8 @@
 ---
 title: Where churn actually shows up in your numbers
 kicker: Subscription revenue decomposes into four measurable nodes. Churn appears in three of them, in different disguises, which is why a single churn rate tells you nothing about what to fix.
-date: 2026-06-23
+date: 2026-08-26
+description: "Subscription revenue decomposes into four measurable nodes. Churn appears in three of them, so a single churn rate tells you nothing about what to fix."
 tag: Analytics
 cta: >-
   If your subscription reporting is one revenue line and one churn rate, no decision can be traced to a cause. Decomposing it is a week of analytics work and it usually settles arguments the roadmap has been having for months.

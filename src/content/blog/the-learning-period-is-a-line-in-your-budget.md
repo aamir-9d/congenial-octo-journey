@@ -1,7 +1,8 @@
 ---
 title: The learning period is a line in your budget
 kicker: An automated app campaign spends badly for about two weeks by design. Changing bids or budget by more than a fifth restarts that clock, and most accounts restart it repeatedly without noticing.
-date: 2026-01-20
+date: 2026-08-28
+description: "An automated app campaign spends badly for about two weeks by design. Changing bids or budget by more than a fifth restarts that clock."
 tag: Campaigns
 cta: >-
   If your campaigns are edited more than once a fortnight, the account may never have left its learning period, and the performance you are judging is the performance of a system that has not finished calibrating. Auditing the change log against the conversion curve usually answers that in an afternoon.

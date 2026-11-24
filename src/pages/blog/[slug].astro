@@ -4,6 +4,8 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { AUTHORS } from '../../data/authors';
 
 /**
  * A single post.
@@ -22,7 +24,41 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+const description = post.data.description ?? post.data.kicker;
+const author = post.data.author ? AUTHORS[post.data.author] : null;
+
+/* Same tag first, then newest: every post is reachable from its neighbours,
+   not only from the index. */
+const related = (await getCollection('blog'))
+  .filter((p) => p.id !== post.id)
+  .sort(
+    (a, b) =>
+      Number(b.data.tag === post.data.tag) - Number(a.data.tag === post.data.tag) ||
+      b.data.date.getTime() - a.data.date.getTime(),
+  )
+  .slice(0, 3);
+
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const home = new URL(`${base}/`, Astro.site).href;
+const url = new URL(`${base}/blog/${post.id}`, Astro.site).href;
+const publisher = { '@type': 'Organization', '@id': `${home}#business`, name: 'E2E Apps', url: home };
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description,
+  datePublished: post.data.date.toISOString().slice(0, 10),
+  mainEntityOfPage: url,
+  url,
+  image: new URL(`${base}/og-image.png`, Astro.site).href,
+  inLanguage: 'en',
+  articleSection: post.data.tag,
+  author: author
+    ? { '@type': 'Person', '@id': `${home}#aamir`, name: author.name, jobTitle: author.role, url: author.linkedin }
+    : publisher,
+  publisher,
+};
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -30,11 +66,16 @@ const fmt = (d: Date) =>
 
 <Base
   title={`${post.data.title} — E2E Apps`}
-  description={post.data.kicker}
+  description={description}
+  ogType="article"
   path={`/blog/${post.id}`}
 >
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
   <div class="page">
     <Nav />
+    <Breadcrumbs
+      trail={[{ name: 'Blog', path: '/blog' }, { name: post.data.title, path: `/blog/${post.id}` }]}
+    />
 
     {/* Both, nested, because they mean different things: `main` is "the content
         of this page" and is what the skip link targets, `article` is "this is a
@@ -47,6 +88,7 @@ const fmt = (d: Date) =>
         <div class="post__meta">
           <span class="post__tag">{post.data.tag}</span>
           <time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt(post.data.date)}</time>
+          <span class="post__byline">By {author ? author.name : 'E2E Apps'}</span>
         </div>
 
         <h1 class="post__title">{post.data.title}</h1>
@@ -74,6 +116,30 @@ const fmt = (d: Date) =>
             </p>
           )
         }
+
+        {
+          author && (
+            <aside class="post__author" aria-label="About the author">
+              <p class="post__author-name">
+                {author.name} <span class="post__author-role">{author.role}</span>
+              </p>
+              <p class="post__author-bio">{author.bio}</p>
+              <a class="link" href={author.linkedin} target="_blank" rel="noopener">
+                Meet on LinkedIn &#8599;
+              </a>
+            </aside>
+          )
+        }
+
+        <nav class="post__related" aria-labelledby="related">
+          <h2 id="related" class="post__related-head">Read next</h2>
+          <ul class="post__related-list">
+            {related.map((p) => (
+              <li><a class="link" href={`${base}/blog/${p.id}`}>{p.data.title}</a></li>
+            ))}
+            <li><a class="link" href={`${base}/services`}>What we fix in mobile measurement</a></li>
+          </ul>
+        </nav>
       </article>
     </main>
 
@@ -106,7 +172,7 @@ const fmt = (d: Date) =>
   .post__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--s6);
+    gap: var(--s3) var(--s6);
     margin-top: var(--s12);
     font-family: var(--font-mono);
     font-size: var(--t-mono);
@@ -117,6 +183,12 @@ const fmt = (d: Date) =>
     letter-spacing: var(--ls-label);
     text-transform: uppercase;
     color: var(--color-accent);
+  }
+
+  /* Always its own line. Sharing one, it wrapped or not depending on whether
+     the mono face had loaded, and shifted the whole article. */
+  .post__byline {
+    flex-basis: 100%;
   }
 
   .post__title {
@@ -356,6 +428,46 @@ const fmt = (d: Date) =>
       justify-content: center;
       min-height: 52px;
     }
+  }
+
+  .post__author,
+  .post__related {
+    margin-top: var(--s12);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .post__author-name {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .post__author-role {
+    margin-left: var(--s3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    font-weight: var(--fw-regular);
+    color: var(--color-text-4);
+  }
+
+  .post__author-bio {
+    margin: var(--s3) 0;
+  }
+
+  .post__related-head {
+    font-size: var(--t-post-title);
+    color: var(--color-text);
+  }
+
+  .post__related-list {
+    margin: var(--s4) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s4);
   }
 
   .post__source {

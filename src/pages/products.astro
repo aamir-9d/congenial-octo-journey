@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Products from '../components/Products.astro';
 
@@ -12,7 +13,7 @@ import Products from '../components/Products.astro';
  * page about the tools.
  */
 
-const title = 'Products - E2E Apps';
+const title = 'Monetization & ASO Tools — E2E Apps';
 const description =
   'Three tools built for measurement and store work: Monetization Scout, ASO Suite and ASO Agent. Each links to a full overview.';
 ---
@@ -21,6 +22,7 @@ const description =
   <div class="page">
     <Nav />
     <main id="main">
+      <Breadcrumbs trail={[{ name: 'Products', path: '/products' }]} />
       <Products lead />
     </main>
 

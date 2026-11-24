@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Footer from '../../components/Footer.astro';
 
 /**
@@ -22,7 +23,7 @@ const posts = (await getCollection('blog')).sort(
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 
-const title = 'Blog — E2E Apps';
+const title = 'Mobile Attribution & App Growth Blog — E2E Apps';
 const description =
   'Findings from live mobile measurement stacks: SKAdNetwork, Mixpanel JQL, and the Python that turns onboarding data into conversion rates.';
 ---
@@ -31,6 +32,7 @@ const description =
   <div class="page">
     <Nav />
     <main id="main">
+      <Breadcrumbs trail={[{ name: 'Blog', path: '/blog' }]} />
       <section class="section section--lead">
         <div class="wrap">
           <div class="section-head" data-reveal="1">

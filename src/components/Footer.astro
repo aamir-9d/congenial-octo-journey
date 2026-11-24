@@ -19,9 +19,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const anchor = (href: string) => (href.startsWith('#') ? `${base}/${href}` : href);
 
 const links = [
-  { href: '#services', label: 'Services' },
+  { href: `${base}/services`, label: 'Services' },
   { href: '#loop', label: 'The Loop' },
-  { href: '#approach', label: 'Approach' },
+  { href: `${base}/services#approach`, label: 'Approach' },
   { href: `${base}/blog`, label: 'Blog' },
   { href: 'mailto:hello@e2eapp.com', label: 'hello@e2eapp.com' },
 ];

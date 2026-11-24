@@ -1,7 +1,8 @@
 ---
 title: The churn that has nothing to do with your product
 kicker: A large share of subscription cancellations are failed payments, not decisions. Grace Period, Account Hold and in-app messaging are configuration rather than product work — and most teams have never measured the split.
-date: 2026-03-17
+date: 2026-08-26
+description: "A large share of subscription cancellations are failed payments, not decisions. Grace Period and Account Hold are configuration, not product work."
 tag: Subscriptions
 cta: >-
   Most teams cannot say what share of their churn is involuntary, because the cancellation reaches analytics as one undifferentiated event. Separating the two is a measurement change, not a product change, and it usually reorders the roadmap.

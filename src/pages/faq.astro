@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Faq from '../components/Faq.astro';
 import Schema from '../components/Schema.astro';
@@ -17,9 +18,9 @@ import Schema from '../components/Schema.astro';
  * source, and it still feeds the FAQPage structured data.
  */
 
-const title = 'FAQ - E2E Apps';
+const title = 'Mobile Attribution & App Growth FAQ — E2E Apps';
 const description =
-  'Nineteen questions about working together and technical scope: pricing, timelines, access, what happens if nothing is wrong, MMPs, SKAdNetwork, web-to-app and subscription revenue.';
+  'Nineteen questions about working together and technical scope: pricing, timelines, access, MMPs, SKAdNetwork, web-to-app and subscription revenue.';
 ---
 
 <Base title={title} description={description} path="/faq">
@@ -27,6 +28,7 @@ const description =
   <div class="page">
     <Nav />
     <main id="main">
+      <Breadcrumbs trail={[{ name: 'FAQ', path: '/faq' }]} />
       <Faq lead />
     </main>
 

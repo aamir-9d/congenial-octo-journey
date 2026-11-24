@@ -10,9 +10,11 @@ interface Props {
   path?: string;
   /** Suppress indexing — used by 404 and by the internal review pages. */
   noindex?: boolean;
+  /** Open Graph type. Posts are "article". */
+  ogType?: string;
 }
 
-const { title, description, path = '/', noindex = false } = Astro.props;
+const { title, description, path = '/', noindex = false, ogType = 'website' } = Astro.props;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const asset = (p: string) => `${base}${p}`;
@@ -52,7 +54,7 @@ const LATIN =
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="E2E Apps" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
