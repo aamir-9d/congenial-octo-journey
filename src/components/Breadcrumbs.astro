@@ -1,0 +1,92 @@
+---
+/**
+ * Breadcrumb trail, visible and as BreadcrumbList structured data.
+ *
+ * Both come from the same array, so the markup cannot describe a trail the
+ * page does not show. The last crumb is the current page and is not a link.
+ *
+ * Positioned in the clearance every opening section already reserves under the
+ * nav, so adding it moves nothing.
+ */
+interface Props {
+  trail: { name: string; path: string }[];
+}
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const trail = [{ name: 'Home', path: '/' }, ...Astro.props.trail];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    item: new URL(`${base}${c.path}`, Astro.site).href,
+  })),
+};
+---
+
+<nav class="crumbs" aria-label="Breadcrumb" data-added="seo">
+  <ol class="crumbs__list">
+    {
+      trail.map((c, i) => (
+        <li class="crumbs__item">
+          {i < trail.length - 1 ? (
+            <a class="crumbs__link" href={`${base}${c.path}`}>{c.name}</a>
+          ) : (
+            <span aria-current="page">{c.name}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+<script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+
+<style>
+  .crumbs {
+    max-width: calc(var(--wrap) + 2 * var(--gutter));
+    margin: 0 auto;
+    /* Zero height: the section below keeps the position it had. */
+    height: 0;
+    padding: 0 var(--gutter);
+    position: relative;
+    z-index: 1;
+  }
+
+  .crumbs__list {
+    display: flex;
+    margin: 0;
+    padding: 24px 0 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+    white-space: nowrap;
+  }
+
+  .crumbs__item {
+    flex: none;
+  }
+
+  .crumbs__item:last-child {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .crumbs__item + .crumbs__item::before {
+    content: '/';
+    margin: 0 10px;
+  }
+
+  .crumbs__link {
+    color: var(--color-text-2);
+  }
+
+  .crumbs__link:hover {
+    color: var(--color-accent);
+  }
+</style>

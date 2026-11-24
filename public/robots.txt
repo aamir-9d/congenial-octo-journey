@@ -1,4 +1,22 @@
+# Everything is open, to search engines and AI assistants alike.
 User-agent: *
+Allow: /
+
+# Named so the intent is explicit, not inferred from the wildcard.
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Google-Extended
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Applebot
+User-agent: Applebot-Extended
+User-agent: CCBot
 Allow: /
 
 Sitemap: https://e2eapp.com/sitemap.xml

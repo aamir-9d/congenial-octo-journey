@@ -2,6 +2,7 @@
 title: The strategy was right. The traffic was wrong.
 kicker: A fifty-app portfolio copied a competitor's paywall wholesale and it failed twice over — once on ad revenue, once on subscriptions. The fix was not a better paywall.
 date: 2026-08-26
+description: "A fifty-app portfolio copied a competitor's paywall and it failed on ad revenue and on subscriptions. The fix was not a better paywall."
 tag: Monetisation
 cta: >-
   If you are running a portfolio on ad revenue and want a subscription track that does not cannibalise it, the segmentation is the part that takes real work: deciding what the first screen is, per user, before the first screen renders. That is a conversation rather than a blog post.

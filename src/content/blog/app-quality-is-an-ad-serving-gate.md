@@ -1,7 +1,8 @@
 ---
 title: Your app's quality score decides whether your ads run at all
 kicker: Store platforms score apps on uninstalls, engagement, ad load and stability, and that score gates access to ad inventory. No bid change and no support ticket can override it.
-date: 2026-02-17
+date: 2026-08-28
+description: "Stores score apps on uninstalls, engagement, ad load and stability, and that score gates ad inventory. No bid change or support ticket overrides it."
 tag: Campaigns
 cta: >-
   If a campaign stopped spending and the bids, budget and policy status are all clean, the next thing to check is not in the ad account at all. Working out whether a serving restriction is a media problem or a product problem is usually a day, and it changes who owns the fix.

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Investigation from '../components/Investigation.astro';
@@ -29,9 +30,9 @@ import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS } from '../data/automation.ts';
  * under the four example tabs, which the brief called out.
  */
 
-const title = 'Automation — E2E Apps';
+const title = 'AI Reporting & Automation for App Growth — E2E Apps';
 const description =
-  'Connect Google Ads, GA4, AdMob and RevenueCat, ask a business question, and get an answer with the source figures attached. Reporting and investigation; account changes are agreed before anything runs.';
+  'Connect Google Ads, GA4, AdMob and RevenueCat, ask a business question, and get an answer with the source figures attached.';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -41,6 +42,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <Nav />
 
     <main id="main">
+      <Breadcrumbs trail={[{ name: 'Automation', path: '/automation' }]} />
       {/* ------------------------------------------------ 1 · introduction */}
       <section class="section section--lead" data-section="automation-intro">
         <div class="wrap">

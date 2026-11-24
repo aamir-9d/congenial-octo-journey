@@ -2,6 +2,7 @@
 title: App Conversion Rate Analysis in Python
 kicker: Aggregating onboarding and paywall data by device, filtering to completed purchases, and calculating conversion rates per country and payment plan with Pandas.
 date: 2024-10-25
+author: aamir
 tag: Analytics
 source: https://www.linkedin.com/pulse/app-onboarding-analysis-revenue-boost-tracking-in-app-aamir-jan-khan-wqutc/
 cta: >-

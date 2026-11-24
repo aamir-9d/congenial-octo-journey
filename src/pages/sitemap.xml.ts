@@ -29,14 +29,15 @@ const PAGES = [
 
 export const GET: APIRoute = async ({ site }) => {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  const today = new Date().toISOString().slice(0, 10);
 
   const entries = [
     ...PAGES.map(({ path, priority, changefreq }) => ({
       path,
       priority,
       changefreq,
-      lastmod: today,
+      /* No lastmod: the build date says nothing about when a page changed, and
+         one that is always today teaches Google to ignore it. */
+      lastmod: undefined as string | undefined,
     })),
     ...(await getCollection('blog')).map((post) => ({
       path: `/blog/${post.id}`,
@@ -51,8 +52,7 @@ export const GET: APIRoute = async ({ site }) => {
       const loc = new URL(`${base}${path === '/' ? '/' : path}`, site).href;
       return `  <url>
     <loc>${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
+${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}    <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
   </url>`;
     })

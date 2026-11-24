@@ -1,7 +1,8 @@
 ---
 title: Everything that happens between "Cancel" and cancelled
 kicker: Tapping cancel is the start of a funnel, not the end of one. Most subscription apps have several intervention points already switched on by default and instrument none of them.
-date: 2026-05-26
+date: 2026-08-26
+description: "Tapping cancel starts a funnel. Most subscription apps have several intervention points already switched on by default and instrument none of them."
 tag: Subscriptions
 cta: >-
   Pause, resubscribe and the cancellation survey are on by default, which means you are probably already running interventions you have never measured. Reading what they are doing takes a subscription platform audit, not a development cycle.

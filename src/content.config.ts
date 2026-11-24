@@ -29,6 +29,10 @@ const blog = defineCollection({
     date: z.coerce.date(),
     /** Mono uppercase label on the row. Keep the set small so it reads as a taxonomy. */
     tag: z.string(),
+    /** Search snippet, 160 characters at most. Falls back to the kicker. */
+    description: z.string().max(160).optional(),
+    /** Byline. Set only where the named person really wrote the post. */
+    author: z.enum(['aamir']).optional(),
     /** Where it first appeared. Rendered as a visible attribution link. */
     source: z.string().url().optional(),
     /**

@@ -187,7 +187,7 @@ const { lead = false } = Astro.props;
               </span>
             </div>
 
-            <h3 class="problems__title">{c.title}</h3>
+            {lead ? <h2 class="problems__title">{c.title}</h2> : <h3 class="problems__title">{c.title}</h3>}
             <p class="problems__lead">{c.lead}</p>
 
             {

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Problems from '../components/Problems.astro';
 import Stack from '../components/Stack.astro';
@@ -18,15 +19,16 @@ import Stack from '../components/Stack.astro';
  * statement; the full argument and the ten capability bundles live here.
  */
 
-const title = 'Services — E2E Apps';
+const title = 'Mobile Attribution & App Growth Services — E2E Apps';
 const description =
-  'What breaks in mobile measurement, and the ten capability bundles that fix it: attribution and MMP, SKAdNetwork, event tracking plans, subscriptions, Google and Apple Ads, web-to-app, ASO.';
+  'What breaks in mobile measurement, and the ten capability bundles that fix it: MMP attribution, SKAdNetwork, tracking plans, subscriptions, app ads and ASO.';
 ---
 
 <Base title={title} description={description} path="/services">
   <div class="page">
     <Nav />
     <main id="main">
+      <Breadcrumbs trail={[{ name: 'Services', path: '/services' }]} />
       <Problems lead />
       <Stack />
     </main>
