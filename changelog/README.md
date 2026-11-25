@@ -11,4 +11,5 @@ names, keys, client names or anything confidential here.
 
 | Session | Summary |
 | --- | --- |
+| [2026-11-25](2026-11-25.md) | Search Console: pages reported indexed |
 | [2026-11-24](2026-11-24.md) | Moved to e2eapp.com, email and contact form working, SEO foundations, 3D storyboard (covers 20–24 November) |
