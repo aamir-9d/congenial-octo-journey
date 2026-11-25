@@ -27,8 +27,9 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # A new push supersedes a running deploy.
-  group: pages
+  # A new push supersedes a running deploy. Keyed by ref, so merging a pull
+  # request does not cancel that request's own checks.
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 env:

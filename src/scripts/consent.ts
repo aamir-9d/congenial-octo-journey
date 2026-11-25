@@ -11,6 +11,8 @@
  * already fired is a default that did nothing.
  */
 
+import { captureAttribution } from './attribution';
+
 const COOKIE = 'e2e_consent';
 const MAX_AGE_DAYS = 180;
 
@@ -80,6 +82,44 @@ function gtag(..._args: unknown[]): void {
   window.dataLayer.push(arguments);
 }
 
+/* Time zone, because a static site has no server-side country. A failure here
+   shows the decline button, which is the safe direction. */
+const EUROPE =
+  /^(Europe\/|Arctic\/|Asia\/(Nicosia|Famagusta)$|Atlantic\/(Reykjavik|Canary|Madeira|Azores|Faroe|Faeroe)$|Africa\/Ceuta$|Indian\/(Reunion|Mayotte)$|America\/(Cayenne|Guadeloupe|Martinique)$)/;
+
+function inEurope(): boolean {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return !tz || !tz.includes('/') || EUROPE.test(tz);
+  } catch {
+    return true;
+  }
+}
+
+/** Drop the analytics and advertising cookies already on this site. */
+function clearTrackingCookies(): void {
+  const root = location.hostname.replace(/^www\./, '');
+  for (const pair of document.cookie.split('; ')) {
+    const name = pair.split('=')[0]!;
+    if (!/^(_ga|_gcl|_fbp|li_|e2e_attr)/.test(name)) continue;
+    for (const domain of ['', '; Domain=' + root, '; Domain=.' + root]) {
+      document.cookie = name + '=; Max-Age=0; Path=/' + domain;
+    }
+  }
+}
+
+/** The "turn cookies off" control on the privacy page. */
+function initWithdraw(banner: HTMLElement | null): void {
+  const off = document.querySelector<HTMLButtonElement>('[data-consent-off]');
+  off?.addEventListener('click', () => {
+    applyConsent(DENIED, true);
+    clearTrackingCookies();
+    banner?.remove();
+    off.textContent = 'Cookies are off';
+    off.disabled = true;
+  });
+}
+
 function applyConsent(state: ConsentState, persist: boolean): void {
   gtag('consent', 'update', state);
   window.dataLayer?.push({
@@ -92,6 +132,7 @@ function applyConsent(state: ConsentState, persist: boolean): void {
 
 export function initConsent(): void {
   const banner = document.getElementById('consent-banner');
+  initWithdraw(banner);
 
   // A stored decision replays on every page load so the container knows about
   // it before anything else fires.
@@ -103,10 +144,14 @@ export function initConsent(): void {
   }
 
   if (!banner) return;
+  const decline = banner.querySelector<HTMLButtonElement>('[data-consent="reject"]');
+  if (decline) decline.hidden = !inEurope();
   banner.hidden = false;
 
   const decide = (state: ConsentState) => {
     applyConsent(state, true);
+    // First-touch context waits for a yes; see attribution.ts.
+    if (state.analytics_storage === 'granted') captureAttribution();
     banner.hidden = true;
     banner.remove();
   };
