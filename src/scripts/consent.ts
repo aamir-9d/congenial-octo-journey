@@ -73,9 +73,11 @@ export function hasAnalyticsConsent(): boolean {
   return storedConsent()?.analytics_storage === 'granted';
 }
 
-function gtag(...args: unknown[]): void {
+/* Must push `arguments`, not a rest array: Tag Manager ignores a plain array, so
+   the consent update would silently never apply. */
+function gtag(..._args: unknown[]): void {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(args);
+  window.dataLayer.push(arguments);
 }
 
 function applyConsent(state: ConsentState, persist: boolean): void {
