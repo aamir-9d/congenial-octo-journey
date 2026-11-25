@@ -28,8 +28,7 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(GTM_ID);
       <link rel="preconnect" href="https://www.googletagmanager.com" />
 
       <script is:inline>
-        {`
-window.dataLayer = window.dataLayer || [];
+        window.dataLayer = window.dataLayer || [];
 function gtag(){ dataLayer.push(arguments); }
 
 // Denied until the visitor says otherwise. wait_for_update holds tags briefly
@@ -45,12 +44,10 @@ gtag('consent', 'default', {
 });
 gtag('set', 'ads_data_redaction', true);
 gtag('set', 'url_passthrough', true);
-`}
       </script>
 
       <script is:inline define:vars={{ GTM_ID }}>
-        {`
-// Load the container once the page is interactive, so it never competes with
+        // Load the container once the page is interactive, so it never competes with
 // the LCP. requestIdleCallback where available, load event otherwise.
 (function () {
   var loaded = false;
@@ -73,7 +70,6 @@ gtag('set', 'url_passthrough', true);
     });
   }
 })();
-`}
       </script>
     </Fragment>
   )

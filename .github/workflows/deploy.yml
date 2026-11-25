@@ -45,8 +45,8 @@ env:
 
   # Fill these in as you create them; each stays dormant while blank.
   # PUBLIC_CALENDLY_URL: https://calendly.com/<handle>/30min
-  # PUBLIC_GTM_ID: GTM-XXXXXXX
-  # PUBLIC_GA4_MEASUREMENT_ID: G-XXXXXXXXXX
+  PUBLIC_GTM_ID: GTM-WVKMF5L4
+  PUBLIC_GA4_MEASUREMENT_ID: G-XTQHVZXEKP
   # PUBLIC_GOOGLE_ADS_CONVERSION_ID: AW-XXXXXXXXX
   # PUBLIC_GOOGLE_ADS_FORM_LABEL: xxxxxxxxxxxxxxxxx
   # PUBLIC_GOOGLE_ADS_BOOKING_LABEL: xxxxxxxxxxxxxxxxx
