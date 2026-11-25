@@ -1,0 +1,108 @@
+---
+/**
+ * A data table that becomes stacked rows on a phone, each value under its own
+ * label, rather than scrolling sideways.
+ */
+interface Props {
+  head: string[];
+  rows: string[][];
+}
+
+const { head, rows } = Astro.props;
+---
+
+<table class="svt" role="table">
+  <thead class="svt__head" role="rowgroup">
+    <tr role="row">{head.map((h) => <th class="svt__th" scope="col" role="columnheader">{h}</th>)}</tr>
+  </thead>
+  <tbody role="rowgroup">
+    {rows.map((r) => (
+      <tr class="svt__row" role="row">
+        {r.map((cell, i) => (
+          <td class:list={['svt__td', { 'svt__td--first': i === 0 }]} role="cell">
+            <span class="svt__label" aria-hidden="true">{head[i]}</span>
+            <span>{cell}</span>
+          </td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+<style>
+  .svt {
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: collapse;
+    font-size: var(--t-card);
+    line-height: var(--lh-snug);
+    text-align: left;
+  }
+
+  .svt__th {
+    padding: var(--s3) var(--s6) var(--s3) 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .svt__td {
+    padding: var(--s4) var(--s6) var(--s4) 0;
+    border-top: 1px solid var(--color-line);
+    vertical-align: top;
+    color: var(--color-text-2);
+  }
+
+  .svt__td--first {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .svt__label {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .svt,
+    .svt tbody,
+    .svt__row,
+    .svt__td {
+      display: block;
+    }
+
+    .svt__head {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .svt__row {
+      padding: var(--s4) 0;
+      border-top: 1px solid var(--color-line);
+    }
+
+    .svt__td {
+      display: grid;
+      grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr);
+      gap: var(--s4);
+      padding: var(--s2) 0;
+      border-top: 0;
+    }
+
+    .svt__label {
+      display: block;
+      padding-top: 2px;
+      font-family: var(--font-mono);
+      font-size: var(--t-mono-2xs);
+      font-weight: var(--fw-regular);
+      letter-spacing: var(--ls-meta);
+      text-transform: uppercase;
+      color: var(--color-text-3);
+    }
+  }
+</style>

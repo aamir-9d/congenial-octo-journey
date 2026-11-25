@@ -9,8 +9,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
    asking permission for cookies that do not exist is a false statement, not a
    harmless default.
 
-   "No thanks" ships visible and consent.ts hides it outside Europe: UK and EU
-   rules want declining to be as easy as agreeing. */
+   One button, at the owner's request. Nothing is collected until it is pressed;
+   /privacy carries the control that turns collection off again. */
 const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 ---
 
@@ -22,9 +22,6 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
       better. They switch on when you press Got it.
     </p>
     <div class="consent__actions">
-      <button type="button" class="consent__btn consent__btn--ghost" data-consent="reject">
-        No thanks
-      </button>
       <button type="button" class="consent__btn consent__btn--amber" data-consent="accept">
         Got it
       </button>
@@ -91,10 +88,6 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
     transition: background 0.15s ease, border-color 0.15s ease;
   }
 
-  .consent__btn[hidden] {
-    display: none;
-  }
-
   .consent__btn--amber {
     background: var(--color-accent);
     color: var(--color-ink);
@@ -103,16 +96,6 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 
   .consent__btn--amber:hover {
     background: var(--color-accent-hover);
-  }
-
-  .consent__btn--ghost {
-    background: transparent;
-    color: var(--color-text);
-    border: 1px solid rgba(var(--rgb-text), 0.28);
-  }
-
-  .consent__btn--ghost:hover {
-    border-color: var(--color-text);
   }
 
   .consent__link {

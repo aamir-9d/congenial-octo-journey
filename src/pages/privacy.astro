@@ -14,7 +14,7 @@ const cookies = [
     name: 'e2e_consent',
     who: 'Us (first-party)',
     life: '180 days',
-    why: 'Remembers whether you allowed or declined analytics and advertising cookies, so you are not asked on every page.',
+    why: 'Remembers whether you allowed or turned off analytics and advertising cookies, so you are not asked on every page.',
   },
   {
     name: 'e2e_attr',
@@ -81,7 +81,7 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
   <p>
     No analytics or advertising data is sent. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
     across the board, so no analytics or advertising cookie is written and no hit is transmitted.
-    If you press No thanks, one first-party cookie remembers it so we do not ask again.
+    The banner stays until you press Got it, or until you turn cookies off below.
   </p>
 
   <h3>If you press Got it</h3>

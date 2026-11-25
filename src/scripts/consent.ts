@@ -82,20 +82,6 @@ function gtag(..._args: unknown[]): void {
   window.dataLayer.push(arguments);
 }
 
-/* Time zone, because a static site has no server-side country. A failure here
-   shows the decline button, which is the safe direction. */
-const EUROPE =
-  /^(Europe\/|Arctic\/|Asia\/(Nicosia|Famagusta)$|Atlantic\/(Reykjavik|Canary|Madeira|Azores|Faroe|Faeroe)$|Africa\/Ceuta$|Indian\/(Reunion|Mayotte)$|America\/(Cayenne|Guadeloupe|Martinique)$)/;
-
-function inEurope(): boolean {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return !tz || !tz.includes('/') || EUROPE.test(tz);
-  } catch {
-    return true;
-  }
-}
-
 /** Drop the analytics and advertising cookies already on this site. */
 function clearTrackingCookies(): void {
   const root = location.hostname.replace(/^www\./, '');
@@ -144,8 +130,6 @@ export function initConsent(): void {
   }
 
   if (!banner) return;
-  const decline = banner.querySelector<HTMLButtonElement>('[data-consent="reject"]');
-  if (decline) decline.hidden = !inEurope();
   banner.hidden = false;
 
   const decide = (state: ConsentState) => {
@@ -157,5 +141,4 @@ export function initConsent(): void {
   };
 
   banner.querySelector('[data-consent="accept"]')?.addEventListener('click', () => decide(GRANTED));
-  banner.querySelector('[data-consent="reject"]')?.addEventListener('click', () => decide(DENIED));
 }
