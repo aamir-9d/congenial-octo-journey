@@ -38,6 +38,13 @@ Plan phases referred to below:
   `scripts/indexnow.mjs`, which submits the live sitemap, or given paths, to `api.indexnow.org` and refuses
   to run until the key file is live.
 
+- Google Alerts created for `"E2E Apps"` and `e2eapp.com` (email alerts to the site owner's Google
+  account); both listed under "My alerts".
+- ChatGPT Business Hub checked: no existing E2E Apps listing; it offers "Create 'E2E Apps'". A different
+  business with a similar name ("e2e Group of Companies", Lahore) appears among the matches, so the
+  profile must use the exact name, website and description from `docs/directory-profiles.md`. Stopped
+  before creating: continuing accepts OpenAI's Businesses terms, which is the owner's decision.
+
 ### Not done
 - Five blog posts not yet submitted to Bing (one-campaign-per-language, leveraging-skan-for-ios,
   renewals-happen-while-your-app-is-closed, the-strategy-was-right-the-traffic-was-wrong,
