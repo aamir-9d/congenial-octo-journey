@@ -17,6 +17,25 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-26: Phase 1 live check (after merge)
+
+### Verified on e2eapp.com
+- `/about` and all five service pages return 200, with and without a trailing slash; `/about` is in the
+  sitemap (29 URLs) and linked from the homepage footer.
+- `/services` carries the ItemList, `/automation` the Service node; `/faq` shows four service links.
+- New headings, intros and the SKAN post title are live.
+- Deploy and Lighthouse checks passed on the merge.
+- Google Rich Results Test, run on `/about`, `/services/att-consent-timing` and `/faq`: each page has
+  3 valid items (Breadcrumbs, Local business, Organisation). The Local business item reports
+  2 non-critical issues on each page.
+
+### Not checked
+- What the 2 non-critical issues are: the tool's detail screen did not open in the automated browser.
+  Probably the optional address and phone fields, which a remote business does not publish; to be
+  confirmed by opening the test by hand.
+
+---
+
 ## 2026-11-26: Phase 1, first pass (branch `seo-aeo-phase1`)
 
 ### Already in place before this session (checked live)
