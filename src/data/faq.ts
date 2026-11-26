@@ -15,6 +15,9 @@
 export interface FaqItem {
   q: string;
   a: string;
+  /** A specialist page that answers this in depth. Shown under the answer;
+      not part of the answer text, so the JSON-LD is unchanged. */
+  service?: string;
 }
 
 /** Working together — price, timeline, access, effort, risk. */
@@ -57,6 +60,7 @@ export const GROUP_A: FaqItem[] = [
 export const GROUP_B: FaqItem[] = [
   {
     q: "Our numbers don't match across Google Ads, GA4, the MMP and RevenueCat. Can you reconcile them?",
+    service: 'mobile-attribution-audit',
     a: "This is the single most common reason people get in touch, and there's almost always a specific mechanical cause rather than a vague \"attribution is hard.\" A frequent one: auto-collected App Store events reach Google Ads without a value or currency attached, so a conversion rule that says *use the value from Firebase, otherwise use zero* silently applies zero to most conversions — a dashboard can report a few dozen dollars against conversions genuinely worth a thousand. Reconciliation starts by finding which of these is yours, not by averaging the four numbers.",
   },
   {
@@ -69,6 +73,7 @@ export const GROUP_B: FaqItem[] = [
   },
   {
     q: 'Do you build SKAdNetwork conversion value schemas?',
+    service: 'skan-adattributionkit-setup',
     a: "Yes — and the schema looks nothing alike between a subscription app and a game. A subscription app keys its fine values to funnel position: trial start, trial converted, first renewal. A game keys them to revenue buckets, because a small share of players produces most of the revenue and the schema's job is identifying a high-value player inside the postback window. Applying a subscription schema to a game wastes the signal completely, and it's a common mistake.",
   },
   {
@@ -85,10 +90,12 @@ export const GROUP_B: FaqItem[] = [
   },
   {
     q: 'Can you get subscription renewals into our ad platforms?',
+    service: 'subscription-revenue-tracking',
     a: "Yes. Renewals happen on Apple's and Google's servers while the app is closed, so no client-side SDK sees them. It takes a server-side path — App Store Server Notifications V2 and Play Real-time Developer Notifications into a backend that validates and forwards to your subscription platform, analytics and ad networks. Without it, every channel looks worse than it is, and the best cohorts get optimised away.",
   },
   {
     q: 'Do you write tracking plans and event taxonomies?',
+    service: 'event-tracking-plan',
     a: 'Yes, as a written specification a developer can implement without a meeting: event names, parameters, types, trigger conditions, and a QA matrix for verifying each one fires correctly in sandbox before release.',
   },
   {

@@ -38,6 +38,7 @@ const PAGES = [
   'services.html',
   'products.html',
   'faq.html',
+  'about.html',
   'blog.html',
   'privacy.html',
   'terms.html',
