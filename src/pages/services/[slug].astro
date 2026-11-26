@@ -110,7 +110,7 @@ const schema = {
         </div>
       </section>
 
-      <section class="section" data-section="service-detail">
+      <section class="section svc__detail" data-section="service-detail">
         <div class="wrap svc__blocks">
           {service.blocks.map((b) => (
             <div class:list={['svc__block', { 'svc__block--wide': b.wide }]}>
@@ -229,6 +229,12 @@ const schema = {
     font-size: var(--t-card-sm);
     line-height: var(--lh-prose);
     color: var(--color-text-3);
+  }
+
+  /* No heading of its own: it continues the cards above, so it keeps one
+     section-pad of space instead of two. */
+  .svc__detail {
+    padding-top: 0;
   }
 
   .svc__band {

@@ -128,3 +128,13 @@ test('every indexable page that was built is in the sitemap', { skip }, () => {
     `built, indexable, and absent from sitemap.xml: ${missing.join(', ')}`,
   );
 });
+
+test('sections are not separated by a screen of empty space', () => {
+  // --section-pad sits above and below every section, so two meeting sections
+  // leave twice its value empty. At up to 124px that was 248px at every break.
+  const tokens = fs.readFileSync(path.join('src', 'styles', 'tokens.css'), 'utf8');
+  const m = tokens.match(/--section-pad:\s*clamp\((\d+)px,\s*[\d.]+vw,\s*(\d+)px\)/);
+  assert.ok(m, '--section-pad is no longer a px clamp; update this test');
+  assert.ok(Number(m[1]) <= 56, `phone section padding ${m[1]}px is too tall`);
+  assert.ok(Number(m[2]) <= 96, `desktop section padding ${m[2]}px is too tall`);
+});
