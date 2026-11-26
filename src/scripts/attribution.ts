@@ -9,10 +9,10 @@
  * This is the exact mechanic the page sells under "Web-to-App Attribution".
  * Running it on ourselves is the point.
  *
- * Deliberately not gated on consent: the identifiers are first-party, written
- * to our own cookie, and used only to attribute a conversion the visitor
- * initiates by submitting a form. Nothing is transmitted anywhere until they
- * submit. Tag firing *is* gated — see consent.ts.
+ * Click IDs and campaign tags on the link are kept regardless of consent: they
+ * are first-party, written to our own cookie, and used only to attribute a form
+ * the visitor chooses to submit. A visit with neither writes nothing until the
+ * visitor agrees. Tag firing is gated too — see consent.ts.
  */
 
 const COOKIE = 'e2e_attr';
@@ -73,6 +73,9 @@ export function captureAttribution(): Attribution {
       changed = true;
     }
   }
+
+  const agreed = /(?:^|; )e2e_consent=[^;]*analytics_storage%22%3A%22granted/.test(document.cookie);
+  if (!next.first_seen && !changed && !agreed) return next;
 
   if (!next.first_seen) {
     next.first_seen = new Date().toISOString();

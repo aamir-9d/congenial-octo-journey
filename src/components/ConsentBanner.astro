@@ -7,7 +7,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
    Gated on the same PUBLIC_GTM_ID as Analytics.astro. With no container
    configured, nothing sets an analytics or advertising cookie — and a banner
    asking permission for cookies that do not exist is a false statement, not a
-   harmless default. */
+   harmless default.
+
+   "No thanks" ships visible and consent.ts hides it outside Europe: UK and EU
+   rules want declining to be as easy as agreeing. */
 const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 ---
 
@@ -15,16 +18,15 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 <div id="consent-banner" class="consent" data-added="phase-3" role="dialog" aria-label="Cookie choices" aria-live="polite" hidden>
   <div class="consent__inner">
     <p class="consent__copy">
-      We use Google Analytics and Google Ads cookies to see which campaigns bring people here and
-      whether they convert. Nothing loads until you choose. Reject and the site works exactly the
-      same &#8212; we just stop counting.
+      We use analytics and advertising cookies to see what brings people here and make the site
+      better. They switch on when you press Got it.
     </p>
     <div class="consent__actions">
       <button type="button" class="consent__btn consent__btn--ghost" data-consent="reject">
-        Reject
+        No thanks
       </button>
       <button type="button" class="consent__btn consent__btn--amber" data-consent="accept">
-        Accept
+        Got it
       </button>
       <a href={`${base}/privacy`} class="consent__link">What we collect</a>
     </div>
@@ -89,9 +91,13 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
     transition: background 0.15s ease, border-color 0.15s ease;
   }
 
+  .consent__btn[hidden] {
+    display: none;
+  }
+
   .consent__btn--amber {
     background: var(--color-accent);
-    color: var(--color-text);
+    color: var(--color-ink);
     border: 0;
   }
 

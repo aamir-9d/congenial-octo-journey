@@ -14,13 +14,13 @@ const cookies = [
     name: 'e2e_consent',
     who: 'Us (first-party)',
     life: '180 days',
-    why: 'Remembers whether you accepted or rejected analytics and advertising cookies, so you are not asked on every page.',
+    why: 'Remembers whether you allowed or declined analytics and advertising cookies, so you are not asked on every page.',
   },
   {
     name: 'e2e_attr',
     who: 'Us (first-party)',
     life: '90 days',
-    why: 'Holds the advertising click identifier from the link you arrived on (see below) so that if you later contact us we can tell which ad brought you. Set regardless of your choice; nothing is transmitted anywhere unless you submit the form.',
+    why: 'Holds the advertising click identifier from the link you arrived on (see below) so that if you later contact us we can tell which ad brought you. Set when you arrive on a tagged link, whatever your choice, or once you press Got it; nothing is transmitted anywhere unless you submit the form.',
   },
   {
     name: '_ga, _ga_*',
@@ -56,7 +56,7 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
   description="What E2E Apps collects, which tools it uses, how long it keeps things, and how to make it stop."
   path="/privacy"
   heading="Privacy"
-  updated="20 August 2026"
+  updated="25 November 2026"
 >
   <p>
     We run a measurement consultancy, so it would be a poor look to be vague about our own. This
@@ -64,8 +64,8 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
     is kept. No generic template, no "we may collect certain information".
   </p>
   <p>
-    <strong>The short version.</strong> If you reject cookies, nothing about your visit leaves this
-    site. If you accept, Google Analytics and Google Ads can see that you visited. If you submit the
+    <strong>The short version.</strong> Until you press Got it, nothing about your visit is sent to
+    an analytics or advertising service. If you press it, Google Analytics and Google Ads can see that you visited. If you submit the
     form or book a call, we get what you typed plus the ad click you arrived on.
   </p>
 
@@ -77,14 +77,14 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
 
   <h2>What we collect, and when</h2>
 
-  <h3>If you just read the page and reject cookies</h3>
+  <h3>If you just read the page without pressing Got it</h3>
   <p>
-    Nothing is sent anywhere. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
+    No analytics or advertising data is sent. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
     across the board, so no analytics or advertising cookie is written and no hit is transmitted.
-    One first-party cookie is set to remember your rejection so we do not ask again.
+    If you press No thanks, one first-party cookie remembers it so we do not ask again.
   </p>
 
-  <h3>If you accept cookies</h3>
+  <h3>If you press Got it</h3>
   <p>
     Google Analytics 4 records the pages you view, how far you scroll, which sections you reach, and
     how you use the payback calculator &#8212; which model you pick, the values you set, and the
@@ -187,11 +187,20 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
     </li>
   </ul>
 
+  <h2>Turn cookies off</h2>
+  <p>
+    This stops analytics and advertising collection in this browser and deletes the cookies we can
+    reach from this site, apart from the one that remembers your choice.
+  </p>
+  <p>
+    <button type="button" class="privacy-off" data-consent-off>Turn cookies off</button>
+  </p>
+
   <h2>Legal basis</h2>
   <ul>
     <li>
       <strong>Consent</strong> for analytics and advertising cookies. Given through the banner,
-      withdrawable at any time by clearing cookies for this site, which brings the banner back.
+      withdrawable at any time with the button above.
     </li>
     <li>
       <strong>Legitimate interest</strong> for the first-party attribution cookie and for the spam
@@ -219,3 +228,21 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
 
   <p><a href={`${base}/`} class="link">Back to the homepage</a></p>
 </Prose>
+
+<style>
+  .privacy-off {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--t-card);
+    padding: var(--s3) var(--s8);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid rgba(var(--rgb-text), 0.28);
+    cursor: pointer;
+  }
+
+  .privacy-off:hover {
+    border-color: var(--color-text);
+  }
+</style>

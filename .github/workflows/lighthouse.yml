@@ -36,6 +36,8 @@ jobs:
         env:
           SITE_URL: https://e2eapp.com
           SITE_BASE: /
+          # Audit what production serves, Tag Manager included.
+          PUBLIC_GTM_ID: GTM-WVKMF5L4
 
       - name: Run Lighthouse CI
         run: |
