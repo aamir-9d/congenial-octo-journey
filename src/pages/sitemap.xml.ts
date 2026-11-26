@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { SERVICES } from '../data/services';
 
 /**
  * Static pages plus every blog post.
@@ -19,6 +20,7 @@ import { getCollection } from 'astro:content';
 const PAGES = [
   { path: '/', priority: '1.0', changefreq: 'monthly' },
   { path: '/services', priority: '0.9', changefreq: 'monthly' },
+  ...SERVICES.map((s) => ({ path: `/services/${s.slug}`, priority: '0.9', changefreq: 'monthly' })),
   { path: '/automation', priority: '0.9', changefreq: 'monthly' },
   { path: '/products', priority: '0.7', changefreq: 'monthly' },
   { path: '/blog', priority: '0.8', changefreq: 'weekly' },

@@ -5,6 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
 import Problems from '../components/Problems.astro';
 import Stack from '../components/Stack.astro';
+import ServiceIndex from '../components/ServiceIndex.astro';
 
 /**
  * Services.
@@ -30,6 +31,7 @@ const description =
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Services', path: '/services' }]} />
       <Problems lead />
+      <ServiceIndex />
       <Stack />
     </main>
 

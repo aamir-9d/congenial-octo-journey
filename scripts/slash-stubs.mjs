@@ -17,7 +17,7 @@ let n = 0;
 
 for (const entry of fs.readdirSync(DIST, { recursive: true, encoding: 'utf8' })) {
   const file = entry.split(path.sep).join('/');
-  if (!/^(blog\/)?[^/]+\.html$/.test(file) || /(^|\/)(index|404)\.html$/.test(file)) continue;
+  if (!/^(blog\/|services\/)?[^/]+\.html$/.test(file) || /(^|\/)(index|404)\.html$/.test(file)) continue;
 
   const copy = path.join(DIST, file.replace(/\.html$/, ''), 'index.html');
   if (fs.existsSync(copy)) continue;

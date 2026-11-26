@@ -1,0 +1,114 @@
+---
+import Icon from './Icon.astro';
+import { SERVICES } from '../data/services';
+
+/** Links to the live specialist pages. Lists only what src/data/services.ts holds. */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section id="specialist" class="section" data-section="specialist-services">
+  <div class="wrap">
+    <div class="section-head" data-reveal="1">
+      <div class="eyebrow">SPECIALIST SERVICES</div>
+      <h2 class="svi__h">One problem per page.</h2>
+      <p class="section-lead">
+        Each shows what apps get wrong and how to fix it. Start with the audit if you do not know
+        which one you need.
+      </p>
+    </div>
+    <ul class="svi__grid" role="list">
+      {SERVICES.map((s, i) => (
+        <li class={i === 0 ? 'svi__item--lead' : undefined}>
+          <a class:list={['svi__card', { 'svi__card--ring': i === 0 }]} href={`${base}/services/${s.slug}`}>
+            <span class="svi__name">{s.name}</span>
+            <span class="svi__text">{s.summary}</span>
+            <span class="svi__go">
+              See the fixes
+              <Icon name="arrow-right" size={13} />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .svi__h {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
+  }
+
+  .svi__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: clamp(40px, 4vw, 64px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .svi__item--lead {
+    grid-column: 1 / -1;
+  }
+
+  .svi__card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    transition: box-shadow 180ms var(--ease-out-soft);
+  }
+
+  .svi__card--ring,
+  .svi__card:hover {
+    box-shadow: var(--ring-accent);
+  }
+
+  .svi__name {
+    font-size: var(--t-post-title);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+  }
+
+  .svi__text {
+    margin-top: 10px;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .svi__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: auto;
+    padding-top: 22px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-disclosure);
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 1023px) {
+    .svi__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .svi__grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .svi__card {
+      padding: 20px;
+    }
+  }
+</style>

@@ -1,0 +1,487 @@
+---
+import Base from '../../layouts/Base.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceVisual from '../../components/ServiceVisual.astro';
+import ServiceTable from '../../components/ServiceTable.astro';
+import { AUTHORS } from '../../data/authors';
+import { SERVICES, UPDATED, rich } from '../../data/services';
+
+/**
+ * One specialist service.
+ *
+ * Built only from the site's own measures: `.section` and `.wrap`, centred
+ * `.section-head`, the bento card (26px, --radius-lg, --ring, 16px gaps) and the
+ * FAQ disclosure. Content lives in src/data/services.ts.
+ */
+
+export function getStaticPaths() {
+  return SERVICES.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = `/services/${service.slug}`;
+const author = AUTHORS.aamir;
+const related = service.related.map((slug) => SERVICES.find((s) => s.slug === slug)!);
+
+const home = new URL(`${base}/`, Astro.site).href;
+const url = new URL(`${base}${path}`, Astro.site).href;
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      '@id': `${url}#service`,
+      name: service.name,
+      serviceType: service.name,
+      description: service.description,
+      url,
+      areaServed: 'Worldwide',
+      provider: { '@type': 'ProfessionalService', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${url}#faq`,
+      mainEntity: service.faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+  ],
+};
+---
+
+<Base title={service.title} description={service.description} path={path}>
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <Breadcrumbs trail={[{ name: 'Services', path: '/services' }, { name: service.name, path }]} />
+
+      <section class="section section--lead" data-section="service-intro">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="eyebrow">{service.eyebrow}</div>
+            <h1 class="svc__h">{service.h1}</h1>
+            <p class="section-lead">{service.lead}</p>
+            <p class="svc__byline">
+              By {author.name}, updated <time datetime={UPDATED.iso}>{UPDATED.label}</time>
+            </p>
+            <a class="btn-primary svc__btn" href={`${base}/#contact`}>
+              Book a call
+              <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+
+          <div class="svc__visual">
+            <h2 class="svc__visual-title">{service.visualTitle}</h2>
+            {service.visualLead && <p class="svc__visual-lead">{service.visualLead}</p>}
+            <ServiceVisual visual={service.visual} />
+            {service.visualNote && <p class="svc__note" set:html={rich(service.visualNote, base)} />}
+          </div>
+        </div>
+      </section>
+
+      <section class="section svc__band" data-section="service-mistakes">
+        <div class="wrap">
+          <div class="section-head" data-reveal="1">
+            <div class="eyebrow">MISTAKES AND FIXES</div>
+            <h2 class="svc__h">What apps get wrong, and the fix.</h2>
+          </div>
+          <ul class="svc__grid" role="list">
+            {service.mistakes.map((m) => (
+              <li class="svc__card">
+                <h3 class="svc__card-title">{m.wrong}</h3>
+                <div>
+                  <div class="svc__kicker">{service.showsLabel}</div>
+                  <p class="svc__card-text">{m.shows}</p>
+                </div>
+                <div class="svc__fix">
+                  <div class="svc__kicker svc__kicker--amber">The fix</div>
+                  <p class="svc__card-text svc__card-text--strong" set:html={rich(m.fix, base)} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" data-section="service-detail">
+        <div class="wrap svc__blocks">
+          {service.blocks.map((b) => (
+            <div class:list={['svc__block', { 'svc__block--wide': b.wide }]}>
+              <h2 class="svc__block-title">{b.title}</h2>
+              {b.text && <p class="svc__block-text" set:html={rich(b.text, base)} />}
+              {b.list && (
+                b.ordered ? (
+                  <ol class="svc__list">{b.list.map((i) => <li>{i}</li>)}</ol>
+                ) : (
+                  <ul class="svc__list">{b.list.map((i) => <li>{i}</li>)}</ul>
+                )
+              )}
+              {b.table && <ServiceTable head={b.table.head} rows={b.table.rows} />}
+              {b.note && <p class="svc__note" set:html={rich(b.note, base)} />}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="section svc__band" data-section="service-faq">
+        <div class="svc__faq">
+          <div class="section-head" data-reveal="1">
+            <div class="eyebrow">BEFORE YOU BOOK</div>
+            <h2 class="svc__h">Common questions.</h2>
+          </div>
+          <div class="svc__faq-list">
+            {service.faqs.map((f, i) => (
+              <details class="svc__faq-item" open={i === 0}>
+                <summary class="svc__q">
+                  <span>{f.q}</span>
+                  <Icon name="caret-down" size={13} />
+                </summary>
+                <p class="svc__a">{f.a}</p>
+              </details>
+            ))}
+          </div>
+
+          <aside class="svc__cta">
+            <p class="svc__cta-text">{service.ask}</p>
+            <a class="btn-primary svc__cta-btn" href={`${base}/#contact`}>
+              Book a call
+              <Icon name="arrow-right" size={14} />
+            </a>
+          </aside>
+
+          <aside class="svc__foot" aria-label="About the author">
+            <p class="svc__author">{author.name} <span class="svc__role">{author.role}</span></p>
+            <p class="svc__bio">{author.bio}</p>
+            <a class="link" href={author.linkedin} target="_blank" rel="noopener">Meet on LinkedIn &#8599;</a>
+          </aside>
+
+          <nav class="svc__foot" aria-labelledby="svc-related">
+            <h2 id="svc-related" class="svc__related-title">Related services</h2>
+            <ul class="svc__related">
+              {related.map((s) => <li><a class="link" href={`${base}/services/${s.slug}`}>{s.name}</a></li>)}
+              {service.post && <li><a class="link" href={`${base}${service.post.href}`}>Read: {service.post.label}</a></li>}
+            </ul>
+          </nav>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .svc__h {
+    margin: 16px auto 0;
+    max-width: 24ch;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
+  }
+
+  .svc__byline {
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+  }
+
+  .svc__btn {
+    margin-top: var(--s8);
+    min-height: 44px;
+  }
+
+  .svc__visual {
+    margin-top: clamp(40px, 4vw, 64px);
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring-accent);
+  }
+
+  .svc__visual-title {
+    font-size: var(--t-h3-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+  }
+
+  .svc__visual-lead {
+    margin-top: 10px;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .svc__note {
+    margin-top: var(--s6);
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-prose);
+    color: var(--color-text-3);
+  }
+
+  .svc__band {
+    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
+  }
+
+  .svc__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 16px;
+    margin: clamp(40px, 4vw, 64px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .svc__card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  /* An odd last card closes its row instead of leaving a hole. */
+  .svc__card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .svc__card-title {
+    font-size: var(--t-post-title);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+  }
+
+  .svc__fix {
+    margin-top: auto;
+  }
+
+  .svc__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .svc__kicker--amber {
+    color: var(--color-accent);
+  }
+
+  .svc__card-text {
+    margin-top: var(--s2);
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .svc__card-text--strong {
+    color: var(--color-text);
+  }
+
+  .svc__blocks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .svc__block {
+    min-width: 0;
+    padding: 26px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .svc__block--wide {
+    grid-column: 1 / -1;
+  }
+
+  .svc__block-title {
+    font-size: var(--t-h3-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+  }
+
+  .svc__block-text {
+    margin-top: 10px;
+    max-width: 72ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .svc__list {
+    display: grid;
+    gap: var(--s3);
+    margin: 14px 0 0;
+    padding-left: 20px;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .svc__list li::marker {
+    color: var(--color-accent);
+  }
+
+  .svc__faq {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .svc__faq-list {
+    margin-top: clamp(40px, 4vw, 64px);
+  }
+
+  .svc__faq-item {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .svc__q {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 0;
+    min-height: 44px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 16.5px;
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+  }
+
+  .svc__q :global(svg) {
+    margin-top: 5px;
+    color: var(--color-text-4);
+    transition: transform 180ms ease;
+  }
+
+  .svc__faq-item[open] .svc__q :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  .svc__a {
+    padding: 0 0 20px;
+    max-width: 72ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-answer);
+    color: var(--color-text-2);
+  }
+
+  .svc__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s6);
+    margin-top: var(--s16);
+    padding: var(--s8);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--ring-accent);
+  }
+
+  .svc__cta-text {
+    flex: 1;
+    min-width: min(100%, 34ch);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .svc__cta-btn {
+    flex: none;
+  }
+
+  .svc__foot {
+    margin-top: var(--s12);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .svc__author {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .svc__role {
+    margin-left: var(--s3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    font-weight: var(--fw-regular);
+    color: var(--color-text-4);
+  }
+
+  .svc__bio {
+    margin: var(--s3) 0;
+  }
+
+  .svc__related-title {
+    font-size: var(--t-post-title);
+    color: var(--color-text);
+  }
+
+  .svc__related {
+    display: grid;
+    gap: var(--s4);
+    margin: var(--s4) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 767px) {
+    .svc__blocks {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .svc__visual,
+    .svc__card,
+    .svc__block {
+      padding: 20px;
+    }
+
+    .svc__q {
+      padding: var(--s4) 0;
+      font-size: 15.5px;
+      line-height: 1.4;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .svc__cta {
+      padding: var(--s6);
+      gap: var(--s4);
+    }
+
+    .svc__cta-btn {
+      width: 100%;
+      justify-content: center;
+      min-height: 52px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc__q :global(svg) {
+      transition: none;
+    }
+  }
+</style>

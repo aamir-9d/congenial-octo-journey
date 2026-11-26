@@ -1,0 +1,352 @@
+---
+import ServiceTable from './ServiceTable.astro';
+import type { Visual } from '../data/services';
+
+/**
+ * The exhibit at the top of a service page. Plain markup throughout, so every
+ * word in it is readable by a screen reader and a crawler. Horizontal on a
+ * desktop, vertical on a phone, never scaled down.
+ */
+interface Props {
+  visual: Visual;
+}
+
+const { visual } = Astro.props;
+
+const windows = [
+  { name: 'Window 1', days: 'Days 0–2', text: 'Install and trial start are visible here.', grow: 3, tone: 'a' },
+  { name: 'Window 2', days: 'Days 3–7', text: 'A seven-day trial charges at about day 7.', grow: 5, tone: 'b' },
+  { name: 'Window 3', days: 'Days 8–35', text: 'Retention and repeat payment.', grow: 28, tone: 'c' },
+  { name: 'Not seen', days: 'Day 36 on', text: 'The first monthly renewal, near day 37, needs server-side data.', grow: 4, tone: 'd' },
+];
+
+const orders = [
+  { title: 'No wait', good: false, steps: ['App opens', 'SDK sends install', 'Prompt appears', 'User allows'], mark: 1, result: 'The answer arrives after the install was sent.' },
+  { title: 'With the wait set', good: true, steps: ['App opens, wait set', 'Prompt appears', 'User allows', 'SDK sends install'], mark: 3, result: 'The install can carry the identifier.' },
+];
+---
+
+{visual.kind === 'windows' && (
+  <div>
+    <ol class="vis-win" role="list">
+      {windows.map((w) => (
+        <li class={`vis-win__item vis-win__item--${w.tone}`} style={`--grow:${w.grow}`}>
+          <span class="vis-win__bar">
+            <span class="vis-win__name">{w.name}</span>
+            <span class="vis-win__days">{w.days}</span>
+          </span>
+          <span class="vis-win__text">{w.text}</span>
+        </li>
+      ))}
+    </ol>
+    <ServiceTable
+      head={['Window', 'Postback delay', 'Value available']}
+      rows={[
+        ['1', '24 to 48 hours', 'Fine (0 to 63) or coarse, depending on the data tier'],
+        ['2', '24 to 144 hours', 'Coarse, unless the tier is 0'],
+        ['3', '24 to 144 hours', 'Coarse, unless the tier is 0'],
+      ]}
+    />
+  </div>
+)}
+
+{visual.kind === 'order' && (
+  <div class="vis-order">
+    {orders.map((o) => (
+      <div>
+        <h3 class:list={['vis-order__title', { 'vis-order__title--good': o.good }]}>{o.title}</h3>
+        <ol class="vis-order__steps" role="list">
+          {o.steps.map((s, i) => (
+            <li class:list={['vis-order__step', i === o.mark && (o.good ? 'vis-order__step--good' : 'vis-order__step--bad')]}>{s}</li>
+          ))}
+        </ol>
+        <p class="vis-order__result">{o.result}</p>
+      </div>
+    ))}
+  </div>
+)}
+
+{visual.kind === 'chain' && (
+  <ol class="vis-chain" role="list">
+    {visual.steps.map(([name, text]) => (
+      <li class="vis-chain__step">
+        <span class="vis-chain__name">{name}</span>
+        <span class="vis-chain__text">{text}</span>
+      </li>
+    ))}
+  </ol>
+)}
+
+{visual.kind === 'spec' && (
+  <dl class="vis-spec">
+    <div class="vis-spec__name">
+      <dt class="vis-spec__key">Name</dt>
+      <dd class="vis-spec__event">{visual.name}</dd>
+    </div>
+    {visual.fields.map(([k, v]) => (
+      <div class="vis-spec__field">
+        <dt class="vis-spec__key">{k}</dt>
+        <dd class="vis-spec__value">{v}</dd>
+      </div>
+    ))}
+  </dl>
+)}
+
+{visual.kind === 'table' && <ServiceTable head={visual.head} rows={visual.rows} />}
+
+<style>
+  ol,
+  dl,
+  dd {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .vis-win {
+    display: flex;
+    gap: 4px;
+    margin-top: 22px;
+  }
+
+  .vis-win__item {
+    flex: var(--grow) 1 0;
+    min-width: 168px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .vis-win__bar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px;
+    min-height: 78px;
+    border-radius: var(--radius-sm);
+  }
+
+  .vis-win__item--a .vis-win__bar {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .vis-win__item--b .vis-win__bar {
+    background: rgba(var(--rgb-accent), 0.34);
+  }
+
+  .vis-win__item--c .vis-win__bar {
+    background: rgba(var(--rgb-accent), 0.16);
+  }
+
+  .vis-win__item--d .vis-win__bar {
+    border: 1px dashed var(--color-text-4);
+  }
+
+  .vis-win__name {
+    font-weight: var(--fw-semibold);
+    font-size: var(--t-body-sm);
+  }
+
+  .vis-win__days {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+  }
+
+  .vis-win__text {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .vis-order {
+    display: grid;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .vis-order__title {
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-2);
+  }
+
+  .vis-order__title--good {
+    color: var(--color-accent);
+  }
+
+  .vis-order__steps {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: var(--s4);
+  }
+
+  .vis-order__step {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunk);
+    font-size: var(--t-card);
+    line-height: var(--lh-snug);
+  }
+
+  .vis-order__step--bad {
+    box-shadow: inset 0 0 0 1px var(--color-text-4);
+  }
+
+  .vis-order__step--good {
+    background: var(--color-accent);
+    color: var(--color-ink);
+    font-weight: var(--fw-semibold);
+  }
+
+  .vis-order__result {
+    margin-top: var(--s3);
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .vis-chain {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .vis-chain__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    padding-top: 26px;
+  }
+
+  .vis-chain__step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  .vis-chain__step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 18px;
+    right: -10px;
+    height: 2px;
+    background: var(--color-line-strong);
+  }
+
+  .vis-chain__name {
+    font-size: var(--t-post-title);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
+    line-height: var(--lh-h3);
+  }
+
+  .vis-chain__text {
+    font-size: var(--t-card-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .vis-spec {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 0 24px;
+    margin-top: 14px;
+  }
+
+  .vis-spec__name {
+    grid-column: 1 / -1;
+    padding: 12px 0 18px;
+  }
+
+  .vis-spec__event {
+    margin-top: var(--s2);
+    font-family: var(--font-mono);
+    font-size: var(--t-stat);
+    line-height: var(--lh-tight);
+    color: var(--color-accent);
+    overflow-wrap: anywhere;
+  }
+
+  .vis-spec__field {
+    padding: 14px 0;
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .vis-spec__key {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .vis-spec__value {
+    margin-top: var(--s2);
+    font-size: var(--t-card);
+    line-height: var(--lh-snug);
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 767px) {
+    .vis-win {
+      flex-direction: column;
+    }
+
+    .vis-win__item {
+      flex: none;
+      min-width: 0;
+      gap: var(--s3);
+      padding-bottom: var(--s4);
+    }
+
+    .vis-win__bar {
+      min-height: 0;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    /* Height stands in for the bar's width, so the third window still reads as
+       much the longest. */
+    .vis-win__item--c .vis-win__bar {
+      min-height: 110px;
+    }
+
+    .vis-order__steps {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .vis-chain {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+
+    .vis-chain__step {
+      padding: 0 0 22px 28px;
+    }
+
+    .vis-chain__step::before {
+      top: 5px;
+    }
+
+    .vis-chain__step:not(:last-child)::after {
+      top: 22px;
+      bottom: 0;
+      left: 5px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+  }
+</style>
