@@ -117,7 +117,9 @@
   --s8: 24px;
   --s12: 34px;
   --s16: 46px;
-  --section-pad: clamp(72px, 8vw, 124px);
+  /* Applied above and below every section, so the gap between two sections is
+     twice this. At 72-124px that left 144-280px of empty screen at every break. */
+  --section-pad: clamp(48px, 5.5vw, 88px);
   --gutter: clamp(20px, 4vw, 44px);
   --wrap: 1280px;
   --wrap-form: 760px;
