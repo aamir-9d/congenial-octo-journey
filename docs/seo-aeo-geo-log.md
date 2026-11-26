@@ -17,6 +17,21 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-26: Phase 2 started
+
+### Done
+- Search Console: indexing requested for `/about` and the five service pages. Each showed "Indexing
+  requested" (priority crawl queue). Before the request, `/services/mobile-attribution-audit` was
+  already on Google; the other five were "URL is unknown to Google".
+- Listing copy written for Clutch, GoodFirms, LinkedIn and ChatGPT Business Hub:
+  `docs/directory-profiles.md`. Taken from the site's own copy; unknowns left as placeholders.
+
+### In progress
+- Bing Webmaster Tools: sign-in screen opened; the owner signs in, then the site is imported from
+  Search Console.
+
+---
+
 ## 2026-11-26: Phase 1 live check (after merge)
 
 ### Verified on e2eapp.com
