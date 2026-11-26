@@ -17,6 +17,61 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-26: Phase 2 started
+
+### Done
+- Search Console: indexing requested for `/about` and the five service pages. Each showed "Indexing
+  requested" (priority crawl queue). Before the request, `/services/mobile-attribution-audit` was
+  already on Google; the other five were "URL is unknown to Google".
+- Listing copy written for Clutch, GoodFirms, LinkedIn and ChatGPT Business Hub:
+  `docs/directory-profiles.md`. Taken from the site's own copy; unknowns left as placeholders.
+
+- Bing Webmaster Tools: the owner signed in with Google; the site was imported from Search Console
+  (no DNS step). Only e2eapp.com was imported.
+- Bing sitemap: `https://e2eapp.com/sitemap.xml` submitted; Bing replied "successfully submitted for
+  processing".
+- Bing URL Submission: 24 of the 29 sitemap URLs submitted and listed as submitted (all pages except five
+  blog posts). Before submission Bing showed most pages as "Discovered but not crawled" and `/about` and
+  `/services/att-consent-timing` as "Not discovered". Daily quota is 100.
+- Bing AI Performance baseline: 0 total citations (Copilot and partners).
+- IndexNow set up: key file `public/89f118ff962dc811cb37e2aa654b8fc0.txt` (public by design) and
+  `scripts/indexnow.mjs`, which submits the live sitemap, or given paths, to `api.indexnow.org` and refuses
+  to run until the key file is live.
+
+- Google Alerts created for `"E2E Apps"` and `e2eapp.com` (email alerts to the site owner's Google
+  account); both listed under "My alerts".
+- ChatGPT Business Hub checked: no existing E2E Apps listing; it offers "Create 'E2E Apps'". A different
+  business with a similar name ("e2e Group of Companies", Lahore) appears among the matches, so the
+  profile must use the exact name, website and description from `docs/directory-profiles.md`. Stopped
+  before creating: continuing accepts OpenAI's Businesses terms, which is the owner's decision.
+
+### Not done
+- Five blog posts not yet submitted to Bing (one-campaign-per-language, leveraging-skan-for-ios,
+  renewals-happen-while-your-app-is-closed, the-strategy-was-right-the-traffic-was-wrong,
+  where-churn-shows-up-in-your-numbers): the batch form did not open in the automated browser. They go
+  through IndexNow after this branch is merged.
+
+---
+
+## 2026-11-26: Phase 1 live check (after merge)
+
+### Verified on e2eapp.com
+- `/about` and all five service pages return 200, with and without a trailing slash; `/about` is in the
+  sitemap (29 URLs) and linked from the homepage footer.
+- `/services` carries the ItemList, `/automation` the Service node; `/faq` shows four service links.
+- New headings, intros and the SKAN post title are live.
+- Deploy and Lighthouse checks passed on the merge.
+- Google Rich Results Test, run on `/about`, `/services/att-consent-timing` and `/faq`: each page has
+  3 valid items (Breadcrumbs, Local business, Organisation). The Local business item reports
+  2 non-critical issues on each page.
+
+### Not checked
+- What the 2 non-critical issues are: the tool's detail screen did not open in the automated browser.
+  Probably the optional address and phone fields, which a remote business does not publish; to be
+  confirmed by opening the test by hand.
+
+---
+
 ## 2026-11-26: Phase 1, first pass (branch `seo-aeo-phase1`)
 
 ### Already in place before this session (checked live)
