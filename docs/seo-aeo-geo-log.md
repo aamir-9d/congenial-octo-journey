@@ -26,9 +26,23 @@ Plan phases referred to below:
 - Listing copy written for Clutch, GoodFirms, LinkedIn and ChatGPT Business Hub:
   `docs/directory-profiles.md`. Taken from the site's own copy; unknowns left as placeholders.
 
-### In progress
-- Bing Webmaster Tools: sign-in screen opened; the owner signs in, then the site is imported from
-  Search Console.
+- Bing Webmaster Tools: the owner signed in with Google; the site was imported from Search Console
+  (no DNS step). Only e2eapp.com was imported.
+- Bing sitemap: `https://e2eapp.com/sitemap.xml` submitted; Bing replied "successfully submitted for
+  processing".
+- Bing URL Submission: 24 of the 29 sitemap URLs submitted and listed as submitted (all pages except five
+  blog posts). Before submission Bing showed most pages as "Discovered but not crawled" and `/about` and
+  `/services/att-consent-timing` as "Not discovered". Daily quota is 100.
+- Bing AI Performance baseline: 0 total citations (Copilot and partners).
+- IndexNow set up: key file `public/89f118ff962dc811cb37e2aa654b8fc0.txt` (public by design) and
+  `scripts/indexnow.mjs`, which submits the live sitemap, or given paths, to `api.indexnow.org` and refuses
+  to run until the key file is live.
+
+### Not done
+- Five blog posts not yet submitted to Bing (one-campaign-per-language, leveraging-skan-for-ios,
+  renewals-happen-while-your-app-is-closed, the-strategy-was-right-the-traffic-was-wrong,
+  where-churn-shows-up-in-your-numbers): the batch form did not open in the automated browser. They go
+  through IndexNow after this branch is merged.
 
 ---
 
