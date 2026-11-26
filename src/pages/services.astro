@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Problems from '../components/Problems.astro';
 import Stack from '../components/Stack.astro';
 import ServiceIndex from '../components/ServiceIndex.astro';
+import { SERVICES } from '../data/services';
 
 /**
  * Services.
@@ -23,9 +24,25 @@ import ServiceIndex from '../components/ServiceIndex.astro';
 const title = 'Mobile Attribution & App Growth Services — E2E Apps';
 const description =
   'What breaks in mobile measurement, and the ten capability bundles that fix it: MMP attribution, SKAdNetwork, tracking plans, subscriptions, app ads and ASO.';
+
+/* The specialist pages this page lists (ServiceIndex), as an ItemList. Built
+   from the same array the section renders, so the two cannot disagree. */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const list = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'E2E Apps specialist services',
+  itemListElement: SERVICES.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: s.name,
+    url: new URL(`${base}/services/${s.slug}`, Astro.site).href,
+  })),
+};
 ---
 
 <Base title={title} description={description} path="/services">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(list)} />
   <div class="page">
     <Nav />
     <main id="main">

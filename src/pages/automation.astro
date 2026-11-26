@@ -35,9 +35,25 @@ const description =
   'Connect Google Ads, GA4, AdMob and RevenueCat, ask a business question, and get an answer with the source figures attached.';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/* The page describes one service; this says so in structured data, using the
+   page's own name and description. Provider is the business node that
+   Schema.astro defines on the homepage. */
+const home = new URL(`${base}/`, Astro.site).href;
+const service = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'AI reporting & automation for app growth',
+  description,
+  url: new URL(`${base}/automation`, Astro.site).href,
+  serviceType: 'Marketing analytics and reporting automation',
+  areaServed: 'Worldwide',
+  provider: { '@type': 'ProfessionalService', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+};
 ---
 
 <Base title={title} description={description} path="/automation">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(service)} />
   <div class="page">
     <Nav />
 

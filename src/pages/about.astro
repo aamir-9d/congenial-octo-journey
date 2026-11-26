@@ -1,0 +1,102 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import Founders from '../components/Founders.astro';
+import ServiceIndex from '../components/ServiceIndex.astro';
+import Schema from '../components/Schema.astro';
+
+/**
+ * /about
+ *
+ * One page that says who E2E Apps is, in words a search engine or an AI
+ * assistant can quote: the business, the two people, what they do. Every
+ * sentence here already appears elsewhere on the site (the business
+ * description in Schema.astro, the bios in Founders.astro, the services in
+ * src/data/services.ts). Nothing new is claimed.
+ *
+ * Schema.astro supplies the business and both Person nodes with their LinkedIn
+ * sameAs links; AboutPage below points at the business node.
+ */
+
+const title = 'About E2E Apps — Mobile Attribution & Growth Specialists';
+const description =
+  'E2E Apps is two specialists in mobile growth and measurement for subscription and ad-monetised apps: attribution and MMP work, SKAdNetwork, revenue pipelines and paid media.';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = new URL(`${base}/`, Astro.site).href;
+const url = new URL(`${base}/about`, Astro.site).href;
+
+const about = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  '@id': `${url}#page`,
+  url,
+  name: title,
+  description,
+  mainEntity: { '@id': `${home}#business` },
+  isPartOf: { '@id': `${home}#website` },
+};
+---
+
+<Base title={title} description={description} path="/about">
+  <Schema slot="head" />
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(about)} />
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <Breadcrumbs trail={[{ name: 'About', path: '/about' }]} />
+
+      <section class="section section--lead" data-section="about-intro">
+        <div class="wrap">
+          <div class="section-head">
+            <div class="eyebrow">ABOUT</div>
+            <h1 class="about__h">About E2E Apps</h1>
+            <p class="section-lead">
+              E2E Apps does mobile growth and measurement for subscription and ad-monetised apps:
+              attribution and MMP work, SKAdNetwork schemas, server-side revenue pipelines, and the paid
+              media that runs on top of them.
+            </p>
+            <p class="section-lead about__more">
+              One specialist owns the entire growth loop. A second owns the infrastructure it runs on.
+              You talk to the two people doing the work.
+            </p>
+            <a class="btn-primary about__btn" href={`${base}/#contact`}>
+              Book a call
+              <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <Founders eyebrow="Who you talk to" />
+      <ServiceIndex />
+    </main>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .about__h {
+    margin: 16px auto 0;
+    max-width: 24ch;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
+  }
+
+  .about__more {
+    margin-top: var(--s4);
+  }
+
+  .about__btn {
+    margin-top: var(--s8);
+  }
+</style>

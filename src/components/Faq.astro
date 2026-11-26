@@ -1,6 +1,10 @@
 ---
 import Icon from './Icon.astro';
 import { GROUP_A, GROUP_B, toHtml } from '../data/faq';
+import { SERVICES } from '../data/services';
+
+const serviceBase = import.meta.env.BASE_URL.replace(/\/$/, '');
+const serviceName = (slug: string) => SERVICES.find((s) => s.slug === slug)?.name;
 
 /**
  * Nineteen questions, two columns.
@@ -65,6 +69,12 @@ const { lead = false } = Astro.props;
                   <Icon name="caret-down" size={13} />
                 </summary>
                 <p class="faq__a" set:html={toHtml(item.a)} />
+                {item.service && serviceName(item.service) && (
+                  <a class="faq__more" href={`${serviceBase}/services/${item.service}`}>
+                    {serviceName(item.service)}
+                    <Icon name="arrow-right" size={13} />
+                  </a>
+                )}
               </details>
             ))}
           </div>
@@ -142,6 +152,19 @@ const { lead = false } = Astro.props;
     font-size: var(--t-card);
     line-height: var(--lh-answer);
     color: var(--color-text-2);
+  }
+
+  /* Link to the specialist page under an answer. Same accent link as the
+     service cards' "See the fixes". */
+  .faq__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    margin: -8px 0 12px;
+    font-size: var(--t-card-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
   }
 
   .faq__a :global(code) {
