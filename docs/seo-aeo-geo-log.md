@@ -42,8 +42,18 @@ Plan phases referred to below:
   account); both listed under "My alerts".
 - ChatGPT Business Hub checked: no existing E2E Apps listing; it offers "Create 'E2E Apps'". A different
   business with a similar name ("e2e Group of Companies", Lahore) appears among the matches, so the
-  profile must use the exact name, website and description from `docs/directory-profiles.md`. Stopped
-  before creating: continuing accepts OpenAI's Businesses terms, which is the owner's decision.
+  profile must use the exact name, website and description from `docs/directory-profiles.md`.
+- ChatGPT business profile created (the owner accepted OpenAI's terms):
+  - Domain verified with a DNS TXT record `openai-business-profile.e2eapp.com`, added in Cloudflare
+    (TTL 300, with a comment naming its purpose). Keep it: removing it may undo the verification.
+  - Category "Marketing agency"; description (the box allows 300 characters): "E2E Apps does mobile
+    growth and measurement for subscription and ad-monetised apps: attribution audits, SKAN and
+    AdAttributionKit setup, ATT timing, event tracking plans and subscription revenue tracking. Two
+    specialists and no hand-offs: you talk to the people doing the work."
+  - Contact email hello@e2eapp.com, verified with the emailed code. No phone (the site publishes none).
+  - Delivery: "We don't offer delivery". Returns: "Returns not accepted" (a service, not goods).
+  - Status: DRAFT. Publishing needs the owner's government-ID verification in Business Hub. Its
+    insights page (mentions, website clicks) shows no data yet.
 
 ### Not done
 - Five blog posts not yet submitted to Bing (one-campaign-per-language, leveraging-skan-for-ios,
