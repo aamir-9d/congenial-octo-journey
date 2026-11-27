@@ -140,13 +140,31 @@ const LATIN =
     {/* Cloudflare Web Analytics: a cookieless page-view count for every visitor,
         including those who never press Got it, which GA4 cannot see. No cookie,
         no personal data, no consent needed; the token is public by design.
-        Described on /privacy. */}
-    <script
-      is:inline
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "866b6ecdda9145e5aeb86e6df7825267"}'
-    ></script>
+        Described on /privacy.
+
+        Loaded the way Tag Manager is: after the load event, at idle, so its
+        script time never lands inside the page's own loading (it failed the
+        Lighthouse check on the pull request as a plain deferred tag). And only
+        on the live host: anywhere else the beacon's request is refused, which
+        logs a console error and would count visits that are not real. */}
+    <script is:inline>
+      (function () {
+        if (!/(^|\.)e2eapp\.com$/.test(location.hostname)) return;
+        function loadBeacon() {
+          var s = document.createElement('script');
+          s.defer = true;
+          s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+          s.setAttribute('data-cf-beacon', '{"token": "866b6ecdda9145e5aeb86e6df7825267"}');
+          document.head.appendChild(s);
+        }
+        function schedule() {
+          'requestIdleCallback' in window
+            ? requestIdleCallback(loadBeacon, { timeout: 4000 })
+            : setTimeout(loadBeacon, 1500);
+        }
+        document.readyState === 'complete' ? schedule() : window.addEventListener('load', schedule);
+      })();
+    </script>
 
     <slot name="head" />
   </head>
