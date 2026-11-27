@@ -17,6 +17,21 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Phase 2 continued
+
+### Done
+- IndexNow: all 29 sitemap URLs submitted after the key file went live (HTTP 202), including the five
+  blog posts left over from Bing's form.
+
+### Not done
+- ChatGPT business profile: identity verification needs the US-based founder, with the company address
+  and tax details. On hold.
+- LinkedIn company page: on hold. A different business already has a LinkedIn page named "E2E Apps"
+  (software development, Atlanta), so ours will need a distinct public URL and the same description as
+  the other profiles.
+
+---
+
 ## 2026-11-26: Phase 2 started
 
 ### Done

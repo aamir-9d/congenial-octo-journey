@@ -319,7 +319,7 @@ test('the homepage order is the one the brief sets', { skip }, () => {
     'proof',
     'automation',
     'loop',
-    'founders',
+    // 'founders' is hidden on the homepage until the portraits exist.
     'contact',
   ]);
 });

@@ -27,7 +27,9 @@ const ORIGINAL = path.join(ROOT, 'E2E Apps Homepage.dc.html');
 // The homepage restructure moved the stack, products and the FAQ onto their own
 // pages. The export's copy still all ships — it just no longer all ships on one
 // page — so parity is checked against the built pages together.
-const PORT_PAGES = ['index.html', 'services.html', 'products.html', 'faq.html'].map((p) =>
+// about.html: the founders section is hidden on the homepage until the portraits
+// exist, and its signed-off copy lives on /about meanwhile.
+const PORT_PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'about.html'].map((p) =>
   path.join(ROOT, 'dist', p),
 );
 const PORT = PORT_PAGES[0]!;
