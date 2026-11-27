@@ -4,12 +4,19 @@ import { SERVICES } from '../data/services';
 
 /** Links to the live specialist pages. Lists only what src/data/services.ts holds. */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+interface Props {
+  /** The homepage calls this section "What I do"; /services and /about keep the default. */
+  eyebrow?: string;
+}
+
+const { eyebrow = 'SPECIALIST SERVICES' } = Astro.props;
 ---
 
 <section id="specialist" class="section" data-section="specialist-services">
   <div class="wrap">
     <div class="section-head" data-reveal="1">
-      <div class="eyebrow">SPECIALIST SERVICES</div>
+      <div class="eyebrow">{eyebrow}</div>
       <h2 class="svi__h">One problem per page.</h2>
       <p class="section-lead">
         Each shows what apps get wrong and how to fix it. Start with the audit if you do not know

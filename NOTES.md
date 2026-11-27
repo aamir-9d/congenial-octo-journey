@@ -372,6 +372,22 @@ reasonable last line of defence and it also *hides* what the console test
 measures -- it is what concealed the founder-bio clipping until a phone
 screenshot turned it up.
 
+### Homepage restructure (27 Nov)
+
+The page now runs hero, stats, services, findings, case study, how we work,
+calculator teaser, AI reporting, contact. The reason and the full list are in
+the comment at the top of `src/pages/index.astro`.
+
+Two things that will look like omissions and are not: the full calculator is
+only on `/payback-calculator` (the homepage carries a card that links to it,
+and keeps `id="payback"`), and the "three checks" block is gone.
+
+**New copy awaiting sign-off**, all marked `data-added`: the four stats
+labels, the teaser's one-line description, the "See what 10 attribution audits
+found" button, and the "What I do" eyebrow. The hero wording was chosen by the
+owner. The stats figures are imported, never typed: `tests/pages.test.ts`
+compares the rendered strip with the data files.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These

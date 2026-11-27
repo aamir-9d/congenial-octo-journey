@@ -21,12 +21,17 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
-const PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', ...['mobile-attribution-audit', 'skan-adattributionkit-setup', 'att-consent-timing', 'event-tracking-plan', 'subscription-revenue-tracking'].map((s) => `services/${s}.html`)];
+const PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', 'payback-calculator.html', ...['mobile-attribution-audit', 'skan-adattributionkit-setup', 'att-consent-timing', 'event-tracking-plan', 'subscription-revenue-tracking'].map((s) => `services/${s}.html`)];
 
 const distExists = fs.existsSync(path.join(DIST, 'index.html'));
 const skip = !distExists && 'run `npm run build` first';
 
 const html = distExists ? fs.readFileSync(path.join(DIST, 'index.html'), 'utf8') : '';
+/* The calculator left the homepage on 27 November 2026; its checks read the
+   page that still renders it. */
+const calcHtml = distExists
+  ? fs.readFileSync(path.join(DIST, 'payback-calculator.html'), 'utf8')
+  : '';
 
 /** Class names used by elements, and the scope token each element carries. */
 function classUsage(source: string): Map<string, Set<string | null>> {
@@ -100,7 +105,7 @@ test('every class on every page is reachable by a rule that can match it', { ski
 });
 
 test('payback fields carry their layout, not the browser default', { skip }, () => {
-  const css = styleText(html);
+  const css = styleText(calcHtml);
 
   // The declarations whose absence produced the visible bug: the field loses
   // its row layout, and the range input loses its full width.
@@ -123,6 +128,7 @@ test('every data-bind sits inside the element the calculator binds against', { s
   // server-rendered once and then frozen for the life of the page — it will
   // show the example scenario's figure against whatever the visitor typed,
   // which is the worst failure this section can have.
+  const html = calcHtml;
   const start = html.indexOf('data-payback');
   assert.ok(start > -1, 'no [data-payback] root in the built page');
 
@@ -142,6 +148,8 @@ test('every data-bind sits inside the element the calculator binds against', { s
 });
 
 test('the payback model is its own section, not a child of the hero', { skip }, () => {
+  // On the homepage `id="payback"` is now the teaser card that links to the
+  // calculator page; the same rule holds for it.
   const hero = html.indexOf('id="top"');
   const payback = html.indexOf('id="payback"');
 

@@ -1,0 +1,81 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * The homepage's pointer to the payback calculator.
+ *
+ * The full calculator used to sit here: 817 of the homepage's roughly 2,000
+ * words, directly under the hero, ahead of the services. It now lives only on
+ * /payback-calculator, and this card links to it. The id stays `payback` so an
+ * old link to the homepage section still lands on something that explains
+ * where it went.
+ *
+ * New section (27 November 2026), marked `data-added`. The heading is the
+ * calculator's own.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<section id="payback" class="section" data-section="payback-teaser" data-added="structure-2026-11">
+  <div class="wrap">
+    <div class="pbt" data-reveal="1">
+      <div>
+        <p class="eyebrow eyebrow--amber">FREE TOOL</p>
+        <h2 class="pbt__h2">See when your spend comes back.</h2>
+        <p class="pbt__body">
+          Enter your cost per install, conversion rates and retention. The calculator shows the day
+          a campaign earns its spend back, for subscription and ad-funded apps.
+        </p>
+      </div>
+      <a href={`${base}/payback-calculator`} class="btn-primary pbt__cta">
+        Open the payback calculator
+        <Icon name="arrow-right" size={15} />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .pbt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s8);
+    padding: clamp(28px, 4vw, 48px);
+    border-radius: var(--radius-panel);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .pbt__h2 {
+    margin-top: var(--s3);
+    font-size: var(--t-h2-card);
+    letter-spacing: var(--ls-h2-card);
+    line-height: var(--lh-h2);
+  }
+
+  .pbt__body {
+    margin-top: var(--s3);
+    max-width: 56ch;
+    font-size: var(--t-card);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .pbt__cta {
+    flex: none;
+  }
+
+  @media (max-width: 767px) {
+    .pbt {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--s6);
+    }
+
+    .pbt__cta {
+      justify-content: center;
+      min-height: 52px;
+    }
+  }
+</style>

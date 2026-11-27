@@ -2,9 +2,10 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Diagnostics from '../components/Diagnostics.astro';
+import Stats from '../components/Stats.astro';
+import ServiceIndex from '../components/ServiceIndex.astro';
 import Proof from '../components/Proof.astro';
-import Payback from '../components/Payback.astro';
+import PaybackTeaser from '../components/PaybackTeaser.astro';
 import Automation from '../components/Automation.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
@@ -17,47 +18,39 @@ import Schema from '../components/Schema.astro';
 /**
  * The homepage.
  *
- * It used to run twelve sections, 4,269 words and nineteen minutes of reading,
- * which is roughly four times what a page like this converts at. The stack,
- * products and the FAQ now have their own pages and the blog index already had
- * one; between them that was 40% of the words and 29 of the 35 disclosures.
- * Nothing was deleted in the move.
+ * Restructured on 27 November 2026 so the page follows one line of argument:
+ * what is sold, the track record, the services, the evidence, the method, then
+ * the ask. Before this it opened on attribution, moved to "three checks" and a
+ * full payback calculator, and only reached the services and the way of
+ * working at the bottom. The owner's verdict was that a visitor could not tell
+ * what was being sold.
  *
- * Revision 2 of the automation brief sets this order:
+ *   Hero           the service and the buyer, and one action
+ *   Stats          four figures, each read from the file that owns it
+ *   ServiceIndex   what I do: the specialist services, audit first
+ *   Proof          what audits turn up, with a link to the findings page
+ *   CaseStudy      one case, shown all the way down
+ *   Loop           how the work runs
+ *   PaybackTeaser  a pointer to the calculator on /payback-calculator
+ *   Automation     ongoing reporting
+ *   Founders       HIDDEN for now: no portraits yet. /about shows both.
+ *   Contact        the one action, again
  *
- *   Hero        the claim, and one action
- *   Diagnostics three rows naming where the money goes missing
- *   Payback     the payback map — prove it with your own numbers
- *   CaseStudy   one case, shown all the way down
- *   Proof       three more findings, as its tail
- *   Automation  ongoing reporting, once the problem and the evidence have landed
- *   Loop        the wider engagement
- *   Founders    who you would actually be talking to (HIDDEN for now: no
- *               portraits yet. /about still shows both founders.)
- *   Contact     the one action, again
+ * Off this page, not deleted: the full calculator (on /payback-calculator)
+ * and Problems (on /services). The "three checks" block (Diagnostics.astro) is
+ * removed; its three links are covered by the services grid. Git history has it.
  *
- * Automation sits after the case study on purpose: a visitor meets the business
- * problem and the evidence first, and only then the service that keeps watching.
- * Leading with it would imply a platform in front of a consulting engagement.
- *
- * Proof now reads as the tail of the case-study movement, which is what the
- * approved composition asks for, but it is a SIBLING of CaseStudy rather than a
- * child of it. Folding it inside cannot work: CaseStudy is marked data-added
- * and the copy-parity check strips such blocks whole, which would take Proof's
- * signed-off copy with it. As a sibling it reads the same and survives.
- *
- * Problems is no longer on this page. It is not deleted -- /services renders it
- * in full, and Diagnostics links each row there. The audit measured it at
- * 1,441px here, a screen and a half spent before the calculator.
+ * Proof is a full section again rather than the nested tail of the case
+ * study, because it now comes before the case.
  */
 
-const title = 'E2E Apps — Mobile attribution and growth for subscription apps';
+const title = 'Mobile Attribution Audits & Fixes for Subscription Apps — E2E Apps';
 /* One constant feeds the meta description, og:description and
    twitter:description. Kept in step with the hero: a search snippet or a
    shared link that advertises a claim the page no longer makes is a
    promise broken before the visitor arrives. */
 const description =
-  'Better signals, smarter ad spend, real app growth. I fix app attribution, uncover missed revenue, and close the gaps in your funnel.';
+  'Mobile attribution audits and fixes for subscription apps. I find what your MMP setup gets wrong, fix it at the source, and show which campaigns pay back.';
 ---
 
 <Base title={title} description={description} path="/">
@@ -66,12 +59,13 @@ const description =
     <Nav />
     <main id="main">
       <Hero />
-      <Diagnostics />
-      <Payback />
+      <Stats />
+      <ServiceIndex eyebrow="WHAT I DO" />
+      <Proof />
       <CaseStudy />
-      <Proof nested />
-      <Automation />
       <Loop />
+      <PaybackTeaser />
+      <Automation />
       {/* Hidden until the founder portraits exist. To bring it back, restore
           the import above and this line:
       <Founders />

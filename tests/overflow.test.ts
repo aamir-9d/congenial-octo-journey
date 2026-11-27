@@ -21,7 +21,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const DIST = path.resolve(import.meta.dirname, '..', 'dist', 'index.html');
+/* The calculator left the homepage on 27 November 2026 and is rendered only on
+   /payback-calculator, so that is the page these checks read. */
+const DIST = path.resolve(import.meta.dirname, '..', 'dist', 'payback-calculator.html');
 const built = fs.existsSync(DIST);
 const skip = !built && 'run `npm run build` first';
 const html = built ? fs.readFileSync(DIST, 'utf8') : '';
