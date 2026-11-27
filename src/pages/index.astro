@@ -8,7 +8,8 @@ import Payback from '../components/Payback.astro';
 import Automation from '../components/Automation.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
-import Founders from '../components/Founders.astro';
+// Founders is hidden on the homepage until the portraits exist; see below.
+// import Founders from '../components/Founders.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import Schema from '../components/Schema.astro';
@@ -31,7 +32,8 @@ import Schema from '../components/Schema.astro';
  *   Proof       three more findings, as its tail
  *   Automation  ongoing reporting, once the problem and the evidence have landed
  *   Loop        the wider engagement
- *   Founders    who you would actually be talking to
+ *   Founders    who you would actually be talking to (HIDDEN for now: no
+ *               portraits yet. /about still shows both founders.)
  *   Contact     the one action, again
  *
  * Automation sits after the case study on purpose: a visitor meets the business
@@ -70,7 +72,10 @@ const description =
       <Proof nested />
       <Automation />
       <Loop />
+      {/* Hidden until the founder portraits exist. To bring it back, restore
+          the import above and this line:
       <Founders />
+      */}
       <Contact />
     </main>
 

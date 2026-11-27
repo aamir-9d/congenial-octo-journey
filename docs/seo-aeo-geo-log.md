@@ -17,6 +17,39 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Phase 3 set up
+
+### Done
+- Phase 2's remaining account work (social profiles, LinkedIn page, Clutch, GoodFirms, ChatGPT ID check) handed
+  to the US-based founder, with a ready-made profile kit.
+- Weekly AI citation tracker created as a private Google Sheet. Tabs:
+  - Questions: 20 buyer questions, each tied to the page that should answer it. Q01 and Q02 are from the
+    25 November baseline; the rest are written from the service pages.
+  - Runs: one row per question per engine (ChatGPT, Perplexity, Claude, Gemini), with whether E2E Apps was
+    named, whether e2eapp.com was cited, and which businesses were named.
+  - Summary: counts and named rate per engine for a chosen week, plus the baseline (0 of 7).
+- Formulas checked with a test row, then the row was removed.
+
+### Not done
+- First weekly run: planned for Monday 30 November; first comparison with the baseline around 10 December.
+
+---
+
+## 2026-11-27: Phase 2 continued
+
+### Done
+- IndexNow: all 29 sitemap URLs submitted after the key file went live (HTTP 202), including the five
+  blog posts left over from Bing's form.
+
+### Not done
+- ChatGPT business profile: identity verification needs the US-based founder, with the company address
+  and tax details. On hold.
+- LinkedIn company page: on hold. A different business already has a LinkedIn page named "E2E Apps"
+  (software development, Atlanta), so ours will need a distinct public URL and the same description as
+  the other profiles.
+
+---
+
 ## 2026-11-26: Phase 2 started
 
 ### Done
@@ -42,8 +75,18 @@ Plan phases referred to below:
   account); both listed under "My alerts".
 - ChatGPT Business Hub checked: no existing E2E Apps listing; it offers "Create 'E2E Apps'". A different
   business with a similar name ("e2e Group of Companies", Lahore) appears among the matches, so the
-  profile must use the exact name, website and description from `docs/directory-profiles.md`. Stopped
-  before creating: continuing accepts OpenAI's Businesses terms, which is the owner's decision.
+  profile must use the exact name, website and description from `docs/directory-profiles.md`.
+- ChatGPT business profile created (the owner accepted OpenAI's terms):
+  - Domain verified with a DNS TXT record `openai-business-profile.e2eapp.com`, added in Cloudflare
+    (TTL 300, with a comment naming its purpose). Keep it: removing it may undo the verification.
+  - Category "Marketing agency"; description (the box allows 300 characters): "E2E Apps does mobile
+    growth and measurement for subscription and ad-monetised apps: attribution audits, SKAN and
+    AdAttributionKit setup, ATT timing, event tracking plans and subscription revenue tracking. Two
+    specialists and no hand-offs: you talk to the people doing the work."
+  - Contact email hello@e2eapp.com, verified with the emailed code. No phone (the site publishes none).
+  - Delivery: "We don't offer delivery". Returns: "Returns not accepted" (a service, not goods).
+  - Status: DRAFT. Publishing needs the owner's government-ID verification in Business Hub. Its
+    insights page (mentions, website clicks) shows no data yet.
 
 ### Not done
 - Five blog posts not yet submitted to Bing (one-campaign-per-language, leveraging-skan-for-ios,
