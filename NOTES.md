@@ -388,6 +388,25 @@ found" button, and the "What I do" eyebrow. The hero wording was chosen by the
 owner. The stats figures are imported, never typed: `tests/pages.test.ts`
 compares the rendered strip with the data files.
 
+### Homepage design pass (27 Nov, later)
+
+Every section below the hero now uses one composition: eyebrow, heading and
+one action on the left, a panel on the right. It is `.split` / `.panel` in
+`global.css`, in the case study's 42/58 proportions. Do not add a centred
+header over a card grid to the homepage again; that is what made the first
+restructure read as two sites. Sub-pages keep the centred `.section-head`.
+
+A design must be looked at before it is shown. The first redesign was drawn on
+a canvas and never rendered, and its alignment faults were found by the owner.
+The repo has no screenshot tool, by the no-dependencies rule; headless Chrome
+(`chrome --headless=new --screenshot --window-size=1440,6800 <url>`) needs
+nothing installed. Chrome will not go narrower than about 500 px, so a phone
+shot needs the page in a 390 px iframe.
+
+**New copy awaiting sign-off**, all marked `data-added`: the services lead
+and button, the findings heading, lead and button, the three hero figure
+labels, and the calculator panel's labels.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These
