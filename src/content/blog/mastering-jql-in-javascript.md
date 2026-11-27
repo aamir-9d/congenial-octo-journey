@@ -10,6 +10,8 @@ cta: >-
 related: event-tracking-plan
 ---
 
+> **Update, November 2026:** Mixpanel now lists JQL as in maintenance mode and recommends moving to its Export API, Query API or Data Pipelines ([Mixpanel docs](https://docs.mixpanel.com/docs/reports/apps/jql)). The funnel and property logic below still applies; for new work, run it through one of those instead.
+
 ## What is Mixpanel?
 
 Mixpanel is a powerful analytics platform used to track user behavior across web and mobile applications. Like other analytics tools such as Firebase and Google Analytics (GA4), Mixpanel helps businesses gain insights into how users interact with their products.

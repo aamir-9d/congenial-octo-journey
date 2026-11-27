@@ -17,6 +17,47 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Remaining audit items
+
+### Done (branch `hide-homepage-founders`)
+- New page `/payback-calculator`: the calculator, the method in plain words for subscription and ad-monetised
+  apps, two worked examples, why dashboards show a later payback, and the model's limits. The examples are
+  computed at build time by the calculator's own model from its default inputs (labelled as example inputs,
+  not client data). WebApplication structured data; in the sitemap and footer; the homepage calculator links
+  to it.
+- Service pages: every mistake card heading now starts "Mistake:" (a visible label plus hidden text in the
+  heading), so it reads on its own when quoted. The SKAN card now says "The SKAN schema measures only revenue".
+- Blog: every post names its next page (`related` in the front matter, required for new posts) and links to
+  it: a service page or the payback calculator. All 15 mapped.
+- JQL tutorial: a dated note that Mixpanel lists JQL as in maintenance mode, with its recommended
+  alternatives. The Python and Pandas tutorials use standard functions and were left as they are.
+- `/about`: the founders' closing line, which repeated the heading and the page lead, removed there.
+- Contact form: optional "How did you hear about us?" (Google search, ChatGPT, Claude, Perplexity, Gemini,
+  Microsoft Copilot, LinkedIn, a colleague or referral, other). The form Worker accepts only those values and
+  shows the answer in the lead email. Worker deployed with its existing settings and secret kept.
+- Five new tests; 155 pass.
+
+### Verified
+- Test enquiry on the live site, tagged `utm_campaign=internal-form-test`: a blank submit showed four field
+  errors, sent no analytics event and did not reach the Worker; the real submit showed the success message,
+  sent exactly one `generate_lead` to GA4, and delivered one email within a second carrying the landing page,
+  UTM source and campaign. A second test sent straight to the Worker with the new field delivered "Heard about
+  us: ChatGPT". Both test leads are in GA4 under the internal campaign.
+- Google: the Page indexing summary is dated 23 November (before the domain move) and shows 0 indexed, 19
+  "Crawled, currently not indexed". URL Inspection today: the homepage and a blog post are indexed;
+  `/services/att-consent-timing` is "Discovered, currently not indexed" (indexing requested on 26 November).
+- Bing Site Explorer: no indexed URLs yet, two days after submission.
+- GA4 already has a predefined "AI Assistant" channel in its default channel group, so visits from AI
+  assistants get their own row without a custom group. A draft custom group was started and discarded unsaved.
+
+### Not done
+- Outreach for links (newsletters, practitioners, partners): needs a researched prospect list and the
+  owner's emails.
+- A case study from the owner's past audits: next content piece.
+- IndexNow for the new and changed pages: after this branch is merged.
+
+---
+
 ## 2026-11-27: Fixes from a second outside audit
 
 An outside audit (ChatGPT, 27 November) checked all 29 sitemap URLs: each has a distinct title, one H1, a
