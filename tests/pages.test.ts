@@ -11,6 +11,13 @@
  * were wrong in a way only a person looking at them would see. These assertions
  * are that person.
  *
+ * November 2026 redesign: the shared header is now PageHero (`.phero` in
+ * src/styles/redesign.css) and the shared ending is the closing band (Cta,
+ * `data-section="cta"`). The old pattern these tests pinned (`.section-head`
+ * inside a `.section--lead`) is gone from every page; the header and closing
+ * tests below pin the new one, over every page that was built rather than a
+ * hand-kept list.
+ *
  * Requires `npm run build`.
  */
 import test from 'node:test';
@@ -23,6 +30,23 @@ const PAGES = ['services', 'products', 'faq', 'about', 'payback-calculator', 'ca
 
 const built = fs.existsSync(path.join(DIST, 'services.html'));
 const skip = !built && 'run `npm run build` first';
+
+/** Every built page, as a path relative to dist/ ("about.html", "blog/x.html"). */
+function builtPages(dir = DIST, prefix = ''): string[] {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    if (e.isDirectory()) return e.name === '_astro' ? [] : builtPages(path.join(dir, e.name), `${prefix}${e.name}/`);
+    return e.name.endsWith('.html') ? [`${prefix}${e.name}`] : [];
+  });
+}
+const ALL_PAGES = builtPages();
+const HOME = 'index.html';
+const bodyOf = (file: string) => {
+  const html = fs.readFileSync(path.join(DIST, file), 'utf8');
+  return html.slice(html.indexOf('<body'));
+};
+/** The page's opening `.phero` section, whole. It never nests a section. */
+const pheroOf = (src: string) => /<section\b[^>]*class="phero[" ][\s\S]*?<\/section>/.exec(src)?.[0] ?? '';
 
 const body = (page: string) => {
   const html = fs.readFileSync(path.join(DIST, `${page}.html`), 'utf8');
@@ -68,26 +92,90 @@ test('no page repeats an eyebrow or a heading', { skip }, () => {
   }
 });
 
-test('every page opens with the same header pattern as the homepage', { skip }, () => {
-  // Centred eyebrow, heading, lead. A left-aligned page header beside centred
-  // section headers is the drift that made the sub-pages feel like another site.
-  for (const page of PAGES) {
-    assert.match(body(page), /class="section-head"/, `/${page} does not use the section-head pattern`);
+test('every page other than the homepage opens with the shared page header', { skip }, () => {
+  // PageHero: a centred label, the page's ONE h1, a lead. A page that builds its
+  // own header instead is the drift that made the sub-pages feel like another
+  // site, so this walks every built page, the blog posts and the service pages
+  // included, and asks three things of each: the first section in <main> is the
+  // `.phero`, there is exactly one of them, and the page's single h1 is in it.
+  assert.ok(ALL_PAGES.length >= 30, `only ${ALL_PAGES.length} pages were found in dist/`);
+
+  for (const file of ALL_PAGES) {
+    if (file === HOME) continue;
+    const src = bodyOf(file);
+    const main = src.slice(src.indexOf('<main'));
+
+    const first = /<section\b[^>]*>/.exec(main)?.[0] ?? '';
+    assert.match(first, /class="phero"/, `/${file} does not open with the shared page header`);
+    assert.equal((src.match(/class="phero[" ]/g) ?? []).length, 1, `/${file} has more than one page header`);
+
+    const h1 = src.match(/<h1\b/g) ?? [];
+    assert.equal(h1.length, 1, `/${file} has ${h1.length} h1 elements`);
+    assert.match(pheroOf(src), /<h1 class="phero__title"/, `/${file}: the h1 is not inside the page header`);
   }
 
-  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
-  assert.match(home, /\.section-head[^{}]*\{[^{}]*text-align:center/, 'section headers are no longer centred');
+  // The homepage has its own hero, built on the same block so the two cannot
+  // drift: same class, its own modifier, and the page's one h1.
+  const home = bodyOf(HOME);
+  const hero = pheroOf(home);
+  assert.match(hero, /class="phero hero"[^>]*data-section="hero"/, 'the homepage hero is not built on the shared header');
+  assert.equal((home.match(/<h1\b/g) ?? []).length, 1, 'the homepage does not have exactly one h1');
+  assert.match(hero, /<h1 class="phero__title phero__title--home"/, 'the homepage h1 is not in its hero');
+
+  const css = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  assert.match(css, /\.phero\{[^{}]*text-align:center/, 'page headers are no longer centred');
 });
 
-test('the opening section clears the fixed nav without a screen of dead space', { skip }, () => {
-  // The nav is fixed and about 70px tall. A full --section-pad on top of that
-  // left most of a viewport empty above the first word.
-  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
-  assert.match(home, /\.section--lead\{padding-top:/, 'the lead-section rule did not ship');
+test('the page header does not open on a screen of dead space', { skip }, () => {
+  // History: the nav used to be `position: fixed`, every page needed a
+  // `.section--lead` to clear it, and a full --section-pad on top of that left
+  // most of a viewport empty above the first word. The nav is now sticky, so it
+  // takes its own room in the flow and nothing has to clear it. What is left to
+  // guard is the other half: the header's own top padding staying bounded.
+  const about = fs.readFileSync(path.join(DIST, 'about.html'), 'utf8');
+  assert.match(about, /\.nav(\[[^\]]*\])?\{[^{}]*position:sticky/, 'the nav is no longer sticky; the header needs to clear it again');
 
-  for (const page of PAGES) {
-    assert.match(body(page), /class="[^"]*section--lead/, `/${page} does not mark its opening section`);
+  const pad = /\.phero\{[^{}]*padding:clamp\((\d+)px,[\d.]+vw,(\d+)px\)/.exec(about);
+  assert.ok(pad, 'the page header padding is no longer a px clamp; update this test');
+  assert.ok(Number(pad[1]) <= 72, `phone header padding ${pad[1]}px is too tall`);
+  assert.ok(Number(pad[2]) <= 128, `desktop header padding ${pad[2]}px is too tall`);
+
+  // And the retired pattern has not crept back onto a built page.
+  for (const file of ALL_PAGES) {
+    assert.doesNotMatch(bodyOf(file), /class="[^"]*\bsection--lead\b/, `/${file} still marks a lead section`);
   }
+});
+
+test('every page ends on the closing band, except the two that must not', { skip }, () => {
+  // Cta is the last thing in <main> on every page. Two pages do not carry it:
+  // the homepage, which ends on the full contact form the band links to, and
+  // the 404 page, whose board (design/v3/NotFound.dc.html) ends on its three
+  // cards; src/pages/404.astro says so. Anything else without a band is a page
+  // that was missed.
+  const WITHOUT = new Set([HOME, '404.html']);
+  const missing: string[] = [];
+  const notLast: string[] = [];
+
+  for (const file of ALL_PAGES) {
+    const src = bodyOf(file);
+    const count = (src.match(/data-section="cta"/g) ?? []).length;
+
+    if (WITHOUT.has(file)) {
+      assert.equal(count, 0, `/${file} has grown a closing band; take it out of the exception list`);
+      continue;
+    }
+    if (count !== 1) missing.push(`${file} (${count})`);
+    else if (!/<section\b[^>]*data-section="cta"[^>]*>(?:(?!<section\b)[\s\S])*<\/section>\s*<\/main>/.test(src)) notLast.push(file);
+  }
+
+  assert.deepEqual(missing, [], 'pages without exactly one closing band: ' + missing.join(', '));
+  assert.deepEqual(notLast, [], 'the closing band is not the last thing in <main> on: ' + notLast.join(', '));
+
+  // The band asks for the same thing everywhere and sends people to the form.
+  const about = bodyOf('about.html');
+  const band = about.slice(about.indexOf('data-section="cta"'));
+  assert.match(band, /href="\/#contact"/, 'the closing band no longer leads to the contact form');
+  assert.match(bodyOf(HOME), /<section\b[^>]*id="contact"/, 'the homepage lost the form the band links to');
 });
 
 /**
@@ -139,22 +227,25 @@ test('sections are not separated by a screen of empty space', () => {
   assert.ok(Number(m[2]) <= 96, `desktop section padding ${m[2]}px is too tall`);
 });
 
-test('the homepage stats strip shows the figures the data files hold', { skip }, async () => {
-  // Four numbers under the hero. Each is imported from the file that owns it;
-  // this fails if someone types a figure into the component instead.
-  const { AUDIT_COUNT } = await import('../src/data/findings.ts');
-  const { SERVICES } = await import('../src/data/services.ts');
+test('no track-record strip, and the figures it held still come from one place', { skip }, async () => {
+  // The homepage used to show four numbers under the hero (audits, services,
+  // apps, years), and this test checked each against the file that owns it.
+  // The owner removed the strip in November 2026: a small audit count on show
+  // reads as inexperience. So the strip must stay gone (the audit count is
+  // also swept site-wide in tests/seo.test.ts), and the two figures that are
+  // still published, in the founder bio on /about, must still agree with
+  // src/data/authors.ts.
   const { PORTFOLIO_APPS, YEARS, AUTHORS } = await import('../src/data/authors.ts');
 
   const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
-  const strip = home.slice(home.indexOf('data-section="stats"'));
-  const shown = [...strip.slice(0, strip.indexOf('</section>')).matchAll(/<dd[^>]*>([^<]+)<\/dd>/g)].map(
-    (m) => m[1]!.trim(),
-  );
-
-  assert.deepEqual(shown, [String(AUDIT_COUNT), String(SERVICES.length), PORTFOLIO_APPS, String(YEARS.count)]);
+  assert.doesNotMatch(home, /data-section="stats"/, 'the stats strip is back on the homepage');
 
   // The bio is the published source of the last two.
   assert.ok(AUTHORS.aamir.bio.includes(`${PORTFOLIO_APPS} iOS and Android apps`));
   assert.ok(AUTHORS.aamir.bio.includes(`${YEARS.word} years`));
+
+  // And /about, where a visitor reads them, says the same.
+  const about = strip(body('about'));
+  assert.ok(about.includes(`${PORTFOLIO_APPS} iOS and Android apps`), '/about states a different portfolio size than authors.ts');
+  assert.ok(about.includes(`${YEARS.word} years`), '/about states a different number of years than authors.ts');
 });

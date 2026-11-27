@@ -2,17 +2,30 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import { CASES } from '../data/cases.ts';
+import { RAW, CASE_STUDY, MORE_CASES } from '../data/case-study.ts';
 
 /**
  * Case studies hub.
  *
- * One card per case: the facts a buyer checks first (market, what kind of app,
- * the windows compared), then problem, change, result and what the comparison
- * cannot show. Every figure is copied from the linked write-up; see
- * src/data/cases.ts.
+ * Board: design/v3/CaseStudies.dc.html. One block per case: the facts a buyer
+ * checks first (client type, market, the windows compared) beside a panel of
+ * the case's own numbers, then problem, change and limits as three cards, the
+ * results, and the takeaway.
+ *
+ * Every figure is imported or derived, never typed:
+ *   - the copy and the result pairs come from src/data/cases.ts;
+ *   - the first case's panel (cost per payer, payers per day, install to trial)
+ *     and its trial-to-paid trade-off are computed from the raw period totals
+ *     in src/data/case-study.ts, the same arithmetic tests/case-study.test.ts
+ *     checks and HomeLoop.astro uses;
+ *   - the second case publishes no figures. Its panel shows the one range its
+ *     own problem statement gives, read out of that sentence.
+ * Client names are withheld.
  */
 
 const title = 'Mobile App Growth Case Studies — E2E Apps';
@@ -21,6 +34,43 @@ const description =
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const home = new URL(`${base}/`, Astro.site).href;
+
+/* --- case 01: derived from the raw period totals --------------------------- */
+const money = (n: number) => `$${n.toFixed(2)}`;
+const rate = (n: number, digits: number) => `${(n * 100).toFixed(digits)}%`;
+const cppBefore = RAW.before.cost / RAW.before.paid;
+const cppAfter = RAW.after.cost / RAW.after.paid;
+const cppDrop = `${((1 - cppAfter / cppBefore) * 100).toFixed(1)}% lower`;
+const cppBar = `${((cppAfter / cppBefore) * 100).toFixed(1)}%`;
+const payersBefore = (RAW.before.paid / RAW.before.days).toFixed(1);
+const payersAfter = (RAW.after.paid / RAW.after.days).toFixed(1);
+const i2tBefore = rate(RAW.before.trials / RAW.before.installs, 2);
+const i2tAfter = rate(RAW.after.trials / RAW.after.installs, 2);
+const t2pBefore = rate(RAW.before.paid / RAW.before.trials, 1);
+const t2pAfter = rate(RAW.after.paid / RAW.after.trials, 1);
+
+/* --- case 02: the one range its problem statement gives -------------------- */
+const portfolio = MORE_CASES[0];
+const shareOf = (text: string) => {
+  const m = /(\d+) to (\d+) per cent/.exec(text);
+  return m ? { low: Number(m[1]), high: Number(m[2]) } : null;
+};
+
+/** "0.62% → 4.00%" as its two halves, for the before / after treatment. */
+const pair = (value: string) => {
+  const [before, after] = value.split(' → ');
+  return { before: before ?? '', after: after ?? '' };
+};
+
+/* Where each card's glow sits, as left / top percentages. */
+const GLOW = [
+  ['0%', '0%'],
+  ['100%', '100%'],
+  ['100%', '0%'],
+  ['0%', '100%'],
+  ['55%', '0%'],
+  ['100%', '55%'],
+];
 
 const list = {
   '@context': 'https://schema.org',
@@ -48,80 +98,209 @@ const list = {
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Case studies', path: '/case-studies' }]} />
 
-      <section class="section section--lead" data-section="cases-intro">
-        <div class="wrap">
-          <div class="section-head">
-            <p class="eyebrow eyebrow--amber">Case studies</p>
-            <h1 class="cs__h1">What was wrong, what changed, and what the numbers show</h1>
-            <p class="section-lead">
-              Each case says which windows were compared and what the comparison cannot prove. Client
-              names are withheld.
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        label="Case studies"
+        title="What was wrong, what changed, and what the numbers show"
+        lead="Each case says which windows were compared and what the comparison cannot prove. Client names are withheld."
+        section="cases-intro"
+      />
 
-      <section class="section cs__list" data-section="cases">
+      <section class="section" data-section="cases">
         <div class="wrap">
           <ol class="cs__cases" role="list">
             {
-              CASES.map((c, i) => (
-                <li class="cs__case">
-                  <aside class="cs__facts" aria-label="Case facts">
-                    <p class="cs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
-                    <dl>
-                      <dt>Client</dt>
-                      <dd>{c.client}</dd>
-                      <dt>Market</dt>
-                      <dd>{c.market}</dd>
-                      <dt>Compared</dt>
-                      <dd>{c.compared}</dd>
-                      <dt>Work</dt>
-                      <dd>{c.services.join(', ')}</dd>
-                    </dl>
-                  </aside>
-                  <div class="cs__body">
-                    <h2 class="cs__h2">{c.title}</h2>
-                    <h3 class="cs__h3">The problem</h3>
-                    <p class="cs__p">{c.problem}</p>
-                    <h3 class="cs__h3">What changed</h3>
-                    <ul class="cs__changes">{c.change.map((x) => <li>{x}</li>)}</ul>
-                    <h3 class="cs__h3">The result</h3>
+              CASES.map((c, i) => {
+                const featured = c.post === CASE_STUDY.slug;
+                const share = c.post === portfolio.slug ? shareOf(c.problem) : null;
+                const hasScene = featured || share !== null;
+                const g = (n: number) => {
+                  const [x, y] = GLOW[(i * 3 + n) % GLOW.length]!;
+                  return `--gx:${x};--gy:${y}`;
+                };
+                return (
+                  <li class="cs__case">
+                    <div class:list={['row', { 'row--flip': i % 2 === 1 }, { 'cs__row--solo': !hasScene }]}>
+                      <div class="cs__copy" data-reveal="1">
+                        <p class="cs__n">
+                          <span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span> Case · client withheld
+                        </p>
+                        <h2 class="shead__title cs__h2">{c.title}</h2>
+                        <dl class="cs__facts">
+                          <div>
+                            <dt>Client</dt>
+                            <dd>{c.client}</dd>
+                          </div>
+                          <div>
+                            <dt>Market</dt>
+                            <dd>{c.market}</dd>
+                          </div>
+                          <div class="cs__facts-wide">
+                            <dt>Compared</dt>
+                            <dd>{c.compared}</dd>
+                          </div>
+                          <div class="cs__facts-wide">
+                            <dt>Work</dt>
+                            <dd>{c.services.join(', ')}</dd>
+                          </div>
+                        </dl>
+                        <a class="pill-link cs__read" href={`${base}/blog/${c.post}`}>
+                          <span>Read the full case<span class="visually-hidden">: {c.title}</span></span>
+                          <Icon name="arrow-right" size={14} />
+                        </a>
+                      </div>
+
+                      {featured && (
+                        <div class="scene cs__scene" data-reveal="1">
+                          <span class="badge cs__badge">{cppDrop}</span>
+                          <div class="dcard cs__main">
+                            <div class="dcard__label">
+                              <span>Cost per payer</span>
+                              <span>PDF scanner</span>
+                            </div>
+                            <p class="cs__cost tabular">
+                              <span class="cs__cost-now">{money(cppAfter)}</span>
+                              <s class="cs__cost-was">{money(cppBefore)}</s>
+                            </p>
+                            <div class="cs__costbars" aria-hidden="true">
+                              <span>Before</span>
+                              <i style="width: 100%" />
+                              <span class="cs__amber">After</span>
+                              <i class="cs__on" style={`width: ${cppBar}`} />
+                            </div>
+                            <p class="cs__foot">{CASE_STUDY.cardStability}</p>
+                          </div>
+                          <div class="cs__pair">
+                            <div class="dcard dcard--raised cs__mini">
+                              <div class="dcard__label"><span>Payers per day</span></div>
+                              <p class="cs__move tabular">
+                                <span class="cs__was">{payersBefore}</span>
+                                <span class="cs__amber" aria-hidden="true">→</span>
+                                <span class="visually-hidden">to</span>
+                                <span class="cs__now">{payersAfter}</span>
+                              </p>
+                            </div>
+                            <div class="dcard dcard--raised cs__mini">
+                              <div class="dcard__label"><span>Install → trial</span></div>
+                              <p class="cs__move tabular">
+                                <span class="cs__was">{i2tBefore}</span>
+                                <span class="cs__amber" aria-hidden="true">→</span>
+                                <span class="visually-hidden">to</span>
+                                <span class="cs__now">{i2tAfter}</span>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {share && (
+                        <div class="scene cs__scene" data-reveal="1">
+                          <span class="badge cs__badge">{portfolio.kicker}</span>
+                          <div class="dcard cs__main">
+                            <div class="dcard__label">
+                              <span>Share of ad revenue</span>
+                              <span>Splash interstitial</span>
+                            </div>
+                            <p class="cs__cost tabular">
+                              <span class="cs__cost-now">{share.low} to {share.high}%</span>
+                            </p>
+                            <div class="cs__range" aria-hidden="true">
+                              <i class="cs__range-high" style={`width: ${share.high}%`} />
+                              <i class="cs__range-low" style={`width: ${share.low}%`} />
+                            </div>
+                            <p class="cs__foot">The copied paywall moved this placement behind itself.</p>
+                          </div>
+                          <div class="dcard dcard--raised cs__tracks">
+                            <div class="dcard__label"><span class="cs__amber">Two sets of campaigns</span></div>
+                            <dl class="cs__flow">
+                              <dt>Existing</dt>
+                              <dd>Splash interstitial put back</dd>
+                              <dt class="cs__flow-on">Second set</dt>
+                              <dd>Optimised for in-app purchase</dd>
+                            </dl>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div class="ggrid ggrid--3 cs__cards">
+                      <div class="gcard" style={g(0)}>
+                        <h3 class="cs__kicker">The problem</h3>
+                        <p class="cs__text">{c.problem}</p>
+                      </div>
+                      <div class="gcard" style={g(1)}>
+                        <h3 class="cs__kicker">What changed</h3>
+                        <ul class="cs__changes" role="list">
+                          {c.change.map((x) => (
+                            <li>{x}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div class="gcard" style={g(2)}>
+                        <h3 class="cs__kicker">Limits</h3>
+                        <p class="cs__text">
+                          <strong>What this cannot show:</strong> {c.limits}
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3 class="visually-hidden">The result</h3>
                     {c.results.length > 0 ? (
                       <ul class="cs__results" role="list">
-                        {c.results.map((r) => (
-                          <li>
-                            <span class="cs__value">{r.value}</span>
-                            <span class="cs__label">{r.label}</span>
+                        {c.results.map((r) => {
+                          const v = pair(r.value);
+                          const lead = r.label === 'Cost per payer';
+                          return (
+                            <li class:list={['cs__stat', { 'cs__stat--lead': lead }]}>
+                              <span class="cs__stat-label">{r.label}</span>
+                              <span class="cs__move cs__move--lg tabular">
+                                <span class="cs__was">{v.before}</span>
+                                <span class="cs__amber" aria-hidden="true">→</span>
+                                <span class="visually-hidden">to</span>
+                                <span class="cs__now">{v.after}</span>
+                              </span>
+                            </li>
+                          );
+                        })}
+                        {featured && (
+                          <li class="cs__stat cs__stat--quiet">
+                            <span class="cs__stat-label">Trade-off: trial to paid fell</span>
+                            <span class="cs__move cs__move--lg tabular">
+                              <span class="cs__was">{t2pBefore}</span>
+                              <span aria-hidden="true">→</span>
+                              <span class="visually-hidden">to</span>
+                              <span class="cs__now cs__now--quiet">{t2pAfter}</span>
+                            </span>
                           </li>
-                        ))}
+                        )}
                       </ul>
                     ) : (
-                      <p class="cs__p">No figures published for this case.</p>
+                      <p class="cs__stat cs__stat--quiet cs__none">
+                        <span class="cs__stat-label" aria-hidden="true">The result</span>
+                        <span class="cs__none-text">No figures published for this case.</span>
+                      </p>
                     )}
-                    <p class="cs__limits"><strong>What this cannot show:</strong> {c.limits}</p>
+
                     <p class="cs__takeaway">{c.takeaway}</p>
-                    <a class="link cs__read" href={`${base}/blog/${c.post}`}>
-                      Read the full case
-                      <Icon name="arrow-right" size={13} />
-                    </a>
-                  </div>
-                </li>
-              ))
+                  </li>
+                );
+              })
             }
           </ol>
+
           <div class="cs__next">
-            <p class="cs__p">
+            <p class="cs__next-text">
               Want the same look at your own funnel? See also{' '}
-              <a class="link" href={`${base}/mmp-audit-findings`}>what 10 attribution audits found</a>.
+              <a class="cs__next-link" href={`${base}/mmp-audit-findings`}>what attribution audits keep finding</a>.
             </p>
-            <a class="btn-primary" href={`${base}/#contact`}>
+            <a class="pill-link" href={`${base}/#contact`}>
               Book a call
               <Icon name="arrow-right" size={14} />
             </a>
           </div>
         </div>
       </section>
+
+      <Cta />
     </main>
     <Footer />
   </div>
@@ -134,176 +313,429 @@ const list = {
     overflow-x: clip;
   }
 
-  .cs__h1 {
-    margin-top: var(--s4);
-    font-size: var(--t-h1);
-    line-height: var(--lh-h1);
-    letter-spacing: var(--ls-h1);
-  }
-
-  .cs__list {
-    padding-top: 0;
-  }
-
   .cs__cases {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(72px, 9vw, 128px);
     margin: 0;
     padding: 0;
     list-style: none;
-    display: grid;
-    gap: var(--s16);
   }
 
-  .cs__case {
-    display: grid;
-    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
-    gap: var(--s16);
-    align-items: start;
+  .cs__case,
+  .cs__copy {
+    min-width: 0;
   }
 
-  .cs__facts {
-    padding: var(--s8);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
+  .cs__amber {
+    color: var(--color-accent-text);
   }
 
-  .cs__num {
-    margin: 0 0 var(--s6);
-    font-family: var(--font-heading);
-    font-size: 44px;
-    font-weight: var(--fw-semibold);
-    color: var(--color-accent);
-    line-height: 1;
-  }
-
-  .cs__facts dl {
-    margin: 0;
-    display: grid;
-    gap: var(--s2);
-  }
-
-  .cs__facts dt {
-    margin-top: var(--s4);
+  /* --- the case header ------------------------------------------------------ */
+  .cs__n {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s4);
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: 13px;
+    letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    letter-spacing: var(--ls-eyebrow);
-    color: var(--color-text-4);
-  }
-
-  .cs__facts dt:first-child {
-    margin-top: 0;
-  }
-
-  .cs__facts dd {
-    margin: 0;
-    color: var(--color-text-2);
-    line-height: var(--lh-card);
-  }
-
-  .cs__h2 {
-    font-size: var(--t-h2-card);
-    line-height: var(--lh-h2);
-  }
-
-  .cs__h3 {
-    margin-top: var(--s12);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    font-weight: var(--fw-regular);
-    text-transform: uppercase;
-    letter-spacing: var(--ls-eyebrow);
-    color: var(--color-accent);
-  }
-
-  .cs__p,
-  .cs__limits,
-  .cs__takeaway {
-    margin-top: var(--s4);
-    max-width: 68ch;
-    color: var(--color-text-2);
-    line-height: var(--lh-body);
-  }
-
-  .cs__changes {
-    margin: var(--s4) 0 0;
-    padding-left: 1.2em;
-    display: grid;
-    gap: var(--s2);
-    color: var(--color-text-2);
-  }
-
-  .cs__results {
-    margin: var(--s6) 0 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-    gap: var(--s6);
-  }
-
-  .cs__results li {
-    padding: var(--s6);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    display: grid;
-    gap: var(--s2);
-  }
-
-  .cs__value {
-    font-family: var(--font-heading);
-    font-size: 24px;
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
-  }
-
-  .cs__label {
-    font-size: var(--t-card-sm);
     color: var(--color-text-3);
   }
 
-  .cs__limits {
-    margin-top: var(--s8);
-    padding-left: var(--s6);
-    border-left: 2px solid var(--color-line-strong);
-    font-size: var(--t-body-sm);
+  .cs__n span {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent-text);
+    color: var(--color-accent-text);
+    letter-spacing: 0;
   }
 
-  .cs__takeaway {
-    color: var(--color-text);
-    font-weight: var(--fw-medium);
+  .cs__h2 {
+    margin-top: var(--s6);
+  }
+
+  .cs__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--s6) var(--s8);
+    margin: var(--s8) 0 0;
+  }
+
+  .cs__facts > div {
+    min-width: 0;
+  }
+
+  .cs__facts-wide {
+    grid-column: 1 / -1;
+  }
+
+  .cs__facts dt {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .cs__facts dd {
+    margin: var(--s2) 0 0;
+    font-size: var(--t-body);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
   }
 
   .cs__read {
-    margin-top: var(--s8);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
+    margin-top: var(--s12);
   }
 
+  /* --- the panel: cards in normal flow, so nothing overlaps at any width --- */
+  .cs__scene {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--s6);
+    padding: clamp(14px, 2.6vw, 34px);
+    min-height: 0;
+  }
+
+  .cs__badge {
+    align-self: flex-end;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .cs__main {
+    width: 100%;
+    max-width: 400px;
+    min-width: 0;
+  }
+
+  .cs__cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+    margin-top: var(--s4);
+  }
+
+  .cs__cost-now {
+    font-size: clamp(34px, 4vw, 50px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1;
+  }
+
+  .cs__cost-was {
+    font-size: 19px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-3);
+  }
+
+  .cs__costbars {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 10px;
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--color-text-3);
+  }
+
+  .cs__costbars i {
+    height: 12px;
+    border-radius: 4px;
+    background: var(--chart-bar-dim);
+  }
+
+  .cs__costbars .cs__on {
+    background: var(--color-accent);
+  }
+
+  .cs__range {
+    position: relative;
+    height: 12px;
+    margin-top: var(--s6);
+    border-radius: 4px;
+    background: var(--chart-bar-dim);
+  }
+
+  .cs__range i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--color-accent);
+  }
+
+  .cs__range .cs__range-high {
+    opacity: 0.45;
+  }
+
+  .cs__foot {
+    margin-top: var(--s6);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--color-line-strong);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+
+  .cs__pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(170px, 100%), 1fr));
+    gap: var(--s4);
+    width: 100%;
+  }
+
+  .cs__mini {
+    min-width: 0;
+    padding: 16px 18px;
+  }
+
+  .cs__tracks {
+    align-self: flex-end;
+    width: 100%;
+    max-width: 350px;
+    padding: 16px 18px;
+  }
+
+  .cs__flow {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 9px 12px;
+    margin: var(--s4) 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .cs__flow dt {
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-weight: var(--fw-semibold);
+  }
+
+  .cs__flow .cs__flow-on {
+    box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.65);
+  }
+
+  .cs__flow dd {
+    margin: 0;
+    color: var(--color-text-2);
+  }
+
+  /* before → after, used on the panel and in the results */
+  .cs__move {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+    margin-top: 4px;
+  }
+
+  .cs__was {
+    font-size: 16px;
+    color: var(--color-text-3);
+  }
+
+  .cs__now {
+    font-size: 26px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.1;
+  }
+
+  .cs__move--lg {
+    margin-top: var(--s4);
+  }
+
+  .cs__move--lg .cs__was {
+    font-size: 17px;
+  }
+
+  .cs__move--lg .cs__now {
+    font-size: clamp(26px, 2.4vw, 32px);
+  }
+
+  .cs__now--quiet {
+    color: var(--color-text-2);
+  }
+
+  /* --- problem / change / limits ------------------------------------------ */
+  .cs__cards {
+    margin-top: clamp(32px, 4.5vw, 64px);
+  }
+
+  .cs__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .cs__text,
+  .cs__changes {
+    margin-top: var(--s6);
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .cs__text strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .cs__changes {
+    display: grid;
+    gap: var(--s4);
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cs__changes li {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  /* A drawn tick: the icon set has no plain check. */
+  .cs__changes li::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0.42em;
+    width: 11px;
+    height: 6px;
+    border-left: 2.4px solid var(--color-accent-text);
+    border-bottom: 2.4px solid var(--color-accent-text);
+    transform: rotate(-45deg);
+  }
+
+  /* --- results -------------------------------------------------------------- */
+  .cs__results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cs__stat {
+    min-width: 0;
+    padding: clamp(18px, 2vw, 26px) clamp(18px, 2.2vw, 28px);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .cs__stat--lead {
+    box-shadow: var(--ring-accent);
+  }
+
+  .cs__stat--lead .cs__stat-label {
+    color: var(--color-accent-text);
+  }
+
+  .cs__stat--quiet {
+    background: var(--color-bg);
+    box-shadow: 0 0 0 1px var(--color-line-strong);
+  }
+
+  .cs__stat-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .cs__none {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s2) var(--s8);
+    margin-top: 16px;
+  }
+
+  .cs__none-text {
+    font-size: var(--t-section-lead);
+    color: var(--color-text-2);
+  }
+
+  .cs__takeaway {
+    max-width: 44ch;
+    margin-top: var(--s12);
+    padding-left: var(--s8);
+    border-left: 2px solid var(--color-accent);
+    font-size: clamp(18px, 1.7vw, 22px);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.4;
+  }
+
+  /* --- what next ------------------------------------------------------------ */
   .cs__next {
-    margin-top: var(--s16);
-    padding-top: var(--s12);
-    border-top: 1px solid var(--color-line);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: var(--s8);
+    margin-top: clamp(56px, 7vw, 96px);
+    padding-top: var(--s12);
+    border-top: 1px solid var(--color-line);
   }
 
-  .cs__next .cs__p {
-    margin: 0;
-    color: var(--color-text);
-    font-size: var(--t-h3-sm);
+  .cs__next-text {
+    flex: 1 1 320px;
+    min-width: 0;
+    font-size: clamp(17px, 1.6vw, 20px);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.45;
   }
 
-  @media (max-width: 860px) {
-    .cs__case {
+  .cs__next-link {
+    color: var(--color-accent-text);
+    border-bottom: 1px solid rgba(var(--rgb-accent), 0.45);
+  }
+
+  @media (min-width: 900px) {
+    .cs__results {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    /* A case with no panel keeps its text on the reading measure. */
+    .cs__row--solo {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--s8);
+    }
+  }
+
+  @media (max-width: 899px) {
+    /* Text first, picture second, on one column. */
+    .cs__scene {
+      order: 2;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .cs__facts {
+      grid-template-columns: minmax(0, 1fr);
     }
   }
 </style>

@@ -2,32 +2,30 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Investigation from '../components/Investigation.astro';
-import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS } from '../data/automation.ts';
+import type { IconName } from '../data/icons';
+import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER } from '../data/automation.ts';
 
 /**
  * /automation
  *
- * Built to docs/design-explorations/automation-layout-v3-charcoal.png, whose
- * layout rule is written on the sketch itself: one strong headline, one useful
- * visual, integrations supporting the story.
- *
- * That reverses the previous composition. The source tiles and assistant names
- * used to stand between the introduction and the evidence; they now sit under
- * the report as two quiet label rows, so the thing a visitor came to see
- * arrives first.
+ * Board: design/v3/Automation.dc.html.
  *
  * Sequence:
- *   1  introduction — headline left, supporting copy and CTA right
- *   2  four selectors and one prominent report
- *   3  compact data-source and assistant labels
+ *   1  PageHero: the h1, the two-line promise, one action
+ *   2  the live example report (Investigation.astro): four chips, one panel
+ *   3  connected sources and assistant options, as cards
  *   4  A simple working relationship: Connect, Investigate, Review
- *   5  two disclosures and the closing action, on one line
+ *   5  the detail: three disclosures beside one heading and the action
+ *   6  Cta
  *
- * The outcomes row is gone. It repeated the four example categories directly
- * under the four example tabs, which the brief called out.
+ * All copy is the page's own or comes from src/data/automation.ts (the section
+ * 3 heading and its aside are the homepage teaser's, held in TEASER). The one
+ * line that is new is the section 5 heading, which the board supplies.
  */
 
 const title = 'AI Reporting & Automation for App Growth — E2E Apps';
@@ -50,6 +48,11 @@ const service = {
   areaServed: 'Worldwide',
   provider: { '@type': 'ProfessionalService', '@id': `${home}#business`, name: 'E2E Apps', url: home },
 };
+
+/* One icon per source, in SOURCES order. */
+const SOURCE_ICONS: IconName[] = ['chart-line', 'cursor-click', 'receipt', 'arrows-clockwise'];
+/* Where each card's glow sits, so a row does not repeat one corner. */
+const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
 ---
 
 <Base title={title} description={description} path="/automation">
@@ -59,71 +62,121 @@ const service = {
 
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Automation', path: '/automation' }]} />
-      {/* ------------------------------------------------ 1 · introduction */}
-      <section class="section section--lead" data-section="automation-intro">
-        <div class="wrap">
-          <div class="intro">
-            <div class="intro__lede">
-              <h1 class="eyebrow eyebrow--amber">AI reporting for app growth teams</h1>
-              <p class="intro__h1">See what changed.<br />Know what to check.</p>
-            </div>
 
-            <div class="intro__aside">
-              <p class="intro__copy">
-                Connect your growth data. Get answers with the source figures attached.
-              </p>
-              <a href={`${base}/#contact`} class="btn-primary">
-                Discuss your setup
-                <Icon name="arrow-up-right" size={14} />
-              </a>
-            </div>
+      {/* ------------------------------------------------ 1 · introduction */}
+      <PageHero
+        label={TEASER.eyebrow}
+        title="AI reporting for app growth teams"
+        cta={{ href: `${base}/#contact`, text: 'Discuss your setup' }}
+        section="automation-intro"
+      >
+        <Fragment>
+          <p class="intro__line">See what changed.<br />Know what to check.</p>
+          <p class="intro__copy">Connect your growth data. Get answers with the source figures attached.</p>
+        </Fragment>
+      </PageHero>
+
+      {/* --------------------------------------------- 2 · the evidence --- */}
+      <section class="section" data-section="automation-report">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">Example investigations</p>
+            <h2 class="shead__title">Ask a business question.</h2>
+            <p class="shead__aside">{TEASER.body}</p>
+          </div>
+
+          <div class="sbody">
+            <Investigation headingId="demo" />
           </div>
         </div>
       </section>
 
-      {/* --------------------------------------------- 2 · the evidence --- */}
-      <section class="section section--tight" data-section="automation-report">
+      {/* ------------------- 3 · integrations, supporting the story ------- */}
+      <section class="section section--band" data-section="automation-sources" data-added="redesign-2026-11">
         <div class="wrap">
-          <Investigation headingId="demo" />
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">{TEASER.sourcesLabel}</p>
+            <h2 class="shead__title">{TEASER.heading[0]}<br />{TEASER.heading[1]}</h2>
+            <p class="shead__aside">{TEASER.support} {TEASER.note}</p>
+          </div>
 
-          {/* 3 · integrations, supporting the story rather than fronting it */}
-          <dl class="labels">
-            <div class="labels__row">
-              <dt>Data sources</dt>
-              <dd>{SOURCES.map((s) => s.name).join(' · ')}</dd>
+          <div class="sbody">
+            <h3 class="sub">Data sources</h3>
+            <div class="ggrid ggrid--4 swipe" data-swipe>
+              {
+                SOURCES.map((s, i) => (
+                  <div class="gcard src" style={`--gx:${GLOW[i % GLOW.length]}`}>
+                    <span class="gcard__icon">
+                      <Icon name={SOURCE_ICONS[i] ?? 'stack'} size={24} />
+                    </span>
+                    <span class="gcard__title">{s.name}</span>
+                    <span class="src__note">{s.note}</span>
+                  </div>
+                ))
+              }
             </div>
-            <div class="labels__row">
-              <dt>Assistant options</dt>
-              <dd>{ASSISTANTS.map((a) => a.name).join(' · ')}</dd>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{SOURCES.map(() => <i />)}</span>
+              <span data-swipe-count>1 of {SOURCES.length}</span>
             </div>
-          </dl>
+
+            <h3 class="sub sub--next">Assistant options</h3>
+            <div class="ggrid ggrid--3 opts">
+              {
+                ASSISTANTS.map((a, i) => (
+                  <div class="gcard" style={`--gx:${GLOW[(i + 1) % GLOW.length]}`}>
+                    <span class="gcard__title opt__name">{a.name}</span>
+                    <span class="gcard__text">{a.route}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
         </div>
       </section>
 
       {/* --------------------------------------------- 4 · how we work ---- */}
       <section class="section" data-section="automation-process">
         <div class="wrap">
-          <h2 class="work__h2">A simple working relationship.</h2>
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">How it runs</p>
+            <h2 class="shead__title">A simple working relationship.</h2>
+          </div>
 
-          <ol class="steps">
+          <ol class="sbody ggrid ggrid--3 steps">
             {
-              STEPS.map((s) => (
-                <li class="step">
-                  <span class="step__n">{s.n}</span>
-                  <span class="step__title">{s.title}</span>
-                  <p class="step__body">{s.body}</p>
+              STEPS.map((s, i) => (
+                <li class="gcard step" style={`--gx:${GLOW[(i + 2) % GLOW.length]}`}>
+                  <span class="step__n">
+                    <span>{s.n}</span> Step
+                  </span>
+                  <span class="gcard__title step__title">{s.title}</span>
+                  <p class="gcard__text">{s.body}</p>
                 </li>
               ))
             }
           </ol>
+        </div>
+      </section>
 
-          {/* 5 · the detail, and the one action, on a single closing line */}
-          <div class="close">
+      {/* ------------------------------------------------ 5 · the detail -- */}
+      <section class="section detail-sec" data-section="automation-detail" data-added="redesign-2026-11">
+        <div class="wrap detail">
+          <div class="detail__head" data-reveal="1">
+            <p class="shead__label">The detail</p>
+            <h2 class="detail__title">What connects, who approves, how figures are defined</h2>
+            <a href={`${base}/#contact`} class="pill-link detail__cta">
+              Discuss your setup
+              <Icon name="arrow-up-right" size={14} />
+            </a>
+          </div>
+
+          <div class="detail__list">
             {
-              DISCLOSURES.map((d) => (
-                <details class="close__item">
+              DISCLOSURES.map((d, i) => (
+                <details class="disc" open={i === 0}>
                   <summary>{d.label}</summary>
-                  <div class="close__body">
+                  <div class="disc__body">
                     {d.body.map((para) => (
                       <p>{para}</p>
                     ))}
@@ -131,14 +184,11 @@ const service = {
                 </details>
               ))
             }
-
-            <a href={`${base}/#contact`} class="close__cta">
-              Discuss your setup
-              <Icon name="arrow-up-right" size={14} />
-            </a>
           </div>
         </div>
       </section>
+
+      <Cta />
     </main>
 
     <Footer />
@@ -151,225 +201,220 @@ const service = {
     background: var(--color-bg);
   }
 
-  /* The report follows the introduction directly, so this section does not
-     restate a full section gap on top of the one above it. */
-  .section--tight {
-    padding-top: 0;
-  }
-
   /* --- 1 · introduction ---------------------------------------------------- */
 
-  .intro {
-    display: grid;
-    gap: var(--s8);
-    grid-template-columns: minmax(0, 1fr);
-    align-items: end;
-  }
-
-  @media (min-width: 900px) {
-    .intro {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      gap: var(--s16);
-    }
-  }
-
-  /* A <p> since the H1 moved to the eyebrow, so it restates the heading look
-     the h1 element used to give it. */
-  .intro__h1 {
-    margin-top: var(--s4);
-    margin-bottom: 0;
+  /* The display line under the h1: the promise, set as large as a lead allows
+     without competing with the heading above it. */
+  .intro__line {
+    margin: var(--s8) auto 0;
     font-family: var(--font-heading);
-    font-weight: var(--fw-bold);
-    text-wrap: balance;
-    font-size: clamp(34px, 4.2vw, 56px);
-    line-height: var(--lh-h1);
-    letter-spacing: var(--ls-h1);
+    font-size: clamp(21px, 2.3vw, 30px);
+    font-weight: var(--fw-semibold);
+    line-height: 1.22;
+    letter-spacing: var(--ls-h3);
     color: var(--color-text);
-    /* On the h1, not on a 16px ancestor: a ch measure resolves against the
-       element's own font size, and setting it on the container wrapped two
-       authored lines onto five. */
-    max-width: 18ch;
-  }
-
-  .intro__aside {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--s8);
-    min-width: 0;
   }
 
   .intro__copy {
-    margin: 0;
-    max-width: 34ch;
-    font-size: var(--t-section-lead);
+    margin: var(--s4) auto 0;
+    max-width: 60ch;
+    font-size: var(--t-lead);
     line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
-  /* Align the desktop copy and CTA with the report's outer right edge. */
-  @media (min-width: 900px) {
-    .intro__aside {
-      align-items: flex-end;
-      text-align: right;
-    }
-  }
-  /* --- 3 · integration labels ---------------------------------------------- */
-
-  .labels {
-    margin: var(--s12) 0 0;
+  /* PageHero renders its slot after the button; these two lines belong above
+     it, so the header's inner block becomes a column and the button goes last. */
+  :global([data-section='automation-intro'] .phero__inner) {
     display: flex;
     flex-direction: column;
-    gap: var(--s4);
   }
 
-  .labels__row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--s3) var(--s8);
+  :global([data-section='automation-intro'] .phero__actions) {
+    order: 1;
   }
 
-  .labels dt {
-    flex: none;
-    min-width: 10em;
+  /* --- 3 · sources and assistants ------------------------------------------ */
+
+  .sub {
+    margin-bottom: var(--s6);
     font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-eyebrow);
+    font-size: var(--t-mono-sm);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    line-height: var(--lh-body);
     text-transform: uppercase;
     color: var(--color-text-4);
   }
 
-  .labels dd {
-    margin: 0;
-    font-size: var(--t-card);
-    color: var(--color-text-2);
+  .sub--next {
+    margin-top: var(--s16);
+  }
+
+  .src__note {
+    margin-top: var(--s2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-meta);
+    color: var(--color-text-3);
+  }
+
+  .opt__name {
+    margin-top: 0;
+  }
+
+  /* Three assistants: three columns as soon as there is room, never 2 + 1. */
+  @media (min-width: 700px) {
+    .opts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   /* --- 4 · how we work ----------------------------------------------------- */
 
-  .work__h2 {
-    font-size: var(--t-h2-card);
-    line-height: var(--lh-h2);
-    letter-spacing: var(--ls-h2-card);
-    color: var(--color-text);
-    text-wrap: balance;
-  }
-
   .steps {
     list-style: none;
-    margin: var(--s12) 0 0;
+    margin-bottom: 0;
     padding: 0;
-    display: grid;
-    gap: var(--s8);
-    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   }
 
-  .step {
-    min-width: 0;
+  @media (min-width: 700px) {
+    .steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .step__n {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s4);
     font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    color: var(--color-accent);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .step__n span {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent-text);
+    color: var(--color-accent-text);
+    letter-spacing: 0;
   }
 
   .step__title {
-    display: block;
-    margin-top: var(--s3);
-    font-size: var(--t-card);
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
+    margin-top: var(--s6);
   }
 
-  .step__body {
-    margin-top: var(--s4);
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-3);
-  }
+  /* --- 5 · the detail ------------------------------------------------------ */
 
-  /* --- 5 · closing line ---------------------------------------------------- */
-
-  .close {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: var(--s6) var(--s12);
-    margin-top: var(--s16);
-    padding-top: var(--s8);
+  /* Plain ground with a hairline: the closing band follows directly, and two
+     bands in a row would read as one. */
+  .detail-sec {
     border-top: 1px solid var(--color-line);
   }
 
-  .close__item {
-    flex: 1 1 18em;
+  .detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+  }
+
+  @media (min-width: 900px) {
+    .detail {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      column-gap: clamp(40px, 6vw, 96px);
+      align-items: start;
+    }
+  }
+
+  .detail__head {
     min-width: 0;
   }
 
-  .close__item summary {
+  .detail__title {
+    margin-top: var(--s6);
+    max-width: 16ch;
+    font-size: clamp(26px, 2.9vw, 40px);
+    letter-spacing: var(--ls-h2);
+    line-height: 1.1;
+  }
+
+  .detail__cta {
+    margin-top: var(--s8);
+  }
+
+  .detail__list {
+    min-width: 0;
+  }
+
+  .disc {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .disc:first-child summary {
+    padding-top: 0;
+  }
+
+  .disc:last-child {
+    border-bottom: 0;
+  }
+
+  .disc summary {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--s6);
     min-height: 44px;
+    padding: var(--s8) 0;
     cursor: pointer;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-disclosure);
-    color: var(--color-text-3);
+    font-family: var(--font-heading);
+    font-size: clamp(18px, 1.7vw, 22px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+    color: var(--color-text);
     list-style: none;
   }
 
-  .close__item summary::-webkit-details-marker {
+  .disc summary::-webkit-details-marker {
     display: none;
   }
 
-  .close__item summary::after {
+  .disc summary::after {
     content: '+';
-    margin-left: 0.4em;
-    color: var(--color-accent);
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: var(--fw-regular);
+    color: var(--color-accent-text);
   }
 
-  .close__item[open] summary::after {
-    content: ' \2212';
+  .disc[open] summary::after {
+    content: '\2212';
   }
 
-  .close__item[open] summary {
-    color: var(--color-text);
-  }
-
-  .close__item summary:focus-visible {
-    outline: 2px solid var(--color-accent);
+  .disc summary:focus-visible {
+    outline: 2px solid var(--color-accent-text);
     outline-offset: 3px;
   }
 
-  .close__body p {
-    margin: 0 0 var(--s4);
+  .disc__body {
+    padding-bottom: var(--s8);
+  }
+
+  .disc__body p {
     max-width: 70ch;
-    font-size: var(--t-card-sm);
+    font-size: var(--t-body);
     line-height: var(--lh-body);
-    color: var(--color-text-4);
+    color: var(--color-text-2);
   }
 
-  .close__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s3);
-    min-height: 44px;
-    margin-left: auto;
-    font-size: var(--t-card);
-    font-weight: var(--fw-medium);
-    color: var(--color-accent);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  .close__cta:hover {
-    color: var(--color-accent-hover);
-  }
-
-  @media (max-width: 640px) {
-    .close__cta {
-      margin-left: 0;
-    }
+  .disc__body p + p {
+    margin-top: var(--s4);
   }
 </style>

@@ -115,12 +115,46 @@ test('no flex or grid container forbids its own children from wrapping', { skip 
 });
 
 test('no fixed width exceeds the narrowest phone', { skip }, () => {
+  // Two shapes are wide on purpose and cannot widen the page. Each is exempt
+  // only while the thing that contains it is provably still there, checked on
+  // the same page — not by name, and not for good:
+  //
+  //  1. A table inside a scrolling box. The legal pages give their tables a
+  //     640px floor so the columns stay readable, and wrap each one in
+  //     `.prose__scroll` (overflow-x: auto), which scrolls instead of the page.
+  //     Exempt only if that rule ships AND every <table> on the page sits
+  //     directly inside one.
+  //
+  //  2. A painted glow. The cards draw their corner glow as an absolutely
+  //     positioned ::before, 300–420px across. Exempt only if the element it
+  //     belongs to clips it (overflow: hidden or clip in that element's own
+  //     rule on this page). Without the clip it would hang off the card and
+  //     off the screen.
   const offenders: string[] = [];
 
   for (const page of PAGES) {
-    for (const [selector, decl] of rules(page)) {
+    const all = rules(page);
+    const file = path.join(DIST, page);
+    const html = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+
+    const tables = (html.match(/<table\b/g) ?? []).length;
+    const wrapped = (html.match(/<div\b[^>]*class="[^"]*\bprose__scroll\b[^"]*"[^>]*>\s*<table\b/g) ?? []).length;
+    const scrollBox = all.some(([sel, d]) => /\.prose__scroll\b/.test(sel) && /overflow-x:\s*(auto|scroll)/.test(d));
+    // (A page with no table at all, /terms today, satisfies this trivially:
+    // the rule ships from the shared layout and matches nothing.)
+    const tablesScroll = scrollBox && wrapped === tables;
+
+    const clips = (host: string) =>
+      all.some(([sel, d]) => sel.split(',').some((s) => s.trim() === host) && /overflow:\s*(hidden|clip)/.test(d));
+
+    for (const [selector, decl] of all) {
       // SVG-internal and deliberately-scrolling boxes are exempt.
       if (/overflow-x:\s*(auto|scroll)/.test(decl)) continue;
+
+      if (tablesScroll && /^\.prose__body table$/.test(selector)) continue;
+
+      const pseudo = /^(.*?)::?(before|after)$/.exec(selector);
+      if (pseudo && /position:\s*absolute/.test(decl) && clips(pseudo[1]!.trim())) continue;
 
       for (const m of decl.matchAll(/(?:^|;)\s*(min-width|width):\s*([0-9.]+)px/g)) {
         if (Number(m[2]) > NARROWEST) offenders.push(`${page}  ${selector.slice(0, 60)} → ${m[1]}: ${m[2]}px`);

@@ -1,0 +1,419 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from './Icon.astro';
+import { FINDINGS } from '../data/findings';
+
+/**
+ * "Jump into the latest findings": the library, the findings report and the
+ * newest posts.
+ *
+ * Board: design/v3/Main.dc.html.
+ *
+ * The owner asked that the number of audits is never put on show, so the
+ * report card says how often each fault appears with bar length alone: no
+ * count, no scale, no total. The bars are still the real proportions from
+ * src/data/findings.ts.
+ *
+ * Posts come from the content collection, newest first: three as cards and the
+ * next three as the plain link list, so the section updates itself when a post
+ * is published.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const cards = posts.slice(0, 3);
+const more = posts.slice(3, 6);
+const stamp = (d: Date) =>
+  `${d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase()} | ${d.getFullYear()}`;
+
+const top = Math.max(...FINDINGS.map((f) => f.count));
+const bars = FINDINGS.slice(0, 4).map((f) => ({ title: f.title, w: (f.count / top) * 100 }));
+
+const library = [
+  { href: `${base}/blog`, name: 'Blog', text: 'Field notes on attribution, subscriptions and campaigns.' },
+  { href: `${base}/case-studies`, name: 'Case studies', text: 'What changed, with the before and after figures.' },
+  { href: `${base}/mmp-audit-findings`, name: 'Audit findings', text: 'The faults that keep turning up in MMP audits.' },
+  { href: `${base}/payback-calculator`, name: 'Payback calculator', text: 'See the day a campaign earns its spend back.' },
+  { href: `${base}/faq`, name: 'FAQ', text: 'Price, timeline, access and scope, answered.' },
+  { href: `${base}/products`, name: 'Products', text: 'The tools built for this work, with overviews.' },
+];
+---
+
+<section id="insights" class="section" data-section="insights" data-added="redesign-2026-11">
+  <div class="wrap">
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">Related content</p>
+      <h2 class="shead__title">Jump into the latest findings</h2>
+    </div>
+
+    <div class="sbody ins">
+      <div class="ins__side" data-reveal="1">
+        <p class="ins__label">Library</p>
+        <h3 class="ins__h3">Everything you need to check your own setup</h3>
+      </div>
+      <ul class="lib" role="list" data-reveal="1">
+        {
+          library.map((l) => (
+            <li>
+              <a class="lib__item" href={l.href}>
+                <span class="lib__name">
+                  {l.name}
+                  <Icon name="arrow-right" size={13} />
+                </span>
+                <span class="lib__text">{l.text}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="ins ins--report">
+      <div class="ins__side" data-reveal="1">
+        <p class="ins__label">From the blog</p>
+        <h3 class="ins__h3">You might be interested</h3>
+        <ul class="more" role="list">
+          {
+            more.map((p) => (
+              <li>
+                <a class="more__link" href={`${base}/blog/${p.id}`}>
+                  {p.data.title}
+                  <Icon name="arrow-right" size={13} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <a class="gcard gcard--lead report" href={`${base}/mmp-audit-findings`} style="--gx:0%;--gy:0%" data-reveal="1">
+        <span class="dcard report__chart">
+          <span class="dcard__label"><span>How often each fault appears</span></span>
+          <span class="report__bars" role="img" aria-label="The four most common faults, most frequent first">
+            {
+              bars.map((b, i) => (
+                <span class="report__row">
+                  <span>{b.title}</span>
+                  <i class:list={{ 'report__bar--dim': i > 1 }} style={`width:${b.w.toFixed(0)}%`} />
+                </span>
+              ))
+            }
+          </span>
+        </span>
+        <span class="report__copy">
+          <span class="shead__label">Report</span>
+          <span class="report__title">What mobile attribution audits keep finding</span>
+          <span class="report__text">
+            ATT handled badly in every audit. Revenue or purchase events missing or wrong in nearly
+            all of them. No app or client is named.
+          </span>
+          <span class="report__go">
+            Read the findings
+            <Icon name="arrow-right" size={13} />
+          </span>
+        </span>
+      </a>
+    </div>
+
+    <div class="ins ins--posts">
+      <div class="ins__side" aria-hidden="true"></div>
+      <div>
+        <div class="posts swipe" data-swipe data-swipe-label="Post">
+          {
+            cards.map((p, i) => (
+              <a class:list={['post', { 'post--first': i === 0 }]} href={`${base}/blog/${p.id}`}>
+                <span class="post__tag">{p.data.tag}</span>
+                <span class="post__title">{p.data.title}</span>
+                <span class="post__date">{stamp(p.data.date)}</span>
+              </a>
+            ))
+          }
+        </div>
+        <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+          <span class="swipe__dots" data-swipe-dots>{cards.map(() => <i />)}</span>
+          <span data-swipe-count>Post 1 of {cards.length}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ins {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+  }
+
+  .ins--report {
+    margin-top: clamp(48px, 7vw, 96px);
+    align-items: stretch;
+  }
+
+  .ins--posts {
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+
+  @media (min-width: 900px) {
+    .ins {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      column-gap: var(--s8);
+    }
+  }
+
+  .ins__side {
+    min-width: 0;
+  }
+
+  .ins__label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .ins__h3 {
+    margin-top: var(--s6);
+    max-width: 16ch;
+    font-size: clamp(22px, 2.3vw, 30px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.14;
+  }
+
+  /* Library: two columns of links separated by hairlines. */
+  .lib {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 40px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 640px) {
+    .lib {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .lib__item {
+    display: block;
+    padding: var(--s8) 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .lib li:first-child .lib__item {
+    padding-top: 0;
+  }
+
+  @media (min-width: 640px) {
+    .lib li:nth-child(2) .lib__item {
+      padding-top: 0;
+    }
+
+    .lib li:nth-last-child(-n + 2) .lib__item {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .lib li:last-child .lib__item {
+      border-bottom: 0;
+    }
+  }
+
+  .lib__name {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    font-size: 18px;
+    font-weight: var(--fw-bold);
+    color: var(--color-text);
+  }
+
+  .lib__name :global(svg),
+  .more__link :global(svg),
+  .report__go :global(svg) {
+    flex: none;
+    color: var(--color-accent-text);
+  }
+
+  .lib__text {
+    display: block;
+    margin-top: 6px;
+    font-size: var(--t-body);
+    color: var(--color-text-2);
+  }
+
+  .more {
+    margin: var(--s8) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .more li + li {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .more__link {
+    display: flex;
+    align-items: center;
+    gap: var(--s4);
+    min-height: 44px;
+    padding: var(--s6) 0;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-snug);
+    color: var(--color-text-2);
+  }
+
+  .more__link:hover {
+    color: var(--color-text);
+  }
+
+  /* The findings report. */
+  .report {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: center;
+    padding: clamp(22px, 4vw, 56px);
+  }
+
+  @media (min-width: 700px) {
+    .report {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(24px, 3.5vw, 44px);
+    }
+  }
+
+  .report__chart {
+    display: block;
+  }
+
+  .report__bars {
+    display: grid;
+    gap: 11px;
+    margin-top: var(--s6);
+    font-size: 13.5px;
+  }
+
+  .report__row {
+    display: block;
+  }
+
+  .report__row i {
+    display: block;
+    height: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    background: var(--color-accent);
+  }
+
+  .report__row .report__bar--dim {
+    opacity: 0.6;
+  }
+
+  .report__copy {
+    display: block;
+    min-width: 0;
+  }
+
+  .report__title {
+    display: block;
+    margin-top: var(--s4);
+    font-size: clamp(22px, 2.3vw, 30px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.14;
+  }
+
+  .report__text {
+    display: block;
+    margin-top: var(--s6);
+    font-size: var(--t-body);
+    color: var(--color-text-2);
+  }
+
+  .report__go {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s3);
+    min-height: 44px;
+    margin-top: var(--s8);
+    padding: 0 18px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--color-line-strong);
+    font-size: 13px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Newest posts. */
+  .posts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12) 32px;
+  }
+
+  @media (min-width: 700px) {
+    .posts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .post {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 180px;
+    padding-top: var(--s8);
+    border-top: 2px solid var(--color-line-strong);
+  }
+
+  .post--first {
+    border-top-color: var(--color-accent);
+  }
+
+  .post__tag,
+  .post__date {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .post__title {
+    margin-top: var(--s4);
+    font-size: 18px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.25;
+    transition: color 180ms var(--ease-out-soft);
+  }
+
+  .post:hover .post__title {
+    color: var(--color-accent-text);
+  }
+
+  .post__date {
+    margin-top: auto;
+    padding-top: var(--s8);
+  }
+
+  @media (max-width: 699px) {
+    .post {
+      min-height: 170px;
+      padding: var(--s6);
+      border-radius: var(--radius-card);
+      background: var(--color-surface);
+      box-shadow: var(--ring);
+    }
+  }
+</style>

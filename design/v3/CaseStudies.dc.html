@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E2E Apps case studies, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:#F0AB33}
+@keyframes e2e-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.e2e-marquee{animation:none !important}}
+</style>
+</helmet>
+<div style="--bg:#0E1014; --surf:#16191F; --surf2:#1D2128; --band:#111318; --line:#23272E; --line2:#2C3138; --tx:#E8EAED; --tx2:#A8AEB6; --tx3:#8E959E; --tx4:#868D98; --am:#E39A1F; --ink:#101725; --f:'Be Vietnam Pro',system-ui,sans-serif; --fm:'IBM Plex Mono',ui-monospace,monospace; background: var(--bg); color: var(--tx); font-family: var(--f); font-size: 17px; line-height: 1.6">
+
+<!-- PAGE HEADER -->
+<section style="position: relative; overflow: hidden; padding: 16px 32px 0">
+<div aria-hidden="true" style="position: absolute; left: 8%; top: -120px; width: 52%; height: 560px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.30), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div aria-hidden="true" style="position: absolute; right: 2%; top: -40px; width: 50%; height: 580px; border-radius: 50%; background: radial-gradient(closest-side, rgba(64,86,140,0.42), rgba(64,86,140,0)); filter: blur(34px)"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.07) 1px, transparent 1px); background-size: 34px 34px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%); mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%)"></div>
+
+<header style="position: relative; max-width: 1376px; margin: 0 auto; box-sizing: border-box; height: 78px; padding: 0 20px 0 24px; display: flex; align-items: center; gap: 36px; background: rgba(22,25,31,0.86); border: 1px solid var(--line2); border-radius: 12px">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; letter-spacing: -0.02em">
+<span style="width: 34px; height: 34px; border-radius: 9px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 12px; font-weight: 700">E2E</span>E2E Apps</a>
+<nav style="display: flex; gap: 30px; font-size: 16px; color: var(--tx2)">
+<a href="#fix">Services</a><a href="#loop">Approach</a><a href="#payback">Calculator</a><a href="#insights">Findings</a><a href="#insights">Blog</a>
+</nav>
+<div style="margin-left: auto; display: flex; gap: 12px">
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; border: 1px solid var(--line2); font-weight: 600; font-size: 16px">Book a call</a>
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 16px">Get a free first look</a>
+</div>
+</header>
+
+<div id="top" style="position: relative; max-width: 1080px; margin: 0 auto; padding: 110px 0 90px; text-align: center">
+<div style="font-family: var(--fm); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Case studies</div>
+<h1 style="margin: 26px 0 0; font-size: 60px; font-weight: 500; letter-spacing: -0.035em; line-height: 1.08; text-wrap: balance">What was wrong, what changed, and what the numbers show</h1>
+<p style="margin: 28px auto 0; max-width: 720px; font-size: 20px; line-height: 1.6; color: var(--tx2)">Each case says which windows were compared and what the comparison cannot prove. Client names are withheld.</p>
+</div>
+</section>
+
+<!-- CASE 01 -->
+<section id="case-01" style="padding: 110px 80px 0; border-top: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto">
+
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<div style="grid-column: span 5">
+<div style="display: inline-flex; align-items: center; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); display: grid; place-items: center; font-family: var(--fm); font-size: 13px; color: var(--am)">01</span><span style="font-family: var(--fm); font-size: 13px; letter-spacing: 0.1em; color: var(--tx3)">CASE · CLIENT WITHHELD</span></div>
+<h2 style="margin: 20px 0 0; font-size: 46px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">A paywall dialog was hiding most trials</h2>
+<dl style="margin: 30px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 20px">
+<div><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Client</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">PDF scanner app, subscription</dd></div>
+<div><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Market</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">25 countries</dd></div>
+<div style="grid-column: 1 / -1"><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Compared</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">18 days before vs 9 days after, both windows aged until trials resolved</dd></div>
+<div style="grid-column: 1 / -1"><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Work</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">Funnel audit, Paywall</dd></div>
+</dl>
+<a href="#insights" style="margin-top: 32px; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid var(--line2); font-weight: 600; font-size: 16px">Read the full case <span aria-hidden="true">›</span></a>
+</div>
+
+<div style="grid-column: 7 / span 6; position: relative; height: 460px; border-radius: 24px; overflow: hidden; background: radial-gradient(circle at 84% 14%, rgba(227,154,31,0.30), rgba(227,154,31,0) 52%), radial-gradient(circle at 10% 92%, rgba(64,86,140,0.42), rgba(64,86,140,0) 55%), #16191F; box-shadow: inset 0 0 0 1px var(--line)">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.08) 1px, transparent 1px); background-size: 22px 22px"></div>
+<div style="position: absolute; left: 34px; top: 44px; width: 380px; box-sizing: border-box; padding: 22px 24px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<div style="display: flex; justify-content: space-between; font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)"><span>Cost per payer</span><span>PDF scanner</span></div>
+<div style="margin-top: 12px; display: flex; align-items: baseline; gap: 14px">
+<span style="font-size: 52px; font-weight: 700; letter-spacing: -0.035em; line-height: 1">$20.91</span>
+<span style="font-size: 20px; font-weight: 600; color: var(--tx3); text-decoration: line-through">$92.95</span>
+</div>
+<div style="margin-top: 16px; display: grid; grid-template-columns: 52px minmax(0, 1fr); align-items: center; row-gap: 8px; column-gap: 10px; font-family: var(--fm); font-size: 11.5px; color: var(--tx3)">
+<span>Before</span><span aria-hidden="true" style="height: 12px; border-radius: 4px; background: #3A4048; width: 100%"></span>
+<span style="color: var(--am)">After</span><span aria-hidden="true" style="height: 12px; border-radius: 4px; background: var(--am); width: 22.5%"></span>
+</div>
+<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line2); font-size: 12.5px; color: var(--tx2)">Spend and installs per day were flat across both windows.</div>
+</div>
+<div style="position: absolute; right: 30px; top: 28px; padding: 9px 14px; border-radius: 999px; background: var(--am); color: var(--ink); font-size: 13px; font-weight: 700; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.9)">77.5% lower</div>
+<div style="position: absolute; left: 34px; bottom: 34px; width: 258px; box-sizing: border-box; padding: 16px 18px; border-radius: 14px; background: #1D2128; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -18px rgba(0,0,0,0.95)">
+<div style="font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Payers per day</div>
+<div style="margin-top: 4px; display: flex; align-items: baseline; gap: 10px"><span style="font-size: 16px; color: var(--tx3)">7.0</span><span aria-hidden="true" style="color: var(--am)">→</span><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.03em">31.8</span></div>
+</div>
+<div style="position: absolute; right: 30px; bottom: 34px; width: 258px; box-sizing: border-box; padding: 16px 18px; border-radius: 14px; background: #1D2128; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -18px rgba(0,0,0,0.95)">
+<div style="font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Install → trial</div>
+<div style="margin-top: 4px; display: flex; align-items: baseline; gap: 10px"><span style="font-size: 16px; color: var(--tx3)">0.62%</span><span aria-hidden="true" style="color: var(--am)">→</span><span style="font-size: 26px; font-weight: 700; letter-spacing: -0.03em">4.00%</span></div>
+</div>
+</div>
+</div>
+
+<!-- problem / change / limits -->
+<div style="margin-top: 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; top: -110px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The problem</div>
+<p style="margin: 16px 0 0; font-size: 16.5px; color: var(--tx2)">Install to trial had sat at 0.6% for months. Tapping the trial button raised a system "are you sure?" alert instead of starting the trial, and no dashboard flagged it.</p>
+</div>
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; bottom: -110px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">What changed</div>
+<ul style="margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; font-size: 16.5px; color: var(--tx2)">
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Removed the confirmation dialog</span></li>
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Rebuilt the paywall around a free vs Pro comparison</span></li>
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Replaced two plans with one weekly plan</span></li>
+</ul>
+</div>
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -80px; top: -100px; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">What this cannot show</div>
+<p style="margin: 16px 0 0; font-size: 16.5px; color: var(--tx2)">Spend and installs per day were flat across both windows. Three changes shipped together, so the comparison cannot say how much each contributed. Trial to paid fell from 26.5% to 18.5%.</p>
+</div>
+</div>
+
+<!-- results -->
+<div style="margin-top: 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div style="box-sizing: border-box; padding: 26px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Install to trial</div>
+<div style="margin-top: 12px; display: flex; align-items: baseline; gap: 10px; white-space: nowrap"><span style="font-size: 17px; color: var(--tx3)">0.62%</span><span aria-hidden="true" style="color: var(--am)">→</span><span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1">4.00%</span></div>
+</div>
+<div style="box-sizing: border-box; padding: 26px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px rgba(227,154,31,0.45)">
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">Cost per payer</div>
+<div style="margin-top: 12px; display: flex; align-items: baseline; gap: 10px; white-space: nowrap"><span style="font-size: 17px; color: var(--tx3)">$92.95</span><span aria-hidden="true" style="color: var(--am)">→</span><span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1">$20.91</span></div>
+</div>
+<div style="box-sizing: border-box; padding: 26px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Payers per day</div>
+<div style="margin-top: 12px; display: flex; align-items: baseline; gap: 10px; white-space: nowrap"><span style="font-size: 17px; color: var(--tx3)">7.0</span><span aria-hidden="true" style="color: var(--am)">→</span><span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1">31.8</span></div>
+</div>
+<div style="box-sizing: border-box; padding: 26px 28px; border-radius: 14px; background: var(--bg); box-shadow: 0 0 0 1px var(--line2)">
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Trade-off: trial to paid fell</div>
+<div style="margin-top: 12px; display: flex; align-items: baseline; gap: 10px; white-space: nowrap"><span style="font-size: 17px; color: var(--tx3)">26.5%</span><span aria-hidden="true" style="color: var(--tx3)">→</span><span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--tx2)">18.5%</span></div>
+</div>
+</div>
+
+<p style="margin: 40px 0 0; padding-left: 24px; border-left: 2px solid var(--am); max-width: 860px; font-size: 22px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.4">A defect in the highest-value step of the funnel can look like a stable baseline for months.</p>
+</div>
+</section>
+
+<!-- CASE 02 -->
+<section id="case-02" style="padding: 140px 80px 0">
+<div style="max-width: 1280px; margin: 0 auto">
+
+<div style="display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center">
+<div style="grid-column: span 6; position: relative; height: 460px; border-radius: 24px; overflow: hidden; background: radial-gradient(circle at 14% 14%, rgba(227,154,31,0.28), rgba(227,154,31,0) 50%), radial-gradient(circle at 92% 92%, rgba(64,86,140,0.42), rgba(64,86,140,0) 55%), #16191F; box-shadow: inset 0 0 0 1px var(--line)">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.08) 1px, transparent 1px); background-size: 22px 22px"></div>
+<div style="position: absolute; left: 34px; top: 44px; width: 380px; box-sizing: border-box; padding: 22px 24px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<div style="display: flex; justify-content: space-between; font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)"><span>Share of ad revenue</span><span>Splash interstitial</span></div>
+<div style="margin-top: 12px; font-size: 46px; font-weight: 700; letter-spacing: -0.035em; line-height: 1">70 to 80%</div>
+<div aria-hidden="true" style="margin-top: 18px; position: relative; height: 12px; border-radius: 4px; background: #3A4048">
+<span style="position: absolute; left: 0; top: 0; height: 12px; width: 80%; border-radius: 4px; background: rgba(227,154,31,0.45)"></span>
+<span style="position: absolute; left: 0; top: 0; height: 12px; width: 70%; border-radius: 4px; background: var(--am)"></span>
+</div>
+<div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line2); font-size: 12.5px; color: var(--tx2)">The copied paywall moved this placement behind itself.</div>
+</div>
+<div style="position: absolute; right: 30px; top: 28px; padding: 9px 14px; border-radius: 999px; background: var(--am); color: var(--ink); font-size: 13px; font-weight: 700; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.9)">Fifty apps, one paywall</div>
+<div style="position: absolute; right: 30px; bottom: 34px; width: 330px; box-sizing: border-box; padding: 16px 18px; border-radius: 14px; background: #1D2128; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -18px rgba(0,0,0,0.95)">
+<div style="font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">Two sets of campaigns</div>
+<div style="margin-top: 12px; display: grid; grid-template-columns: auto 18px minmax(0, 1fr); align-items: center; row-gap: 9px; column-gap: 8px; font-size: 12.5px; font-weight: 600">
+<span style="padding: 6px 10px; border-radius: 8px; background: #0E1014; box-shadow: inset 0 0 0 1px var(--line2)">Existing</span><span aria-hidden="true" style="height: 2px; background: var(--am)"></span><span style="color: var(--tx2); font-weight: 400">Splash interstitial put back</span>
+<span style="padding: 6px 10px; border-radius: 8px; background: #0E1014; box-shadow: inset 0 0 0 1px rgba(227,154,31,0.6)">Second set</span><span aria-hidden="true" style="height: 2px; background: var(--am)"></span><span style="color: var(--tx2); font-weight: 400">Optimised for in-app purchase</span>
+</div>
+</div>
+</div>
+
+<div style="grid-column: 8 / span 5">
+<div style="display: inline-flex; align-items: center; gap: 12px"><span style="width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); display: grid; place-items: center; font-family: var(--fm); font-size: 13px; color: var(--am)">02</span><span style="font-family: var(--fm); font-size: 13px; letter-spacing: 0.1em; color: var(--tx3)">CASE · CLIENT WITHHELD</span></div>
+<h2 style="margin: 20px 0 0; font-size: 46px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">A copied paywall failed on ads and on subscriptions</h2>
+<dl style="margin: 30px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 20px">
+<div><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Client</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">Portfolio of fifty utility apps, ad-monetised</dd></div>
+<div><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Market</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">Global</dd></div>
+<div style="grid-column: 1 / -1"><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Compared</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">Before and after a portfolio-wide paywall rollout</dd></div>
+<div style="grid-column: 1 / -1"><dt style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Work</dt><dd style="margin: 6px 0 0; font-size: 16px; color: var(--tx2)">Monetisation, User acquisition</dd></div>
+</dl>
+<a href="#insights" style="margin-top: 32px; display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid var(--line2); font-weight: 600; font-size: 16px">Read the full case <span aria-hidden="true">›</span></a>
+</div>
+</div>
+
+<div style="margin-top: 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -90px; bottom: -120px; width: 290px; height: 290px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The problem</div>
+<p style="margin: 16px 0 0; font-size: 16.5px; color: var(--tx2)">A competitor's paywall was rolled out across fifty apps. It moved the splash interstitial behind the paywall, and that placement carried 70 to 80 per cent of the portfolio's ad revenue. The campaigns were also bidding for ad engagement, not for buyers.</p>
+</div>
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: 30%; top: -150px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">What changed</div>
+<ul style="margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; font-size: 16.5px; color: var(--tx2)">
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Put the splash interstitial back for the existing campaigns</span></li>
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Started a second set of campaigns optimised for in-app purchase</span></li>
+<li style="display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 5px"><path d="M5 12l5 5 9-10"></path></svg><span>Branched the first run on which campaign acquired the user</span></li>
+</ul>
+</div>
+<div style="position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 34px 34px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -70px; top: 34%; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">What this cannot show</div>
+<p style="margin: 16px 0 0; font-size: 16.5px; color: var(--tx2)">The revenue figures belong to the employer the work was done for and are not published. The write-up describes the mechanism, which is the part that transfers.</p>
+</div>
+</div>
+
+<div style="margin-top: 16px; box-sizing: border-box; padding: 26px 28px; border-radius: 14px; background: var(--bg); box-shadow: 0 0 0 1px var(--line2); display: flex; align-items: baseline; gap: 20px">
+<span style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">The result</span>
+<span style="font-size: 17px; color: var(--tx2)">No figures published for this case.</span>
+</div>
+
+<p style="margin: 40px 0 0; padding-left: 24px; border-left: 2px solid var(--am); max-width: 860px; font-size: 22px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.4">A monetisation strategy only works with the acquisition strategy that feeds it.</p>
+
+<div style="margin-top: 96px; padding-top: 40px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap">
+<p style="margin: 0; font-size: 20px; font-weight: 600; letter-spacing: -0.012em">Want the same look at your own funnel? See also <a href="#insights" style="color: var(--am)">what attribution audits keep finding →</a></p>
+<a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid var(--line2); font-weight: 600; font-size: 16px">Book a call <span aria-hidden="true">›</span></a>
+</div>
+</div>
+</section>
+
+<!-- CONTACT BAND -->
+<section id="contact" style="position: relative; overflow: hidden; margin-top: 110px; padding: 100px 80px; background: var(--band); border-top: 1px solid var(--line)">
+<div aria-hidden="true" style="position: absolute; left: -6%; bottom: -260px; width: 46%; height: 560px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.22), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div style="position: relative; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<div style="grid-column: span 8">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Let's look at your setup</div>
+<h2 style="margin: 18px 0 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+<p style="margin: 22px 0 0; font-size: 18px; color: var(--tx2); max-width: 620px">A 30-minute call, no pitch. I'll name the specific gaps I can see and what each one is likely costing. If there's nothing wrong, I'll tell you that too.</p>
+</div>
+<div style="grid-column: 9 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 18px; padding-bottom: 6px">
+<a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; height: 60px; padding: 0 30px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 19px; box-shadow: 0 10px 28px -12px rgba(0,0,0,0.9)">Get a free first look
+<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="#contact" style="font-family: var(--fm); font-size: 14px; color: var(--am)">hello@e2eapp.com ↗</a>
+</div>
+</div>
+</section>
+
+<footer style="padding: 44px 80px 44px; border-top: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; font-size: 15px; color: var(--tx3)">
+<span style="display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--tx)"><span style="width: 30px; height: 30px; border-radius: 8px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 11px">E2E</span>E2E Apps</span>
+<span style="display: flex; gap: 28px; flex-wrap: wrap"><a href="#fix">Services</a><a href="#insights">Audit findings</a><a href="#insights">Case studies</a><a href="#payback">Payback calculator</a><a href="#insights">Blog</a><a href="#top">About</a><a href="#top">Privacy</a></span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3794}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,13 +1,15 @@
 ---
 import Icon from './Icon.astro';
+import type { IconName } from '../data/icons';
 import { SERVICES } from '../data/services';
 
 /**
  * "Pick your situation" and the ways to work together, on /services.
  *
- * Situations point to the page that answers them. The two engagement shapes
- * are the ones the FAQ already describes; no price is published, as on the
- * rest of the site ("figures on a call").
+ * Board: design/v3/Services.dc.html. Situations are full-width rows on a band,
+ * each pointing to the page that answers it. The three engagement shapes are
+ * glow cards, the free first look being the lead; no price is published, as on
+ * the rest of the site ("figures on a call").
  */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const name = (slug: string) => SERVICES.find((s) => s.slug === slug)!.name;
@@ -21,16 +23,54 @@ const SITUATIONS = [
   { when: 'You want to know when your spend pays back', path: '/payback-calculator', label: 'Payback calculator' },
   { when: 'Your team builds the weekly growth report by hand', path: '/automation', label: 'AI reporting & automation' },
 ];
+
+interface Way {
+  icon: IconName;
+  title: string;
+  text: string;
+  href: string;
+  go: string;
+  lead?: boolean;
+  glow: [string, string];
+}
+
+const WAYS: Way[] = [
+  {
+    icon: 'magnifying-glass',
+    title: 'Fixed-price audit',
+    text: "A full review of the measurement stack, the gaps ranked by what each is costing, and a written remediation plan. The usual starting point, because it tells both of us whether more work is worth anyone's money.",
+    href: '/services/mobile-attribution-audit',
+    go: 'See the audit',
+    glow: ['100%', '0%'],
+  },
+  {
+    icon: 'arrows-clockwise',
+    title: 'Monthly retainer',
+    text: 'The fixes get implemented and the campaigns get run, by the people who found the problems.',
+    href: '/#contact',
+    go: 'Book a call',
+    glow: ['0%', '100%'],
+  },
+  {
+    icon: 'paper-plane-tilt',
+    title: 'Free first look',
+    text: "Send your app's store link and we reply in writing with three measurement checks for it. No call needed.",
+    href: '/#contact',
+    go: 'Send your app link',
+    lead: true,
+    glow: ['100%', '100%'],
+  },
+];
 ---
 
-<section id="situations" class="section" data-section="situations">
+<section id="situations" class="section section--band" data-section="situations">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow">WHERE TO START</div>
-      <h2 class="eng__h">Pick your situation.</h2>
-      <p class="section-lead">Each one points to the page that deals with it.</p>
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">Where to start</p>
+      <h2 class="shead__title">Pick your situation.</h2>
+      <p class="shead__aside">Each one points to the page that deals with it.</p>
     </div>
-    <ul class="eng__sit" role="list">
+    <ul class="sbody eng__sit" role="list">
       {
         SITUATIONS.map((s) => (
           <li>
@@ -38,7 +78,7 @@ const SITUATIONS = [
               <span class="eng__when">{s.when}</span>
               <span class="eng__go">
                 {s.label}
-                <Icon name="arrow-right" size={13} />
+                <Icon name="arrow-right" size={16} />
               </span>
             </a>
           </li>
@@ -50,123 +90,107 @@ const SITUATIONS = [
 
 <section id="engage" class="section" data-section="engage">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow">WAYS TO WORK TOGETHER</div>
-      <h2 class="eng__h">Start with an audit. Keep going if it is worth it.</h2>
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">Ways to work together</p>
+      <h2 class="shead__title">Start with an audit. Keep going if it is worth it.</h2>
+      <p class="shead__aside">Prices are given on a call, once the size of the stack is clear.</p>
     </div>
-    <div class="eng__ways">
-      <div class="eng__way">
-        <h3 class="eng__h3">Fixed-price audit</h3>
-        <p class="eng__p">
-          A full review of the measurement stack, the gaps ranked by what each is costing, and a
-          written remediation plan. The usual starting point, because it tells both of us whether
-          more work is worth anyone's money.
-        </p>
-      </div>
-      <div class="eng__way">
-        <h3 class="eng__h3">Monthly retainer</h3>
-        <p class="eng__p">The fixes get implemented and the campaigns get run, by the people who found the problems.</p>
-      </div>
-      <div class="eng__way eng__way--free">
-        <h3 class="eng__h3">Free first look</h3>
-        <p class="eng__p">
-          Send your app's store link and we reply in writing with three measurement checks for it. No
-          call needed.
-        </p>
-        <a class="link eng__link" href={`${base}/#contact`}>Send your app link</a>
-      </div>
+    <div class="sbody ggrid ggrid--3">
+      {
+        WAYS.map((w) => (
+          <div
+            class:list={['gcard', 'eng__way', { 'gcard--lead': w.lead }]}
+            style={`--gx:${w.glow[0]};--gy:${w.glow[1]}`}
+          >
+            <span class="gcard__icon">
+              <Icon name={w.icon} size={24} />
+            </span>
+            <h3 class="gcard__title">{w.title}</h3>
+            <p class="gcard__text">{w.text}</p>
+            <a class="gcard__go" href={`${base}${w.href}`}>
+              {w.go}
+              <Icon name="arrow-right" size={15} />
+            </a>
+          </div>
+        ))
+      }
     </div>
-    <p class="eng__note">Prices are given on a call, once the size of the stack is clear.</p>
   </div>
 </section>
 
 <style>
-  .eng__h {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-    line-height: var(--lh-h2);
-  }
-
   .eng__sit {
-    margin: clamp(32px, 3vw, 48px) auto 0;
+    margin-bottom: 0;
     padding: 0;
     list-style: none;
-    max-width: 980px;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--color-line-strong);
   }
 
   .eng__row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s2);
     align-items: center;
-    justify-content: space-between;
-    gap: var(--s4) var(--s8);
-    min-height: 44px;
     padding: var(--s6) 0;
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line-strong);
     color: inherit;
-    text-decoration: none;
   }
 
   .eng__when {
-    flex: 1 1 380px;
+    min-width: 0;
+    font-size: clamp(16.5px, 1.5vw, 19px);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-snug);
     color: var(--color-text);
-    line-height: var(--lh-card);
   }
 
   .eng__go {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    color: var(--color-accent);
-    font-weight: var(--fw-medium);
-    font-size: var(--t-card);
+    justify-content: space-between;
+    gap: var(--s4);
+    min-width: 0;
+    min-height: 28px;
+    font-weight: var(--fw-semibold);
+    font-size: var(--t-body);
+    color: var(--color-accent-text);
   }
 
-  .eng__row:hover .eng__when {
-    color: var(--color-accent);
+  .eng__go :global(svg) {
+    transition: transform 180ms var(--ease-out-soft);
   }
 
-  .eng__ways {
-    margin-top: clamp(32px, 3vw, 48px);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-    gap: var(--s8);
+  .eng__row:hover .eng__go :global(svg),
+  .eng__row:focus-visible .eng__go :global(svg) {
+    transform: translateX(4px);
   }
 
-  .eng__way {
-    padding: var(--s8);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
+  /* Three cards in two columns: the lead card closes the row. */
+  @media (min-width: 700px) and (max-width: 1023px) {
+    .eng__way:last-child {
+      grid-column: 1 / -1;
+      min-height: 0;
+    }
   }
 
-  .eng__way--free {
-    border-color: rgba(var(--rgb-accent), 0.5);
+  @media (min-width: 900px) {
+    .eng__row {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+      column-gap: var(--s8);
+      padding: 26px 0;
+    }
+
   }
 
-  .eng__h3 {
-    font-size: var(--t-h3-sm);
+  @media (min-width: 1024px) {
+    .eng__way {
+      min-height: 360px;
+    }
   }
 
-  .eng__p {
-    margin-top: var(--s4);
-    color: var(--color-text-2);
-    line-height: var(--lh-body);
-  }
-
-  .eng__link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    margin-top: var(--s4);
-  }
-
-  .eng__note {
-    margin-top: var(--s8);
-    text-align: center;
-    color: var(--color-text-3);
-    font-size: var(--t-body-sm);
+  @media (prefers-reduced-motion: reduce) {
+    .eng__go :global(svg) {
+      transition: none;
+    }
   }
 </style>

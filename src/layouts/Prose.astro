@@ -2,32 +2,107 @@
 import Base from './Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 
+/**
+ * The layout for a long written document: /privacy and /terms.
+ *
+ * Board: design/v3/Legal.dc.html. A page header (the "last updated" line as its
+ * label, the h1), then two columns on a wide screen: an "On this page" card and
+ * a readable prose column.
+ *
+ * The contents card is built from the document itself. The slot is rendered to
+ * a string, every <h2> in it is given an id made from its own text, and the
+ * card lists those same headings, so the card cannot name a section the page
+ * does not have. A document with no h2 gets no card and a single column.
+ *
+ * Classes a document may use in its body:
+ *   .prose__scroll  around a <table>, so a wide table scrolls in its own box
+ *   .prose__note    a paragraph set apart as a card
+ *   .prose__chips   a <ul> of short <code> items, set as a row of chips
+ */
 interface Props {
   title: string;
   description: string;
   path: string;
   heading: string;
+  /** Shown as "Last updated …" above the heading. */
   updated?: string;
+  /** One line under the heading. */
+  lead?: string;
   noindex?: boolean;
 }
 
-const { title, description, path, heading, updated, noindex = false } = Astro.props;
+const { title, description, path, heading, updated, lead, noindex = false } = Astro.props;
+
+const text = (html: string) =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&(?:quot|#34|#x22);/g, '"')
+    .replace(/&(?:amp|#38);/g, '&')
+    .replace(/&[a-z#0-9]+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const toc: { id: string; title: string }[] = [];
+const used = new Set<string>();
+const rendered = await Astro.slots.render('default');
+const body = rendered.replace(/<h2(\s[^>]*)?>([\s\S]*?)<\/h2>/g, (_m, attrs: string | undefined, inner: string) => {
+  const title = text(inner);
+  let id = slug(title) || 'section';
+  for (let n = 2; used.has(id); n++) id = `${slug(title) || 'section'}-${n}`;
+  used.add(id);
+  toc.push({ id, title });
+  return `<h2${attrs ?? ''} id="${id}">${inner}</h2>`;
+});
 ---
 
 <Base title={title} description={description} path={path} noindex={noindex}>
   <div class="page">
     <Nav />
-    {!noindex && <Breadcrumbs trail={[{ name: heading, path }]} />}
-    <main id="main" class="prose section">
-      <div class="prose__inner">
-        <h1 class="prose__h1">{heading}</h1>
-        {updated && <div class="prose__updated">Last updated {updated}</div>}
-        <div class="prose__body">
-          <slot />
+    <main id="main">
+      {!noindex && <Breadcrumbs trail={[{ name: heading, path }]} />}
+      <PageHero
+        label={updated ? `Last updated ${updated}` : 'E2E Apps'}
+        title={heading}
+        lead={lead}
+        section="prose-intro"
+      />
+
+      <section class="section" data-section="prose">
+        <div class:list={['wrap', 'prose__cols', { 'prose__cols--toc': toc.length > 0 }]}>
+          {
+            toc.length > 0 && (
+              <nav class="gcard prose__toc" aria-label="On this page" style="--gx:100%;--gy:0%">
+                <p class="prose__toc-label">On this page</p>
+                <ol class="prose__toc-list">
+                  {toc.map((t, i) => (
+                    <li>
+                      <a href={`#${t.id}`}>
+                        <span class="prose__toc-n">{String(i + 1).padStart(2, '0')}</span>
+                        <span>{t.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+          <div class="prose__body">
+            <Fragment set:html={body} />
+          </div>
         </div>
-      </div>
+      </section>
+
+      <Cta />
     </main>
     <Footer />
   </div>
@@ -37,50 +112,126 @@ const { title, description, path, heading, updated, noindex = false } = Astro.pr
   .page {
     min-height: 100vh;
     background: var(--color-bg);
-    /* `clip`, not `hidden` — see global.css. `hidden` makes this a scroll
-       container and the sticky nav sticks to it instead of the viewport. */
+    /* `clip`, never the scroll-container value: that would make this a scroll
+       container and the sticky nav would stick to it instead of the viewport.
+       See global.css. */
     overflow-x: clip;
   }
 
-  .prose {
-    /* Clear the fixed nav. */
-    padding-top: calc(var(--section-pad) + 48px);
+  .prose__cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: start;
   }
 
-  .prose__inner {
-    max-width: 68ch;
-    margin: 0 auto;
+  @media (min-width: 960px) {
+    .prose__cols--toc {
+      grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+      column-gap: clamp(40px, 7vw, 112px);
+    }
+
+    .prose__toc {
+      position: sticky;
+      top: 88px;
+    }
   }
 
-  .prose__h1 {
-    font-size: var(--t-h2);
+  /* --- contents card ------------------------------------------------------- */
+
+  .prose__toc {
+    padding: var(--s8) var(--s8) var(--s6);
+  }
+
+  .prose__toc-label {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .prose__toc-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: var(--s4) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .prose__toc-list li + li {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .prose__toc-list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s4);
+    min-height: 44px;
+    padding: 11px 0;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-snug);
+    color: var(--color-text-2);
+    transition: color 160ms var(--ease-out-soft);
+  }
+
+  .prose__toc-list a > span:last-child {
+    min-width: 0;
+  }
+
+  .prose__toc-list a:hover {
     color: var(--color-text);
   }
 
-  .prose__updated {
-    margin-top: var(--s6);
+  .prose__toc-n {
+    flex: none;
     font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-meta);
+    font-size: var(--t-mono-3xs);
     color: var(--color-text-4);
   }
 
+  .prose__toc-list a:hover .prose__toc-n {
+    color: var(--color-accent-text);
+  }
+
+  /* --- the document -------------------------------------------------------- */
+
   .prose__body {
-    margin-top: var(--s12);
     display: grid;
-    gap: var(--s8);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
+    min-width: 0;
+    max-width: 780px;
     font-size: var(--t-body);
+    line-height: var(--lh-prose);
     color: var(--color-text-2);
   }
 
-  .prose__body h2 {
-    margin-top: var(--s8);
-    font-size: var(--t-h3-sm);
+  /* The opening paragraph reads as the document's lead. */
+  .prose__body > p:first-child {
+    font-size: var(--t-lead);
     color: var(--color-text);
   }
 
+  .prose__body h2 {
+    margin-top: var(--s12);
+    font-size: clamp(24px, 2.5vw, 32px);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.14;
+    color: var(--color-text);
+    scroll-margin-top: 88px;
+  }
+
   .prose__body h3 {
+    margin-top: var(--s4);
     font-size: var(--t-post-title);
+    letter-spacing: var(--ls-snug);
+    line-height: var(--lh-h3);
+    color: var(--color-text);
+  }
+
+  .prose__body strong {
+    font-weight: var(--fw-semibold);
     color: var(--color-text);
   }
 
@@ -88,41 +239,139 @@ const { title, description, path, heading, updated, noindex = false } = Astro.pr
     margin: 0;
     padding-left: var(--s8);
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s3);
   }
 
   .prose__body code {
     font-family: var(--font-mono);
-    font-size: var(--t-card);
+    font-size: var(--t-card-sm);
+    background: var(--color-surface-sunk);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    border-radius: 5px;
+    padding: 2px 6px;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+
+  /* A row of short code items. */
+  .prose__body .prose__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .prose__body .prose__chips code {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: var(--t-mono-sm);
+  }
+
+  /* A paragraph set apart: the lead card of the document. */
+  .prose__body .prose__note {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: clamp(18px, 2.4vw, 28px);
+    border-radius: var(--radius-lg);
     background: var(--color-surface);
-    border-radius: 3px;
-    padding: 1px 5px;
+    box-shadow: var(--ring-accent);
+    color: var(--color-text);
+  }
+
+  .prose__body .prose__note::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    right: -150px;
+    top: -150px;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(var(--rgb-accent)), transparent);
+    opacity: var(--glow-lead);
+    pointer-events: none;
+  }
+
+  .prose__body .prose__note > strong:first-child {
+    display: block;
+    margin-bottom: var(--s3);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  /* Wide tables scroll inside their own box rather than the page. */
+  .prose__scroll {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    -webkit-overflow-scrolling: touch;
   }
 
   .prose__body table {
     width: 100%;
+    min-width: 640px;
+    max-width: none;
     border-collapse: collapse;
     font-size: var(--t-card);
+    line-height: var(--lh-card);
   }
 
   .prose__body th,
   .prose__body td {
     text-align: left;
     vertical-align: top;
-    padding: var(--s3) var(--s4) var(--s3) 0;
+    padding: var(--s4) var(--s6);
     border-bottom: 1px solid var(--color-line);
   }
 
-  .prose__body th {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-meta);
-    color: var(--color-text-4);
-    font-weight: 400;
+  .prose__body tbody tr:last-child td {
+    border-bottom: 0;
   }
 
-  /* Wide tables scroll inside their own box rather than the page. */
-  .prose__scroll {
-    overflow-x: auto;
+  .prose__body th {
+    background: var(--color-surface-sunk);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-text-3);
+  }
+
+  .prose__body td:first-child {
+    color: var(--color-text);
+  }
+
+  /* A cookie name is one token: it stays on one line and the table scrolls. */
+  .prose__body td code {
+    white-space: nowrap;
+  }
+
+  /* The last column is the sentence; it keeps a readable measure when the
+     table is scrolling, so the rows do not grow tall. */
+  .prose__body td:last-child {
+    min-width: 240px;
+  }
+
+  /* Below the two-column layout the contents card sits above the document, in
+     two columns of links while there is room for them. */
+  @media (min-width: 460px) and (max-width: 959px) {
+    .prose__toc-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--s8);
+    }
+
+    .prose__toc-list li:nth-child(2) {
+      border-top: 0;
+    }
   }
 </style>

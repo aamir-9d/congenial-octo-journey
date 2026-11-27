@@ -1,16 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import Stats from '../components/Stats.astro';
-import ServiceIndex from '../components/ServiceIndex.astro';
-import Proof from '../components/Proof.astro';
-import PaybackTeaser from '../components/PaybackTeaser.astro';
-import Automation from '../components/Automation.astro';
-import CaseStudy from '../components/CaseStudy.astro';
-import Loop from '../components/Loop.astro';
-// Founders is hidden on the homepage until the portraits exist; see below.
-// import Founders from '../components/Founders.astro';
+import HomeHero from '../components/HomeHero.astro';
+import HomeServices from '../components/HomeServices.astro';
+import HomeLoop from '../components/HomeLoop.astro';
+import HomePayback from '../components/HomePayback.astro';
+import HomeInsights from '../components/HomeInsights.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
 import Schema from '../components/Schema.astro';
@@ -18,30 +13,28 @@ import Schema from '../components/Schema.astro';
 /**
  * The homepage.
  *
- * Restructured on 27 November 2026 so the page follows one line of argument:
- * what is sold, the track record, the services, the evidence, the method, then
- * the ask. Before this it opened on attribution, moved to "three checks" and a
- * full payback calculator, and only reached the services and the way of
- * working at the bottom. The owner's verdict was that a visitor could not tell
- * what was being sold.
+ * Rebuilt in November 2026 from the boards the owner approved
+ * (design/v3/Main.dc.html for desktop, Phone.dc.html for the phone). The page
+ * makes one argument from top to bottom:
  *
- *   Hero           the service and the buyer, and one action
- *   Stats          four figures, each read from the file that owns it
- *   ServiceIndex   what I do: the specialist services, audit first
- *   Proof          what audits turn up, with a link to the findings page
- *   CaseStudy      one case, shown all the way down
- *   Loop           how the work runs
- *   PaybackTeaser  a pointer to the calculator on /payback-calculator
- *   Automation     ongoing reporting
- *   Founders       HIDDEN for now: no portraits yet. /about shows both.
- *   Contact        the one action, again
+ *   HomeHero      the service and the buyer, one action, the tools it works in
+ *   HomeServices  what I fix: five services and AI reporting, audit first
+ *   HomeLoop      how the work runs: four stations, a photograph for each
+ *   HomePayback   a preview of the calculator; the tool is on its own page
+ *   HomeInsights  the library, the findings report, the newest posts
+ *   Contact       the form and the booking link
  *
- * Off this page, not deleted: the full calculator (on /payback-calculator)
- * and Problems (on /services). The "three checks" block (Diagnostics.astro) is
- * removed; its three links are covered by the services grid. Git history has it.
+ * Things that are deliberate and will otherwise look like omissions:
  *
- * Proof is a full section again rather than the nested tail of the case
- * study, because it now comes before the case.
+ *  - No audit count and no "track record" strip. The owner's call: a small
+ *    number on show reads as inexperience. Findings are described in words.
+ *  - The full calculator is on /payback-calculator only.
+ *  - The case study has its own page (/case-studies); station 04 of the loop
+ *    carries its headline figures and links there.
+ *  - Founders are on /about.
+ *
+ * Below 700px the services, the loop stations and the posts each become one
+ * swipe row that moves on by itself (src/scripts/swipe.ts).
  */
 
 const title = 'Mobile Attribution Audits & Fixes for Subscription Apps — E2E Apps';
@@ -58,18 +51,11 @@ const description =
   <div class="page">
     <Nav />
     <main id="main">
-      <Hero />
-      <Stats />
-      <ServiceIndex eyebrow="WHAT I DO" />
-      <Proof />
-      <CaseStudy />
-      <Loop />
-      <PaybackTeaser />
-      <Automation />
-      {/* Hidden until the founder portraits exist. To bring it back, restore
-          the import above and this line:
-      <Founders />
-      */}
+      <HomeHero />
+      <HomeServices />
+      <HomeLoop />
+      <HomePayback />
+      <HomeInsights />
       <Contact />
     </main>
 

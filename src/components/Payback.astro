@@ -91,18 +91,19 @@ const AD_FIELDS = [
 
 <section id="payback" class="section" data-section="payback">
   <div class="wrap">
-    <div data-reveal="1">
-      <p class="eyebrow eyebrow--amber pm__eyebrow">{eyebrow}</p>
-      <h2 class="pm__h2">See when your spend comes back.</h2>
-      <p class="pm__lead">Set the inputs. Find the crossing. Explore what changes the outcome.</p>
-      {
-        methodLink && (
-          <p class="pm__method">
-            <a class="link" href={`${base}/payback-calculator`}>How the calculator works, with worked examples</a>
-          </p>
-        )
-      }
+    {/* The section head is the shared `.shead` (src/styles/redesign.css). */}
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">{eyebrow}</p>
+      <h2 class="shead__title">See when your spend comes back.</h2>
+      <p class="shead__aside">Set the inputs. Find the crossing. Explore what changes the outcome.</p>
     </div>
+    {
+      methodLink && (
+        <p class="pm__method">
+          <a class="link" href={`${base}/payback-calculator`}>How the calculator works, with worked examples</a>
+        </p>
+      )
+    }
 
     <div class="pm" data-payback data-reveal="1">
       {/* --- model + scenario bar ------------------------------------- */}

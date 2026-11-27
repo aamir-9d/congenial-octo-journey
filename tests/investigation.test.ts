@@ -22,7 +22,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { EXAMPLES, SOURCES, ASSISTANTS } from '../src/data/automation.ts';
+import { EXAMPLES, SOURCES, ASSISTANTS, TEASER } from '../src/data/automation.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const PAGE = path.join(ROOT, 'dist', 'automation.html');
@@ -155,14 +155,20 @@ test('four sources and three assistants, all rendered', { skip }, () => {
   assert.equal(SOURCES.length, 4, 'revision 2 requires four sources');
   assert.equal(ASSISTANTS.length, 3, 'revision 2 requires three assistants');
 
+  // The November 2026 homepage carries automation as one card in "What I fix",
+  // not as a section of its own, so the four sources and three assistants are
+  // required of /automation only. What the homepage owes them is the way in.
   for (const s of SOURCES) {
     assert.ok(html.includes(s.name), `${s.name} is missing from the page`);
-    assert.ok(home.includes(s.name), `${s.name} is missing from the homepage section`);
   }
   for (const a of ASSISTANTS) {
     assert.ok(html.includes(a.name), `${a.name} is missing from the page`);
-    assert.ok(home.includes(a.name), `${a.name} is missing from the homepage section`);
   }
+  assert.match(
+    home,
+    /<a[^>]*class="[^"]*\bgcard\b[^"]*"[^>]*href="\/automation"|<a[^>]*href="\/automation"[^>]*class="[^"]*\bgcard\b/,
+    'the homepage services grid no longer has a card leading to /automation',
+  );
 });
 
 test('GA4 has a real example, not just a tile', { skip }, () => {
@@ -287,38 +293,35 @@ test('no assistant is presented as the default', { skip }, () => {
   for (const a of ASSISTANTS) assert.ok(a.route.length > 20, `${a.name}: no real route given`);
 });
 
-test('the homepage section stays a summary', { skip }, () => {
-  const section = /<section id="automation"[\s\S]*?<\/section>/.exec(home)?.[0];
-  assert.ok(section, 'the homepage automation section is missing');
+test('the homepage carries automation as one card, never the demonstration', { skip }, () => {
+  /* The redesign folded the homepage automation section into the services
+     grid: a sixth card, written from the same TEASER the section used. What
+     this guarded before still holds, only tighter — the homepage summarises
+     and the interface stays on /automation. */
+  const card = /<a\b(?=[^>]*href="\/automation")(?=[^>]*class="[^"]*\bgcard\b)[^>]*>([\s\S]*?)<\/a>/.exec(home)?.[1];
+  assert.ok(card, 'the homepage automation card is missing');
 
-  const words = section
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&[a-z#0-9]+;/gi, ' ')
-    .split(/\s+/)
-    .filter(Boolean).length;
+  const text = card.replace(/<svg[\s\S]*?<\/svg>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ');
+  const squash = (s: string) => s.replace(/\s+/g, ' ').trim();
+  assert.ok(squash(text).includes(squash(TEASER.body)), 'the card no longer says what the automation teaser says');
 
-  assert.ok(
-    words >= 70 && words <= 125,
-    `the homepage section is ${words} words; the brief asks for 80-110 and this guards it from growing back into the full interface`,
-  );
-  assert.doesNotMatch(section, /role="tablist"/, 'the full demonstration leaked onto the homepage');
+  const words = text.split(/\s+/).filter(Boolean).length;
+  assert.ok(words <= 60, `the homepage automation card is ${words} words; it is a card, not a section`);
+
+  assert.doesNotMatch(home, /role="tablist"/, 'the full demonstration leaked onto the homepage');
+  assert.doesNotMatch(home, /data-panel=/, 'a demonstration panel leaked onto the homepage');
 });
 
-test('the homepage order is the one the brief sets', { skip }, () => {
+test('the homepage order is the one the redesign sets', { skip }, () => {
   const order = [...home.matchAll(/data-section="([a-z-]+)"/g)].map((m) => m[1]);
-  /* The 27 November 2026 restructure: what is sold, the track record, the
-     services, the evidence, the method, then the ask. The full calculator is
-     on /payback-calculator and Problems is on /services; neither is deleted. */
-  assert.deepEqual(order, [
-    'hero',
-    'stats',
-    'specialist-services',
-    'proof',
-    'case-study',
-    'loop',
-    'payback-teaser',
-    'automation',
-    // 'founders' is hidden on the homepage until the portraits exist.
-    'contact',
-  ]);
+  /* The November 2026 rebuild (design/v3/Main.dc.html, and the header of
+     src/pages/index.astro): the service and the buyer, what is fixed, how the
+     work runs, a preview of the calculator, the library, then the ask.
+
+     Deliberately absent, and each has a page of its own: the stats strip (the
+     owner's call: no audit count on show), the proof and case-study sections
+     (/case-studies; station 04 of the loop carries the headline figures), the
+     automation section (a card in the services grid; /automation) and the
+     founders (/about). The full calculator is on /payback-calculator. */
+  assert.deepEqual(order, ['hero', 'services', 'loop', 'payback-preview', 'insights', 'contact']);
 });

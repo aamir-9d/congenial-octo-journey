@@ -6,26 +6,31 @@ import Icon from './Icon.astro';
 /**
  * The two founders.
  *
- * A 78px photo slot beside the name and role, then a single-paragraph bio, a
- * row of credential tags, and the LinkedIn link.
+ * Board: design/v3/About.dc.html. Two glow cards: an initials avatar beside
+ * the name and role, the bio, and the LinkedIn link.
  *
- * The bios are CONDENSED from the export's three paragraphs to one — new copy,
- * marked `data-added` and awaiting sign-off. The full originals are still in
- * git history if the condensed version does not land.
+ * The bios are the condensed one-paragraph versions (marked `data-added`), word
+ * for word as they were before the redesign.
  *
- * The build-time `fs.existsSync` check stays: drop `aamir.jpg` / `faisal.jpg`
- * into public/img/ and the photos render. Until then the slot shows a user glyph
- * on a diagonal-stripe ground, which reads as deliberate rather than as a
- * missing image.
+ * No credential chips. The previous cards carried a row of them, several of
+ * which stated counts (accounts, apps, years); the owner does not want counts
+ * on show and the board draws none, so the row is gone. Each fact is still in
+ * the bio's own sentence.
+ *
+ * No portraits exist yet, so the avatar is the founder's initials. The
+ * build-time `fs.existsSync` check stays: drop `aamir.jpg` / `faisal.jpg` into
+ * public/img/ and the photographs render in the same slot.
  */
 
-/** The homepage numbers its sections; other pages pass a plain label. */
 interface Props {
+  /** The small label above the heading. */
   eyebrow?: string;
-  /** The closing line. /about leaves it out: it repeats the heading and the page's own lead. */
+  /** Optional paragraph beside the heading. */
+  aside?: string;
+  /** The closing line. /about leaves it out: it repeats the heading and the aside. */
   pull?: boolean;
 }
-const { eyebrow = '06 / Who you talk to', pull = true } = Astro.props;
+const { eyebrow = 'Who you talk to', aside, pull = true } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const publicDir = path.resolve(process.cwd(), 'public');
 const hasPhoto = (file: string) => fs.existsSync(path.join(publicDir, 'img', file));
@@ -38,7 +43,7 @@ const founders = [
     role: 'MEASUREMENT & GROWTH',
     alt: 'Aamir Jan Khan',
     linkedin: 'https://www.linkedin.com/in/aamir-jan-khan/',
-    tags: ['48 AppsFlyer accounts', '50+ apps', 'Media buying'],
+    glow: '--gx:100%;--gy:0%',
     bio: "I run growth for a portfolio of 50+ iOS and Android apps — which means I'm not describing this work from the outside. Five years across measurement platforms, ad platforms, app stores and subscription analytics. Most people in this field pick a side, the plumbing or the media buying. In a portfolio you don't get that luxury, because you own the outcome, not the task.",
   },
   {
@@ -48,7 +53,7 @@ const founders = [
     role: 'INFRASTRUCTURE & OPERATIONS',
     alt: 'Muhammad Faisal Khan',
     linkedin: 'https://www.linkedin.com/in/muhammad-faisal-khan-3606365/',
-    tags: ['20 years', 'LTE & 5G core', 'Cisco / Nokia / Ericsson'],
+    glow: '--gx:0%;--gy:100%',
     bio: "Twenty years as a solution architect on carrier-grade mobile networks — packet core delivery across Cisco, Nokia and Ericsson. A lot of what breaks in app measurement isn't a setting in a dashboard. It's a server that has to receive a webhook, validate it, and forward it on without dropping anything. That's the half I own.",
   },
 ];
@@ -56,34 +61,33 @@ const founders = [
 
 <section class="section" data-section="founders">
   <div class="wrap">
-    <div data-reveal="1">
-      <p class="eyebrow founders__eyebrow">{eyebrow}</p>
-      <h2 class="founders__h2">Nothing gets handed off.</h2>
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">{eyebrow}</p>
+      <h2 class="shead__title">Nothing gets handed off.</h2>
+      {aside && <p class="shead__aside">{aside}</p>}
     </div>
 
-    <div class="founders__grid">
+    <div class="sbody founders__grid">
       {
-        founders.map((f) => (
-          <div class="founders__card" data-reveal="1">
+        founders.map((f, i) => (
+          <div class="gcard founders__card" style={f.glow} data-reveal="1">
             <div class="founders__id">
-              <div class="founders__slot">
-                {
-                  hasPhoto(f.file) ? (
-                    <img
-                      src={`${base}/img/${f.file}`}
-                      alt={f.alt}
-                      width="156"
-                      height="156"
-                      loading="lazy"
-                      decoding="async"
-                      class="founders__photo"
-                    />
-                  ) : (
-                    <span class="founders__await" aria-hidden="true">{f.initials}</span>
-                  )
-                }
+              <div class:list={['founders__slot', { 'founders__slot--fill': i === 0 }]}>
+                {hasPhoto(f.file) ? (
+                  <img
+                    src={`${base}/img/${f.file}`}
+                    alt={f.alt}
+                    width="128"
+                    height="128"
+                    loading="lazy"
+                    decoding="async"
+                    class="founders__photo"
+                  />
+                ) : (
+                  <span aria-hidden="true">{f.initials}</span>
+                )}
               </div>
-              <div>
+              <div class="founders__who">
                 <h3 class="founders__name">{f.name}</h3>
                 <div class="founders__role">{f.role}</div>
               </div>
@@ -91,13 +95,9 @@ const founders = [
 
             <p class="founders__bio" data-added="bento">{f.bio}</p>
 
-            <div class="founders__tags">
-              {f.tags.map((t) => <span class="founders__tag">{t}</span>)}
-            </div>
-
-            <a href={f.linkedin} target="_blank" rel="noopener" class="founders__linkedin">
+            <a href={f.linkedin} target="_blank" rel="noopener" class="pill-link founders__linkedin">
               Meet on LinkedIn
-              <Icon name="arrow-up-right" size={13} />
+              <Icon name="arrow-up-right" size={14} />
             </a>
           </div>
         ))
@@ -115,182 +115,114 @@ const founders = [
 </section>
 
 <style>
-
-  .founders__eyebrow {
-    margin-bottom: var(--s6);
-  }
-
-  .founders__h2 {
-    max-width: 24ch;
-    font-size: var(--t-h2);
-    line-height: var(--lh-h2);
-    letter-spacing: var(--ls-h2);
-  }
-
   .founders__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
-    margin-top: clamp(40px, 4vw, 64px);
+  }
+
+  @media (min-width: 860px) {
+    .founders__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .founders__card {
-    display: flex;
-    flex-direction: column;
-    background: var(--color-surface);
-    border-radius: var(--radius-lg);
-    padding: 26px;
-    box-shadow: var(--ring);
+    padding: clamp(22px, 3vw, 44px);
   }
 
   .founders__id {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: var(--s6);
+    min-width: 0;
   }
 
-  /* A deliberate placeholder, not a broken image: the stripes read as a frame
-     waiting for a photo. */
+  /* The initials avatar. The first card's is filled; amber as a fill carries
+     ink, amber as text is the text token. */
   .founders__slot {
     flex: none;
-    width: 78px;
-    height: 94px;
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    background: repeating-linear-gradient(135deg, #1d2128 0 6px, #191c22 6px 12px);
     display: grid;
     place-items: center;
-    color: var(--color-line-hover);
-    box-shadow: inset 0 0 0 1px var(--color-line);
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--color-accent-dim);
+    box-shadow: inset 0 0 0 1.5px rgba(var(--rgb-accent), 0.65);
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.01em;
+    color: var(--color-accent-text);
   }
 
-  /* Says what it is. A user glyph reads as an avatar that failed to load; this
-     reads as a frame with a photo still to come, which is what it is. */
-  /* No photo yet: the founder's initials, not a "portrait to be added" note,
-     which read as unfinished on the live page. */
-  .founders__await {
-    font-family: var(--font-heading);
-    font-size: 26px;
-    font-weight: var(--fw-semibold);
-    letter-spacing: 0.02em;
-    color: var(--color-accent);
+  .founders__slot--fill {
+    background: var(--color-accent);
+    box-shadow: none;
+    color: var(--color-ink);
   }
 
   .founders__photo {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+  }
+
+  .founders__who {
+    min-width: 0;
   }
 
   .founders__name {
-    font-size: var(--t-h3);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-brand);
+    font-size: clamp(21px, 2.1vw, 28px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.16;
   }
 
   .founders__role {
-    margin-top: 5px;
+    margin-top: 6px;
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     letter-spacing: var(--ls-label);
+    line-height: var(--lh-snug);
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .founders__bio {
-    margin-top: 20px;
-    font-size: var(--t-body-sm);
+    flex: 1;
+    margin-top: var(--s8);
+    font-size: var(--t-body);
     line-height: var(--lh-answer);
     color: var(--color-text-2);
-    flex: 1;
-  }
-
-  .founders__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 20px;
-  }
-
-  .founders__tag {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    white-space: nowrap;
-    color: var(--color-text-3);
-    padding: 6px 11px;
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-sunk);
   }
 
   .founders__linkedin {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    /* The 44px floor applied only under the phone breakpoint, so on a desktop
-       or a tablet this was a 22px target. It is the same link either way. */
-    min-height: 44px;
-    margin-top: 12px;
     align-self: flex-start;
-    font-size: var(--t-card-sm);
-    font-weight: var(--fw-semibold);
-    color: var(--color-accent);
+    margin-top: var(--s8);
   }
 
-  /* Left, with the head and the cards. The old centred pull under a centred
-     head was consistent; under a left-aligned one it is not. */
+  .founders__linkedin :global(svg) {
+    flex: none;
+    color: var(--color-accent-text);
+  }
+
   .founders__pull {
     max-width: 34ch;
     text-align: left;
   }
 
-  /* --- phone ---------------------------------------------------------------
-     The photo shrinks and moves beside the name rather than above it, so the
-     card opens with who this is instead of with a 78px placeholder.
-     ---------------------------------------------------------------------- */
-
-  @media (max-width: 767px) {
-    .founders__card {
-      padding: var(--s6);
+  @media (max-width: 520px) {
+    .founders__slot {
+      width: 56px;
+      height: 56px;
+      font-size: 19px;
     }
 
     .founders__id {
-      display: flex;
-      align-items: center;
       gap: 14px;
-    }
-
-    .founders__photo,
-    .founders__slot {
-      width: 64px;
-      height: 76px;
-      flex: none;
-    }
-
-    .founders__name {
-      font-size: 19px;
-      line-height: 1.2;
-    }
-
-    .founders__role {
-      margin-top: 4px;
-      font-size: 10px;
-      line-height: var(--lh-tight);
-    }
-
-    .founders__bio {
-      margin-top: var(--s6);
-      font-size: 14px;
-      line-height: var(--lh-prose);
-    }
-
-    .founders__tag {
-      font-size: 10.5px;
-    }
-
-    .founders__linkedin {
-      min-height: 44px;
-      font-size: 13.5px;
     }
   }
 </style>

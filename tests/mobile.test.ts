@@ -1,12 +1,16 @@
 /**
  * Phone layout.
  *
- * `design/E2E Apps - Bento mobile.dc.html` is a separate signed-off design, not
- * a narrower rendering of the desktop one: the hero headline is 32px rather
- * than a clamp bottoming out, the CTAs stack full width, the blog rows become
- * stacked blocks closing on a "Read" affordance, the Loop is a vertical rail
- * instead of a circle, and the calculator header is left-aligned where the
- * desktop one is centred.
+ * `design/v3/Phone.dc.html` is a separate signed-off design, not a narrower
+ * rendering of the desktop one: the hero headline is a stated 36px rather than
+ * a clamp bottoming out, the hero buttons stack full width at 54px, the blog
+ * cards go to one column with a 17px title, and the homepage's services, loop
+ * stations and posts each become a swipe row (tests/redesign.test.ts).
+ *
+ * (Until November 2026 this file pinned the earlier phone design,
+ * `design/E2E Apps - Bento mobile.dc.html`: a 32px headline, 52px stacked CTAs
+ * on `.hero__actions`, and blog rows whose "Read" link was hidden on desktop.
+ * The redesign replaced all three; the tests below pin what replaced them.)
  *
  * None of that is visible to the rest of this suite, which reads the built page
  * as one document and never asks what a rule is gated behind. So a phone rule
@@ -77,12 +81,21 @@ test('the hero uses the mobile design, not a shrunken desktop one', { skip }, ()
   const css = phoneCss(640);
 
   // The size comes from the --t-h1 token override, not a per-component rule,
-  // so every section heading moves together.
-  assert.match(css, /--t-h1:\s*32px/, 'the phone type scale is not applied');
-  assert.match(css, /--t-h2:\s*25px/, 'section headings are not the design 25px');
-  assert.ok(has(css, '.hero__actions', 'display:grid'), 'CTAs do not stack');
-  assert.ok(/min-height:52px/.test(css), 'stacked CTAs are not 52px tall');
-  assert.ok(has(css, '.hero__lead', 'font-size:var(--t-body-sm)'), 'lead is not 15px');
+  // so every section heading moves together. These are the phone values in
+  // src/styles/tokens.css; the homepage h1 takes --t-h1 and every other page's
+  // h1 takes --t-page.
+  assert.match(css, /--t-h1:\s*36px/, 'the phone type scale is not applied');
+  assert.match(css, /--t-page:\s*32px/, 'sub-page headlines are not the design 32px');
+  assert.match(css, /--t-h2:\s*28px/, 'section headings are not the design 28px');
+
+  // The hero is built on the shared page header, so the stacking rule is the
+  // header's: each action takes the full row and is 54px tall.
+  assert.ok(/\.phero__actions>\*\{[^{}]*flex:1 1 100%/.test(css), 'CTAs do not stack');
+  assert.ok(/\.phero__actions>\*\{[^{}]*min-height:54px/.test(css), 'stacked CTAs are not 54px tall');
+
+  // And the two rules those overrides act on have to exist outside the query.
+  assert.match(html, /\.phero__title--home\{[^{}]*font-size:var\(--t-h1\)/, 'the homepage h1 does not take --t-h1');
+  assert.match(html, /\.phero__title\{[^{}]*font-size:var\(--t-page\)/, 'page h1s do not take --t-page');
 });
 
 test('bento cards get the phone padding and type', { skip }, () => {
@@ -100,26 +113,42 @@ test('bento cards get the phone padding and type', { skip }, () => {
   );
 });
 
-test('blog rows are stacked blocks closing on a Read affordance', { skip }, () => {
-  // The blog section left the homepage in the restructure; its rows and their
-  // phone rules now ship on the blog index, so that is where this reads.
+test('blog cards go to one column on a phone and keep their Read affordance', { skip }, () => {
+  // The blog index is a grid of cards since the November 2026 redesign: one
+  // column by default, two from 700px, three from 1024px. Each card closes on
+  // "Read" at every width. The old design showed it on a phone only and this
+  // test used to assert it was hidden on desktop; on a card it is the one
+  // affordance, so now it must never be hidden.
   const blogIndex = path.resolve(import.meta.dirname, '..', 'dist', 'blog.html');
   const doc = fs.existsSync(blogIndex) ? fs.readFileSync(blogIndex, 'utf8') : html;
   const css = phoneCssOf(doc, 767);
 
   assert.ok(has(css, '.blog__title', 'font-size:17px'), 'post titles are not the design 17px');
-  assert.ok(/\.blog__read[^{}]*\{[^{}]*display:inline-flex/.test(css), '"Read" never becomes visible');
+  assert.ok(/\.blog__read[^{}]*\{[^{}]*display:inline-flex/.test(css), '"Read" is not shown on a phone');
   // The updated mobile design keeps the kicker -- an earlier pass dropped it.
   assert.ok(!/\.blog__kicker[^{}]*\{[^{}]*display:none/.test(css), 'the kicker should stay on a phone');
   // The full-width "All posts" button was part of the homepage blog teaser,
   // which the restructure removed. On the index itself there is nowhere for it
   // to go, so there is nothing left to assert about it.
 
-  // And it must be absent above the breakpoint, or it doubles the desktop row.
+  // Above the breakpoint: still shown, and never switched off anywhere.
   // Read from the same document as the phone rules above — the homepage no
   // longer carries a blog section at all.
   const desktop = doc.replace(/@media[^{]+\{(?:[^{}]|\{[^{}]*\})*\}/g, '');
-  assert.ok(/\.blog__read[^{}]*\{[^{}]*display:none/.test(desktop), '"Read" is not hidden on desktop');
+  assert.ok(/\.blog__read[^{}]*\{[^{}]*display:inline-flex/.test(desktop), '"Read" is not shown on desktop');
+  assert.ok(!/\.blog__read[^{}]*\{[^{}]*display:none/.test(doc), '"Read" is hidden at some width');
+
+  // Every card carries one, and the whole card is the link (so the 24px line
+  // "Read" sits on is not itself the touch target).
+  const rows = doc.match(/<a\b[^>]*class="blog__row"/g) ?? [];
+  assert.ok(rows.length >= 15, 'the blog index lists fewer posts than exist');
+  assert.equal((doc.match(/class="blog__read"/g) ?? []).length, rows.length, 'a card has no Read affordance');
+
+  // One column until there is room for two; tracks that can shrink.
+  assert.match(desktop, /\.blog__list(\[[^\]]*\])?\{[^{}]*grid-template-columns:minmax\(0,1fr\)/, 'the list does not start as one column');
+  const wider = [...doc.matchAll(/@media\s*\(min-width:\s*(\d+)px\)\{\.blog__list(?:\[[^\]]*\])?\{grid-template-columns:repeat\((\d),minmax\(0,1fr\)\)/g)]
+    .map((m) => [Number(m[1]), Number(m[2])]);
+  assert.deepEqual(wider, [[700, 2], [1024, 3]], 'the card grid no longer steps 1 → 2 → 3 columns');
 });
 
 test('the payback map becomes one column with 44px targets', { skip }, () => {

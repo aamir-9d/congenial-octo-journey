@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E2E Apps service page, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:#F0AB33}
+@keyframes e2e-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.e2e-marquee{animation:none !important}}
+</style>
+</helmet>
+<div style="--bg:#0E1014; --surf:#16191F; --surf2:#1D2128; --band:#111318; --line:#23272E; --line2:#2C3138; --tx:#E8EAED; --tx2:#A8AEB6; --tx3:#8E959E; --tx4:#868D98; --am:#E39A1F; --ink:#101725; --f:'Be Vietnam Pro',system-ui,sans-serif; --fm:'IBM Plex Mono',ui-monospace,monospace; background: var(--bg); color: var(--tx); font-family: var(--f); font-size: 17px; line-height: 1.6">
+
+<!-- PAGE HEADER -->
+<section style="position: relative; overflow: hidden; padding: 16px 32px 0">
+<div aria-hidden="true" style="position: absolute; left: 8%; top: -120px; width: 52%; height: 640px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.30), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div aria-hidden="true" style="position: absolute; right: 2%; top: -40px; width: 50%; height: 660px; border-radius: 50%; background: radial-gradient(closest-side, rgba(64,86,140,0.42), rgba(64,86,140,0)); filter: blur(34px)"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.07) 1px, transparent 1px); background-size: 34px 34px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%); mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%)"></div>
+
+<header style="position: relative; max-width: 1376px; margin: 0 auto; box-sizing: border-box; height: 78px; padding: 0 20px 0 24px; display: flex; align-items: center; gap: 36px; background: rgba(22,25,31,0.86); border: 1px solid var(--line2); border-radius: 12px">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; letter-spacing: -0.02em">
+<span style="width: 34px; height: 34px; border-radius: 9px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 12px; font-weight: 700">E2E</span>E2E Apps</a>
+<nav style="display: flex; gap: 30px; font-size: 16px; color: var(--tx2)">
+<a href="#fix">Services</a><a href="#loop">Approach</a><a href="#payback">Calculator</a><a href="#insights">Findings</a><a href="#insights">Blog</a>
+</nav>
+<div style="margin-left: auto; display: flex; gap: 12px">
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; border: 1px solid var(--line2); font-weight: 600; font-size: 16px">Book a call</a>
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 16px">Get a free first look</a>
+</div>
+</header>
+
+<div id="top" style="position: relative; max-width: 1040px; margin: 0 auto; padding: 110px 0 90px; text-align: center">
+<div style="font-family: var(--fm); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)"><a href="#fix" style="color: var(--tx3)">Services</a> <span aria-hidden="true" style="color: var(--tx4)">/</span> Attribution audit</div>
+<h1 style="margin: 26px 0 0; font-size: 62px; font-weight: 500; letter-spacing: -0.034em; line-height: 1.07; text-wrap: balance">Mobile attribution audit for subscription apps</h1>
+<p style="margin: 28px auto 0; max-width: 820px; font-size: 20px; line-height: 1.6; color: var(--tx2)">A mobile attribution audit checks whether your MMP, ad accounts, app code and subscription platform agree about where users and revenue come from. I review AppsFlyer, Adjust and Singular setups, rank what is wrong by impact, and give your developers a written fix for each item.</p>
+<a href="#contact" style="margin-top: 34px; display: inline-flex; align-items: center; gap: 10px; height: 58px; padding: 0 28px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 18px; box-shadow: 0 10px 28px -12px rgba(0,0,0,0.9)">Book a call
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<p style="margin: 20px 0 0; font-family: var(--fm); font-size: 13px; color: var(--tx3)">By Aamir Jan Khan, updated 25 November 2026</p>
+</div>
+</section>
+
+<!-- THE AUDIT PATH -->
+<section id="path" style="padding: 110px 80px 0; border-top: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">The audit path</div>
+<div style="margin-top: 18px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<h2 style="grid-column: span 8; margin: 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">I follow one user from the ad to the renewal.</h2>
+</div>
+
+<div style="margin-top: 64px; position: relative; border-radius: 24px; overflow: hidden; padding: 44px 44px 52px; background: radial-gradient(circle at 90% 6%, rgba(227,154,31,0.30), rgba(227,154,31,0) 42%), radial-gradient(circle at 4% 100%, rgba(64,86,140,0.42), rgba(64,86,140,0) 48%), #16191F; box-shadow: inset 0 0 0 1px var(--line)">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.08) 1px, transparent 1px); background-size: 22px 22px"></div>
+<div style="position: relative; display: flex; justify-content: space-between; align-items: center">
+<span style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">What gets checked at each step</span>
+<span style="padding: 9px 14px; border-radius: 999px; background: var(--am); color: var(--ink); font-size: 13px; font-weight: 700; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.9)">Ranked by impact</span>
+</div>
+<div style="position: relative; margin-top: 32px">
+<span aria-hidden="true" style="position: absolute; left: 20px; right: 20px; top: 47px; height: 2px; background: var(--am)"></span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px">
+<div style="box-sizing: border-box; min-height: 190px; padding: 24px 22px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); font-family: var(--fm); font-size: 13px; color: var(--am)">01</span>
+<div style="margin-top: 20px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Ad</div>
+<div style="margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--tx2)">Partner connection, windows and cost</div>
+</div>
+<div style="box-sizing: border-box; min-height: 190px; padding: 24px 22px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); font-family: var(--fm); font-size: 13px; color: var(--am)">02</span>
+<div style="margin-top: 20px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Install</div>
+<div style="margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--tx2)">SDK start, consent, links and SKAN</div>
+</div>
+<div style="box-sizing: border-box; min-height: 190px; padding: 24px 22px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); font-family: var(--fm); font-size: 13px; color: var(--am)">03</span>
+<div style="margin-top: 20px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Behaviour</div>
+<div style="margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--tx2)">Events, triggers and values</div>
+</div>
+<div style="box-sizing: border-box; min-height: 190px; padding: 24px 22px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--am); font-family: var(--fm); font-size: 13px; color: var(--am)">04</span>
+<div style="margin-top: 20px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Payment</div>
+<div style="margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--tx2)">Trial, purchase and currency</div>
+</div>
+<div style="box-sizing: border-box; min-height: 190px; padding: 24px 22px; border-radius: 14px; background: #1D2128; box-shadow: 0 0 0 1px rgba(227,154,31,0.6), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<span style="display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--am); font-family: var(--fm); font-size: 13px; color: var(--ink)">05</span>
+<div style="margin-top: 20px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Renewal</div>
+<div style="margin-top: 8px; font-size: 15px; line-height: 1.5; color: var(--tx2)">Server events, refunds and reports</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- MISTAKES AND FIXES -->
+<section id="mistakes" style="margin-top: 140px; padding: 110px 80px; background: var(--band); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Mistakes and fixes</div>
+<div style="margin-top: 18px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<h2 style="grid-column: span 7; margin: 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">Common attribution mistakes, and the fix.</h2>
+<p style="grid-column: 9 / span 4; margin: 0 0 6px; font-size: 17px; color: var(--tx2)">Each card names the mistake, how it shows up in your reports, and what puts it right.</p>
+</div>
+<div style="margin-top: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; top: -100px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 01</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">The SDK starts before consent is answered</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">iOS installs arrive without an advertising ID</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Set the launch order and wait time, then test each answer</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; bottom: -110px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 02</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">The SKAN schema measures only revenue</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Trial apps send empty or low values</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Map early signals that happen inside the first window</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -90px; top: -110px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 03</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Ad platforms receive the wrong events</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Campaigns optimise for a weak signal</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Map the events that match the campaign goal</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; bottom: -110px; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 04</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Revenue has no value or currency</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Conversions count but ROAS is zero</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Send both fields in the right format</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: 26%; top: -140px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 05</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Re-engagement has no inactivity rule</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Active users are credited to retargeting</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Set the window to match how often people use the app</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -100px; top: 28%; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 06</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Web visits lose their campaign</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Web-driven installs look organic</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Carry click data through the store link</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; top: 30%; width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 07</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Uninstall measurement is off</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">No view of early loss by channel</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Complete the push setup and monitor by source</p>
+</div></div>
+</div>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 320px; box-sizing: border-box; padding: 28px 28px 26px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: 10%; bottom: -150px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Mistake 08</div>
+<h3 style="margin: 12px 0 0; min-height: 50px; font-size: 20px; font-weight: 700; letter-spacing: -0.016em; line-height: 1.25">Settings differ between iOS and Android</h3>
+<div style="margin-top: 18px; font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">How it shows up</div>
+<p style="margin: 6px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--tx2)">Platforms cannot be compared</p>
+<div style="margin-top: auto; padding-top: 20px"><div style="padding-top: 16px; border-top: 1px solid var(--line2)">
+<div style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The fix</div>
+<p style="margin: 6px 0 0; min-height: 47px; font-size: 15.5px; line-height: 1.5; color: var(--tx)">Document a reason for every difference</p>
+</div></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- SCOPE: when, what it checks, what you get -->
+<section id="scope" style="padding: 120px 80px 0">
+<div style="max-width: 1280px; margin: 0 auto">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Scope</div>
+<div style="margin-top: 18px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<h2 style="grid-column: span 8; margin: 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">When you need it, what it checks, what you get</h2>
+</div>
+
+<div style="margin-top: 64px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px">
+
+<div style="grid-column: span 5; position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 36px 36px 34px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; top: -110px; width: 290px; height: 290px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<h3 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.18">When do you need an attribution audit?</h3>
+<div style="margin-top: 26px; display: grid; grid-template-columns: 10px minmax(0, 1fr); column-gap: 14px; row-gap: 16px; font-size: 16.5px; line-height: 1.5; color: var(--tx2)">
+<span aria-hidden="true" style="margin-top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--am)"></span><span>Google Ads, Meta, the MMP and RevenueCat report different revenue.</span>
+<span aria-hidden="true" style="margin-top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--am)"></span><span>Organic installs rise when paid spend rises.</span>
+<span aria-hidden="true" style="margin-top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--am)"></span><span>Trials appear in the MMP but renewals do not.</span>
+<span aria-hidden="true" style="margin-top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--am)"></span><span>iOS campaigns have little or no conversion data.</span>
+<span aria-hidden="true" style="margin-top: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--am)"></span><span>Nobody knows why a setting was chosen.</span>
+</div>
+</div>
+
+<div style="grid-column: span 7; position: relative; overflow: hidden; isolation: isolate; box-sizing: border-box; padding: 36px 36px 34px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; bottom: -120px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<h3 style="margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.18">What does an attribution audit check?</h3>
+<div style="margin-top: 26px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; row-gap: 16px; font-size: 16px; line-height: 1.45; color: var(--tx2)">
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>SDK version, start-up and user identity</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Attribution windows, view-through and reattribution</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>SKAN and AdAttributionKit</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Each ad partner connection and postback</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Event names, triggers and values</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Trials, purchases, renewals and refunds</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Web-to-app links and deep links</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>Privacy and consent settings</span></span>
+<span style="display: grid; grid-template-columns: 20px minmax(0, 1fr); column-gap: 10px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-top: 3px"><path d="M5 12l5 5 9-10"></path></svg><span>GA4, Firebase and cost data</span></span>
+</div>
+</div>
+
+<div style="grid-column: 1 / -1; position: relative; overflow: hidden; isolation: isolate; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: center; box-sizing: border-box; padding: 40px 40px 40px 36px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px rgba(227,154,31,0.45)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -110px; bottom: -130px; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.28), rgba(227,154,31,0))"></span>
+<div style="grid-column: span 5">
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">The deliverable</div>
+<h3 style="margin: 14px 0 0; font-size: 34px; font-weight: 700; letter-spacing: -0.024em; line-height: 1.14">What you get from the audit</h3>
+<p style="margin: 16px 0 0; font-size: 17.5px; color: var(--tx2); max-width: 440px">A ranked list. Each finding has the issue, why it matters, the fix, the owner and a way to verify it. Developer items include exact instructions.</p>
+</div>
+<div style="grid-column: 7 / span 6; position: relative; height: 380px; border-radius: 20px; overflow: hidden; background: radial-gradient(circle at 86% 10%, rgba(227,154,31,0.28), rgba(227,154,31,0) 52%), radial-gradient(circle at 6% 96%, rgba(64,86,140,0.42), rgba(64,86,140,0) 55%), #111318; box-shadow: inset 0 0 0 1px var(--line2)">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.08) 1px, transparent 1px); background-size: 22px 22px"></div>
+<div style="position: absolute; left: 32px; right: 76px; bottom: 30px; box-sizing: border-box; padding: 22px 24px; border-radius: 14px; background: #0E1014; box-shadow: 0 0 0 1px var(--line2), 0 26px 50px -20px rgba(0,0,0,0.9)">
+<div style="display: flex; justify-content: space-between; font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)"><span>Finding</span><span>Sample</span></div>
+<div style="margin-top: 14px; display: grid; grid-template-columns: 124px minmax(0, 1fr); row-gap: 11px; column-gap: 14px; align-items: baseline; font-size: 14.5px">
+<span style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Issue</span><span style="font-weight: 600">Revenue has no value or currency</span>
+<span style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Why it matters</span><span style="color: var(--tx2)">Conversions count but ROAS is zero</span>
+<span style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--am)">Fix</span><span>Send both fields in the right format</span>
+<span style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Owner</span><span style="color: var(--tx2)">Developer</span>
+<span style="font-family: var(--fm); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx3)">Verify</span><span style="color: var(--tx2)">A test purchase arrives with both fields</span>
+</div>
+</div>
+<div style="position: absolute; right: 26px; top: 26px; padding: 9px 14px; border-radius: 999px; background: var(--am); color: var(--ink); font-size: 13px; font-weight: 700; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.9)">Ranked by impact</div>
+<div style="position: absolute; left: 32px; top: 30px; padding: 12px 16px; border-radius: 12px; background: #1D2128; box-shadow: 0 0 0 1px var(--line2), 0 20px 40px -16px rgba(0,0,0,0.95)">
+<div style="font-family: var(--fm); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx4)">Written for</div>
+<div style="margin-top: 2px; font-size: 16px; font-weight: 700; letter-spacing: -0.01em">Your developers</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding: 140px 80px 0">
+<div style="max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: start">
+<div style="grid-column: span 4">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Before you book</div>
+<h2 style="margin: 18px 0 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08">Common questions.</h2>
+</div>
+<div style="grid-column: 6 / span 7; border-top: 1px solid var(--line2)">
+<div style="padding: 26px 0 28px; border-bottom: 1px solid var(--line2)">
+<button type="button" style="width: 100%; padding: 0; border: 0; background: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; color: var(--tx); font-family: var(--f); font-size: 20px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">How long does it take?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E39A1F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"></path></svg></button>
+<p style="margin: 12px 0 0; max-width: 620px; font-size: 17px; color: var(--tx2)">Typically two weeks.</p>
+</div>
+<div style="padding: 26px 0; border-bottom: 1px solid var(--line2)">
+<button type="button" style="width: 100%; padding: 0; border: 0; background: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; color: var(--tx); font-family: var(--f); font-size: 20px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">Do you need our source code?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#868D98" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+</div>
+<div style="padding: 26px 0; border-bottom: 1px solid var(--line2)">
+<button type="button" style="width: 100%; padding: 0; border: 0; background: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; color: var(--tx); font-family: var(--f); font-size: 20px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">Which platforms do you audit?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#868D98" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+</div>
+<div style="padding: 26px 0; border-bottom: 1px solid var(--line2)">
+<button type="button" style="width: 100%; padding: 0; border: 0; background: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; color: var(--tx); font-family: var(--f); font-size: 20px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">Do you implement the fixes?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#868D98" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+</div>
+<div style="padding: 26px 0; border-bottom: 1px solid var(--line2)">
+<button type="button" style="width: 100%; padding: 0; border: 0; background: none; display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: left; color: var(--tx); font-family: var(--f); font-size: 20px; font-weight: 600; letter-spacing: -0.012em; cursor: pointer">What if you find nothing wrong?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#868D98" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+</div>
+</div>
+</div>
+</section>
+
+<!-- THE OTHER FOUR SERVICES -->
+<section id="fix" style="padding: 140px 80px 0">
+<div style="max-width: 1280px; margin: 0 auto">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Related services</div>
+<div style="margin-top: 18px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<h2 style="grid-column: span 7; margin: 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08">One problem per page.</h2>
+<p style="grid-column: 9 / span 4; margin: 0 0 6px; font-size: 17px; color: var(--tx2)">Each shows what apps get wrong and how to fix it.</p>
+</div>
+<div style="margin-top: 64px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+
+<a href="#fix" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 300px; box-sizing: border-box; padding: 30px 30px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span style="width: 48px; height: 48px; border-radius: 12px; background: rgba(227,154,31,0.12); color: var(--am); display: grid; place-items: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3zM9 12l2 2 4-4"></path></svg></span>
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; bottom: -110px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="margin-top: 24px; min-height: 83px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">SKAN &amp; AdAttributionKit setup</span>
+<span style="margin-top: 12px; font-size: 16px; color: var(--tx2)">Conversion values, windows and postbacks.</span>
+<span style="margin-top: auto; padding-top: 22px; font-weight: 600; font-size: 16px; color: var(--am)">See the fixes →</span>
+</a>
+
+<a href="#fix" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 300px; box-sizing: border-box; padding: 30px 30px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span style="width: 48px; height: 48px; border-radius: 12px; background: rgba(227,154,31,0.12); color: var(--am); display: grid; place-items: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span>
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; top: -110px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="margin-top: 24px; min-height: 83px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">ATT &amp; consent timing</span>
+<span style="margin-top: 12px; font-size: 16px; color: var(--tx2)">Prompt order, waiting time and testing.</span>
+<span style="margin-top: auto; padding-top: 22px; font-weight: 600; font-size: 16px; color: var(--am)">See the fixes →</span>
+</a>
+
+<a href="#fix" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 300px; box-sizing: border-box; padding: 30px 30px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span style="width: 48px; height: 48px; border-radius: 12px; background: rgba(227,154,31,0.12); color: var(--am); display: grid; place-items: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h13"></path><circle cx="19" cy="12" r="2"></circle></svg></span>
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -90px; bottom: -120px; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="margin-top: 24px; min-height: 83px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Event tracking plan &amp; mapping</span>
+<span style="margin-top: 12px; font-size: 16px; color: var(--tx2)">What to send, when and in what format.</span>
+<span style="margin-top: auto; padding-top: 22px; font-weight: 600; font-size: 16px; color: var(--am)">See the fixes →</span>
+</a>
+
+<a href="#fix" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 300px; box-sizing: border-box; padding: 30px 30px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span style="width: 48px; height: 48px; border-radius: 12px; background: rgba(227,154,31,0.12); color: var(--am); display: grid; place-items: center"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"></path></svg></span>
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -80px; top: -120px; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="margin-top: 24px; min-height: 83px; font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2">Subscription revenue tracking</span>
+<span style="margin-top: 12px; font-size: 16px; color: var(--tx2)">Trials, renewals and refunds, counted once.</span>
+<span style="margin-top: auto; padding-top: 22px; font-weight: 600; font-size: 16px; color: var(--am)">See the fixes →</span>
+</a>
+</div>
+</div>
+</section>
+
+<!-- CONTACT BAND -->
+<section id="contact" style="position: relative; overflow: hidden; margin-top: 130px; padding: 100px 80px; background: var(--band); border-top: 1px solid var(--line)">
+<div aria-hidden="true" style="position: absolute; left: -6%; bottom: -260px; width: 46%; height: 560px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.22), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div style="position: relative; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<div style="grid-column: span 7">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Let's look at your setup</div>
+<h2 style="margin: 18px 0 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+</div>
+<div style="grid-column: 9 / span 4">
+<p style="margin: 0; font-size: 17px; color: var(--tx2)">Send your app's store link. I reply in writing with three measurement checks for it, free.</p>
+<div style="margin-top: 26px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap">
+<a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; height: 58px; padding: 0 28px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 18px">Get a free first look
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="#contact" style="font-family: var(--fm); font-size: 14px; color: var(--am)">hello@e2eapp.com ↗</a>
+</div>
+</div>
+</div>
+</section>
+
+<footer style="padding: 44px 80px 44px; border-top: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; font-size: 15px; color: var(--tx3)">
+<span style="display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--tx)"><span style="width: 30px; height: 30px; border-radius: 8px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 11px">E2E</span>E2E Apps</span>
+<span style="display: flex; gap: 28px; flex-wrap: wrap"><a href="#fix">Services</a><a href="#insights">Audit findings</a><a href="#insights">Case studies</a><a href="#payback">Payback calculator</a><a href="#insights">Blog</a><a href="#top">About</a><a href="#top">Privacy</a></span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5705}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * The header of every page except the homepage.
+ *
+ * Board: any of design/v3/*.dc.html. Amber and blue blooms and a dot grid
+ * behind a centred label, the page's ONE h1, a lead and at most one button.
+ *
+ * The styles are `.phero*` in src/styles/redesign.css. Put a <Breadcrumbs>
+ * above this component, not inside it. Anything passed as children renders
+ * under the lead (a byline, a second link).
+ */
+interface Props {
+  /** Small mono line above the headline. */
+  label: string;
+  /** The page's h1. */
+  title: string;
+  lead?: string;
+  cta?: { href: string; text: string };
+  /** `data-section` value, for the tests that read section order. */
+  section?: string;
+}
+
+const { label, title, lead, cta, section = 'page-hero' } = Astro.props;
+---
+
+<section class="phero" data-section={section}>
+  <div class="phero__grid" aria-hidden="true"></div>
+  <div class="phero__inner">
+    <p class="phero__label">{label}</p>
+    <h1 class="phero__title">{title}</h1>
+    {lead && <p class="phero__lead">{lead}</p>}
+    {
+      cta && (
+        <div class="phero__actions">
+          <a href={cta.href} class="btn-primary">
+            {cta.text}
+            <Icon name="arrow-right" size={16} />
+          </a>
+        </div>
+      )
+    }
+    <slot />
+  </div>
+</section>

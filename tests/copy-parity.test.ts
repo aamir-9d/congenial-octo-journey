@@ -29,7 +29,11 @@ const ORIGINAL = path.join(ROOT, 'E2E Apps Homepage.dc.html');
 // page — so parity is checked against the built pages together.
 // about.html: the founders section is hidden on the homepage until the portraits
 // exist, and its signed-off copy lives on /about meanwhile.
-const PORT_PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'about.html', 'payback-calculator.html'].map((p) =>
+// case-studies.html, automation.html: the November 2026 homepage rebuild took
+// the case study and automation sections off the homepage; those pages are
+// where their copy lives now, so they are searched too. (Adding a page also
+// makes the "really is gone" test below stricter, which is the point.)
+const PORT_PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'about.html', 'payback-calculator.html', 'case-studies.html', 'automation.html'].map((p) =>
   path.join(ROOT, 'dist', p),
 );
 const PORT = PORT_PAGES[0]!;
@@ -206,6 +210,66 @@ const REPLACED: { text: string; why: string }[] = [
   {
     text: 'Live from the model below. Move a slider and these move.',
     why: 'hero summary card removed',
+  },
+
+  /* --- The November 2026 homepage rebuild -----------------------------------
+     The owner approved new boards (design/v3/) and the homepage was rebuilt
+     from them: see the header of src/pages/index.astro. Thirteen runs of the
+     export's body copy went with the sections that were redrawn or removed.
+     Each was searched for on every page above before it was listed here, and
+     the test below fails if one of them comes back. The old components
+     (src/components/Loop.astro, Proof.astro) still hold the wording, unused. */
+  {
+    text: 'Get the raw signal right at the source. Event taxonomy and naming, a written tracking plan the developers can actually implement, SDK integration and QA, consent and ATT prompt sequencing, debug and sandbox validation before anything ships.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 01 paragraph is on no page. Station 01 now reads "Get events, consent and server delivery working together."',
+  },
+  {
+    text: 'Outcome: Events fire when they should, named what they should be, carrying what they should carry.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 01 outcome line is on no page. The station now ends "The output is a reliable source signal."',
+  },
+  {
+    text: 'Connect the signal to a source. MMP configuration and audit, SKAdNetwork and AdAttributionKit conversion schemas, attribution window alignment, server-to-server events, deferred deep linking, conversion APIs to every ad platform, web-to-app click capture.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 02 paragraph is on no page. Station 02 now reads "Connect installs and revenue to sources. Check the gaps in reporting."',
+  },
+  {
+    text: 'Outcome: Every install and every dollar traceable to the click that caused it.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 02 outcome line is on no page. The station now ends "The output is attribution you can inspect."',
+  },
+  {
+    text: 'Turn clean data into a spending decision. Cohort LTV and retention decay, CAC payback curves by channel and by country, trial-to-paid economics, breakeven ceilings per market, paywall funnel diagnosis.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 03 paragraph is on no page. Station 03 now reads "Use retention, LTV and payback to set spending limits by market."',
+  },
+  {
+    text: 'Outcome: A defensible number for what you can afford to pay for a user — market by market.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 03 outcome line is on no page. The station now ends "The output is a defensible acquisition ceiling."',
+  },
+  {
+    text: 'Spend against those numbers. Google Ads app and web-to-app campaigns, Apple Ads, Meta, TikTok, ASO and store listing strategy, paywall and pricing tests, ad monetisation and mediation.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 04 paragraph is on no page. Station 04 now reads "Run campaigns and monetisation tests. Feed the results back into measurement."',
+  },
+  {
+    text: 'Outcome: Budget deployed where the arithmetic says it works — and fresh signal flowing back into Station 01.',
+    why: 'homepage rebuilt November 2026; the Full Loop was redrawn from the approved board (design/v3/Main.dc.html) as four photograph rows with two or three short sentences each, and this station 04 outcome line is on no page. The station now ends "The output is spend informed by evidence."',
+  },
+  {
+    text: 'Most consultants stop after Station 02. The loop only closes when the same person walks all four.',
+    why: 'homepage rebuilt November 2026; the Loop closing line became the section aside, which keeps its first sentence ("Most consultants stop after station 02.") and drops the second. The heading now carries the point: "four stations, one person accountable"',
+  },
+  {
+    text: 'A dashboard reported an 11% trial-to-paid rate. The verified figure was closer to 17%. Every budget decision made from that dashboard had been built on the wrong number.',
+    why: 'homepage rebuilt November 2026; the proof section (three findings from past audits) is not on the new homepage and was not moved to another page. Its two figures survive as the 11% and 17% bars on station 02 of the loop; the sentence does not',
+  },
+  {
+    text: 'Share of new users in one app who ever reached a payment screen. Nobody had measured it. That single number was the reason the app lost money.',
+    why: 'homepage rebuilt November 2026; the proof section (three findings from past audits) is not on the new homepage and was not moved to another page. This finding is not referred to anywhere on the rebuilt site',
+  },
+  {
+    text: 'At one portfolio audit, the majority of spend was going to countries that mathematically could not break even. It had run that way for months.',
+    why: 'homepage rebuilt November 2026; the proof section (three findings from past audits) is not on the new homepage and was not moved to another page. This finding is not referred to anywhere on the rebuilt site',
+  },
+  {
+    text: 'Client names withheld. Details available on a call.',
+    why: 'homepage rebuilt November 2026; the proof section (three findings from past audits) is not on the new homepage and was not moved to another page. This was its footnote. The statement itself is still made where client work is shown: /case-studies opens "Client names are withheld." and marks every case "client withheld" (tests/case-study.test.ts)',
   },
 ];
 

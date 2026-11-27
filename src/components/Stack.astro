@@ -3,6 +3,9 @@ import Icon from './Icon.astro';
 /**
  * "The full stack, in bundles." Ten filterable accordions.
  *
+ * Board: design/v3/Services.dc.html. Two columns of glow cards; the
+ * infrastructure bundle carries the full glow and the amber ring.
+ *
  * The export drove open/closed from component state and rendered the body only
  * when open. Here each bundle is a <details>, so the ten accordions need no JS
  * at all and their content stays in the DOM for search engines. The +/− glyph
@@ -85,19 +88,29 @@ const bundles = [
 ];
 
 const filters = [
-  { key: 'all', label: 'ALL 10' },
-  { key: 'meas', label: 'MEASUREMENT' },
-  { key: 'media', label: 'MEDIA & STORE' },
-  { key: 'infra', label: 'INFRASTRUCTURE' },
+  { key: 'all', label: 'All bundles' },
+  { key: 'meas', label: 'Measurement' },
+  { key: 'media', label: 'Media & store' },
+  { key: 'infra', label: 'Infrastructure' },
+];
+
+/* Where each card's glow sits, cycled. */
+const GLOW = [
+  ['0%', '0%'],
+  ['100%', '100%'],
+  ['100%', '0%'],
+  ['0%', '100%'],
+  ['50%', '0%'],
+  ['100%', '100%'],
 ];
 ---
 
-<section id="approach" class="stack section" data-section="stack">
+<section id="approach" class="section" data-section="stack">
   <div class="wrap">
-    <div data-reveal="1" class="section-head">
-      <div class="eyebrow">WHAT'S UNDER THE HOOD</div>
-      <h2 class="stack__head">The full stack, in bundles.</h2>
-      <p class="section-lead">Named, so you can check whether the thing you need is on the list.</p>
+    <div data-reveal="1" class="shead">
+      <p class="shead__label">What's under the hood</p>
+      <h2 class="shead__title">The full stack, in bundles.</h2>
+      <p class="shead__aside">Named, so you can check whether the thing you need is on the list.</p>
     </div>
 
     <div class="stack__filters" role="group" aria-label="Filter bundles by discipline">
@@ -117,15 +130,20 @@ const filters = [
 
     <div class="stack__grid" id="stack-grid">
       {
-        bundles.map((b) => (
-          <details class:list={['stack__item', { 'stack__item--lead': b.cat === 'infra' }]} data-cat={b.cat}>
+        bundles.map((b, i) => (
+          <details
+            class:list={['gcard', 'stack__item', { 'gcard--lead': b.cat === 'infra' }]}
+            style={`--gx:${GLOW[i % GLOW.length]![0]};--gy:${GLOW[i % GLOW.length]![1]}`}
+            data-cat={b.cat}
+            open={i < 2}
+          >
             <summary class="stack__summary">
               <span class="stack__num">{b.n}</span>
               <span class="stack__label">
                 <span class="stack__title">{b.title}</span>
                 <span class="stack__meta">{b.meta}</span>
               </span>
-              <span class="stack__icon"><Icon name="plus" size={13} /></span>
+              <span class="stack__icon"><Icon name="plus" size={14} /></span>
             </summary>
             <div class="stack__body">{b.body}</div>
           </details>
@@ -141,40 +159,35 @@ const filters = [
 </script>
 
 <style>
-  .stack {
-    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
-  }
-
-
-  .stack__head {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-  }
-
   /* --- filter chips ------------------------------------------------------ */
 
   .stack__filters {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 8px;
-    margin-top: clamp(28px, 3vw, 40px);
+    margin-top: clamp(28px, 3.4vw, 44px);
   }
 
   .stack__chip {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-chip);
-    text-transform: uppercase;
-    padding: 9px 16px;
+    min-height: 44px;
+    padding: 0 18px;
     border-radius: var(--radius-pill);
-    cursor: pointer;
-    white-space: nowrap;
+    border: 1px solid var(--color-line-strong);
     background: transparent;
     color: var(--color-text-2);
-    border: 1px solid var(--color-line-strong);
-    transition: background 160ms var(--ease-out-soft), border-color 160ms var(--ease-out-soft);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background 160ms var(--ease-out-soft),
+      border-color 160ms var(--ease-out-soft);
+  }
+
+  .stack__chip:hover {
+    border-color: var(--color-line-hover);
   }
 
   /* Amber tint rather than a filled pill: four of these sitting solid would
@@ -182,7 +195,7 @@ const filters = [
      pressable at that weight. */
   .stack__chip[aria-pressed='true'] {
     background: var(--color-accent-dim);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     border-color: var(--color-accent);
   }
 
@@ -190,22 +203,24 @@ const filters = [
 
   .stack__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-    gap: 14px;
-    margin-top: 24px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: var(--s8);
+    /* An accordion: opening one card must not stretch its neighbour. */
     align-items: start;
   }
 
-  .stack__item {
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    overflow: hidden;
+  @media (min-width: 900px) {
+    .stack__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
-  /* Bundle 02 is ringed in amber — the infrastructure half of the practice. */
-  .stack__item--lead {
-    border-color: var(--color-accent);
+  /* A glow card that is a <details>: block, with the padding on its parts so
+     the whole summary is the click target. */
+  .stack__item {
+    display: block;
+    padding: 0;
   }
 
   .stack__item[hidden] {
@@ -213,12 +228,13 @@ const filters = [
   }
 
   .stack__summary {
-    padding: var(--s8);
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    column-gap: 14px;
+    align-items: start;
+    min-height: 44px;
+    padding: clamp(20px, 2.2vw, 28px) clamp(20px, 2.4vw, 32px);
     cursor: pointer;
-    font-family: inherit;
-    display: flex;
-    gap: var(--s4);
-    align-items: flex-start;
     list-style: none;
   }
 
@@ -226,91 +242,86 @@ const filters = [
     display: none;
   }
 
-  /* Declared with `style-hover` in the export, which no runtime implemented. */
-  .stack__summary:hover {
-    background: var(--color-surface-sunk);
-  }
-
-  .stack__item--lead .stack__summary:hover {
-    background: var(--color-accent-dim);
-  }
-
   .stack__num {
+    padding-top: 5px;
     font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    color: var(--color-accent);
-    padding-top: var(--s2);
+    font-size: 13px;
+    color: var(--color-accent-text);
   }
 
   .stack__label {
-    flex: 1;
+    min-width: 0;
   }
 
-  /* Reserve two lines for the title and the meta.
-
-     The grid is `align-items: start`, so every card sizes to its own content —
-     which is the right call for an accordion, because `stretch` would make
-     opening one card stretch every sibling in its row. The cost is that a card
-     titled "Attribution & MMP" is a line shorter than "Backend &
-     Infrastructure", and the closed grid looks ragged.
-
-     Reserving the space fixes the raggedness without giving up the accordion
-     behaviour: closed cards line up, and opening one still grows only itself.
-     `1.65` is the inherited body line-height, and `em` keeps this correct if
-     the type scale ever moves. */
   .stack__title {
     display: block;
-    min-height: calc(2 * 1.65em);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: var(--t-post-title);
-    letter-spacing: var(--ls-tight);
+    font-size: clamp(18px, 1.7vw, 21px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.25;
     color: var(--color-text);
   }
 
   .stack__meta {
     display: block;
-    min-height: calc(2 * 1.65em);
     margin-top: var(--s2);
     font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
+    font-size: var(--t-mono);
+    line-height: var(--lh-snug);
     color: var(--color-text-4);
   }
 
   .stack__icon {
-    font-family: var(--font-mono);
-    font-size: var(--t-card);
-    color: var(--color-text-4);
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-bg);
+    color: var(--color-text-2);
   }
 
-  .stack__icon {
-    display: inline-flex;
-    margin-top: 5px;
-    color: var(--color-text-4);
+  .stack__icon :global(svg) {
     transition: transform 180ms var(--ease-out-soft);
+  }
+
+  .stack__summary:hover .stack__icon {
+    border-color: var(--color-line-hover);
   }
 
   /* Rotated rather than swapped for a minus: the same glyph turning into a
      close mark reads as one control changing state. */
   .stack__item[open] .stack__icon {
+    color: var(--color-accent-text);
+  }
+
+  .stack__item[open] .stack__icon :global(svg) {
     transform: rotate(45deg);
   }
 
+  /* Long slash-separated tokens: they may break anywhere rather than push the
+     page sideways. */
   .stack__body {
-    padding: 0 var(--s8) var(--s8) var(--s12);
+    margin: 0 clamp(20px, 2.4vw, 32px) clamp(22px, 2.4vw, 32px);
+    padding-top: var(--s6);
+    border-top: 1px solid var(--color-line);
     font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    line-height: var(--lh-mono);
+    font-size: 13.5px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
     color: var(--color-text-2);
   }
 
-  /* --- phone ---------------------------------------------------------------
-     The filter chips become one scrolling strip rather than three wrapped
-     rows, and the bundle bodies get `overflow-wrap: anywhere` because they are
-     long slash-separated tokens that will otherwise force the page sideways.
-     ---------------------------------------------------------------------- */
+  @media (min-width: 700px) {
+    .stack__body {
+      margin-left: calc(clamp(20px, 2.4vw, 32px) + 46px);
+    }
+  }
 
-  @media (max-width: 767px) {
+  /* --- phone ---------------------------------------------------------------
+     The filter chips become one scrolling strip rather than wrapped rows. */
+  @media (max-width: 699px) {
     .stack__filters {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -327,29 +338,17 @@ const filters = [
 
     .stack__chip {
       flex: none;
-      min-height: 44px;
-      font-size: 11px;
-      white-space: nowrap;
-    }
-
-    .stack__title {
-      font-size: 16.5px;
-      line-height: 1.25;
-    }
-
-    .stack__meta {
-      font-size: 10.5px;
-      line-height: var(--lh-tight);
     }
 
     .stack__body {
-      font-size: 11.5px;
-      line-height: var(--lh-mono);
-      overflow-wrap: anywhere;
+      font-size: var(--t-mono);
     }
+  }
 
-    .stack__summary {
-      min-height: 44px;
+  @media (prefers-reduced-motion: reduce) {
+    .stack__chip,
+    .stack__icon :global(svg) {
+      transition: none;
     }
   }
 </style>

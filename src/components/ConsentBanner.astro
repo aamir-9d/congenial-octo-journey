@@ -56,7 +56,7 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
     width: 100%;
     padding: var(--s6) var(--s8);
     border-radius: var(--radius-card);
-    background: rgba(14, 16, 20, 0.94);
+    background: rgba(var(--rgb-bg), 0.94);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(var(--rgb-text), 0.08);
@@ -107,6 +107,6 @@ const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
   }
 
   .consent__link:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 </style>

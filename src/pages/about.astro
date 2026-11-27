@@ -2,14 +2,18 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
-import Icon from '../components/Icon.astro';
 import Founders from '../components/Founders.astro';
 import ServiceIndex from '../components/ServiceIndex.astro';
 import Schema from '../components/Schema.astro';
 
 /**
  * /about
+ *
+ * Board: design/v3/About.dc.html. Page header, the two founders, the service
+ * index, the closing ask. No stats strip.
  *
  * One page that says who E2E Apps is, in words a search engine or an AI
  * assistant can quote: the business, the two people, what they do. Every
@@ -48,30 +52,21 @@ const about = {
     <main id="main">
       <Breadcrumbs trail={[{ name: 'About', path: '/about' }]} />
 
-      <section class="section section--lead" data-section="about-intro">
-        <div class="wrap">
-          <div class="section-head">
-            <div class="eyebrow">ABOUT</div>
-            <h1 class="about__h">About E2E Apps</h1>
-            <p class="section-lead">
-              E2E Apps does mobile growth and measurement for subscription and ad-monetised apps:
-              attribution and MMP work, SKAdNetwork schemas, server-side revenue pipelines, and the paid
-              media that runs on top of them.
-            </p>
-            <p class="section-lead about__more">
-              One specialist owns the entire growth loop. A second owns the infrastructure it runs on.
-              You talk to the two people doing the work.
-            </p>
-            <a class="btn-primary about__btn" href={`${base}/#contact`}>
-              Book a call
-              <Icon name="arrow-right" size={14} />
-            </a>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        label="About"
+        title="About E2E Apps"
+        lead="E2E Apps does mobile growth and measurement for subscription and ad-monetised apps: attribution and MMP work, SKAdNetwork schemas, server-side revenue pipelines, and the paid media that runs on top of them."
+        cta={{ href: `${base}/#contact`, text: 'Book a call' }}
+        section="about-intro"
+      />
 
-      <Founders eyebrow="Who you talk to" pull={false} />
+      <Founders
+        eyebrow="Who you talk to"
+        aside="One specialist owns the entire growth loop. A second owns the infrastructure it runs on. You talk to the two people doing the work."
+        pull={false}
+      />
       <ServiceIndex />
+      <Cta />
     </main>
 
     <Footer />
@@ -82,21 +77,5 @@ const about = {
   .page {
     min-height: 100vh;
     background: var(--color-bg);
-  }
-
-  .about__h {
-    margin: 16px auto 0;
-    max-width: 24ch;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-    line-height: var(--lh-h2);
-  }
-
-  .about__more {
-    margin-top: var(--s4);
-  }
-
-  .about__btn {
-    margin-top: var(--s8);
   }
 </style>

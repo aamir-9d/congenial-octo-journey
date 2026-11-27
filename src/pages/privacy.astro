@@ -57,13 +57,14 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
   path="/privacy"
   heading="Privacy"
   updated="25 November 2026"
+  lead="What E2E Apps collects, which tools it uses, how long it keeps things, and how to make it stop."
 >
   <p>
     We run a measurement consultancy, so it would be a poor look to be vague about our own. This
     page describes exactly what this website collects, which third parties see it, and how long it
     is kept. No generic template, no "we may collect certain information".
   </p>
-  <p>
+  <p class="prose__note">
     <strong>The short version.</strong> Every visit is counted by Cloudflare Web Analytics, which uses
     no cookies and keeps no personal data. Until you press Got it, nothing else about your visit is sent to
     an analytics or advertising service. If you press it, Google Analytics and Google Ads can see that you visited. If you submit the
@@ -105,7 +106,7 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
     Advertising platforms append a click identifier to the link. We read these from the address bar
     and keep them in a first-party cookie for 90 days:
   </p>
-  <ul>
+  <ul class="prose__chips">
     {clickIds.map((id) => <li><code>{id}</code></li>)}
   </ul>
   <p>
@@ -235,6 +236,7 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
 
 <style>
   .privacy-off {
+    min-height: 46px;
     font-family: var(--font-body);
     font-weight: 600;
     font-size: var(--t-card);

@@ -4,17 +4,21 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import Cta from '../../components/Cta.astro';
 import ServiceVisual from '../../components/ServiceVisual.astro';
 import ServiceTable from '../../components/ServiceTable.astro';
 import { AUTHORS } from '../../data/authors';
+import type { IconName } from '../../data/icons';
 import { SERVICES, UPDATED, rich } from '../../data/services';
 
 /**
- * One specialist service.
+ * One specialist service. Five pages come from this template.
  *
- * Built only from the site's own measures: `.section` and `.wrap`, centred
- * `.section-head`, the bento card (26px, --radius-lg, --ring, 16px gaps) and the
- * FAQ disclosure. Content lives in src/data/services.ts.
+ * Board: design/v3/ServiceDetail.dc.html. Page header, the page's exhibit on a
+ * scene panel, the mistakes as glow cards on a band, the content blocks, the
+ * FAQ beside its heading, the related services, then the shared ask.
+ * Content lives in src/data/services.ts; nothing here is typed in twice.
  */
 
 export function getStaticPaths() {
@@ -26,6 +30,27 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const path = `/services/${service.slug}`;
 const author = AUTHORS.aamir;
 const related = service.related.map((slug) => SERVICES.find((s) => s.slug === slug)!);
+
+/* Each service keeps the icon it has on /services and the homepage. */
+const ICONS: IconName[] = ['magnifying-glass', 'shield-check', 'cursor-click', 'list', 'arrows-clockwise'];
+const iconOf = (slug: string) => ICONS[SERVICES.findIndex((s) => s.slug === slug)] ?? 'stack';
+const GLOW = [
+  ['100%', '0%'],
+  ['0%', '100%'],
+  ['0%', '0%'],
+  ['100%', '100%'],
+];
+const glow = (i: number) => `--gx:${GLOW[i % GLOW.length]![0]};--gy:${GLOW[i % GLOW.length]![1]}`;
+const two = (n: number) => String(n).padStart(2, '0');
+
+/* The audit's deliverable is a list of findings, so its block shows one: a
+   mistake from this page's own list, laid out the way a finding is written. */
+const isAudit = service.slug === 'mobile-attribution-audit';
+const sample = isAudit ? service.mistakes.find((m) => m.wrong.startsWith('Revenue')) : undefined;
+
+/* The shared closing band carries the audit's ask word for word, so the audit
+   page does not print it a second time beside the FAQ. */
+const showAsk = !isAudit;
 
 const home = new URL(`${base}/`, Astro.site).href;
 const url = new URL(`${base}${path}`, Astro.site).href;
@@ -62,118 +87,201 @@ const schema = {
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Services', path: '/services' }, { name: service.name, path }]} />
 
-      <section class="section section--lead" data-section="service-intro">
-        <div class="wrap">
-          <div class="section-head">
-            <div class="eyebrow">{service.eyebrow}</div>
-            <h1 class="svc__h">{service.h1}</h1>
-            <p class="section-lead">{service.lead}</p>
-            <p class="svc__byline">
-              By {author.name}, updated <time datetime={UPDATED.iso}>{UPDATED.label}</time>
-            </p>
-            <a class="btn-primary svc__btn" href={`${base}/#contact`}>
-              Book a call
-              <Icon name="arrow-right" size={14} />
-            </a>
-          </div>
+      <PageHero
+        label={service.eyebrow}
+        title={service.h1}
+        lead={service.lead}
+        cta={{ href: `${base}/#contact`, text: 'Book a call' }}
+        section="service-intro"
+      >
+        <p class="svc__byline">
+          By {author.name}, updated <time datetime={UPDATED.iso}>{UPDATED.label}</time>
+        </p>
+      </PageHero>
 
-          <div class="svc__visual">
-            <h2 class="svc__visual-title">{service.visualTitle}</h2>
-            {service.visualLead && <p class="svc__visual-lead">{service.visualLead}</p>}
+      <section class="section" data-section="service-visual">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">At a glance</p>
+            <h2 class="shead__title svc__wide-title">{service.visualTitle}</h2>
+            {service.visualLead && <p class="shead__aside">{service.visualLead}</p>}
+          </div>
+          <div class="sbody">
             <ServiceVisual visual={service.visual} />
             {service.visualNote && <p class="svc__note" set:html={rich(service.visualNote, base)} />}
           </div>
         </div>
       </section>
 
-      <section class="section svc__band" data-section="service-mistakes">
+      <section class="section section--band" data-section="service-mistakes">
         <div class="wrap">
-          <div class="section-head" data-reveal="1">
-            <div class="eyebrow">MISTAKES AND FIXES</div>
-            <h2 class="svc__h">{service.mistakesTitle}</h2>
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">Mistakes and fixes</p>
+            <h2 class="shead__title">{service.mistakesTitle}</h2>
           </div>
-          <ul class="svc__grid" role="list">
-            {service.mistakes.map((m) => (
-              <li class="svc__card">
-                {/* "Mistake:" is part of the heading, so the heading still makes sense
-                    when it is quoted on its own, away from the section title. */}
-                <div class="svc__kicker" aria-hidden="true">Mistake</div>
-                <h3 class="svc__card-title"><span class="visually-hidden">Mistake: </span>{m.wrong}</h3>
-                <div>
-                  <div class="svc__kicker">{service.showsLabel}</div>
-                  <p class="svc__card-text">{m.shows}</p>
-                </div>
-                <div class="svc__fix">
-                  <div class="svc__kicker svc__kicker--amber">The fix</div>
-                  <p class="svc__card-text svc__card-text--strong" set:html={rich(m.fix, base)} />
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section class="section svc__detail" data-section="service-detail">
-        <div class="wrap svc__blocks">
-          {service.blocks.map((b) => (
-            <div class:list={['svc__block', { 'svc__block--wide': b.wide }]}>
-              <h2 class="svc__block-title">{b.title}</h2>
-              {b.text && <p class="svc__block-text" set:html={rich(b.text, base)} />}
-              {b.list && (
-                b.ordered ? (
-                  <ol class="svc__list">{b.list.map((i) => <li>{i}</li>)}</ol>
-                ) : (
-                  <ul class="svc__list">{b.list.map((i) => <li>{i}</li>)}</ul>
-                )
-              )}
-              {b.table && <ServiceTable head={b.table.head} rows={b.table.rows} />}
-              {b.note && <p class="svc__note" set:html={rich(b.note, base)} />}
+          <div class="sbody">
+            <ul
+              class:list={[
+                'ggrid',
+                service.mistakes.length % 3 === 0 ? 'ggrid--3' : 'ggrid--4',
+                'swipe',
+                'svc__grid',
+                { 'svc__grid--seven': service.mistakes.length === 7 },
+              ]}
+              role="list"
+              data-swipe
+              data-swipe-label="Mistake"
+            >
+              {service.mistakes.map((m, i) => (
+                <li class="gcard svc__card" style={glow(i)}>
+                  {/* "Mistake:" is part of the heading, so the heading still makes sense
+                      when it is quoted on its own, away from the section title. */}
+                  <div class="svc__kicker" aria-hidden="true">Mistake {two(i + 1)}</div>
+                  <h3 class="svc__card-title"><span class="visually-hidden">Mistake: </span>{m.wrong}</h3>
+                  <div class="svc__shows">
+                    <div class="svc__kicker">{service.showsLabel}</div>
+                    <p class="svc__card-text">{m.shows}</p>
+                  </div>
+                  <div class="svc__fix">
+                    <div class="svc__kicker svc__kicker--amber">The fix</div>
+                    <p class="svc__card-text svc__card-text--strong" set:html={rich(m.fix, base)} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{service.mistakes.map(() => <i />)}</span>
+              <span data-swipe-count>Mistake 1 of {service.mistakes.length}</span>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      <section class="section svc__band" data-section="service-faq">
-        <div class="svc__faq">
-          <div class="section-head" data-reveal="1">
-            <div class="eyebrow">BEFORE YOU BOOK</div>
-            <h2 class="svc__h">Common questions.</h2>
+      <section class="section" data-section="service-detail">
+        <div class="wrap svc__blocks">
+          {service.blocks.map((b, i) => {
+            const withSample = Boolean(b.wide && sample && !b.list && !b.table);
+            return (
+              <div
+                class:list={[
+                  'gcard',
+                  'svc__block',
+                  { 'svc__block--wide': b.wide, 'gcard--lead svc__block--split': withSample },
+                ]}
+                style={glow(i + 1)}
+              >
+                <div class="svc__block-copy">
+                  <h2 class="svc__block-title">{b.title}</h2>
+                  {b.text && <p class="svc__block-text" set:html={rich(b.text, base)} />}
+                  {b.list && (
+                    b.ordered ? (
+                      <ol class="svc__list svc__list--ordered">{b.list.map((item) => <li>{item}</li>)}</ol>
+                    ) : (
+                      <ul class:list={['svc__list', { 'svc__list--two': b.list.length > 6 }]}>
+                        {b.list.map((item) => <li>{item}</li>)}
+                      </ul>
+                    )
+                  )}
+                  {b.table && (
+                    <div class="svc__table">
+                      <ServiceTable head={b.table.head} rows={b.table.rows} />
+                    </div>
+                  )}
+                  {b.note && <p class="svc__note" set:html={rich(b.note, base)} />}
+                </div>
+                {withSample && sample && (
+                  <div class="scene svc__sample">
+                    <dl class="dcard svc__finding">
+                      <div class="dcard__label">
+                        <span>Finding</span>
+                        <span>Sample</span>
+                      </div>
+                      <div class="svc__finding-row">
+                        <dt class="svc__finding-key">Issue</dt>
+                        <dd class="svc__finding-val svc__finding-val--strong">{sample.wrong}</dd>
+                      </div>
+                      <div class="svc__finding-row">
+                        <dt class="svc__finding-key">Why it matters</dt>
+                        <dd class="svc__finding-val">{sample.shows}</dd>
+                      </div>
+                      <div class="svc__finding-row">
+                        <dt class="svc__finding-key svc__finding-key--amber">Fix</dt>
+                        <dd class="svc__finding-val svc__finding-val--strong">{sample.fix}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section class="section section--band" data-section="service-faq">
+        <div class="wrap svc__faq">
+          <div class="svc__faq-head" data-reveal="1">
+            <p class="shead__label">Before you book</p>
+            <h2 class="shead__title svc__faq-title">Common questions.</h2>
+            {showAsk && (
+              <aside class="svc__cta">
+                <p class="svc__cta-text">{service.ask}</p>
+                <a class="btn-primary svc__cta-btn" href={`${base}/#contact`}>
+                  Book a call
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </aside>
+            )}
           </div>
           <div class="svc__faq-list">
             {service.faqs.map((f, i) => (
               <details class="svc__faq-item" open={i === 0}>
                 <summary class="svc__q">
                   <span>{f.q}</span>
-                  <Icon name="caret-down" size={13} />
+                  <Icon name="caret-down" size={16} />
                 </summary>
                 <p class="svc__a">{f.a}</p>
               </details>
             ))}
           </div>
-
-          <aside class="svc__cta">
-            <p class="svc__cta-text">{service.ask}</p>
-            <a class="btn-primary svc__cta-btn" href={`${base}/#contact`}>
-              Book a call
-              <Icon name="arrow-right" size={14} />
-            </a>
-          </aside>
-
-          <aside class="svc__foot" aria-label="About the author">
-            <p class="svc__author">{author.name} <span class="svc__role">{author.role}</span></p>
-            <p class="svc__bio">{author.bio}</p>
-            <a class="link" href={author.linkedin} target="_blank" rel="noopener">Meet on LinkedIn &#8599;</a>
-          </aside>
-
-          <nav class="svc__foot" aria-labelledby="svc-related">
-            <h2 id="svc-related" class="svc__related-title">Related services</h2>
-            <ul class="svc__related">
-              {related.map((s) => <li><a class="link" href={`${base}/services/${s.slug}`}>{s.name}</a></li>)}
-              {service.post && <li><a class="link" href={`${base}${service.post.href}`}>Read: {service.post.label}</a></li>}
-            </ul>
-          </nav>
         </div>
       </section>
+
+      <section class="section" data-section="service-related">
+        <nav class="wrap" aria-labelledby="svc-related">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">Related services</p>
+            <h2 id="svc-related" class="shead__title">One problem per page.</h2>
+            <p class="shead__aside">Each shows what apps get wrong and how to fix it.</p>
+          </div>
+          <ul class="sbody ggrid ggrid--3 svc__related" role="list">
+            {related.map((s, i) => (
+              <li class="svc__related-item">
+                <a class="gcard svc__rel" href={`${base}/services/${s.slug}`} style={glow(i)}>
+                  <span class="gcard__icon">
+                    <Icon name={iconOf(s.slug)} size={24} />
+                  </span>
+                  <span class="gcard__title">{s.name}</span>
+                  <span class="gcard__text">{s.summary}</span>
+                  <span class="gcard__go">
+                    See the fixes
+                    <Icon name="arrow-right" size={15} />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          {service.post && (
+            <p class="svc__post">
+              <a class="pill-link" href={`${base}${service.post.href}`}>
+                Read: {service.post.label}
+                <Icon name="arrow-right" size={15} />
+              </a>
+            </p>
+          )}
+        </nav>
+      </section>
+
+      <Cta />
     </main>
     <Footer />
   </div>
@@ -185,116 +293,100 @@ const schema = {
     background: var(--color-bg);
   }
 
-  .svc__h {
-    margin: 16px auto 0;
-    max-width: 24ch;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-    line-height: var(--lh-h2);
-  }
-
   .svc__byline {
-    margin-top: var(--s6);
+    margin-top: var(--s8);
     font-family: var(--font-mono);
     font-size: var(--t-mono);
-    color: var(--color-text-4);
+    color: var(--color-text-3);
   }
 
-  .svc__btn {
-    margin-top: var(--s8);
-    min-height: 44px;
-  }
-
-  .svc__visual {
-    margin-top: clamp(40px, 4vw, 64px);
-    padding: 26px;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--ring-accent);
-  }
-
-  .svc__visual-title {
-    font-size: var(--t-h3-sm);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-h3);
-    line-height: var(--lh-h3);
-  }
-
-  .svc__visual-lead {
-    margin-top: 10px;
-    font-size: var(--t-card);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
+  /* The exhibit's heading is a sentence, so it gets a longer measure. */
+  .svc__wide-title {
+    max-width: 24ch;
   }
 
   .svc__note {
     margin-top: var(--s6);
+    max-width: 78ch;
     font-size: var(--t-card-sm);
     line-height: var(--lh-prose);
     color: var(--color-text-3);
   }
 
-  /* No heading of its own: it continues the cards above, so it keeps one
-     section-pad of space instead of two. */
-  .svc__detail {
-    padding-top: 0;
-  }
+  /* --- mistakes ---------------------------------------------------------- */
 
-  .svc__band {
-    background: linear-gradient(180deg, var(--color-bg), var(--color-band) 50%, var(--color-bg));
-  }
-
+  /* Margin and padding are left to .swipe below 700px, where the row bleeds
+     to the screen edges. */
   .svc__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-    gap: 16px;
-    margin: clamp(40px, 4vw, 64px) 0 0;
-    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
     list-style: none;
   }
 
+  @media (min-width: 700px) {
+    .svc__grid {
+      padding: 0;
+    }
+  }
+
   .svc__card {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 26px;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    padding: clamp(20px, 2.2vw, 28px);
   }
 
   /* An odd last card closes its row instead of leaving a hole. */
-  .svc__card:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
+  @media (min-width: 700px) and (max-width: 1023px) {
+    .svc__card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
   }
 
-  .svc__card-title {
-    font-size: var(--t-post-title);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-h3);
-    line-height: var(--lh-h3);
-  }
-
-  .svc__fix {
-    margin-top: auto;
+  @media (min-width: 1024px) {
+    .svc__grid--seven .svc__card:last-child {
+      grid-column: span 2;
+    }
   }
 
   .svc__kicker {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-kicker);
+    letter-spacing: var(--ls-label);
     text-transform: uppercase;
-    color: var(--color-text-3);
+    color: var(--color-text-4);
   }
 
   .svc__kicker--amber {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
+  }
+
+  .svc__card-title {
+    margin-top: var(--s4);
+    font-size: 20px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.25;
+  }
+
+  .svc__shows {
+    margin-top: var(--s6);
+  }
+
+  /* Pinned to the foot, under a rule, so every card in a row ends on its fix. */
+  .svc__fix {
+    margin-top: auto;
+    padding-top: var(--s6);
+  }
+
+  .svc__fix::before {
+    content: '';
+    display: block;
+    margin-bottom: var(--s6);
+    border-top: 1px solid var(--color-line-strong);
   }
 
   .svc__card-text {
     margin-top: var(--s2);
-    font-size: var(--t-card);
-    line-height: var(--lh-body);
+    font-size: 15.5px;
+    line-height: 1.5;
     color: var(--color-text-2);
   }
 
@@ -302,189 +394,332 @@ const schema = {
     color: var(--color-text);
   }
 
+  @media (min-width: 1024px) {
+    .svc__card-title {
+      min-height: 2.5em;
+    }
+
+    .svc__fix .svc__card-text {
+      min-height: 3em;
+    }
+  }
+
+  /* --- content blocks ---------------------------------------------------- */
+
   .svc__blocks {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 
   .svc__block {
-    min-width: 0;
-    padding: 26px;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    padding: clamp(22px, 2.8vw, 36px);
   }
 
-  .svc__block--wide {
-    grid-column: 1 / -1;
+  .svc__block-copy {
+    min-width: 0;
   }
 
   .svc__block-title {
-    font-size: var(--t-h3-sm);
-    font-weight: var(--fw-semibold);
+    font-size: clamp(21px, 2vw, 27px);
+    font-weight: var(--fw-bold);
     letter-spacing: var(--ls-h3);
-    line-height: var(--lh-h3);
+    line-height: 1.18;
   }
 
   .svc__block-text {
-    margin-top: 10px;
+    margin-top: var(--s6);
     max-width: 72ch;
-    font-size: var(--t-card);
+    font-size: var(--t-body);
     line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
   .svc__list {
     display: grid;
-    gap: var(--s3);
-    margin: 14px 0 0;
-    padding-left: 20px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s4) var(--s8);
+    margin: var(--s8) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-body);
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+
+  .svc__list li {
+    position: relative;
+    min-width: 0;
+    padding-left: 24px;
+  }
+
+  .svc__list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  /* Ordered lists keep their numbers, in the mono face. */
+  .svc__list--ordered {
+    counter-reset: step;
+  }
+
+  .svc__list--ordered li {
+    padding-left: 38px;
+    counter-increment: step;
+  }
+
+  .svc__list--ordered li::before {
+    content: counter(step, decimal-leading-zero);
+    top: 0.2em;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-accent-text);
+  }
+
+  .svc__table {
+    margin-top: var(--s8);
+  }
+
+  /* The audit's deliverable: the copy beside one sample finding. */
+  .svc__sample {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 0;
+    padding: clamp(16px, 2.6vw, 30px);
+    border-radius: 20px;
+  }
+
+  .svc__finding {
+    align-self: stretch;
+    margin: 0;
+  }
+
+  .svc__finding-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    margin-top: var(--s4);
+  }
+
+  .svc__finding-key {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .svc__finding-key--amber {
+    color: var(--color-accent-text);
+  }
+
+  .svc__finding-val {
+    margin: 0;
+    min-width: 0;
     font-size: var(--t-card);
+    line-height: var(--lh-snug);
+    color: var(--color-text-2);
+  }
+
+  .svc__finding-val--strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  @media (min-width: 480px) {
+    .svc__finding-row {
+      grid-template-columns: minmax(0, 124px) minmax(0, 1fr);
+      column-gap: 14px;
+      align-items: baseline;
+    }
+  }
+
+  @media (min-width: 700px) {
+    .svc__list--two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 900px) {
+    .svc__blocks {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .svc__block--wide {
+      grid-column: 1 / -1;
+    }
+
+    .svc__block--split {
+      display: grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(32px, 6vw, 96px);
+      align-items: center;
+    }
+
+    .svc__block--split .svc__block-title {
+      font-size: var(--t-h2-card);
+      letter-spacing: var(--ls-h2-card);
+      line-height: 1.14;
+    }
+
+    .svc__sample {
+      min-height: 280px;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .svc__sample {
+      margin-top: var(--s8);
+    }
+  }
+
+  /* --- FAQ --------------------------------------------------------------- */
+
+  .svc__faq {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(32px, 4.5vw, 64px);
+    align-items: start;
+  }
+
+  .svc__faq-head {
+    min-width: 0;
+  }
+
+  .svc__faq-title {
+    margin-top: var(--s6);
+  }
+
+  .svc__cta {
+    margin-top: var(--s12);
+  }
+
+  .svc__cta-text {
+    max-width: 34ch;
+    font-size: var(--t-section-lead);
     line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
-  .svc__list li::marker {
-    color: var(--color-accent);
-  }
-
-  .svc__faq {
-    max-width: 760px;
-    margin: 0 auto;
+  .svc__cta-btn {
+    margin-top: var(--s6);
+    min-height: 50px;
   }
 
   .svc__faq-list {
-    margin-top: clamp(40px, 4vw, 64px);
+    min-width: 0;
+    border-top: 1px solid var(--color-line-strong);
   }
 
   .svc__faq-item {
-    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line-strong);
   }
 
   .svc__q {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 18px;
-    padding: 18px 0;
+    gap: 20px;
     min-height: 44px;
+    padding: clamp(18px, 2vw, 26px) 0;
     cursor: pointer;
     list-style: none;
-    font-size: 16.5px;
+    font-size: clamp(17px, 1.6vw, 20px);
     font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-snug);
     line-height: var(--lh-snug);
   }
 
+  .svc__q > span {
+    min-width: 0;
+  }
+
   .svc__q :global(svg) {
-    margin-top: 5px;
-    color: var(--color-text-4);
-    transition: transform 180ms ease;
+    color: var(--color-text-3);
+    transition: transform 180ms var(--ease-out-soft);
   }
 
   .svc__faq-item[open] .svc__q :global(svg) {
     transform: rotate(180deg);
+    color: var(--color-accent-text);
   }
 
   .svc__a {
-    padding: 0 0 20px;
-    max-width: 72ch;
-    font-size: var(--t-card);
-    line-height: var(--lh-answer);
+    margin-top: calc(var(--s2) * -1);
+    padding: 0 0 clamp(20px, 2vw, 28px);
+    max-width: 62ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
-  .svc__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s6);
-    margin-top: var(--s16);
-    padding: var(--s8);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow: var(--ring-accent);
+  @media (min-width: 900px) {
+    .svc__faq {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+      column-gap: clamp(40px, 7vw, 104px);
+    }
   }
 
-  .svc__cta-text {
-    flex: 1;
-    min-width: min(100%, 34ch);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
-
-  .svc__cta-btn {
-    flex: none;
-  }
-
-  .svc__foot {
-    margin-top: var(--s12);
-    padding-top: var(--s8);
-    border-top: 1px solid var(--color-line);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
-
-  .svc__author {
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
-  }
-
-  .svc__role {
-    margin-left: var(--s3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    font-weight: var(--fw-regular);
-    color: var(--color-text-4);
-  }
-
-  .svc__bio {
-    margin: var(--s3) 0;
-  }
-
-  .svc__related-title {
-    font-size: var(--t-post-title);
-    color: var(--color-text);
-  }
+  /* --- related ----------------------------------------------------------- */
 
   .svc__related {
-    display: grid;
-    gap: var(--s4);
-    margin: var(--s4) 0 0;
+    margin-bottom: 0;
     padding: 0;
     list-style: none;
   }
 
-  @media (max-width: 767px) {
-    .svc__blocks {
-      grid-template-columns: minmax(0, 1fr);
+  .svc__related-item {
+    display: flex;
+    min-width: 0;
+  }
+
+  .svc__rel {
+    flex: 1;
+    min-height: 268px;
+  }
+
+  @media (min-width: 700px) and (max-width: 1023px) {
+    .svc__related-item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
 
-    .svc__visual,
-    .svc__card,
-    .svc__block {
-      padding: 20px;
-    }
-
-    .svc__q {
-      padding: var(--s4) 0;
-      font-size: 15.5px;
-      line-height: 1.4;
+    .svc__related-item:last-child:nth-child(odd) .svc__rel {
+      min-height: 0;
     }
   }
 
-  @media (max-width: 640px) {
-    .svc__cta {
-      padding: var(--s6);
-      gap: var(--s4);
+  @media (min-width: 1024px) {
+    .svc__rel .gcard__title {
+      min-height: 2.36em;
     }
+  }
 
+  .svc__post {
+    margin-top: var(--s8);
+  }
+
+  @media (max-width: 640px) {
     .svc__cta-btn {
       width: 100%;
       justify-content: center;
-      min-height: 52px;
+      min-height: 54px;
+    }
+
+    .svc__post .pill-link {
+      width: 100%;
+      justify-content: space-between;
+      padding: 10px 20px;
     }
   }
 

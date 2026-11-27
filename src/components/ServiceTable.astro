@@ -1,7 +1,8 @@
 ---
 /**
  * A data table that becomes stacked rows on a phone, each value under its own
- * label, rather than scrolling sideways.
+ * label. Between the phone and the desktop it sits in a box that scrolls
+ * sideways by itself, so a wide table can never widen the page.
  */
 interface Props {
   head: string[];
@@ -11,49 +12,61 @@ interface Props {
 const { head, rows } = Astro.props;
 ---
 
-<table class="svt" role="table">
-  <thead class="svt__head" role="rowgroup">
-    <tr role="row">{head.map((h) => <th class="svt__th" scope="col" role="columnheader">{h}</th>)}</tr>
-  </thead>
-  <tbody role="rowgroup">
-    {rows.map((r) => (
-      <tr class="svt__row" role="row">
-        {r.map((cell, i) => (
-          <td class:list={['svt__td', { 'svt__td--first': i === 0 }]} role="cell">
-            <span class="svt__label" aria-hidden="true">{head[i]}</span>
-            <span>{cell}</span>
-          </td>
-        ))}
-      </tr>
-    ))}
-  </tbody>
-</table>
+<div class="svt-box">
+  <table class="svt" role="table">
+    <thead class="svt__head" role="rowgroup">
+      <tr role="row">{head.map((h) => <th class="svt__th" scope="col" role="columnheader">{h}</th>)}</tr>
+    </thead>
+    <tbody role="rowgroup">
+      {rows.map((r) => (
+        <tr class="svt__row" role="row">
+          {r.map((cell, i) => (
+            <td class:list={['svt__td', { 'svt__td--first': i === 0 }]} role="cell">
+              <span class="svt__label" aria-hidden="true">{head[i]}</span>
+              <span>{cell}</span>
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
 
 <style>
+  .svt-box {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
   .svt {
     width: 100%;
-    margin-top: 14px;
     border-collapse: collapse;
-    font-size: var(--t-card);
+    font-size: var(--t-body-sm);
     line-height: var(--lh-snug);
     text-align: left;
   }
 
   .svt__th {
-    padding: var(--s3) var(--s6) var(--s3) 0;
+    padding: var(--s3) var(--s6) var(--s4) 0;
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
     font-weight: var(--fw-regular);
-    letter-spacing: var(--ls-meta);
+    letter-spacing: var(--ls-label);
     text-transform: uppercase;
     color: var(--color-text-3);
   }
 
   .svt__td {
     padding: var(--s4) var(--s6) var(--s4) 0;
-    border-top: 1px solid var(--color-line);
+    border-top: 1px solid var(--color-line-strong);
     vertical-align: top;
     color: var(--color-text-2);
+  }
+
+  .svt__th:last-child,
+  .svt__td:last-child {
+    padding-right: 0;
   }
 
   .svt__td--first {
@@ -83,7 +96,12 @@ const { head, rows } = Astro.props;
 
     .svt__row {
       padding: var(--s4) 0;
-      border-top: 1px solid var(--color-line);
+      border-top: 1px solid var(--color-line-strong);
+    }
+
+    .svt__row:first-child {
+      padding-top: 0;
+      border-top: 0;
     }
 
     .svt__td {
