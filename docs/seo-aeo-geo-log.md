@@ -17,6 +17,24 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Phase 3 set up
+
+### Done
+- Phase 2's remaining account work (social profiles, LinkedIn page, Clutch, GoodFirms, ChatGPT ID check) handed
+  to the US-based founder, with a ready-made profile kit.
+- Weekly AI citation tracker created as a private Google Sheet. Tabs:
+  - Questions: 20 buyer questions, each tied to the page that should answer it. Q01 and Q02 are from the
+    25 November baseline; the rest are written from the service pages.
+  - Runs: one row per question per engine (ChatGPT, Perplexity, Claude, Gemini), with whether E2E Apps was
+    named, whether e2eapp.com was cited, and which businesses were named.
+  - Summary: counts and named rate per engine for a chosen week, plus the baseline (0 of 7).
+- Formulas checked with a test row, then the row was removed.
+
+### Not done
+- First weekly run: planned for Monday 30 November; first comparison with the baseline around 10 December.
+
+---
+
 ## 2026-11-27: Phase 2 continued
 
 ### Done
