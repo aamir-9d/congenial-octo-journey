@@ -17,6 +17,23 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Visitor counting and source tracking
+
+### Found
+- GA4, last 28 days (it went live on 25 November): 6 sessions, all Direct. Search Console, 23 to 25
+  November: 0 clicks, 11 impressions, average position 44.5. Bing: no indexed pages yet. No real leads.
+- Source tracking already works: a test visit tagged `utm_source=utm-check&utm_medium=test` sent GA4 a
+  page view carrying those tags, with consent granted. The site also keeps UTMs, referrer and landing page
+  and sends them with every enquiry. The "Direct" total reflects almost no outside visits yet, GA4's one-day
+  processing delay, and visitors who never press Got it, whom GA4 does not record.
+
+### Done (branch `cf-web-analytics`)
+- Cloudflare Web Analytics site created for e2eapp.com and its beacon added to every page: a cookieless
+  count of every visit, page, referrer and country, including visitors who never press Got it.
+- `/privacy` updated to say so, in the short version, the no-consent section and the processor table.
+
+---
+
 ## 2026-11-27: Indexing requested for the new pages (after PR #16)
 
 - Live: `/payback-calculator`, `/case-studies` and `/mmp-audit-findings` return 200; the sitemap lists 32 URLs.

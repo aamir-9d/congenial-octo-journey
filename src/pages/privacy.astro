@@ -64,7 +64,8 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
     is kept. No generic template, no "we may collect certain information".
   </p>
   <p>
-    <strong>The short version.</strong> Until you press Got it, nothing about your visit is sent to
+    <strong>The short version.</strong> Every visit is counted by Cloudflare Web Analytics, which uses
+    no cookies and keeps no personal data. Until you press Got it, nothing else about your visit is sent to
     an analytics or advertising service. If you press it, Google Analytics and Google Ads can see that you visited. If you submit the
     form or book a call, we get what you typed plus the ad click you arrived on.
   </p>
@@ -79,7 +80,9 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
 
   <h3>If you just read the page without pressing Got it</h3>
   <p>
-    No analytics or advertising data is sent. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
+    Cloudflare Web Analytics counts the page view: the page, the site that sent you, your browser type and
+    country. It sets no cookie, does not identify you, and does not follow you across sites. Nothing else
+    is sent. Google Tag Manager loads, but with EU Consent Mode v2 set to denied
     across the board, so no analytics or advertising cookie is written and no hit is transmitted.
     The banner stays until you press Got it, or until you turn cookies off below.
   </p>
@@ -135,6 +138,7 @@ const clickIds = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'li_fat_id', 'ttclid'];
       <tbody>
         <tr><td>Google (Analytics 4, Ads, Tag Manager)</td><td>Page views, calculator interactions, conversion events, a hashed email on conversion</td><td>Traffic analytics and ad measurement</td></tr>
         <tr><td>Cloudflare (Workers)</td><td>The form submission in transit, your IP address</td><td>Runs the form endpoint; GitHub Pages cannot execute server code</td></tr>
+        <tr><td>Cloudflare (Web Analytics)</td><td>The page viewed, the referring site, browser type and country; no cookie</td><td>Counts every visit, including those that never press Got it</td></tr>
         <tr><td>Resend</td><td>The contents of your form submission</td><td>Delivers it to our inbox</td></tr>
         <tr><td>Calendly</td><td>Name, email, chosen time</td><td>Books the call</td></tr>
         <tr><td>Meta</td><td>A hashed email and the conversion event</td><td>Ad measurement, only if you accepted</td></tr>

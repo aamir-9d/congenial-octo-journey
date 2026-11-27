@@ -137,6 +137,17 @@ const LATIN =
     {/* Consent defaults, then the container. Must come before any tag. */}
     <Analytics />
 
+    {/* Cloudflare Web Analytics: a cookieless page-view count for every visitor,
+        including those who never press Got it, which GA4 cannot see. No cookie,
+        no personal data, no consent needed; the token is public by design.
+        Described on /privacy. */}
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "866b6ecdda9145e5aeb86e6df7825267"}'
+    ></script>
+
     <slot name="head" />
   </head>
 
