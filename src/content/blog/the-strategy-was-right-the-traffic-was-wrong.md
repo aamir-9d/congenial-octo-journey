@@ -6,6 +6,7 @@ description: "A fifty-app portfolio copied a competitor's paywall and it failed 
 tag: Monetisation
 cta: >-
   If you are running a portfolio on ad revenue and want a subscription track that does not cannibalise it, the segmentation is the part that takes real work: deciding what the first screen is, per user, before the first screen renders. That is a conversation rather than a blog post.
+related: payback-calculator
 ---
 
 Across a category of utility apps — document readers, QR scanners, screen-mirroring tools — a monetisation pattern had converged. The same shape everywhere: a feature-comparison paywall setting a free column against a premium one, a single plan rather than a menu, and that plan billed weekly at a price well above the category norm. Not $6.99 or $9.99. Closer to $19.99.

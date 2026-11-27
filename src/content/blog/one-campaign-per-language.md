@@ -6,6 +6,7 @@ description: "Targeting a country is not the same as targeting the people in it.
 tag: Campaigns
 cta: >-
   Most accounts have never checked what share of their target markets they are actually addressable in, because the campaign structure makes the question invisible. Working out where the unaddressed audience is takes a language-by-market pass and usually finds more than expected.
+related: payback-calculator
 ---
 
 Most app accounts are structured by geography. One campaign per country, or one per region, with creative in whatever language is dominant there.

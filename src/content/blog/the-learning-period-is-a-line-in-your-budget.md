@@ -6,6 +6,7 @@ description: "An automated app campaign spends badly for about two weeks by desi
 tag: Campaigns
 cta: >-
   If your campaigns are edited more than once a fortnight, the account may never have left its learning period, and the performance you are judging is the performance of a system that has not finished calibrating. Auditing the change log against the conversion curve usually answers that in an afternoon.
+related: payback-calculator
 ---
 
 An automated app campaign does not know anything when it launches. It has a target, a budget, and a creative set, and it has to discover the relationship between the inventory it can buy and the conversions that come out of the other end.

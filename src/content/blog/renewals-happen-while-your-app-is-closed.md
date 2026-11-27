@@ -6,6 +6,7 @@ description: "A renewal is a server-side event no client SDK sees, so it never r
 tag: Subscriptions
 cta: >-
   If your renewal revenue is not reaching your ad platforms, the bidding is being optimised against first payments only, and your best cohorts are the ones being underbid. Finding out whether that is happening takes about an hour with access to your MMP and your subscription platform.
+related: subscription-revenue-tracking
 ---
 
 Here is a sequence that runs a few thousand times a day in a healthy subscription app, and that most measurement stacks cannot see.

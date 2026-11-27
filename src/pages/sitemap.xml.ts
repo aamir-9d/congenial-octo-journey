@@ -22,6 +22,7 @@ const PAGES = [
   { path: '/services', priority: '0.9', changefreq: 'monthly' },
   ...SERVICES.map((s) => ({ path: `/services/${s.slug}`, priority: '0.9', changefreq: 'monthly' })),
   { path: '/automation', priority: '0.9', changefreq: 'monthly' },
+  { path: '/payback-calculator', priority: '0.8', changefreq: 'monthly' },
   { path: '/products', priority: '0.7', changefreq: 'monthly' },
   { path: '/blog', priority: '0.8', changefreq: 'weekly' },
   { path: '/about', priority: '0.7', changefreq: 'monthly' },

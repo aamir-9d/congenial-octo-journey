@@ -95,7 +95,10 @@ const schema = {
           <ul class="svc__grid" role="list">
             {service.mistakes.map((m) => (
               <li class="svc__card">
-                <h3 class="svc__card-title">{m.wrong}</h3>
+                {/* "Mistake:" is part of the heading, so the heading still makes sense
+                    when it is quoted on its own, away from the section title. */}
+                <div class="svc__kicker" aria-hidden="true">Mistake</div>
+                <h3 class="svc__card-title"><span class="visually-hidden">Mistake: </span>{m.wrong}</h3>
                 <div>
                   <div class="svc__kicker">{service.showsLabel}</div>
                   <p class="svc__card-text">{m.shows}</p>

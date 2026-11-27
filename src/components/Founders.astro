@@ -22,8 +22,10 @@ import Icon from './Icon.astro';
 /** The homepage numbers its sections; other pages pass a plain label. */
 interface Props {
   eyebrow?: string;
+  /** The closing line. /about leaves it out: it repeats the heading and the page's own lead. */
+  pull?: boolean;
 }
-const { eyebrow = '06 / Who you talk to' } = Astro.props;
+const { eyebrow = '06 / Who you talk to', pull = true } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const publicDir = path.resolve(process.cwd(), 'public');
 const hasPhoto = (file: string) => fs.existsSync(path.join(publicDir, 'img', file));
@@ -102,9 +104,13 @@ const founders = [
       }
     </div>
 
-    <p data-reveal="1" class="pull founders__pull">
-      Nothing gets handed off. You talk to the two people doing the work.
-    </p>
+    {
+      pull && (
+        <p data-reveal="1" class="pull founders__pull">
+          Nothing gets handed off. You talk to the two people doing the work.
+        </p>
+      )
+    }
   </div>
 </section>
 

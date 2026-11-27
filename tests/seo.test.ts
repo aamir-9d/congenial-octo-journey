@@ -73,3 +73,35 @@ test('FAQ answers that a service page covers link to it', { skip }, () => {
     assert.match(html, new RegExp(`href="/services/${f.service}"`), `/faq does not link ${f.service}`);
   }
 });
+
+test('/payback-calculator: own page, in the sitemap, with method and computed examples', { skip }, () => {
+  const html = read('payback-calculator.html');
+  assert.match(html, /<h1[^>]*>App payback calculator<\/h1>/);
+  assert.ok(types(html).has('WebApplication'), 'no WebApplication node');
+  assert.match(html, /How the calculator works/);
+  assert.match(html, /Worked examples/);
+  assert.match(html, /data-payback/, 'the tool itself is missing');
+  assert.match(read('sitemap.xml'), /\/payback-calculator</);
+  assert.match(read('index.html'), /href="\/payback-calculator"/, 'homepage does not link the full page');
+});
+
+test('every blog post links on to a service or tool page', { skip }, () => {
+  const dir = path.join(DIST, 'blog');
+  const posts = fs.readdirSync(dir).filter((f) => f.endsWith('.html') && f !== 'index.html');
+  assert.ok(posts.length >= 15);
+  for (const f of posts) {
+    const html = fs.readFileSync(path.join(dir, f), 'utf8');
+    assert.match(html, /href="\/(services\/[a-z-]+|payback-calculator|automation)"[^>]*>(Service|Tool|AI reporting)/, `${f} has no related page link`);
+  }
+});
+
+test('service mistake headings stand on their own', { skip }, () => {
+  const html = read('services/mobile-attribution-audit.html');
+  assert.match(html, /<h3 class="svc__card-title"[^>]*><span class="visually-hidden"[^>]*>Mistake: <\/span>/);
+});
+
+test('contact form asks, optionally, where people heard about us', { skip }, () => {
+  const html = read('index.html');
+  assert.match(html, /name="heard"/);
+  assert.doesNotMatch(html, /name="heard"[^>]*required/, 'the source question must stay optional');
+});

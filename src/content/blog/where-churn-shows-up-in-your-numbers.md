@@ -6,6 +6,7 @@ description: "Subscription revenue decomposes into four measurable nodes. Churn 
 tag: Analytics
 cta: >-
   If your subscription reporting is one revenue line and one churn rate, no decision can be traced to a cause. Decomposing it is a week of analytics work and it usually settles arguments the roadmap has been having for months.
+related: subscription-revenue-tracking
 ---
 
 Most subscription dashboards show two numbers that matter: revenue, and a churn rate. Both are true and neither is actionable, because each one is several different things added together.

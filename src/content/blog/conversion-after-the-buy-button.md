@@ -6,6 +6,7 @@ description: "The billing sheet is a funnel step too. It converts differently in
 tag: Monetisation
 cta: >-
   If you have never seen your own purchase flow in your top three non-home markets, your paywall conversion rate is an average of experiences you have not looked at. Testing that is a day of work and it routinely finds a market where the flow is simply unavailable.
+related: event-tracking-plan
 ---
 
 Almost every paywall project measures the same thing: what share of people who saw the paywall tapped the button.

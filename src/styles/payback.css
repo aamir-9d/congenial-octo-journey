@@ -29,6 +29,11 @@
   color: var(--color-text-2);
 }
 
+.pm__method {
+  margin-top: var(--s3);
+  font-size: var(--t-card);
+}
+
 .pm {
   display: flex;
   flex-direction: column;

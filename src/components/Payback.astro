@@ -34,8 +34,18 @@ import { INITIAL_STATE } from '../scripts/calc-model.ts';
 import { computePayback, crossingLabel, crossingNote } from '../scripts/payback-model.ts';
 import { buildChart, BOX } from '../scripts/payback-chart.ts';
 import { PRESETS } from '../data/presets.ts';
+import { ASSUMPTIONS } from '../data/payback.ts';
 import { computeView } from '../scripts/calc-model.ts';
 import '../styles/payback.css';
+
+/** The homepage numbers its sections; /payback-calculator passes a plain label
+    and leaves out the link to itself. */
+interface Props {
+  eyebrow?: string;
+  methodLink?: boolean;
+}
+const { eyebrow = '02 / The payback map', methodLink = true } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const H0 = 365;
 const initial = computePayback(INITIAL_STATE, H0);
@@ -54,14 +64,8 @@ const crossDay = initial.crossing.kind === 'beyond-range' ? null : initial.cross
    stated as describing the example, because that is what it describes: the
    live accessible summary is the chart's own <desc>, which the controller
    keeps in step with whatever is on screen. */
-const ASSUMPTIONS = [
-  'Geometric per-cycle retention — a constant renewal rate every billing cycle.',
-  'Constant ARPDAU across tenure.',
-  'No seasonality in eCPM.',
-  'No organic uplift from paid spend.',
-  'No involuntary-churn recovery (failed payments never retried).',
-  'Steady-state approximation — no cohort-size or price changes over the horizon.',
-];
+// The model's limits live in src/data/payback.ts, shared with /payback-calculator.
+
 
 const exampleSummary = computeView(INITIAL_STATE).chartSummary;
 
@@ -88,9 +92,16 @@ const AD_FIELDS = [
 <section id="payback" class="section" data-section="payback">
   <div class="wrap">
     <div data-reveal="1">
-      <p class="eyebrow eyebrow--amber pm__eyebrow">02 / The payback map</p>
+      <p class="eyebrow eyebrow--amber pm__eyebrow">{eyebrow}</p>
       <h2 class="pm__h2">See when your spend comes back.</h2>
       <p class="pm__lead">Set the inputs. Find the crossing. Explore what changes the outcome.</p>
+      {
+        methodLink && (
+          <p class="pm__method">
+            <a class="link" href={`${base}/payback-calculator`}>How the calculator works, with worked examples</a>
+          </p>
+        )
+      }
     </div>
 
     <div class="pm" data-payback data-reveal="1">

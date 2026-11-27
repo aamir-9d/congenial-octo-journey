@@ -20,6 +20,22 @@ const FORM_ENDPOINT = import.meta.env.PUBLIC_FORM_ENDPOINT ?? '';
 
 const hasCalendly = /^https:\/\/calendly\.com\//.test(CALENDLY_URL);
 
+/* Optional. Someone who first read about E2E Apps in an AI assistant often
+   comes back later by typing the address, and analytics then calls the visit
+   direct. Only the buyer can say where they heard of us. The Worker accepts
+   exactly these values. */
+const heardOptions = [
+  'Google search',
+  'ChatGPT',
+  'Claude',
+  'Perplexity',
+  'Gemini',
+  'Microsoft Copilot',
+  'LinkedIn',
+  'A colleague or referral',
+  'Other',
+];
+
 const spendOptions = [
   'Not spending yet',
   'Under $10k / month',
@@ -104,6 +120,14 @@ const spendOptions = [
           <span class="form__label">What's the problem?</span>
           <textarea name="message" rows="5" required maxlength="4000" class="form__input form__textarea"></textarea>
           <span class="form__error" data-error="message" hidden></span>
+        </label>
+
+        <label class="form__field">
+          <span class="form__label">How did you hear about us? <span class="form__optional">(optional)</span></span>
+          <select name="heard" class="form__input form__input--select">
+            <option value="">Select</option>
+            {heardOptions.map((o) => <option value={o}>{o}</option>)}
+          </select>
         </label>
 
         {/* Honeypot. Hidden from people, irresistible to bots. Not
@@ -344,6 +368,10 @@ const spendOptions = [
     font-size: var(--t-mono-xs);
     letter-spacing: var(--ls-meta);
     color: rgba(var(--rgb-text), 0.72);
+  }
+
+  .form__optional {
+    color: var(--color-text-4);
   }
 
   .form__input {

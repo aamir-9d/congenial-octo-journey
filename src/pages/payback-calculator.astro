@@ -1,0 +1,324 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import Payback from '../components/Payback.astro';
+import { INITIAL_STATE, cycleDays } from '../scripts/calc-model.ts';
+import { computePayback, crossingLabel, SEARCH_MAX } from '../scripts/payback-model.ts';
+import { ASSUMPTIONS } from '../data/payback.ts';
+
+/**
+ * The payback calculator on a page of its own.
+ *
+ * The homepage keeps the tool; this page adds what a homepage section cannot
+ * hold: the method in plain words, two worked examples and the limits, so the
+ * page can be shared, linked and cited on its own.
+ *
+ * The worked examples are computed here, at build time, by the same engine the
+ * tool uses (calc-model.ts through payback-model.ts). Nothing below is typed in
+ * by hand, so the page and the tool cannot disagree. The inputs are the tool's
+ * own default scenario: example inputs, not client data or market averages.
+ */
+
+const title = 'App Payback Calculator for Subscription & Ad Apps — E2E Apps';
+const description =
+  'Estimate the day an install pays back its acquisition cost, for subscription or ad-monetised apps. Method, worked examples and limits included.';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const H = 365;
+
+const sub = INITIAL_STATE;
+const ad = { ...INITIAL_STATE, mode: 'ad' as const };
+const subP = computePayback(sub, H);
+const adP = computePayback(ad, H);
+
+const money = (v: number) => (v < 0 ? '−$' : '$') + Math.abs(v).toFixed(2);
+const pct = (v: number) => `${v}%`;
+const times = (v: number | null) => (v === null ? '—' : v.toFixed(2) + '×');
+
+const subInputs: [string, string][] = [
+  ['Install to trial', pct(sub.i2t)],
+  ['Trial to paid', pct(sub.t2p)],
+  ['Plan price', `${money(sub.price)} ${sub.period}`],
+  ['Trial length', `${sub.trialDays} days`],
+  ['Renewal retention per billing cycle', pct(sub.retention)],
+  ['Store commission', pct(sub.commission)],
+  ['Refunds', pct(sub.refund)],
+  ['Cost per install', money(sub.cpi)],
+];
+const adInputs: [string, string][] = [
+  ['Revenue per active user per day', `$${ad.arpdau}`],
+  ['Day 1 retention', pct(ad.d1)],
+  ['Day 30 retention', pct(ad.d30)],
+  ['Cost per install', money(ad.adCpi)],
+];
+const results = (p: typeof subP): [string, string][] => [
+  ['Payback', crossingLabel(p.crossing, H)],
+  [`Revenue per install by day ${H}`, money(p.revenueAt)],
+  [`Return on spend by day ${H}`, times(p.roas)],
+];
+
+const home = new URL(`${base}/`, Astro.site).href;
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'App payback calculator',
+  description,
+  url: new URL(`${base}/payback-calculator`, Astro.site).href,
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Any (runs in the browser)',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  provider: { '@type': 'ProfessionalService', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+};
+---
+
+<Base title={title} description={description} path="/payback-calculator">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(app)} />
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <Breadcrumbs trail={[{ name: 'Payback calculator', path: '/payback-calculator' }]} />
+
+      <section class="section section--lead" data-section="calc-intro">
+        <div class="wrap">
+          <div class="section-head">
+          <p class="eyebrow eyebrow--amber">Free tool</p>
+          <h1 class="calc__h1">App payback calculator</h1>
+          <p class="section-lead">
+            Find the day an install earns back what it cost to acquire, for a subscription app or an
+            ad-monetised one. Set your own funnel, price, retention and cost per install. Results are
+            modelled from the assumptions you enter: a planning estimate, not a forecast of what a
+            campaign will do.
+          </p>
+          </div>
+        </div>
+      </section>
+
+      <Payback eyebrow="The calculator" methodLink={false} />
+
+      <section class="section" data-section="calc-method">
+        <div class="wrap">
+          <h2 class="calc__h2">How the calculator works</h2>
+          <div class="calc__grid">
+            <div class="calc__card">
+              <h3 class="calc__h3">Subscription apps</h3>
+              <ol class="calc__steps">
+                <li>Payers per install = install-to-trial rate × trial-to-paid rate.</li>
+                <li>Each payment is the plan price after store commission and refunds.</li>
+                <li>
+                  The first charge lands when the trial ends, then one charge per billing cycle
+                  ({cycleDays({ ...sub, period: 'weekly' })} days weekly, {cycleDays(sub)} monthly,
+                  {' '}{cycleDays({ ...sub, period: 'annual' })} annual).
+                </li>
+                <li>
+                  At every renewal the same share of payers stays (renewal retention), so payments
+                  shrink cycle by cycle.
+                </li>
+                <li>
+                  Revenue per install on any day = payers per install × net payment × payments
+                  reached so far.
+                </li>
+              </ol>
+            </div>
+            <div class="calc__card">
+              <h3 class="calc__h3">Ad-monetised apps</h3>
+              <ol class="calc__steps">
+                <li>
+                  A retention curve is drawn through your day 1 and day 30 retention (a power curve,
+                  so it falls fast and then flattens).
+                </li>
+                <li>Active days per install = the install day plus the retained share of every day after it.</li>
+                <li>Revenue per install = revenue per active user per day × active days.</li>
+              </ol>
+            </div>
+          </div>
+          <p class="calc__note">
+            In both models, payback is the first day revenue per install reaches the cost per install.
+            The search runs to day {SEARCH_MAX.toLocaleString('en-US')}; when it finds no crossing, the
+            calculator says so rather than calling it never.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" data-section="calc-examples">
+        <div class="wrap">
+          <h2 class="calc__h2">Worked examples</h2>
+          <p class="section-lead calc__lead">
+            Both use the calculator's default scenario: example inputs chosen to show how the model
+            behaves, not client data and not market averages. Every result below is computed by the
+            same model as the tool above.
+          </p>
+          <div class="calc__grid">
+            <div class="calc__card">
+              <h3 class="calc__h3">Subscription example</h3>
+              <table class="calc__table">
+                <caption class="visually-hidden">Subscription example inputs and results</caption>
+                <tbody>
+                  {subInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                </tbody>
+                <tbody class="calc__results">
+                  {results(subP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                </tbody>
+              </table>
+            </div>
+            <div class="calc__card">
+              <h3 class="calc__h3">Ad-monetised example</h3>
+              <table class="calc__table">
+                <caption class="visually-hidden">Ad-monetised example inputs and results</caption>
+                <tbody>
+                  {adInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                </tbody>
+                <tbody class="calc__results">
+                  {results(adP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" data-section="calc-measured">
+        <div class="wrap calc__narrow">
+          <h2 class="calc__h2">Why your dashboard can show a later payback</h2>
+          <p class="calc__p">
+            The calculator models the revenue a cohort really earns. Your MMP and ad platforms often
+            see less of it. Three switches under the chart simulate the usual gaps: renewals that are
+            never sent from the server, a SKAN schema that is not mapped to revenue, and web-to-app
+            clicks that never connect to the install. With a gap switched on, the reported line falls
+            below the real one, and campaigns that pay back look as if they do not.
+          </p>
+          <p class="calc__p">
+            Closing those gaps is the work behind the{' '}
+            <a class="link" href={`${base}/services/mobile-attribution-audit`}>attribution audit</a> and{' '}
+            <a class="link" href={`${base}/services/subscription-revenue-tracking`}>subscription revenue tracking</a>.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" data-section="calc-limits">
+        <div class="wrap calc__narrow">
+          <h2 class="calc__h2">Limits of the model</h2>
+          <ul class="calc__list">
+            {ASSUMPTIONS.map((a) => <li>{a}</li>)}
+            <li>Surplus is before operating costs, so it is not profit.</li>
+          </ul>
+          <a class="btn-primary calc__btn" href={`${base}/#contact`}>
+            Check it against your own data
+            <Icon name="arrow-right" size={14} />
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+    overflow-x: clip;
+  }
+
+  .calc__h1 {
+    margin-top: var(--s4);
+    font-size: var(--t-h1);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+  }
+
+  .calc__lead {
+    max-width: 68ch;
+  }
+
+  .calc__h2 {
+    font-size: var(--t-h2);
+  }
+
+  .calc__h3 {
+    font-size: var(--t-h3-sm);
+  }
+
+  .calc__grid {
+    margin-top: var(--s8);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: var(--s6);
+  }
+
+  .calc__card {
+    padding: var(--s8);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    min-width: 0;
+  }
+
+  .calc__steps,
+  .calc__list {
+    margin: var(--s6) 0 0;
+    padding-left: 1.25em;
+    display: grid;
+    gap: var(--s3);
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .calc__note,
+  .calc__p {
+    margin-top: var(--s6);
+    max-width: 68ch;
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .calc__narrow {
+    max-width: 860px;
+  }
+
+  .calc__table {
+    margin-top: var(--s6);
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-body-sm);
+  }
+
+  .calc__table th,
+  .calc__table td {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .calc__table th {
+    font-weight: var(--fw-regular);
+    color: var(--color-text-2);
+    padding-right: var(--s4);
+  }
+
+  .calc__table td {
+    font-family: var(--font-mono);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .calc__results th,
+  .calc__results td {
+    color: var(--color-text);
+    font-weight: var(--fw-semibold);
+  }
+
+  .calc__results tr:first-child th,
+  .calc__results tr:first-child td {
+    border-top: 2px solid var(--color-accent);
+  }
+
+  .calc__btn {
+    margin-top: var(--s8);
+  }
+</style>

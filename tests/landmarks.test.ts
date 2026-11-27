@@ -39,6 +39,7 @@ const PAGES = [
   'products.html',
   'faq.html',
   'about.html',
+  'payback-calculator.html',
   'blog.html',
   'privacy.html',
   'terms.html',
