@@ -2,27 +2,69 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import { FINDINGS, AUDIT_COUNT } from '../data/findings.ts';
 
 /**
- * Original data: what ten mobile attribution audits found. Counts and method
- * live in src/data/findings.ts. No app or client is named.
+ * Original data: what mobile attribution audits keep finding.
+ *
+ * Board: design/v3/Findings.dc.html. Counts and method live in
+ * src/data/findings.ts. No app or client is named.
+ *
+ * The owner does not want the number of audits shown, so no count is printed
+ * anywhere on this page: each finding's count becomes a phrase ("In every
+ * audit", "In more than half") and a bar whose length is count / AUDIT_COUNT
+ * with no scale. Both are computed from the data file below, never typed.
  */
 
-const title = 'What 10 Mobile Attribution Audits Found — E2E Apps';
+const title = 'What Mobile Attribution Audits Keep Finding — E2E Apps';
 const description =
-  'The measurement problems found across ten mobile attribution audits of AppsFlyer, Adjust and Singular setups: ATT, revenue events, SKAN and more.';
+  'What mobile attribution (MMP) audits of AppsFlyer, Adjust and Singular setups keep finding: ATT handling, revenue events, SKAN, postbacks and more.';
+const headline = 'What mobile attribution audits keep finding';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const home = new URL(`${base}/`, Astro.site).href;
+
+/** How often a fault appeared, in words. */
+const often = (count: number) => {
+  if (count === AUDIT_COUNT) return 'In every audit';
+  if (count === AUDIT_COUNT - 1) return 'In nearly every audit';
+  if (count * 2 > AUDIT_COUNT) return 'In more than half';
+  if (count * 2 === AUDIT_COUNT) return 'In half';
+  return 'In some audits';
+};
+const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+const share = (count: number) => `${(count / AUDIT_COUNT) * 100}%`;
+/** Filled tag for the near-universal faults, outlined amber down to half, quiet below. */
+const tone = (count: number) =>
+  count >= AUDIT_COUNT - 1 ? 'fix' : count * 2 >= AUDIT_COUNT ? 'review' : 'ok';
+
+const WORDS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+const faults = WORDS[FINDINGS.length] ?? String(FINDINGS.length);
+
 const top = FINDINGS[0]!;
+const second = FINDINGS[1]!;
+
+/* Where each card's glow sits, as left / top percentages. */
+const GLOW = [
+  ['100%', '0%'],
+  ['100%', '100%'],
+  ['0%', '0%'],
+  ['0%', '100%'],
+  ['55%', '0%'],
+  ['100%', '60%'],
+  ['100%', '0%'],
+  ['0%', '55%'],
+  ['100%', '100%'],
+];
 
 const article = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'What 10 mobile attribution audits found',
+  headline,
   description,
   url: new URL(`${base}/mmp-audit-findings`, Astro.site).href,
   datePublished: '2026-11-27',
@@ -38,74 +80,192 @@ const article = {
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Audit findings', path: '/mmp-audit-findings' }]} />
 
-      <section class="section section--lead" data-section="findings-intro">
+      <PageHero
+        label="Original data"
+        title={headline}
+        lead="The measurement problems found across mobile attribution audits of AppsFlyer, Adjust and Singular setups: ATT, revenue events, SKAN and more."
+        cta={{ href: `${base}/services/mobile-attribution-audit`, text: 'See what the audit covers' }}
+        section="findings-intro"
+      />
+
+      <section class="section" data-section="findings-overview">
         <div class="wrap">
-          <div class="section-head">
-            <p class="eyebrow eyebrow--amber">Original data</p>
-            <h1 class="fd__h1">What {AUDIT_COUNT} mobile attribution audits found</h1>
-            <p class="section-lead">
-              Across {AUDIT_COUNT} audits of subscription and ad-monetised apps, mostly on AppsFlyer with
-              Adjust and Singular, the most common problem was ATT handling: it needed fixing in
-              {' '}{top.count} of {AUDIT_COUNT}. Revenue or purchase events were missing or wrong in
-              {' '}{FINDINGS[1]!.count}. No app is named here.
-            </p>
+          <div class="row">
+            <div class="fd__copy" data-reveal="1">
+              <p class="shead__label">Most common first</p>
+              <h2 class="shead__title fd__h2">ATT handling needed fixing {lower(often(top.count))}</h2>
+              <p class="fd__p">
+                Across audits of subscription and ad-monetised apps, mostly on AppsFlyer with Adjust
+                and Singular, the most common problem was ATT handling: it needed fixing
+                {' '}{lower(often(top.count))}. Revenue or purchase events were missing or wrong
+                {' '}{lower(often(second.count))}.
+              </p>
+              <p class="fd__p">No app is named here.</p>
+              <a class="pill-link fd__pill" href="#findings">
+                Read all {lower(faults)} findings <Icon name="arrow-right" size={14} />
+              </a>
+            </div>
+
+            <div class="scene fd__scene" data-reveal="1">
+              <span class="badge fd__badge">ATT: {lower(often(top.count))}</span>
+              <div class="dcard fd__chart">
+                <div class="dcard__label"><span>How often each fault appears</span></div>
+                <ul class="fd__bars" role="list">
+                  {
+                    FINDINGS.map((f) => (
+                      <li>
+                        <span class="fd__bars-name">{f.title}</span>
+                        <span class="visually-hidden">: {lower(often(f.count))}</span>
+                        <span class="fd__bars-track" aria-hidden="true">
+                          <i class={`fd__fill fd__fill--${tone(f.count)}`} style={`width:${share(f.count)}`} />
+                        </span>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+              <div class="dcard dcard--raised fd__setups">
+                <div class="dcard__label"><span class="fd__amber">Setups audited</span></div>
+                <p class="fd__setups-main">Mostly AppsFlyer, with Adjust and Singular</p>
+                <p class="fd__setups-sub">Subscription and ad-monetised apps.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="section fd__list" data-section="findings">
-        <div class="wrap fd__narrow">
-          <h2 class="visually-hidden">Findings, most common first</h2>
-          <ol class="fd__items" role="list">
-            {
-              FINDINGS.map((f) => (
-                <li class="fd__item">
-                  <div class="fd__top">
-                    <h3 class="fd__title">{f.title}</h3>
-                    <p class="fd__count">
-                      <strong>{f.count}</strong> of {AUDIT_COUNT} audits
-                    </p>
-                  </div>
-                  <div class="fd__bar" aria-hidden="true">
-                    <span style={`width:${(f.count / AUDIT_COUNT) * 100}%`} />
-                  </div>
-                  <p class="fd__effect">{f.effect}</p>
-                  <a class="link fd__link" href={`${base}${f.path}`}>
-                    Fix: {f.linkLabel}
-                    <Icon name="arrow-right" size={13} />
-                  </a>
-                </li>
-              ))
-            }
-          </ol>
+      <section id="findings" class="section section--band" data-section="findings">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">The findings</p>
+            <h2 class="shead__title">{faults} faults, and the fix for each</h2>
+            <p class="shead__aside">
+              Each card says what the fault does to the numbers and links to the service that fixes
+              it. Bars show how often it appeared. Most common first.
+            </p>
+          </div>
+
+          <div class="sbody">
+            <ol class="ggrid ggrid--3 swipe fd__items" role="list" data-swipe data-swipe-label="Finding">
+              {
+                FINDINGS.map((f, i) => (
+                  <li
+                    class:list={['gcard', 'fd__item', { 'gcard--lead': i === 0 }]}
+                    style={`--gx:${GLOW[i % GLOW.length]![0]};--gy:${GLOW[i % GLOW.length]![1]}`}
+                  >
+                    <div class="fd__top">
+                      <span class="fd__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                      <span class={`tag tag--${tone(f.count)} fd__count`}>{often(f.count)}</span>
+                    </div>
+                    <span class="fd__bar" aria-hidden="true">
+                      <i style={`width:${share(f.count)}`} />
+                    </span>
+                    <h3 class="gcard__title">{f.title}</h3>
+                    <p class="gcard__text">{f.effect}</p>
+                    <a class="gcard__go" href={`${base}${f.path}`}>
+                      Fix: {f.linkLabel}
+                      <Icon name="arrow-right" size={15} />
+                    </a>
+                  </li>
+                ))
+              }
+            </ol>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{FINDINGS.map(() => <i />)}</span>
+              <span data-swipe-count>Finding 1 of {FINDINGS.length}</span>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="section" data-section="findings-method">
-        <div class="wrap fd__narrow">
-          <h2 class="fd__h2">How these were counted</h2>
-          <ul class="fd__method">
-            <li>Each audit is a workbook of checks marked "Looks good", "Needs review" or "Needs fixes".</li>
-            <li>An audit counts once for a finding if at least one check in that area needed fixing. "Needs review" is not counted.</li>
-            <li>Only the attribution platform checks are used. Analytics checks are left out.</li>
-            <li>A check copied word for word between audit workbooks is not counted, and nor is one marked not applicable after discussion.</li>
-            <li>Every match was read by hand before it was counted.</li>
-          </ul>
-          <h2 class="fd__h2">What this cannot show</h2>
-          <p class="fd__p">
-            These are apps whose teams asked for an audit, so they are more likely than average to have
-            problems. Ten audits is a small sample: read the counts as what to check first, not as an
-            industry rate.
-          </p>
-          <div class="fd__next">
-            <a class="btn-primary" href={`${base}/services/mobile-attribution-audit`}>
-              See what the audit covers
-              <Icon name="arrow-right" size={14} />
-            </a>
-            <a class="link" href={`${base}/case-studies`}>Case studies</a>
+        <div class="wrap">
+          <div class="row row--flip">
+            <div class="fd__copy" data-reveal="1">
+              <p class="shead__label">Method</p>
+              <h2 class="shead__title fd__h2">How these were counted</h2>
+              <ul class="fd__method" role="list">
+                <li>Each audit is a workbook of checks marked "Looks good", "Needs review" or "Needs fixes".</li>
+                <li>An audit counts once for a finding if at least one check in that area needed fixing. "Needs review" is not counted.</li>
+                <li>Only the attribution platform checks are used. Analytics checks are left out.</li>
+                <li>A check copied word for word between audit workbooks is not counted, and nor is one marked not applicable after discussion.</li>
+                <li>Every match was read by hand before it was counted.</li>
+              </ul>
+            </div>
+
+            <div class="scene fd__scene fd__scene--method" data-reveal="1">
+              <span class="badge fd__badge">Every match read by hand</span>
+              <div class="dcard fd__book">
+                <div class="dcard__label"><span>Audit workbook</span><span>Sample</span></div>
+                <div class="fd__table">
+                  <table class="fd__sheet">
+                    <thead>
+                      <tr><th scope="col">Check</th><th scope="col">Status</th><th scope="col">In the count</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">ATT prompt timing</th>
+                        <td><span class="tag tag--fix">Needs fixes</span></td>
+                        <td class="fd__amber fd__yes">Counted</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Revenue events</th>
+                        <td><span class="tag tag--fix">Needs fixes</span></td>
+                        <td class="fd__amber fd__yes">Counted</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">SKAN conversion values</th>
+                        <td><span class="tag tag--review">Needs review</span></td>
+                        <td>Not counted</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Partner postbacks</th>
+                        <td><span class="tag tag--ok">Looks good</span></td>
+                        <td>Not counted</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="dcard dcard--raised fd__setups">
+                <div class="dcard__label"><span class="fd__amber">Counting rule</span></div>
+                <p class="fd__setups-sub">
+                  An audit counts once for a finding, however many checks in that area needed fixing.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      <section class="section fd__limits-section" data-section="findings-limits">
+        <div class="wrap">
+          <div class="gcard gcard--lead fd__limits" style="--gx:0%;--gy:0%" data-reveal="1">
+            <div class="fd__limits-head">
+              <p class="shead__label">Limits</p>
+              <h2 class="fd__limits-title">What this cannot show</h2>
+            </div>
+            <div class="fd__limits-body">
+              <p class="fd__limits-text">
+                These are apps whose teams asked for an audit, so they are more likely than average to
+                have problems. It is a small sample: read the counts as what to check first, not as an
+                industry rate.
+              </p>
+              <div class="fd__next">
+                <a class="btn-primary" href={`${base}/services/mobile-attribution-audit`}>
+                  See what the audit covers
+                  <Icon name="arrow-right" size={14} />
+                </a>
+                <a class="fd__more" href={`${base}/case-studies`}>
+                  Case studies <Icon name="arrow-right" size={14} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Cta />
     </main>
     <Footer />
   </div>
@@ -118,112 +278,329 @@ const article = {
     overflow-x: clip;
   }
 
-  .fd__h1 {
+  .fd__copy {
+    min-width: 0;
+  }
+
+  .fd__h2 {
+    margin-top: var(--s6);
+  }
+
+  .fd__p {
+    margin-top: var(--s6);
+    max-width: 52ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .fd__p + .fd__p {
     margin-top: var(--s4);
-    font-size: var(--t-h1);
-    line-height: var(--lh-h1);
-    letter-spacing: var(--ls-h1);
   }
 
-  .fd__list {
-    padding-top: 0;
+  .fd__pill {
+    margin-top: var(--s8);
   }
 
-  .fd__narrow {
-    max-width: 920px;
+  .fd__amber {
+    color: var(--color-accent-text);
   }
 
-  .fd__items {
-    margin: 0;
+  /* --- scenes: cards in normal flow, so nothing can overlap at any width --- */
+  .fd__scene {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s6);
+    padding: clamp(18px, 2.6vw, 34px);
+    min-height: 0;
+  }
+
+  .fd__scene--method {
+    justify-content: center;
+  }
+
+  .fd__badge {
+    align-self: flex-end;
+  }
+
+  .fd__chart,
+  .fd__book {
+    width: 100%;
+    max-width: 440px;
+    min-width: 0;
+  }
+
+  .fd__book {
+    max-width: 500px;
+  }
+
+  .fd__setups {
+    align-self: flex-end;
+    width: 100%;
+    max-width: 290px;
+  }
+
+  .fd__setups-main {
+    margin-top: var(--s2);
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: 1.4;
+  }
+
+  .fd__setups-sub {
+    margin-top: var(--s2);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+
+  .fd__bars {
+    display: grid;
+    gap: var(--s4);
+    margin: var(--s6) 0 0;
     padding: 0;
     list-style: none;
-    border-top: 1px solid var(--color-line);
+    font-size: 13.5px;
+    line-height: 1.35;
   }
 
-  .fd__item {
-    padding: var(--s12) 0;
-    border-bottom: 1px solid var(--color-line);
+  .fd__bars-name {
+    display: block;
+  }
+
+  .fd__bars-track {
+    display: block;
+    margin-top: 5px;
+    height: 8px;
+  }
+
+  .fd__fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--color-accent);
+  }
+
+  .fd__fill--review {
+    opacity: 0.62;
+  }
+
+  .fd__fill--ok {
+    opacity: 0.4;
+  }
+
+  /* The sample workbook: a real table, in a box that scrolls sideways if a
+     phone is too narrow for three columns. */
+  .fd__table {
+    margin-top: var(--s4);
+    overflow-x: auto;
+  }
+
+  .fd__sheet {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-card);
+  }
+
+  .fd__sheet th,
+  .fd__sheet td {
+    padding: 7px 12px 7px 0;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: var(--fw-regular);
+  }
+
+  .fd__sheet th:last-child,
+  .fd__sheet td:last-child {
+    padding-right: 0;
+  }
+
+  .fd__sheet thead th {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .fd__sheet td {
+    font-size: 13.5px;
+    color: var(--color-text-3);
+    white-space: nowrap;
+  }
+
+  .fd__sheet .fd__yes {
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent-text);
+  }
+
+  /* --- the findings ------------------------------------------------------- */
+  .fd__items {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
   }
 
   .fd__top {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     justify-content: space-between;
-    gap: var(--s4) var(--s8);
+    gap: var(--s3) var(--s4);
   }
 
-  .fd__title {
-    font-size: var(--t-h3-sm);
+  .fd__n {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-text-3);
   }
 
   .fd__count {
-    margin: 0;
-    font-family: var(--font-mono);
-    color: var(--color-text-3);
-    white-space: nowrap;
-  }
-
-  .fd__count strong {
-    font-family: var(--font-heading);
-    font-size: 28px;
-    color: var(--color-accent);
-    margin-right: 4px;
+    padding: 5px 11px;
+    font-size: var(--t-mono-xs);
   }
 
   .fd__bar {
+    display: block;
     margin-top: var(--s6);
     height: 8px;
     border-radius: 4px;
-    background: var(--color-surface-sunk);
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line);
     overflow: hidden;
   }
 
-  .fd__bar span {
+  .fd__bar i {
     display: block;
     height: 100%;
+    border-radius: 4px;
     background: var(--color-accent);
   }
 
-  .fd__effect,
-  .fd__p {
-    margin-top: var(--s6);
-    max-width: 68ch;
-    color: var(--color-text-2);
-    line-height: var(--lh-body);
+  .fd__item .gcard__title {
+    font-size: var(--t-h3);
   }
 
-  .fd__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 44px;
-    margin-top: var(--s4);
+  .fd__item .gcard__text {
+    font-size: var(--t-body-sm);
   }
 
-  .fd__h2 {
-    margin-top: var(--s12);
-    font-size: var(--t-h2-card);
-  }
-
-  .fd__h2:first-child {
-    margin-top: 0;
-  }
-
+  /* --- method ------------------------------------------------------------- */
   .fd__method {
-    margin: var(--s6) 0 0;
-    padding-left: 1.2em;
     display: grid;
-    gap: var(--s4);
-    color: var(--color-text-2);
+    gap: var(--s6);
+    margin: var(--s8) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-body);
     line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .fd__method li {
+    position: relative;
+    padding-left: 30px;
+  }
+
+  /* A drawn tick: the icon set has no plain check. */
+  .fd__method li::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0.42em;
+    width: 12px;
+    height: 6px;
+    border-left: 2.4px solid var(--color-accent-text);
+    border-bottom: 2.4px solid var(--color-accent-text);
+    transform: rotate(-45deg);
+  }
+
+  /* --- limits ------------------------------------------------------------- */
+  .fd__limits-section {
+    padding-top: 0;
+  }
+
+  .fd__limits {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s8);
+    padding: clamp(24px, 4vw, 54px);
+    box-shadow: 0 0 0 1px var(--color-line-strong);
+  }
+
+  .fd__limits-head,
+  .fd__limits-body {
+    min-width: 0;
+  }
+
+  .fd__limits-title {
+    margin-top: var(--s4);
+    font-size: var(--t-h2-card);
+    letter-spacing: var(--ls-h2-card);
+    line-height: 1.14;
+  }
+
+  .fd__limits-text {
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
   .fd__next {
-    margin-top: var(--s12);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--s8);
+    gap: var(--s4) var(--s8);
+    margin-top: var(--s8);
+  }
+
+  .fd__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    min-height: 44px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent-text);
+  }
+
+  @media (min-width: 900px) {
+    .fd__limits {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+  }
+
+  @media (max-width: 899px) {
+    /* Text first, picture second, on one column. */
+    .fd__scene {
+      order: 2;
+    }
+  }
+
+  @media (max-width: 699px) {
+    .fd__item {
+      min-height: 300px;
+    }
+
+    /* Room for the three-column sample sheet inside a phone-width panel. */
+    .fd__scene {
+      padding: 12px;
+    }
+
+    .fd__book {
+      padding: 16px 14px;
+    }
+
+    .fd__sheet th,
+    .fd__sheet td {
+      padding-right: 8px;
+      font-size: 13px;
+    }
+
+    .fd__sheet thead th {
+      font-size: 10px;
+    }
   }
 </style>

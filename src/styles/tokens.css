@@ -30,12 +30,29 @@
   --color-text-4: #868d98; /*  4.8:1  labels, meta   */
 
   /* --- Brand accent — carried over from the cream site ------------------ */
-  --color-accent: #e39a1f; /* 8.1:1 on --color-bg */
+  --color-accent: #e39a1f; /* 8.1:1 on --color-bg. FILLS, bars, rings. */
+  /* Amber as TEXT. The same amber on the dark ground; a darker one on the light
+     ground, where #E39A1F is only 2.2:1. Every `color:` that wants the accent
+     reads this, never --color-accent. */
+  --color-accent-text: #e39a1f;
+  /* The focus ring. Amber on dark; a deeper amber on light, where the brand
+     amber is 2.2:1 against the ground and a ring must reach 3:1. */
+  --color-focus: #e39a1f;
   --color-accent-hover: #f0ab33;
   --color-accent-dim: rgba(227, 154, 31, 0.12);
   --color-ink: #101725; /* text on a filled accent button, 7.6:1 */
   --rgb-accent: 227, 154, 31;
   --rgb-text: 232, 234, 237;
+  /* The ground as r,g,b: for the shade laid over a photo so cards on it stay
+     legible, and for the translucent nav. */
+  --rgb-bg: 14, 16, 20;
+  --rgb-surface: 22, 25, 31;
+  /* Strength of the two blooms behind a page header and of a card's corner glow. */
+  --bloom-amber: 0.3;
+  --bloom-blue: 0.42;
+  --glow: 0.07;
+  --glow-lead: 0.28;
+  --dot-grid: 0.07;
 
   /* --- Chart ------------------------------------------------------------ */
   --chart-true: var(--color-accent);
@@ -56,8 +73,9 @@
   --fw-bold: 700;
 
   /* --- Type scale ------------------------------------------------------- */
-  --t-h1: clamp(38px, 5.4vw, 68px);
-  --t-h2: clamp(30px, 3.4vw, 44px);
+  --t-h1: clamp(38px, 5.4vw, 78px);
+  --t-page: clamp(36px, 4.6vw, 62px);
+  --t-h2: clamp(30px, 3.5vw, 50px);
   --t-h2-closing: clamp(30px, 3.8vw, 50px);
   --t-h2-card: clamp(26px, 2.8vw, 36px);
   --t-h3: 23px;
@@ -149,6 +167,62 @@
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/* ---------------------------------------------------------------------------
+   Light theme.
+
+   The site follows the visitor's device: dark where the system is dark, light
+   where it is light. There is no switch and no stored preference. Only colour
+   tokens change; every size, space and radius is shared.
+
+   Amber stays the one accent, but it cannot be text on a light ground, so
+   --color-accent-text goes to a deep amber that clears 4.5:1 on white, and the
+   chart line goes to one that clears 3:1. Amber fills keep the brand value and
+   carry dark ink, as they always have.
+
+   scripts/check-contrast.mjs checks both themes.
+   --------------------------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg: #f6f7f9;
+    --color-surface: #ffffff;
+    --color-surface-sunk: #eef0f4;
+    --color-line: #e1e4ea;
+    --color-line-soft: #e9ecf1;
+    --color-line-strong: #cbd1da;
+    --color-line-hover: #a9b1bd;
+    --color-band: #eef0f4;
+
+    --color-text: #101725; /* 16.6:1 on --color-bg */
+    --color-text-2: #3c4454; /*  9.3:1 */
+    --color-text-3: #4f5868; /*  6.7:1 */
+    --color-text-4: #5a6474; /*  5.6:1 */
+
+    --color-accent-text: #8a5600; /* 5.9:1 on white, 5.5:1 on --color-bg */
+    --color-focus: #a86a00;
+    --color-accent-dim: rgba(227, 154, 31, 0.16);
+    --rgb-text: 16, 23, 37;
+    --rgb-bg: 246, 247, 249;
+    --rgb-surface: 255, 255, 255;
+    --bloom-amber: 0.55;
+    --bloom-blue: 0.34;
+    --glow: 0.12;
+    --glow-lead: 0.34;
+    --dot-grid: 0.09;
+
+    --chart-true: #b87400; /* 3.6:1 on white */
+    --chart-measured: #8a93a1;
+    --chart-axis: #cbd1da;
+    --chart-rule: #a9b1bd;
+    --chart-bar-dim: #cbd1da;
+
+    --shadow-accent: 0 8px 22px -12px rgba(16, 23, 37, 0.35);
+    --shadow-accent-hover: 0 12px 28px -10px rgba(16, 23, 37, 0.4);
+    --shadow-accent-sm: 0 6px 16px -10px rgba(16, 23, 37, 0.3);
+    --shadow-card-hover: 0 18px 44px rgba(16, 23, 37, 0.14);
+    --ring-accent: 0 0 0 1px rgba(184, 116, 0, 0.5);
+  }
+}
+
 /* The compatibility alias block that lived here is gone.
 
    It mapped the retired cream names onto the new palette so the site stayed
@@ -176,8 +250,9 @@
 
 @media (max-width: 640px) {
   :root {
-    --t-h1: 32px;
-    --t-h2: 25px;
+    --t-h1: 36px;
+    --t-page: 32px;
+    --t-h2: 28px;
     --t-h2-closing: 27px;
     --t-h2-card: 25px;
     --t-h3: 21px;

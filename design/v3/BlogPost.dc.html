@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>E2E Apps blog post, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{color:#F0AB33}
+@keyframes e2e-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.e2e-marquee{animation:none !important}}
+</style>
+</helmet>
+<div style="--bg:#0E1014; --surf:#16191F; --surf2:#1D2128; --band:#111318; --line:#23272E; --line2:#2C3138; --tx:#E8EAED; --tx2:#A8AEB6; --tx3:#8E959E; --tx4:#868D98; --am:#E39A1F; --ink:#101725; --f:'Be Vietnam Pro',system-ui,sans-serif; --fm:'IBM Plex Mono',ui-monospace,monospace; background: var(--bg); color: var(--tx); font-family: var(--f); font-size: 17px; line-height: 1.6">
+
+<!-- PAGE HEADER -->
+<section style="position: relative; overflow: hidden; padding: 16px 32px 0">
+<div aria-hidden="true" style="position: absolute; left: 8%; top: -120px; width: 52%; height: 640px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.30), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div aria-hidden="true" style="position: absolute; right: 2%; top: -40px; width: 50%; height: 660px; border-radius: 50%; background: radial-gradient(closest-side, rgba(64,86,140,0.42), rgba(64,86,140,0)); filter: blur(34px)"></div>
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.07) 1px, transparent 1px); background-size: 34px 34px; -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%); mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 78%)"></div>
+
+<header style="position: relative; max-width: 1376px; margin: 0 auto; box-sizing: border-box; height: 78px; padding: 0 20px 0 24px; display: flex; align-items: center; gap: 36px; background: rgba(22,25,31,0.86); border: 1px solid var(--line2); border-radius: 12px">
+<a href="#top" style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 19px; letter-spacing: -0.02em">
+<span style="width: 34px; height: 34px; border-radius: 9px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 12px; font-weight: 700">E2E</span>E2E Apps</a>
+<nav style="display: flex; gap: 30px; font-size: 16px; color: var(--tx2)">
+<a href="#fix">Services</a><a href="#loop">Approach</a><a href="#payback">Calculator</a><a href="#insights">Findings</a><a href="#insights">Blog</a>
+</nav>
+<div style="margin-left: auto; display: flex; gap: 12px">
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; border: 1px solid var(--line2); font-weight: 600; font-size: 16px">Book a call</a>
+<a href="#contact" style="display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 16px">Get a free first look</a>
+</div>
+</header>
+
+<!-- Breadcrumb -->
+<div style="position: relative; max-width: 1280px; margin: 0 auto; padding: 28px 0 0; display: flex; justify-content: space-between; align-items: center; gap: 24px; font-family: var(--fm); font-size: 12.5px; color: var(--tx4)">
+<nav aria-label="Breadcrumb" style="display: flex; gap: 10px; min-width: 0; white-space: nowrap">
+<a href="#top" style="color: var(--tx2)">Home</a><span aria-hidden="true">/</span><a href="#top" style="color: var(--tx2)">Blog</a><span aria-hidden="true">/</span><span aria-current="page" style="overflow: hidden; text-overflow: ellipsis">Renewals happen while your app is closed. Nothing is listening.</span>
+</nav>
+<a href="#top" style="flex: none; color: var(--tx2)">← All posts</a>
+</div>
+
+<div id="top" style="position: relative; max-width: 1000px; margin: 0 auto; padding: 82px 0 90px; text-align: center">
+<div style="font-family: var(--fm); font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Subscriptions</div>
+<h1 style="margin: 26px 0 0; font-size: 58px; font-weight: 500; letter-spacing: -0.033em; line-height: 1.1; text-wrap: balance">Renewals happen while your app is closed. Nothing is listening.</h1>
+<p style="margin: 26px auto 0; max-width: 760px; font-size: 20px; line-height: 1.6; color: var(--tx2)">A renewal is a server-side event on Google's or Apple's infrastructure. No client SDK sees it, so it never reaches your MMP or your ad platforms — and every channel looks worse than it is.</p>
+<div style="margin-top: 34px; display: inline-flex; align-items: center; gap: 14px; font-family: var(--fm); font-size: 13px; color: var(--tx3)">
+<span style="display: inline-flex; align-items: center; gap: 10px"><span style="width: 30px; height: 30px; border-radius: 8px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-family: var(--f); font-size: 11px; font-weight: 700">E2E</span>By E2E Apps</span>
+<span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 50%; background: var(--line2)"></span>
+<span>26 August 2026</span>
+</div>
+</div>
+</section>
+
+<!-- ARTICLE -->
+<section id="article" style="padding: 96px 80px 0; border-top: 1px solid var(--line)">
+<article style="max-width: 720px; margin: 0 auto; font-size: 18px; line-height: 1.75; color: var(--tx2)">
+
+<p style="margin: 0; font-size: 21px; line-height: 1.65; color: var(--tx)">Here is a sequence that runs a few thousand times a day in a healthy subscription app, and that most measurement stacks cannot see.</p>
+<p style="margin: 26px 0 0">A subscriber's plan renews. Google Play — or the App Store — charges the card, extends the entitlement, and records the transaction. The app is closed. It has been closed for eleven days. No SDK initialises, no client event fires, and nothing in the app is aware that money changed hands.</p>
+
+<blockquote style="margin: 44px 0 0; padding: 4px 0 4px 28px; border-left: 3px solid var(--am); font-size: 32px; font-weight: 500; letter-spacing: -0.024em; line-height: 1.22; color: var(--tx)">The revenue is real. The measurement is not there.</blockquote>
+
+<h2 style="margin: 72px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.024em; line-height: 1.18; color: var(--tx); text-wrap: balance">Why this is an attribution problem and not an accounting one</h2>
+<p style="margin: 22px 0 0">You will still see the money. It appears in Play Console, in your subscription platform, and eventually in the bank. Finance is fine.</p>
+<p style="margin: 22px 0 0">What breaks is the link between that money and the click that caused it.</p>
+<p style="margin: 22px 0 0">Your ad platforms optimise against the conversion events you send them. If the only subscription event that reaches Google Ads or Meta is the <em>first</em> payment, then every channel is being valued at first payment only. A cohort that converts at a slightly worse rate but renews for fourteen months looks worse than one that converts well and churns in six weeks — and the bidding will systematically move budget toward the second.</p>
+
+<div style="position: relative; overflow: hidden; isolation: isolate; margin-top: 36px; padding: 30px 32px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px rgba(227,154,31,0.45)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -80px; top: -100px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.26), rgba(227,154,31,0))"></span>
+<div style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--am)">Not a rounding error</div>
+<p style="margin: 12px 0 0; font-size: 19px; line-height: 1.6; color: var(--tx)">On a subscription app it is the single largest distortion in the account, and it is invisible because nothing is broken. Every event that fires, fires correctly. The events that do not exist do not raise alarms.</p>
+</div>
+
+<h2 style="margin: 72px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.024em; line-height: 1.18; color: var(--tx); text-wrap: balance">What Real-Time Developer Notifications actually are</h2>
+<p style="margin: 22px 0 0">Google Play's answer is <strong style="font-weight: 600; color: var(--tx)">Real-Time Developer Notifications</strong> — a Pub/Sub topic that receives a push whenever a subscriber's state changes. Apple's equivalent is App Store Server Notifications V2.</p>
+<p style="margin: 22px 0 0">RTDN is usually introduced as a retention tool, which undersells it. It is the only mechanism that tells you, in something close to real time:</p>
+
+<ul style="position: relative; overflow: hidden; isolation: isolate; list-style: none; margin: 28px 0 0; padding: 12px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line); font-size: 17px; color: var(--tx)">
+<li aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; bottom: -130px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></li>
+<li style="display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line)"><span style="flex: none; font-family: var(--fm); font-size: 12px; color: var(--am)">01</span><span>a renewal succeeded</span></li>
+<li style="display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line)"><span style="flex: none; font-family: var(--fm); font-size: 12px; color: var(--am)">02</span><span>a payment failed and the subscription entered grace or hold</span></li>
+<li style="display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line)"><span style="flex: none; font-family: var(--fm); font-size: 12px; color: var(--am)">03</span><span>a subscriber cancelled, and when</span></li>
+<li style="display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line)"><span style="flex: none; font-family: var(--fm); font-size: 12px; color: var(--am)">04</span><span>a subscription was paused, or the pause schedule changed</span></li>
+<li style="display: flex; align-items: baseline; gap: 16px; padding: 14px 0"><span style="flex: none; font-family: var(--fm); font-size: 12px; color: var(--am)">05</span><span>a refund was issued and an entitlement revoked</span></li>
+</ul>
+
+<p style="margin: 28px 0 0">Google Play's own framing lists both jobs: a real-time performance tracking tool, and a tool to enable win-back strategies. Almost everyone builds the second and skips the first.</p>
+
+<figure style="margin: 44px 0 0">
+<div style="position: relative; overflow: hidden; border-radius: 24px; padding: 26px 28px 30px; background: radial-gradient(circle at 86% 10%, rgba(227,154,31,0.28), rgba(227,154,31,0) 50%), radial-gradient(circle at 8% 96%, rgba(64,86,140,0.42), rgba(64,86,140,0) 55%), #16191F; box-shadow: inset 0 0 0 1px var(--line)">
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(232,234,237,0.08) 1px, transparent 1px); background-size: 22px 22px"></div>
+<div style="position: relative; display: flex; justify-content: space-between; align-items: center; gap: 16px">
+<span style="font-family: var(--fm); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">Subscription state machine</span>
+<span style="padding: 8px 14px; border-radius: 999px; background: var(--am); color: var(--ink); font-size: 13px; font-weight: 700; line-height: 1.2; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.9)">No client SDK sees these</span>
+</div>
+<svg viewBox="0 0 720 290" role="img" aria-label="Subscription state machine showing active, voluntary cancellation, involuntary hold or grace, and expiry, with recovery paths returning to active" style="position: relative; margin-top: 22px; width: 100%; height: auto; display: block">
+<rect x="250" y="10" width="220" height="46" rx="10" fill="#E39A1F"></rect>
+<text x="360" y="39" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="15" font-weight="700" fill="#101725">Subscription Active</text>
+<line x1="300" y1="56" x2="180" y2="112" stroke="#4A515A" stroke-width="1.5"></line>
+<text x="176" y="90" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="12" fill="#A8AEB6">user cancels</text>
+<line x1="420" y1="56" x2="540" y2="112" stroke="#4A515A" stroke-width="1.5"></line>
+<text x="546" y="90" font-family="IBM Plex Mono, monospace" font-size="12" fill="#A8AEB6">payment fails</text>
+<rect x="40" y="112" width="250" height="62" rx="10" fill="#0E1014" stroke="#2C3138"></rect>
+<text x="165" y="138" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="14" font-weight="600" fill="#E8EAED">Voluntary</text>
+<text x="165" y="158" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="#8E959E">cancelled, entitlement runs on</text>
+<rect x="430" y="112" width="250" height="62" rx="10" fill="#0E1014" stroke="#2C3138"></rect>
+<text x="555" y="138" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="14" font-weight="600" fill="#E8EAED">Involuntary</text>
+<text x="555" y="158" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" fill="#8E959E">grace period, then account hold</text>
+<path d="M40 143 L20 143 L20 33 L250 33" fill="none" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="5 4"></path>
+<path d="M680 143 L700 143 L700 33 L470 33" fill="none" stroke="#E39A1F" stroke-width="1.5" stroke-dasharray="5 4"></path>
+<text x="360" y="204" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#E39A1F">both paths can return to active — RTDN is how you know</text>
+<line x1="165" y1="174" x2="165" y2="232" stroke="#4A515A" stroke-width="1.5"></line>
+<line x1="555" y1="174" x2="555" y2="232" stroke="#4A515A" stroke-width="1.5"></line>
+<rect x="250" y="232" width="220" height="46" rx="10" fill="#1D2128" stroke="#2C3138"></rect>
+<text x="360" y="261" text-anchor="middle" font-family="Be Vietnam Pro, sans-serif" font-size="15" font-weight="600" fill="#A8AEB6">Subscription Expired</text>
+<line x1="165" y1="232" x2="250" y2="255" stroke="#4A515A" stroke-width="1.5"></line>
+<line x1="555" y1="232" x2="470" y2="255" stroke="#4A515A" stroke-width="1.5"></line>
+</svg>
+</div>
+<figcaption style="margin-top: 16px; font-size: 15px; line-height: 1.6; color: var(--tx3)">Every transition here is a server-side event. A client SDK sees none of them, which is why a stack without a server-side path reports the first payment and then goes quiet.</figcaption>
+</figure>
+
+<!-- The rest of the article, fading out -->
+<div style="position: relative; overflow: hidden; max-height: 330px">
+<h2 style="margin: 72px 0 0; font-size: 32px; font-weight: 700; letter-spacing: -0.024em; line-height: 1.18; color: var(--tx)">What Truecaller found</h2>
+<p style="margin: 22px 0 0">Google published a case study on this that is worth reading for the shape rather than the numbers.</p>
+<p style="margin: 22px 0 0">Truecaller discovered that <strong style="font-weight: 600; color: var(--tx)">50% of Truecaller Monthly Premium subscribers were cancelling within 60 days</strong>. They used RTDN to test whether those cancellations were decisions or drift — people losing track of a subscription in the absence of any messaging — and enabled account hold and grace period so they could identify payment failures separately from cancellations.</p>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 210px; background: linear-gradient(180deg, rgba(14,16,20,0), #0E1014 88%)"></div>
+</div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 18px; font-family: var(--fm); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tx3)">
+<span aria-hidden="true" style="height: 1px; background: var(--line2)"></span><span>The article continues</span><span aria-hidden="true" style="height: 1px; background: var(--line2)"></span>
+</div>
+<div style="margin-top: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
+<span style="padding: 8px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line2); font-size: 14px; line-height: 1.3; color: var(--tx2)">The build, honestly described</span>
+<span style="padding: 8px 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line2); font-size: 14px; line-height: 1.3; color: var(--tx2)">How to tell whether you have this problem</span>
+</div>
+
+<!-- The post's closing call to action -->
+<aside style="position: relative; overflow: hidden; isolation: isolate; margin-top: 64px; padding: 36px 36px 34px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -90px; top: -120px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.24), rgba(227,154,31,0))"></span>
+<p style="margin: 0; font-size: 19px; line-height: 1.6; color: var(--tx)">If your renewal revenue is not reaching your ad platforms, the bidding is being optimised against first payments only, and your best cohorts are the ones being underbid. Finding out whether that is happening takes about an hour with access to your MMP and your subscription platform.</p>
+<div style="margin-top: 26px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap">
+<a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 24px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 16.5px; line-height: 1">Book a call
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="#related" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 16px; line-height: 1.3; color: var(--am)">Service: Subscription revenue tracking <span aria-hidden="true">→</span></a>
+</div>
+</aside>
+</article>
+</section>
+
+<!-- READ NEXT -->
+<section id="related" style="padding: 130px 80px 0">
+<div style="max-width: 1280px; margin: 0 auto">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Related posts</div>
+<div style="margin-top: 18px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<h2 style="grid-column: span 6; margin: 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08">Read next</h2>
+<div style="grid-column: 8 / span 5; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; margin-bottom: 6px">
+<a href="#related" style="display: block; padding-top: 16px; border-top: 2px solid var(--am)"><span style="display: block; font-family: var(--fm); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx4)">Service</span><span style="display: block; margin-top: 6px; font-size: 17px; font-weight: 700; line-height: 1.3">Subscription revenue tracking <span aria-hidden="true" style="color: var(--am)">▸</span></span></a>
+<a href="#related" style="display: block; padding-top: 16px; border-top: 2px solid var(--line2)"><span style="display: block; font-family: var(--fm); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tx4)">Services</span><span style="display: block; margin-top: 6px; font-size: 17px; font-weight: 700; line-height: 1.3">What we fix in mobile measurement <span aria-hidden="true" style="color: var(--am)">▸</span></span></a>
+</div>
+</div>
+
+<div style="margin-top: 56px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+
+<a href="#related" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 310px; box-sizing: border-box; padding: 32px 32px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -90px; bottom: -110px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--am)">Subscriptions</span>
+<span style="margin-top: 16px; font-size: 22px; font-weight: 700; letter-spacing: -0.018em; line-height: 1.22">Everything that happens between "Cancel" and cancelled</span>
+<span style="margin-top: 12px; font-size: 15.5px; color: var(--tx2)">Tapping cancel is the start of a funnel, not the end of one.</span>
+<span style="margin-top: auto; padding-top: 24px; display: flex; justify-content: space-between; align-items: center"><span style="font-family: var(--fm); font-size: 12.5px; color: var(--tx4)">AUG | 2026</span><span style="font-weight: 600; font-size: 15px; color: var(--am)">Read →</span></span>
+</a>
+
+<a href="#related" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 310px; box-sizing: border-box; padding: 32px 32px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; left: -100px; top: -110px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--am)">Subscriptions</span>
+<span style="margin-top: 16px; font-size: 22px; font-weight: 700; letter-spacing: -0.018em; line-height: 1.22">The churn that has nothing to do with your product</span>
+<span style="margin-top: 12px; font-size: 15.5px; color: var(--tx2)">A large share of subscription cancellations are failed payments, not decisions.</span>
+<span style="margin-top: auto; padding-top: 24px; display: flex; justify-content: space-between; align-items: center"><span style="font-family: var(--fm); font-size: 12.5px; color: var(--tx4)">AUG | 2026</span><span style="font-weight: 600; font-size: 15px; color: var(--am)">Read →</span></span>
+</a>
+
+<a href="#related" style="position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; min-height: 310px; box-sizing: border-box; padding: 32px 32px 28px; border-radius: 14px; background: var(--surf); box-shadow: 0 0 0 1px var(--line)">
+<span aria-hidden="true" style="position: absolute; z-index: -1; right: -70px; top: 34%; width: 270px; height: 270px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.07), rgba(227,154,31,0))"></span>
+<span style="font-family: var(--fm); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--am)">Campaigns</span>
+<span style="margin-top: 16px; font-size: 22px; font-weight: 700; letter-spacing: -0.018em; line-height: 1.22">Your app's quality score decides whether your ads run at all</span>
+<span style="margin-top: 12px; font-size: 15.5px; color: var(--tx2)">Store platforms score apps on uninstalls, engagement, ad load and stability, and that score gates access to ad inventory.</span>
+<span style="margin-top: auto; padding-top: 24px; display: flex; justify-content: space-between; align-items: center"><span style="font-family: var(--fm); font-size: 12.5px; color: var(--tx4)">AUG | 2026</span><span style="font-weight: 600; font-size: 15px; color: var(--am)">Read →</span></span>
+</a>
+
+</div>
+</div>
+</section>
+
+<!-- CLOSING BAND -->
+<section id="contact" style="position: relative; overflow: hidden; margin-top: 130px; padding: 96px 80px; background: var(--band); border-top: 1px solid var(--line)">
+<div aria-hidden="true" style="position: absolute; left: -6%; bottom: -300px; width: 46%; height: 560px; border-radius: 50%; background: radial-gradient(closest-side, rgba(227,154,31,0.22), rgba(227,154,31,0)); filter: blur(30px)"></div>
+<div style="position: relative; max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; align-items: end">
+<div style="grid-column: span 8">
+<div style="font-family: var(--fm); font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--am)">Let's look at your setup</div>
+<h2 style="margin: 18px 0 0; font-size: 50px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance">Send me your MMP setup. I'll tell you what's broken in it.</h2>
+</div>
+<div style="grid-column: 10 / span 3; display: flex; flex-direction: column; align-items: flex-end; gap: 18px; padding-bottom: 6px">
+<a href="#contact" style="display: inline-flex; align-items: center; gap: 10px; height: 60px; padding: 0 30px; border-radius: 9px; background: var(--am); color: var(--ink); font-weight: 600; font-size: 19px; white-space: nowrap; box-shadow: 0 10px 28px -12px rgba(0,0,0,0.9)">Get a free first look
+<svg aria-hidden="true" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="#contact" style="font-family: var(--fm); font-size: 14px; color: var(--am)">hello@e2eapp.com ↗</a>
+</div>
+</div>
+</section>
+
+<footer style="padding: 44px 80px 44px; border-top: 1px solid var(--line)">
+<div style="max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; font-size: 15px; color: var(--tx3)">
+<span style="display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--tx)"><span style="width: 30px; height: 30px; border-radius: 8px; background: var(--am); color: var(--ink); display: grid; place-items: center; font-size: 11px">E2E</span>E2E Apps</span>
+<span style="display: flex; gap: 28px; flex-wrap: wrap"><a href="#fix">Services</a><a href="#insights">Audit findings</a><a href="#insights">Case studies</a><a href="#payback">Payback calculator</a><a href="#insights">Blog</a><a href="#top">About</a><a href="#top">Privacy</a></span>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5125}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

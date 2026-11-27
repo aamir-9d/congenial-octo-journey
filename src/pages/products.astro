@@ -2,11 +2,17 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
 import Products from '../components/Products.astro';
+import Cta from '../components/Cta.astro';
+import Footer from '../components/Footer.astro';
 
 /**
  * Products.
+ *
+ * Board: design/v3/Products.dc.html. The page header carries the h1; the
+ * section under it is one large card per product (Products.astro); the closing
+ * ask ends the page.
  *
  * Moved off the homepage, where three product cards competed with the
  * argument rather than supporting it. Someone evaluating the tools wants a
@@ -23,7 +29,14 @@ const description =
     <Nav />
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Products', path: '/products' }]} />
-      <Products lead />
+      <PageHero
+        label="Products"
+        title="Monetization and app store optimization tools"
+        lead="Each one a full overview — what it does, how it works, and screenshots from the running build."
+        section="products-intro"
+      />
+      <Products />
+      <Cta />
     </main>
 
     <Footer />
@@ -35,7 +48,4 @@ const description =
     min-height: 100vh;
     background: var(--color-bg);
   }
-
-
-
 </style>

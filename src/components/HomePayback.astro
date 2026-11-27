@@ -1,0 +1,316 @@
+---
+import Icon from './Icon.astro';
+import { INITIAL_STATE } from '../scripts/calc-model.ts';
+import { computePayback, crossingLabel } from '../scripts/payback-model.ts';
+
+/**
+ * The homepage's preview of the payback calculator.
+ *
+ * Board: design/v3/Main.dc.html. The full, interactive calculator lives on
+ * /payback-calculator; putting it here made it the longest block on the page
+ * and interrupted the pitch. This section shows what the tool does and sends
+ * people to it.
+ *
+ * It is not a drawing. The inputs are the calculator's own defaults
+ * (INITIAL_STATE) and the curve and breakeven day come from running them
+ * through the model, so the preview shows what a visitor sees on arrival.
+ * tests/pages.test.ts checks the day shown against the model.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const s = INITIAL_STATE;
+
+const HORIZON = 365;
+const pb = computePayback(s, HORIZON);
+const dayLabel = crossingLabel(pb.crossing, HORIZON);
+
+const W = 400;
+const H = 150;
+const lo = Math.min(...pb.series);
+const hi = Math.max(...pb.series, 0);
+const px = (d: number) => Math.round((d / HORIZON) * W * 10) / 10;
+const py = (v: number) => Math.round((10 + (1 - (v - lo) / (hi - lo || 1)) * (H - 20)) * 10) / 10;
+const line = pb.series.map((v, d) => `${d === 0 ? 'M' : 'L'}${px(d)} ${py(v)}`).join(' ');
+const area = `${line} L${W} ${H} L0 ${H} Z`;
+const zeroY = py(0);
+const crossX = pb.crossing.kind === 'within' ? px(pb.crossing.day) : null;
+
+const inputs: [string, string][] = [
+  ['Cost per install', `$${s.cpi.toFixed(2)}`],
+  ['Install → trial', `${s.i2t}%`],
+  ['Trial → paid', `${s.t2p}%`],
+  ['Renewal retention', `${s.retention}%`],
+  ['Plan price', `$${s.price.toFixed(2)}`],
+];
+---
+
+<section id="payback" class="section section--band" data-section="payback-preview" data-added="redesign-2026-11">
+  <div class="wrap pv">
+    <div class="pv__copy" data-reveal="1">
+      <p class="shead__label">Free tool</p>
+      <h2 class="pv__title">See when your spend comes back</h2>
+      <p class="pv__text">
+        Enter your cost per install, conversion rates and retention. The calculator shows the day a
+        campaign earns its spend back, for subscription and ad-funded apps.
+      </p>
+      <a href={`${base}/payback-calculator`} class="btn-primary pv__cta">
+        Open the payback calculator
+        <Icon name="arrow-right" size={16} />
+      </a>
+    </div>
+
+    <a class="pv__panel" href={`${base}/payback-calculator`} data-reveal="1" aria-label="Open the payback calculator">
+      <span class="pv__top">
+        <span class="pv__seg" aria-hidden="true"><b>Subscription</b><i>Ad revenue</i></span>
+        <span class="pv__tag">Example scenario</span>
+      </span>
+      <span class="pv__body">
+        <span class="pv__inputs">
+          {
+            inputs.map(([label, value]) => (
+              <span class="pv__input">
+                <span>{label}</span>
+                <span class="pv__val tabular">{value}</span>
+              </span>
+            ))
+          }
+        </span>
+        <span class="pv__result">
+          <span class="pv__tag">Acquisition cost recovered</span>
+          <span class="pv__day tabular" data-preview-crossing>{dayLabel}</span>
+          <svg
+            class="pv__chart"
+            viewBox={`0 0 ${W} ${H}`}
+            role="img"
+            aria-label={`The example scenario's payback curve over ${HORIZON} days, crossing zero on ${dayLabel.toLowerCase()}`}
+          >
+            <defs>
+              <linearGradient id="pv-area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="currentColor" stop-opacity="0.34"></stop>
+                <stop offset="1" stop-color="currentColor" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path d={area} fill="url(#pv-area)"></path>
+            <line class="pv__zero" x1="0" y1={zeroY} x2={W} y2={zeroY}></line>
+            <path class="pv__line" d={line}></path>
+            {crossX !== null && <circle class="pv__dot" cx={crossX} cy={zeroY} r="7" />}
+          </svg>
+          <span class="pv__axis" aria-hidden="true"><span>Day 0</span><span>Day {HORIZON}</span></span>
+        </span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .pv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .pv {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(40px, 7vw, 104px);
+    }
+  }
+
+  .pv__copy {
+    min-width: 0;
+  }
+
+  .pv__title {
+    margin-top: var(--s6);
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
+    max-width: 14ch;
+  }
+
+  .pv__text {
+    margin-top: var(--s8);
+    max-width: 44ch;
+    font-size: clamp(16px, 1.3vw, 18px);
+    color: var(--color-text-2);
+  }
+
+  .pv__cta {
+    margin-top: var(--s12);
+    min-height: 56px;
+  }
+
+  .pv__panel {
+    display: block;
+    min-width: 0;
+    padding: clamp(16px, 2vw, 26px);
+    border-radius: 18px;
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      var(--shadow-card-hover);
+    color: var(--color-text);
+    transition: box-shadow 200ms var(--ease-out-soft);
+  }
+
+  .pv__panel:hover {
+    box-shadow:
+      var(--ring-accent),
+      var(--shadow-card-hover);
+  }
+
+  .pv__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+  }
+
+  .pv__seg {
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 10px;
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-size: 14px;
+    font-weight: var(--fw-semibold);
+  }
+
+  .pv__seg b,
+  .pv__seg i {
+    padding: 8px 14px;
+    border-radius: 7px;
+    font-style: normal;
+    font-weight: inherit;
+    color: var(--color-text-2);
+  }
+
+  .pv__seg b {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .pv__tag {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .pv__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6);
+    margin-top: var(--s6);
+  }
+
+  @media (min-width: 560px) {
+    .pv__body {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+  }
+
+  .pv__inputs {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+
+  .pv__input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-size: 14px;
+    color: var(--color-text-2);
+  }
+
+  .pv__val {
+    font-family: var(--font-mono);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .pv__result {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 18px 20px 14px;
+    border-radius: var(--radius-card);
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    color: var(--chart-true);
+  }
+
+  .pv__day {
+    margin-top: 4px;
+    font-size: clamp(30px, 3vw, 38px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.05;
+    color: var(--color-text);
+  }
+
+  .pv__chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: auto;
+    padding-top: var(--s4);
+  }
+
+  .pv__zero {
+    stroke: var(--chart-rule);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+  }
+
+  .pv__line {
+    fill: none;
+    stroke: var(--chart-true);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+
+  .pv__dot {
+    fill: var(--chart-true);
+    stroke: var(--color-bg);
+    stroke-width: 4;
+  }
+
+  .pv__axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-4);
+  }
+
+  /* On a phone the preview keeps the result and two of the inputs. */
+  @media (max-width: 559px) {
+    .pv__result {
+      order: -1;
+    }
+
+    .pv__inputs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pv__input:nth-child(n + 2):not(:last-child) {
+      display: none;
+    }
+
+    .pv__cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

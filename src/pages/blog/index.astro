@@ -4,14 +4,26 @@ import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import Cta from '../../components/Cta.astro';
+import Icon from '../../components/Icon.astro';
+import PostArt from '../../components/PostArt.astro';
+import { CASE_STUDY, RAW } from '../../data/case-study';
 
 /**
  * Blog index.
  *
- * Styled with the current tokens so the articles are readable and reviewable
- * on the preview now. The Bento restyle lands with the rest of the sections —
- * the markup here is the shape the design calls for (date, title, kicker, tag,
- * arrow), so that pass is a stylesheet change rather than a rewrite.
+ * Board: design/v3/Blog.dc.html. A page header, the paywall case study as the
+ * one featured card, then every post as a card with a spot illustration.
+ *
+ * The grid is the content collection, newest first, so a new post appears by
+ * being published. The featured card's figures are derived from the case
+ * study's raw period totals, the same arithmetic HomeLoop.astro and
+ * tests/case-study.test.ts use; nothing on it is typed.
+ *
+ * The topic chips filter the grid without a script: they are radio buttons,
+ * and one generated rule per tag hides the cards that do not match. Every post
+ * stays in the HTML whatever is selected.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -20,12 +32,33 @@ const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
 );
 
-const fmt = (d: Date) =>
-  d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const stamp = (d: Date) =>
+  `${d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase()} | ${d.getFullYear()}`;
 
 const title = 'Mobile Attribution & App Growth Blog — E2E Apps';
 const description =
   'Findings from live mobile measurement stacks: SKAdNetwork, Mixpanel JQL, and the Python that turns onboarding data into conversion rates.';
+
+/* The featured card. */
+const featured = posts.find((p) => p.id === CASE_STUDY.slug);
+const money = (n: number) => `$${n.toFixed(2)}`;
+const cppBefore = RAW.before.cost / RAW.before.paid;
+const cppAfter = RAW.after.cost / RAW.after.paid;
+const cppDrop = `${((1 - cppAfter / cppBefore) * 100).toFixed(1)}% lower`;
+const i2tBefore = `${((RAW.before.trials / RAW.before.installs) * 100).toFixed(2)}%`;
+const i2tAfter = `${((RAW.after.trials / RAW.after.installs) * 100).toFixed(2)}%`;
+
+/* Topic chips: the posts' own tags, the most used first. */
+const key = (tag: string) => tag.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+const counts = new Map<string, number>();
+for (const p of posts) counts.set(p.data.tag, (counts.get(p.data.tag) ?? 0) + 1);
+const tags = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
+const filterCss = tags
+  .map(
+    (t) =>
+      `.blog__posts:has(#blog-t-${key(t)}:checked) .blog__row:not([data-tag="${key(t)}"]){display:none}`,
+  )
+  .join('');
 ---
 
 <Base title={title} description={description} path="/blog">
@@ -33,39 +66,130 @@ const description =
     <Nav />
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Blog', path: '/blog' }]} />
-      <section class="section section--lead">
-        <div class="wrap">
-          <div class="section-head" data-reveal="1">
-            <div class="eyebrow">FROM THE BLOG</div>
-            <h1 class="blog__head">What we're finding in live stacks</h1>
-            <p class="section-lead">
-              Written while the work was happening, not afterwards. Every one of these started as a
-              problem in somebody's stack.
-            </p>
+      <PageHero
+        label="From the blog"
+        title="What we're finding in live stacks"
+        lead="Written while the work was happening, not afterwards. Every one of these started as a problem in somebody's stack."
+        section="blog-hero"
+      />
+
+      {
+        featured && (
+          <section class="section blog__featured" data-section="blog-featured">
+            <div class="wrap">
+              <p class="shead__label">Featured case study</p>
+              <a
+                class="gcard gcard--lead feat"
+                href={`${base}/blog/${featured.id}`}
+                style="--gx:0%;--gy:0%"
+                data-reveal="1"
+              >
+                <span class="feat__copy">
+                  <span class="feat__meta">
+                    <span class="tag tag--fix feat__tag">{featured.data.tag}</span>
+                    <span class="feat__date">{stamp(featured.data.date)}</span>
+                  </span>
+                  <span class="feat__title">{featured.data.title}</span>
+                  <span class="feat__text">{featured.data.kicker}</span>
+                  <span class="feat__foot">
+                    <span class="btn-primary">
+                      Read the case study
+                      <Icon name="arrow-right" size={16} />
+                    </span>
+                    <span class="feat__who">{CASE_STUDY.kicker}</span>
+                  </span>
+                </span>
+
+                <span class="scene feat__scene">
+                  <span class="feat__dots" aria-hidden="true" />
+                  <span class="badge feat__badge">{cppDrop}</span>
+                  <span class="dcard feat__main">
+                    <span class="dcard__label">
+                      <span>Cost per payer</span>
+                      <span>PDF scanner</span>
+                    </span>
+                    <span class="feat__cost tabular">
+                      <span class="feat__now">{money(cppAfter)}</span>
+                      <s class="feat__was">{money(cppBefore)}</s>
+                    </span>
+                    <span class="feat__bars" aria-hidden="true">
+                      <span>Before</span>
+                      <i style="width: 100%" />
+                      <span class="feat__amber">After</span>
+                      <i class="feat__on" style={`width: ${((cppAfter / cppBefore) * 100).toFixed(1)}%`} />
+                    </span>
+                  </span>
+                  <span class="dcard dcard--raised feat__low">
+                    <span class="dcard__label">
+                      <span>Install → trial</span>
+                    </span>
+                    <span class="feat__stat tabular">
+                      <span class="feat__before">{i2tBefore}</span>
+                      <span class="feat__amber" aria-hidden="true">→</span>
+                      <span class="feat__after">{i2tAfter}</span>
+                    </span>
+                  </span>
+                </span>
+              </a>
+            </div>
+          </section>
+        )
+      }
+
+      <section id="posts" class="section" data-section="blog-posts">
+        <div class="wrap blog__posts">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">All posts</p>
+            <h2 class="shead__title">Field notes on attribution, subscriptions and campaigns</h2>
+            <p class="shead__aside">{description}</p>
           </div>
+
+          <style is:inline set:html={filterCss} />
+          <fieldset class="chips">
+            <legend class="visually-hidden">Show posts on one topic</legend>
+            <input class="chips__in" type="radio" name="blog-topic" id="blog-t-all" checked />
+            <label class="chips__chip" for="blog-t-all">All</label>
+            {
+              tags.map((t) => (
+                <Fragment>
+                  <input class="chips__in" type="radio" name="blog-topic" id={`blog-t-${key(t)}`} />
+                  <label class="chips__chip" for={`blog-t-${key(t)}`}>
+                    {t}
+                  </label>
+                </Fragment>
+              ))
+            }
+          </fieldset>
 
           <div class="blog__list">
             {
-              posts.map((post) => (
-                <a class="blog__row" href={`${base}/blog/${post.id}`}>
-                  <span class="blog__date">
-                    <time datetime={post.data.date.toISOString().slice(0, 10)}>
-                      {fmt(post.data.date)}
-                    </time>
-                  </span>
+              posts.map((post, i) => (
+                <a class="blog__row" href={`${base}/blog/${post.id}`} data-tag={key(post.data.tag)}>
+                  <PostArt slug={post.id} tag={post.data.tag} ground={i} />
                   <span class="blog__body">
+                    <span class="blog__tag">{post.data.tag}</span>
                     <span class="blog__title">{post.data.title}</span>
                     <span class="blog__kicker">{post.data.kicker}</span>
+                    <span class="blog__foot">
+                      <span class="blog__date">
+                        <time datetime={post.data.date.toISOString().slice(0, 10)}>
+                          {stamp(post.data.date)}
+                        </time>
+                      </span>
+                      <span class="blog__read">
+                        Read
+                        <Icon name="arrow-right" size={13} />
+                      </span>
+                    </span>
                   </span>
-                  <span class="blog__tag">{post.data.tag}</span>
-                  <span class="blog__arrow" aria-hidden="true">&#8594;</span>
-                  <span class="blog__read">Read &#8594;</span>
                 </a>
               ))
             }
           </div>
         </div>
       </section>
+
+      <Cta />
     </main>
 
     <Footer />
@@ -78,35 +202,332 @@ const description =
     background: var(--color-bg);
   }
 
-  .blog__head {
-    margin-top: var(--s4);
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-    color: var(--color-text);
+  .blog__featured {
+    padding-bottom: 0;
   }
 
+  /* --- Featured card ------------------------------------------------------ */
+  .feat {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: center;
+    margin-top: var(--s8);
+    padding: clamp(20px, 3vw, 40px);
+  }
+
+  @media (min-width: 900px) {
+    .feat {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(24px, 3.5vw, 48px);
+    }
+  }
+
+  .feat__copy {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    min-width: 0;
+  }
+
+  .feat__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s4);
+  }
+
+  .feat__tag {
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+  }
+
+  .feat__date,
+  .feat__who {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+  }
+
+  .feat__title {
+    margin-top: var(--s8);
+    font-size: clamp(26px, 3vw, 40px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h2);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  .feat__text {
+    margin-top: var(--s6);
+    max-width: 46ch;
+    font-size: clamp(16px, 1.35vw, 18px);
+    color: var(--color-text-2);
+  }
+
+  .feat__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s4) var(--s8);
+    margin-top: auto;
+    padding-top: var(--s12);
+  }
+
+  .feat__scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--s4);
+    overflow: hidden;
+    min-height: 0;
+    padding: clamp(18px, 3vw, 34px);
+  }
+
+  @media (min-width: 900px) {
+    .feat__scene {
+      min-height: 380px;
+    }
+  }
+
+  .feat__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle at center,
+      rgba(var(--rgb-text), var(--dot-grid)) 1px,
+      transparent 1px
+    );
+    background-size: 22px 22px;
+    pointer-events: none;
+  }
+
+  .feat__badge,
+  .feat__main,
+  .feat__low {
+    position: relative;
+  }
+
+  .feat__badge {
+    justify-self: end;
+  }
+
+  .feat__main {
+    display: block;
+    justify-self: start;
+    width: min(100%, 360px);
+    padding: 22px 24px;
+  }
+
+  .feat__low {
+    display: block;
+    justify-self: end;
+    width: min(100%, 250px);
+    padding: 16px 18px;
+  }
+
+  .feat__cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+    margin-top: var(--s4);
+  }
+
+  .feat__now {
+    font-size: clamp(38px, 4.4vw, 52px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1;
+  }
+
+  .feat__was {
+    font-size: 20px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-3);
+  }
+
+  .feat__bars {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 10px;
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-text-3);
+  }
+
+  .feat__bars i {
+    height: 12px;
+    border-radius: 4px;
+    background: var(--chart-bar-dim);
+  }
+
+  .feat__bars .feat__on {
+    background: var(--color-accent);
+  }
+
+  .feat__amber {
+    color: var(--color-accent-text);
+  }
+
+  .feat__stat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin-top: 4px;
+  }
+
+  .feat__before {
+    font-size: 16px;
+    color: var(--color-text-3);
+  }
+
+  .feat__after {
+    font-size: 26px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+  }
+
+  /* --- Topic chips -------------------------------------------------------- */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+    margin: clamp(28px, 4vw, 48px) 0 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .chips__in {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .chips__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition:
+      background 180ms var(--ease-out-soft),
+      box-shadow 180ms var(--ease-out-soft);
+  }
+
+  .chips__chip:hover {
+    box-shadow: inset 0 0 0 1px var(--color-line-hover);
+    background: rgba(var(--rgb-text), 0.05);
+  }
+
+  .chips__in:checked + .chips__chip {
+    background: var(--color-accent);
+    box-shadow: none;
+    color: var(--color-ink);
+  }
+
+  .chips__in:focus-visible + .chips__chip {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  /* --- Post cards --------------------------------------------------------- */
   .blog__list {
-    margin-top: clamp(32px, 3.4vw, 48px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: var(--s12);
+  }
+
+  @media (min-width: 700px) {
+    .blog__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .blog__row {
-    display: grid;
-    grid-template-columns: minmax(0, 110px) minmax(0, 1fr) minmax(0, 190px) auto;
-    gap: var(--s8);
-    align-items: baseline;
-    padding: var(--s8) 0;
-    border-top: 1px solid var(--color-line);
-    color: inherit;
-    text-decoration: none;
-    transition: background 0.16s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    color: var(--color-text);
+    transition: box-shadow 200ms var(--ease-out-soft);
   }
 
-  .blog__row:last-child {
-    border-bottom: 1px solid var(--color-line);
+  .blog__row:hover,
+  .blog__row:focus-visible {
+    box-shadow: var(--ring-accent);
   }
 
-  .blog__row:hover {
-    background: rgba(var(--rgb-text), 0.03);
+  .blog__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 22px 24px;
+  }
+
+  .blog__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .blog__title {
+    display: block;
+    margin-top: var(--s4);
+    font-size: 19.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.25;
+  }
+
+  .blog__kicker {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    margin-top: 10px;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .blog__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s3) var(--s6);
+    margin-top: auto;
+    padding-top: 22px;
   }
 
   .blog__date {
@@ -116,54 +537,24 @@ const description =
     white-space: nowrap;
   }
 
-  .blog__title {
-    display: block;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: var(--t-post-title);
-    line-height: var(--lh-pull);
-    letter-spacing: var(--ls-tight);
-    color: var(--color-text);
-  }
-
-  .blog__kicker {
-    display: block;
-    margin-top: var(--s3);
-    font-size: var(--t-card);
-    line-height: var(--lh-snug);
-    color: var(--color-text-2);
-  }
-
-  .blog__tag {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--color-accent);
-  }
-
-  .blog__arrow {
-    font-family: var(--font-mono);
-    color: var(--color-text-4);
-  }
-
-  /* Phone only: the arrow at the end of a wide row becomes an explicit
-     affordance once the row is a stacked block. */
   .blog__read {
-    display: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent-text);
   }
 
-  /* The rows follow `design/E2E Apps - Bento mobile.dc.html`: date and tag on
-     one line, a 17px title beneath, the kicker, then "Read". These rules used
-     to live in the homepage Blog component; the blog index is where the rows
-     are now, so this is where they belong. */
+  /* Phone: one card a row, a shorter illustration and the 17px title the
+     phone board draws. */
   @media (max-width: 767px) {
     .blog__row {
-      grid-template-columns: auto minmax(0, 1fr);
-      column-gap: 10px;
-      row-gap: var(--s3);
-      align-items: center;
-      padding: var(--s6) 0;
+      --art-h: 160px;
+    }
+
+    .blog__body {
+      padding: var(--s6) 20px;
     }
 
     .blog__title {
@@ -172,33 +563,21 @@ const description =
     }
 
     .blog__read {
-      order: 4;
-      grid-column: 1 / -1;
       display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      justify-self: start;
-      font-size: 13px;
-      font-weight: var(--fw-semibold);
-      color: var(--color-accent);
+      min-height: 24px;
     }
 
-    .blog__date {
-      order: 1;
+    .feat .btn-primary {
+      flex: 1 1 100%;
+      justify-content: center;
+      min-height: 52px;
     }
+  }
 
-    .blog__body {
-      grid-column: 1 / -1;
-      order: 3;
-    }
-
-    .blog__tag {
-      order: 2;
-      justify-self: start;
-    }
-
-    .blog__arrow {
-      display: none;
+  @media (prefers-reduced-motion: reduce) {
+    .blog__row,
+    .chips__chip {
+      transition: none;
     }
   }
 </style>

@@ -9,36 +9,26 @@
  * Reference: docs/design-explorations/payback-map-*.png
  */
 
-.pm__eyebrow {
-  margin-bottom: var(--s6);
-}
-
-.pm__h2 {
-  max-width: 24ch;
-  font-size: var(--t-h2);
-  line-height: var(--lh-h2);
-  letter-spacing: var(--ls-h2);
-  color: var(--color-text);
-}
-
-.pm__lead {
-  margin-top: var(--s4);
-  max-width: 58ch;
-  font-size: var(--t-card);
-  line-height: var(--lh-card);
-  color: var(--color-text-2);
-}
-
 .pm__method {
-  margin-top: var(--s3);
+  margin-top: var(--s6);
   font-size: var(--t-card);
 }
 
+/* The shell (board: design/v3/Calculator.dc.html): one raised surface with a
+   hairline ring and an 18px radius. The panels inside it sit on the page
+   ground, and the fields and tiles inside those on the surface again, so each
+   level reads in the dark and in the light theme from tokens alone. */
 .pm {
   display: flex;
   flex-direction: column;
   gap: var(--s4);
-  margin-top: clamp(28px, 3.5vw, 48px);
+  margin-top: clamp(32px, 4.5vw, 64px);
+  padding: clamp(10px, 2vw, 26px);
+  border-radius: 18px;
+  background: var(--color-surface);
+  box-shadow:
+    0 0 0 1px var(--color-line-strong),
+    var(--shadow-card-hover);
 }
 
 /* --- model + scenario bar ------------------------------------------------ */
@@ -48,10 +38,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--s4) var(--s8);
-  padding: 14px;
-  border-radius: var(--radius-panel);
-  background: var(--color-surface);
-  box-shadow: var(--ring);
+  padding: 4px 4px var(--s2);
 }
 
 .pm__models {
@@ -169,10 +156,10 @@
 }
 
 .pm__panel {
-  padding: clamp(20px, 2vw, 28px);
-  border-radius: var(--radius-panel);
-  background: var(--color-surface);
-  box-shadow: var(--ring);
+  padding: clamp(16px, 2vw, 26px);
+  border-radius: var(--radius-card);
+  background: var(--color-bg);
+  box-shadow: inset 0 0 0 1px var(--color-line-strong);
   min-width: 0;
 }
 
@@ -187,7 +174,7 @@
   font-size: var(--t-mono-2xs);
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .pm__group {
@@ -230,12 +217,12 @@
   padding: 0 12px;
   min-height: 44px;
   border-radius: var(--radius-md);
-  background: var(--color-surface-sunk);
+  background: var(--color-surface);
   box-shadow: 0 0 0 1px var(--color-line-strong);
 }
 
 .pm__entry:focus-within {
-  box-shadow: 0 0 0 1px var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-focus);
 }
 
 .pm__prefix,
@@ -264,7 +251,7 @@
 }
 
 .pm__num[aria-invalid='true'] {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* The spinners crowd a 5ch box and are redundant next to a slider. */
@@ -287,7 +274,7 @@
 }
 
 .pm__range:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
 
@@ -295,7 +282,7 @@
   grid-column: 1 / -1;
   font-size: var(--t-body-sm);
   line-height: var(--lh-card);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .pm__error[hidden] {
@@ -334,7 +321,7 @@
 
 .pm__more--wide {
   border: 0;
-  padding: 0;
+  padding: 0 4px;
 }
 
 .pm__summary {
@@ -359,14 +346,14 @@
 }
 
 .pm__summary:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
 
 .pm__sign::before {
   content: '+';
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .pm__more[open] .pm__sign::before {
@@ -431,7 +418,7 @@
   min-width: 62px;
   border: 0;
   border-radius: var(--radius-md);
-  background: var(--color-surface-sunk);
+  background: var(--color-surface);
   box-shadow: 0 0 0 1px var(--color-line-strong);
   font-family: var(--font-body);
   font-size: var(--t-card-sm);
@@ -452,8 +439,20 @@
   display: grid;
   gap: var(--s4);
   grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
-  padding-bottom: var(--s4);
-  border-bottom: 1px solid var(--color-line);
+}
+
+.pm__results > div,
+.pm__ledger-cell {
+  padding: 14px 18px 16px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-line-strong);
+}
+
+/* The surplus is the answer, so its tile carries the amber ring. */
+.pm__results > div:last-child,
+.pm__ledger-cell:last-child {
+  box-shadow: inset var(--ring-accent);
 }
 
 .pm__result-label {
@@ -476,7 +475,7 @@
 }
 
 .pm__result-val--accent {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* --- the plot ------------------------------------------------------------ */
@@ -498,9 +497,12 @@
   overflow: visible;
 }
 
+/* Strokes read --chart-true, which is the brand amber on the dark ground and a
+   deeper amber on the light one: #E39A1F is only 2.2:1 on white, too faint for
+   a 2.4px line. The fallback is the brand amber. */
 .pm__curve {
   fill: none;
-  stroke: var(--color-accent);
+  stroke: var(--chart-true, var(--color-accent));
   stroke-width: 2.4;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
@@ -522,8 +524,8 @@
 }
 
 .pm__area {
-  fill: var(--color-accent);
-  opacity: 0.1;
+  fill: var(--chart-true, var(--color-accent));
+  opacity: 0.12;
 }
 
 .pm__zero {
@@ -533,14 +535,16 @@
 }
 
 .pm__guide {
-  stroke: var(--color-accent);
+  stroke: var(--chart-true, var(--color-accent));
   stroke-width: 1;
   stroke-dasharray: 3 4;
   vector-effect: non-scaling-stroke;
 }
 
+/* The halo is the ground of the panel the plot sits in (.pm__panel), so it cuts
+   the curve cleanly in either theme. */
 .pm__marker {
-  fill: var(--color-accent);
+  fill: var(--chart-true, var(--color-accent));
   stroke: var(--color-bg);
   stroke-width: 3;
 }
@@ -606,18 +610,21 @@
 .pm__chip {
   position: absolute;
   top: 0;
-  left: calc(62px + var(--x) * (100% - 62px));
+  /* Centred on the crossing, but never closer than half its own width to
+     either edge of the plot, so a late crossing cannot push it out of the
+     panel on a phone. */
+  left: clamp(80px, calc(62px + var(--x) * (100% - 62px)), calc(100% - 80px));
   transform: translateX(-50%);
-  padding: 5px 11px;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-sunk);
-  box-shadow: 0 0 0 1px var(--color-line-strong);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
   font-family: var(--font-mono);
   font-size: var(--t-mono-2xs);
+  font-weight: var(--fw-semibold);
   letter-spacing: var(--ls-meta);
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--color-accent);
+  color: var(--color-ink);
 }
 
 .pm__chip[hidden] {
@@ -659,11 +666,11 @@
 .pm__swatch {
   width: 22px;
   height: 0;
-  border-top: 2px solid var(--color-accent);
+  border-top: 2px solid var(--chart-true, var(--color-accent));
 }
 
 .pm__swatch--now {
-  border-top-color: var(--color-accent);
+  border-top-color: var(--chart-true, var(--color-accent));
 }
 
 .pm__swatch--pin {
@@ -688,16 +695,18 @@
   font-family: var(--font-body);
   font-size: var(--t-card-sm);
   font-weight: var(--fw-semibold);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   cursor: pointer;
 }
 
+/* Not --color-accent-hover: that is a lighter amber with no light-theme value,
+   and as text on a light ground it cannot be read. */
 .pm__action:hover {
-  color: var(--color-accent-hover);
+  color: var(--color-text);
 }
 
 .pm__action:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }
@@ -720,7 +729,7 @@
 }
 
 .pm__action-sign {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* --- refused scenario ---------------------------------------------------- */
@@ -731,7 +740,7 @@
   gap: 10px;
   padding: var(--s6);
   border-radius: var(--radius-card);
-  background: var(--color-surface-sunk);
+  background: var(--color-surface);
   box-shadow: var(--ring-accent);
 }
 
@@ -773,6 +782,11 @@
   .pm__strip {
     grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
   }
+
+  /* The note belongs to the three figures, so it sits under them. */
+  .pm__strip > .pm__foot-note {
+    grid-column: 2;
+  }
 }
 
 .pm__strip-title {
@@ -811,7 +825,7 @@
 }
 
 .pm__ledger-val--accent {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .pm__ledger-arrow {
@@ -833,6 +847,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--s4);
+  padding: 0 4px;
 }
 
 .pm__qualify {
@@ -915,7 +930,7 @@
 }
 
 .pm__box:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 

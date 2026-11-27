@@ -1,0 +1,121 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * The homepage hero and the tools strip beneath it.
+ *
+ * Board: design/v3/Main.dc.html. One label, one headline, one sentence, one
+ * action. The headline was chosen by the owner on 27 November 2026.
+ *
+ * The strip names the tools the work happens in. It is a list of names, not
+ * logos and not a client list, and the label above it says so.
+ */
+const TOOLS = [
+  'AppsFlyer',
+  'Adjust',
+  'Singular',
+  'Branch',
+  'RevenueCat',
+  'Adapty',
+  'Google Ads',
+  'Apple Search Ads',
+  'Meta',
+  'TikTok',
+  'Snapchat',
+  'Firebase',
+  'GA4',
+  'BigQuery',
+];
+---
+
+<section id="top" class="phero hero" data-section="hero" data-added="redesign-2026-11">
+  <div class="phero__grid" aria-hidden="true"></div>
+  <div class="phero__inner">
+    <p class="phero__label">Mobile attribution consultant</p>
+    <h1 class="phero__title phero__title--home">
+      Mobile attribution audits and fixes for subscription apps
+    </h1>
+    <p class="phero__lead">
+      I find what your MMP setup gets wrong, fix it at the source, and show you which campaigns
+      actually pay back.
+    </p>
+    <div class="phero__actions">
+      <a href="#contact" class="btn-primary hero__cta">
+        Get a free first look
+        <Icon name="arrow-right" size={16} />
+      </a>
+      <a href="#specialist" class="btn-secondary hero__cta">See the services</a>
+    </div>
+    <p class="phero__note">Send your store link. I reply in writing with three measurement checks.</p>
+  </div>
+
+  <div class="hero__tools">
+    <p class="hero__tools-label">Works inside the stack you already run</p>
+    <div class="marquee">
+      <div class="marquee__track">
+        {TOOLS.map((t) => <span>{t}</span>)}
+        {TOOLS.map((t) => <span aria-hidden="true">{t}</span>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .hero__cta {
+    min-height: 56px;
+    font-size: 17px;
+  }
+
+  .hero__tools {
+    position: relative;
+    z-index: 1;
+    margin: clamp(56px, 8vw, 112px) calc(var(--gutter) * -1) 0;
+  }
+
+  .hero__tools-label {
+    margin-bottom: var(--s8);
+    padding: 0 var(--gutter);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    letter-spacing: var(--ls-kicker);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  /* The headline is the LCP element. It rises on load like the rest of the
+     hero, with the shortest delay, and nothing here shifts layout. */
+  .hero :global(.phero__label),
+  .hero :global(.phero__title),
+  .hero :global(.phero__lead),
+  .hero :global(.phero__actions),
+  .hero :global(.phero__note) {
+    animation: rise 0.6s var(--ease-out-soft) both;
+  }
+
+  .hero :global(.phero__title) {
+    animation-delay: 0.06s;
+  }
+  .hero :global(.phero__lead) {
+    animation-delay: 0.14s;
+  }
+  .hero :global(.phero__actions) {
+    animation-delay: 0.22s;
+  }
+  .hero :global(.phero__note) {
+    animation-delay: 0.3s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero :global(.phero__label),
+    .hero :global(.phero__title),
+    .hero :global(.phero__lead),
+    .hero :global(.phero__actions),
+    .hero :global(.phero__note) {
+      animation: none;
+    }
+  }
+</style>

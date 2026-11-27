@@ -10,6 +10,11 @@
  * The article and the section are checked against the same source, so the two
  * cannot drift apart either.
  *
+ * Where it renders: the November 2026 redesign took the case study section off
+ * the homepage and gave it /case-studies. The homepage keeps only the headline
+ * figures on station 04 of the loop (checked in tests/redesign.test.ts), so the
+ * built-page assertions below read dist/case-studies.html.
+ *
  * Requires `npm run build`.
  */
 import test from 'node:test';
@@ -18,9 +23,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { CASE_STUDY, MORE_CASES, RAW } from '../src/data/case-study.ts';
+import { CASES } from '../src/data/cases.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const DIST = path.join(ROOT, 'dist', 'index.html');
+const DIST = path.join(ROOT, 'dist', 'case-studies.html');
 const POST = path.join(ROOT, 'src', 'content', 'blog', `${CASE_STUDY.slug}.md`);
 
 const built = fs.existsSync(DIST);
@@ -97,9 +103,50 @@ test('the caveats that qualify the figures are on the card, not only in the arti
   assert.match(CASE_STUDY.caveat, /billing frequency/i);
 });
 
+test('the figures /case-studies prints are the ones the period totals give', () => {
+  // /case-studies takes its result pairs from src/data/cases.ts, where they are
+  // written as strings ("$92.95 → $20.91"). A second hand-kept copy of a figure
+  // is a figure waiting to disagree with the first, so each pair is recomputed
+  // from RAW here exactly as the featured card's figures are above.
+  const featured = CASES.find((c) => c.post === CASE_STUDY.slug);
+  assert.ok(featured, 'the featured case is no longer listed in src/data/cases.ts');
+
+  const computed: Record<string, [string, string]> = {
+    'Install to trial': [
+      `${((RAW.before.trials / RAW.before.installs) * 100).toFixed(2)}%`,
+      `${((RAW.after.trials / RAW.after.installs) * 100).toFixed(2)}%`,
+    ],
+    'Cost per payer': [
+      `$${(RAW.before.cost / RAW.before.paid).toFixed(2)}`,
+      `$${(RAW.after.cost / RAW.after.paid).toFixed(2)}`,
+    ],
+    'Payers per day': [
+      (RAW.before.paid / RAW.before.days).toFixed(1),
+      (RAW.after.paid / RAW.after.days).toFixed(1),
+    ],
+  };
+
+  assert.ok(featured!.results.length >= 3, 'the featured case lost a headline result');
+  for (const r of featured!.results) {
+    const want = computed[r.label];
+    assert.ok(want, `"${r.label}" is shown on /case-studies but nothing here recomputes it`);
+    assert.equal(r.value, `${want![0]} → ${want![1]}`, `${r.label} disagrees with the period totals`);
+  }
+
+  // The trade-off is stated in the limits, with the two rates RAW gives.
+  const t2p = (w: typeof RAW.before) => `${((w.paid / w.trials) * 100).toFixed(1)}%`;
+  assert.ok(featured!.limits.includes(t2p(RAW.before)), 'the limits note lost the before trial-to-paid rate');
+  assert.ok(featured!.limits.includes(t2p(RAW.after)), 'the limits note lost the after trial-to-paid rate');
+});
+
 test('the section renders, and links to the article that backs it', { skip }, () => {
-  assert.match(html, /data-section="case-study"/, 'the case study section did not render');
+  assert.match(html, /data-section="cases"/, 'the case study section did not render');
   assert.ok(html.includes(`/blog/${CASE_STUDY.slug}`), 'the card does not link to the article');
+
+  // The homepage no longer carries the section, but it must still lead to it:
+  // station 04 of the loop and the library both link /case-studies.
+  const home = fs.readFileSync(path.join(ROOT, 'dist', 'index.html'), 'utf8');
+  assert.match(home, /href="\/case-studies"/, 'the homepage no longer links the case studies');
 
   const article = fs.readFileSync(POST, 'utf8');
   assert.ok(article.length > 3_000, 'the article backing the section is missing or thin');
@@ -119,14 +166,22 @@ test('the section renders, and links to the article that backs it', { skip }, ()
 
 test('the client stays withheld', { skip }, () => {
   assert.match(CASE_STUDY.kicker, /WITHHELD/);
-  assert.match(html, /Client names withheld/);
+  // The page says it once for all cases in its lead, and again on every case.
+  assert.match(html, /Client names are withheld/);
+  const cases = html.match(/class="cs__case"/g) ?? [];
+  assert.ok(cases.length >= 1, 'no cases rendered');
+  assert.equal(
+    (html.match(/Case · client withheld/g) ?? []).length,
+    cases.length,
+    'a case on /case-studies is not marked "client withheld"',
+  );
 });
 
 test('further case studies link to posts that exist, and claim no figures', { skip }, () => {
   for (const c of MORE_CASES) {
     const file = path.join(ROOT, 'src', 'content', 'blog', `${c.slug}.md`);
     assert.ok(fs.existsSync(file), `${c.slug} has no article behind it`);
-    assert.ok(html.includes(`/blog/${c.slug}`), `${c.slug} does not render on the homepage`);
+    assert.ok(html.includes(`/blog/${c.slug}`), `${c.slug} does not render on /case-studies`);
 
     // These carry no published revenue figures, so the card must not imply
     // one. A currency amount, or a percentage attached to lift/growth language,
@@ -135,7 +190,14 @@ test('further case studies link to posts that exist, and claim no figures', { sk
     // point of the study, so it is deliberately not caught here.
     const claim = /\$[\d,]+|\b\d+(\.\d+)?%\s*(lift|increase|uplift|growth)/i.exec(c.summary);
     assert.equal(claim, null, `${c.slug} summary makes a numeric claim: "${claim?.[0]}"`);
+
+    // /case-studies renders these from src/data/cases.ts. The same rule holds
+    // there: no results, and the page says so instead of leaving a gap.
+    const listed = CASES.find((x) => x.post === c.slug);
+    assert.ok(listed, `${c.slug} is not listed in src/data/cases.ts`);
+    assert.deepEqual(listed!.results, [], `${c.slug} now publishes figures it has no right to`);
   }
+  assert.match(html, /No figures published for this case\./, 'the unpublished case no longer says so');
 });
 
 /**
@@ -149,6 +211,11 @@ test('further case studies link to posts that exist, and claim no figures', { sk
  * So this recomputes it from RAW and asserts the page shows that, and that the
  * comparison bar is scaled from the same ratio — a bar drawn to a different
  * number than the caption would be the same failure, drawn instead of written.
+ *
+ * On /case-studies the reduction is the badge on the case's panel ("77.5%
+ * lower") over a card labelled "Cost per payer", and the bar is an inline
+ * width to one decimal. The homepage's copy of the same card is checked in
+ * tests/redesign.test.ts.
  */
 test('the cost-per-payer reduction on the card is the one RAW supports', { skip }, () => {
   const before = RAW.before.cost / RAW.before.paid;
@@ -158,9 +225,10 @@ test('the cost-per-payer reduction on the card is the one RAW supports', { skip 
   const ratio = (after / before) * 100;
 
   assert.ok(
-    html.includes(`${reduction.toFixed(1)}% lower cost per payer in the after window`),
+    new RegExp(`class="badge cs__badge"[^>]*>\\s*${reduction.toFixed(1).replace('.', '\\.')}% lower\\s*<`).test(html),
     `the card does not state the ${reduction.toFixed(1)}% the period totals give`,
   );
+  assert.match(html, /<span[^>]*>Cost per payer<\/span>/, 'the badge no longer sits over a cost-per-payer card');
 
   // The two figures it is derived from have to be on the card as well, or the
   // reader is asked to take the percentage on trust.
@@ -168,13 +236,14 @@ test('the cost-per-payer reduction on the card is the one RAW supports', { skip 
   assert.ok(html.includes(`$${before.toFixed(2)}`), 'the before figure is missing');
 
   assert.ok(
-    html.includes(`--w:${ratio.toFixed(2)}%`),
-    `the comparison bar is not scaled to ${ratio.toFixed(2)}% — the picture and the caption disagree`,
+    new RegExp(`class="cs__on"[^>]*style="width: ${ratio.toFixed(1).replace('.', '\\.')}%"`).test(html),
+    `the comparison bar is not scaled to ${ratio.toFixed(1)}% — the picture and the caption disagree`,
   );
 
   // Stated as an observation about the window, never as isolated causation.
   assert.ok(
-    /Changes were bundled; this does not isolate one causal effect/.test(html),
-    'the bundled-changes qualification is not on the card',
+    /Three changes shipped together, so the comparison cannot say how much each contributed/.test(html),
+    'the bundled-changes qualification is not on the page',
   );
+  assert.match(html, /What this cannot show:/, 'the limits note lost its label');
 });

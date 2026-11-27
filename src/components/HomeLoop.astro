@@ -1,0 +1,743 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { RAW } from '../data/case-study';
+import { INITIAL_STATE } from '../scripts/calc-model.ts';
+import { computePayback, crossingLabel } from '../scripts/payback-model.ts';
+import photo1 from '../assets/loop/loop-01-instrument.jpg';
+import photo2 from '../assets/loop/loop-02-attribute.jpg';
+import photo3 from '../assets/loop/loop-03-decide.jpg';
+import photo4 from '../assets/loop/loop-04-deploy.jpg';
+
+/**
+ * The Full Loop: four stations, each a text / photograph row.
+ *
+ * Board: design/v3/Main.dc.html (and Phone.dc.html for the swipe row).
+ *
+ * The four photographs are GENERATED images of people at work (27 November
+ * 2026). They are illustrations. They are not the founders and not clients, and
+ * nothing on the site may caption them as either; the alt text describes the
+ * scene and no more.
+ *
+ * Every figure on a data card is computed, not typed:
+ *   - station 03 runs the calculator's own example scenario through the model;
+ *   - station 04 derives cost per payer and install-to-trial from the case
+ *     study's raw period totals, the same arithmetic tests/case-study.test.ts
+ *     checks.
+ * Station 02's 11% and 17% are the Proof finding's own figures.
+ *
+ * Astro's image service writes each photograph as WebP at four widths; the
+ * browser picks one. The panel is at most ~560px wide.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const HORIZON = 365;
+const pb = computePayback(INITIAL_STATE, HORIZON);
+const dayLabel = crossingLabel(pb.crossing, HORIZON);
+const W = 400;
+const H = 150;
+const lo = Math.min(...pb.series);
+const hi = Math.max(...pb.series, 0);
+const px = (d: number) => Math.round((d / HORIZON) * W * 10) / 10;
+const py = (v: number) => Math.round((10 + (1 - (v - lo) / (hi - lo || 1)) * (H - 20)) * 10) / 10;
+const line = pb.series.map((v, d) => `${d === 0 ? 'M' : 'L'}${px(d)} ${py(v)}`).join(' ');
+const zeroY = py(0);
+const crossX = pb.crossing.kind === 'within' ? px(pb.crossing.day) : null;
+const roas = pb.roas === null ? null : `${(pb.roas * 100).toFixed(1)}%`;
+
+const money = (n: number) => `$${n.toFixed(2)}`;
+const cppBefore = RAW.before.cost / RAW.before.paid;
+const cppAfter = RAW.after.cost / RAW.after.paid;
+const cppDrop = `${((1 - cppAfter / cppBefore) * 100).toFixed(1)}% lower`;
+const i2tBefore = `${((RAW.before.trials / RAW.before.installs) * 100).toFixed(2)}%`;
+const i2tAfter = `${((RAW.after.trials / RAW.after.installs) * 100).toFixed(2)}%`;
+
+const SIZES = '(min-width: 900px) 560px, 82vw';
+const WIDTHS = [480, 720, 960, 1200];
+---
+
+<section id="loop" class="section" data-section="loop" data-added="redesign-2026-11">
+  <div class="wrap loop">
+    <div class="shead shead--center" data-reveal="1">
+      <p class="shead__label">How the work runs</p>
+      <h2 class="shead__title">The Full Loop: four stations, one person accountable</h2>
+      <p class="shead__aside">
+        Measurement informs the spend. The results improve the next decision. Most consultants stop
+        after station 02.
+      </p>
+    </div>
+
+    <div class="sbody">
+      <div class="rows swipe" data-swipe data-swipe-label="Station">
+        <!-- 01 Instrument -->
+        <article class="row loop__row">
+          <div class="loop__copy">
+            <p class="loop__n"><span>01</span> Station</p>
+            <h3 class="loop__title">Instrument</h3>
+            <p class="loop__text">
+              Get events, consent and server delivery working together. The output is a reliable
+              source signal.
+            </p>
+            <a class="pill-link loop__link" href={`${base}/services/event-tracking-plan`}>
+              Explore scope <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+          <div class="scene scene--photo loop__scene">
+            <div class="scene__photo">
+              <Image
+                src={photo1}
+                alt="A developer working at a laptop in the evening, phone on the desk beside him"
+                widths={WIDTHS}
+                sizes={SIZES}
+                format="webp"
+                quality={72}
+                loading="lazy"
+              />
+            </div>
+            <div class="dcard dcard--raised loop__card loop__card--top">
+              <div class="dcard__label"><span class="loop__amber">Server delivery</span></div>
+              <div class="flow">
+                <span>Store</span><i aria-hidden="true"></i><span class="flow__on">Server</span><i
+                  aria-hidden="true"></i><span>MMP</span>
+              </div>
+            </div>
+            <div class="dcard loop__card loop__card--main">
+              <div class="dcard__label"><span>Audit sheet</span><span>Sample</span></div>
+              <dl class="sheet">
+                <dt>ATT prompt timing</dt>
+                <dd><span class="tag tag--fix">Needs fixes</span></dd>
+                <dt>Revenue events</dt>
+                <dd><span class="tag tag--fix">Needs fixes</span></dd>
+                <dt class="sheet__extra">SKAN conversion values</dt>
+                <dd class="sheet__extra"><span class="tag tag--review">Needs review</span></dd>
+                <dt>Partner postbacks</dt>
+                <dd><span class="tag tag--ok">Looks good</span></dd>
+              </dl>
+            </div>
+          </div>
+        </article>
+
+        <!-- 02 Attribute -->
+        <article class="row row--flip loop__row">
+          <div class="loop__copy">
+            <p class="loop__n"><span>02</span> Station</p>
+            <h3 class="loop__title">Attribute</h3>
+            <p class="loop__text">
+              Connect installs and revenue to sources. Check the gaps in reporting. The output is
+              attribution you can inspect.
+            </p>
+            <a class="pill-link loop__link" href={`${base}/services/mobile-attribution-audit`}>
+              Explore scope <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+          <div class="scene scene--photo loop__scene">
+            <div class="scene__photo">
+              <Image
+                src={photo2}
+                alt="An analyst studying two monitors, hand at her chin"
+                widths={WIDTHS}
+                sizes={SIZES}
+                format="webp"
+                quality={72}
+                loading="lazy"
+              />
+            </div>
+            <div class="dcard loop__card loop__card--main loop__card--bars">
+              <div class="dcard__label"><span>Trial-to-paid, one audit</span></div>
+              <div class="bars" role="img" aria-label="A dashboard reported 11% trial-to-paid; the verified figure was 17%">
+                <div class="bars__col">
+                  <span class="bars__v">11%</span>
+                  <span class="bars__bar" style="height: 64.7%"></span>
+                </div>
+                <div class="bars__col bars__col--on">
+                  <span class="bars__v">17%</span>
+                  <span class="bars__bar" style="height: 100%"></span>
+                </div>
+              </div>
+              <div class="bars__key"><span>Dashboard</span><span class="loop__amber">Verified</span></div>
+            </div>
+            <span class="badge loop__badge">6 points the dashboard hid</span>
+          </div>
+        </article>
+
+        <!-- 03 Decide -->
+        <article class="row loop__row">
+          <div class="loop__copy">
+            <p class="loop__n"><span>03</span> Station</p>
+            <h3 class="loop__title">Decide</h3>
+            <p class="loop__text">
+              Use retention, LTV and payback to set spending limits by market. The output is a
+              defensible acquisition ceiling.
+            </p>
+            <a class="pill-link loop__link" href={`${base}/payback-calculator`}>
+              Try the payback calculator <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+          <div class="scene scene--photo loop__scene">
+            <div class="scene__photo">
+              <Image
+                src={photo3}
+                alt="A man studying a printed chart at his desk, pen in hand"
+                widths={WIDTHS}
+                sizes={SIZES}
+                format="webp"
+                quality={72}
+                loading="lazy"
+              />
+            </div>
+            <div class="dcard loop__card loop__card--main loop__card--chart">
+              <div class="chart__head">
+                <span class="chart__day tabular">{dayLabel}</span>
+                <span class="chart__tag">Example</span>
+              </div>
+              <p class="chart__sub">Acquisition cost recovered</p>
+              <svg
+                class="chart"
+                viewBox={`0 0 ${W} ${H}`}
+                role="img"
+                aria-label={`Cumulative net revenue per install in the example scenario, crossing zero on ${dayLabel.toLowerCase()}`}
+              >
+                <line class="chart__zero" x1="0" y1={zeroY} x2={W} y2={zeroY}></line>
+                <path class="chart__line" d={line}></path>
+                {crossX !== null && <circle class="chart__dot" cx={crossX} cy={zeroY} r="7" />}
+              </svg>
+            </div>
+            {
+              roas && (
+                <div class="dcard dcard--raised loop__card loop__card--low">
+                  <div class="dcard__label">
+                    <span>Revenue / spend at D{HORIZON}</span>
+                  </div>
+                  <p class="loop__stat loop__amber tabular">{roas}</p>
+                </div>
+              )
+            }
+          </div>
+        </article>
+
+        <!-- 04 Deploy -->
+        <article class="row row--flip loop__row">
+          <div class="loop__copy">
+            <p class="loop__n"><span>04</span> Station</p>
+            <h3 class="loop__title">Deploy</h3>
+            <p class="loop__text">
+              Run campaigns and monetisation tests. Feed the results back into measurement. The
+              output is spend informed by evidence.
+            </p>
+            <a class="pill-link loop__link" href={`${base}/case-studies`}>
+              Read the case study <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+          <div class="scene scene--photo loop__scene">
+            <div class="scene__photo">
+              <Image
+                src={photo4}
+                alt="A marketer checking her phone beside an open laptop"
+                widths={WIDTHS}
+                sizes={SIZES}
+                format="webp"
+                quality={72}
+                loading="lazy"
+              />
+            </div>
+            <div class="dcard loop__card loop__card--main loop__card--cost">
+              <div class="dcard__label"><span>Cost per payer</span><span class="cost__who">PDF scanner</span></div>
+              <p class="cost tabular">
+                <span class="cost__now">{money(cppAfter)}</span>
+                <s class="cost__was">{money(cppBefore)}</s>
+              </p>
+              <div class="cost__bars" aria-hidden="true">
+                <span>Before</span><i style="width: 100%"></i>
+                <span class="loop__amber">After</span><i
+                  class="cost__on"
+                  style={`width: ${((cppAfter / cppBefore) * 100).toFixed(1)}%`}></i>
+              </div>
+            </div>
+            <span class="badge loop__badge loop__badge--cost">{cppDrop}</span>
+            <div class="dcard dcard--raised loop__card loop__card--low">
+              <div class="dcard__label"><span>Install → trial</span></div>
+              <p class="loop__stat tabular">
+                <span class="loop__was">{i2tBefore}</span>
+                <span class="loop__amber" aria-hidden="true">→</span>
+                {i2tAfter}
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+        <span class="swipe__dots" data-swipe-dots><i></i><i></i><i></i><i></i></span>
+        <span data-swipe-count>Station 1 of 4</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .loop {
+    max-width: var(--wrap-loop);
+  }
+
+  /* A grid child holding text: without this one long word widens the track. */
+  .loop__copy {
+    min-width: 0;
+  }
+
+  .loop__n {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .loop__n span {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent-text);
+    color: var(--color-accent-text);
+    letter-spacing: 0;
+  }
+
+  .loop__title {
+    margin-top: var(--s6);
+    font-size: clamp(24px, 2.6vw, 34px);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.16;
+  }
+
+  .loop__text {
+    margin-top: var(--s6);
+    max-width: 44ch;
+    font-size: clamp(16px, 1.3vw, 18px);
+    color: var(--color-text-2);
+  }
+
+  .loop__link {
+    margin-top: var(--s8);
+  }
+
+  .loop__scene {
+    height: 360px;
+  }
+
+  .loop__amber {
+    color: var(--color-accent-text);
+  }
+
+  .loop__card {
+    position: absolute;
+  }
+
+  /* Cards hang over the photograph's left edge, into the column gap. */
+  .loop__card--main {
+    left: -40px;
+    bottom: 26px;
+    width: 300px;
+  }
+
+  .loop__card--top {
+    left: 22px;
+    top: 22px;
+    width: 250px;
+    padding: 14px 16px;
+  }
+
+  .loop__card--low {
+    left: 64px;
+    bottom: 18px;
+    padding: 10px 16px;
+  }
+
+  .loop__card--bars {
+    top: 46px;
+    bottom: auto;
+    width: 270px;
+    height: 284px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .loop__card--chart {
+    top: 34px;
+    bottom: auto;
+    width: 320px;
+    padding-bottom: 12px;
+  }
+
+  .loop__card--cost {
+    top: 44px;
+    bottom: auto;
+  }
+
+  .loop__card--cost ~ .loop__card--low {
+    left: 20px;
+    bottom: 22px;
+    width: 230px;
+    padding: 14px 18px;
+  }
+
+  .loop__badge {
+    position: absolute;
+    left: 74px;
+    top: 24px;
+  }
+
+  .loop__badge--cost {
+    left: 176px;
+  }
+
+  .loop__stat {
+    margin-top: 2px;
+    font-size: 22px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+  }
+
+  .loop__was {
+    font-size: 15px;
+    font-weight: var(--fw-regular);
+    color: var(--color-text-3);
+  }
+
+  /* Station 01 */
+  .flow {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+    margin-top: var(--s4);
+    font-size: 13px;
+    font-weight: var(--fw-semibold);
+  }
+
+  .flow span {
+    padding: 7px 10px;
+    border-radius: var(--radius-sm);
+    background: #0e1014;
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  }
+
+  .flow .flow__on {
+    box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.65);
+  }
+
+  .flow i {
+    height: 2px;
+    background: var(--color-accent);
+  }
+
+  .sheet {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px 12px;
+    margin: var(--s4) 0 0;
+    font-size: 14px;
+  }
+
+  .sheet dd {
+    margin: 0;
+  }
+
+  /* Station 02 */
+  .bars {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    align-items: end;
+    margin-top: var(--s4);
+  }
+
+  .bars__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  .bars__v {
+    font-size: 28px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    color: var(--color-text-2);
+  }
+
+  .bars__col--on .bars__v {
+    color: var(--color-accent-text);
+  }
+
+  .bars__bar {
+    display: block;
+    margin-top: 6px;
+    max-height: 130px;
+    border-radius: 8px 8px 0 0;
+    background: var(--chart-bar-dim);
+  }
+
+  .bars__col--on .bars__bar {
+    background: var(--color-accent);
+  }
+
+  .bars__key {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-line-strong);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: var(--ls-meta);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  /* Station 03 */
+  .chart__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s4);
+  }
+
+  .chart__day {
+    font-size: 30px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1;
+  }
+
+  .chart__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-3xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+  }
+
+  .chart__sub {
+    margin-top: 4px;
+    font-size: 13.5px;
+    color: var(--color-text-2);
+  }
+
+  .chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 8px;
+  }
+
+  .chart__zero {
+    stroke: var(--chart-rule);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+  }
+
+  .chart__line {
+    fill: none;
+    stroke: var(--chart-true);
+    stroke-width: 3;
+    stroke-linejoin: round;
+  }
+
+  .chart__dot {
+    fill: var(--chart-true);
+    stroke: #0e1014;
+    stroke-width: 4;
+  }
+
+  /* Station 04 */
+  .cost {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: var(--s4);
+  }
+
+  .cost__now {
+    font-size: 44px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1;
+  }
+
+  .cost__was {
+    font-size: 18px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-3);
+  }
+
+  .cost__bars {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 10px;
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-text-3);
+  }
+
+  .cost__bars i {
+    height: 12px;
+    border-radius: 4px;
+    background: var(--chart-bar-dim);
+  }
+
+  .cost__bars .cost__on {
+    background: var(--color-accent);
+  }
+
+  /* Between the phone row and the two-column layout the cards cannot hang
+     outside the photograph, so they sit inside its left edge. */
+  @media (max-width: 899px) {
+    .loop__row > .loop__scene {
+      order: -1;
+    }
+
+    .loop__card--main {
+      left: 16px;
+    }
+
+    .loop__card--top {
+      display: none;
+    }
+
+    .loop__badge {
+      left: 16px;
+      top: 16px;
+    }
+
+    .loop__card--bars {
+      top: auto;
+      bottom: 16px;
+      height: 236px;
+    }
+
+    .loop__card--chart,
+    .loop__card--cost {
+      top: auto;
+      bottom: 16px;
+    }
+
+    .loop__card--low,
+    .loop__card--cost ~ .loop__card--low {
+      display: none;
+    }
+  }
+
+  /* The phone swipe card: photograph on top, a compact card in its corner. */
+  @media (max-width: 699px) {
+    .loop__row {
+      gap: var(--s6);
+      align-content: start;
+    }
+
+    .loop__scene {
+      height: 300px;
+      min-height: 0;
+      border-radius: 20px;
+    }
+
+    .loop__scene :global(.scene__photo img) {
+      object-position: 100% 20%;
+    }
+
+    .loop__scene :global(.scene__photo)::after {
+      background:
+        linear-gradient(180deg, rgba(14, 16, 20, 0) 30%, rgba(14, 16, 20, 0.78) 100%),
+        linear-gradient(90deg, rgba(14, 16, 20, 0.62), rgba(14, 16, 20, 0) 62%);
+    }
+
+    .loop__card--main {
+      left: 14px;
+      bottom: 14px;
+      width: 236px;
+      padding: 12px 13px;
+    }
+
+    .loop__card--bars {
+      width: 152px;
+      height: 178px;
+    }
+
+    .loop__card--chart {
+      width: 204px;
+    }
+
+    .sheet {
+      gap: 6px 8px;
+      font-size: 12.5px;
+    }
+
+    .sheet__extra,
+    .cost__who,
+    .chart__sub {
+      display: none;
+    }
+
+    .bars__v {
+      font-size: 21px;
+    }
+
+    .bars__bar {
+      max-height: 68px;
+    }
+
+    .bars__key {
+      column-gap: 14px;
+      font-size: 8.5px;
+    }
+
+    .bars {
+      column-gap: 14px;
+    }
+
+    .chart__day {
+      font-size: 22px;
+    }
+
+    .cost__now {
+      font-size: 30px;
+    }
+
+    .cost__was {
+      font-size: 14px;
+    }
+
+    .loop__badge {
+      left: 14px;
+      top: 14px;
+      font-size: 12.5px;
+    }
+
+    .loop__title {
+      margin-top: 0;
+    }
+
+    .loop__n {
+      display: none;
+    }
+
+    .loop__text {
+      margin-top: var(--s3);
+      font-size: 15.5px;
+    }
+
+    .loop__link {
+      margin-top: var(--s6);
+      min-height: 46px;
+      padding: 0 20px;
+      font-size: 15px;
+    }
+  }
+</style>

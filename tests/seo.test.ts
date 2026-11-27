@@ -14,6 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { SERVICES } from '../src/data/services.ts';
 import { ALL_FAQ } from '../src/data/faq.ts';
+import { FINDINGS, AUDIT_COUNT } from '../src/data/findings.ts';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
 const built = fs.existsSync(path.join(DIST, 'about.html'));
@@ -122,13 +123,194 @@ test('/services routes each situation to a page and names the ways to work toget
   assert.match(html, /href="\/payback-calculator"/);
 });
 
-test('/mmp-audit-findings: counts within range, each links its fix, no app names', { skip }, () => {
+/**
+ * The findings page, without the number of audits.
+ *
+ * This test used to require "<strong>N</strong> of 10 audits" on every finding.
+ * The owner decided in November 2026 that the number of audits is never shown:
+ * a small count on show reads as inexperience. The counts still exist, in
+ * src/data/findings.ts, and still decide everything a reader sees: the order,
+ * the length of each bar and the phrase beside it. So the facts this protects
+ * are unchanged; only the numeral is gone.
+ *
+ * The phrase is recomputed here from the count rather than read off the page,
+ * so a card that says "In every audit" about a fault found in six of them
+ * fails, whichever of the two was edited.
+ */
+const often = (count: number) => {
+  if (count === AUDIT_COUNT) return 'in every audit';
+  if (count === AUDIT_COUNT - 1) return 'in nearly every audit';
+  if (count * 2 > AUDIT_COUNT) return 'in more than half';
+  if (count * 2 === AUDIT_COUNT) return 'in half';
+  return 'in some audits';
+};
+const plain = (h: string) =>
+  h
+    .replace(/<svg[\s\S]*?<\/svg>/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#38;/g, '&')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+test('/mmp-audit-findings: every finding, its fix, and the frequency its count implies', { skip }, () => {
   const html = read('mmp-audit-findings.html');
   assert.match(read('sitemap.xml'), /\/mmp-audit-findings</);
-  const counts = [...html.matchAll(/<strong[^>]*>(\d+)<\/strong> of 10 audits/g)].map((m) => Number(m[1]));
-  assert.ok(counts.length >= 6, 'too few findings');
-  for (const c of counts) assert.ok(c >= 1 && c <= 10, `count ${c} out of range`);
-  assert.deepEqual([...counts].sort((a, b) => b - a), counts, 'findings are not ordered most common first');
+
+  const cards = [...html.matchAll(/<li\b[^>]*class="[^"]*\bfd__item\b[^"]*"[^>]*>([\s\S]*?)<\/li>/g)].map((m) => m[1]!);
+  assert.equal(cards.length, FINDINGS.length, `${FINDINGS.length} findings in the data, ${cards.length} cards on the page`);
+  assert.ok(FINDINGS.length >= 6, 'too few findings');
+
+  const widths: number[] = [];
+
+  FINDINGS.forEach((f, i) => {
+    const card = cards[i]!;
+    assert.ok(f.count >= 1 && f.count <= AUDIT_COUNT, `${f.key}: count ${f.count} out of range`);
+
+    // Same order as the data, with its title as the card's heading.
+    assert.equal(plain(/<h3\b[^>]*>([\s\S]*?)<\/h3>/.exec(card)?.[1] ?? ''), f.title, `card ${i + 1} is not "${f.title}"`);
+    assert.ok(plain(card).includes(f.effect), `${f.key}: the effect on the numbers is missing or reworded`);
+
+    // Its fix: the right page, under the right name.
+    const link = new RegExp(`<a\\b[^>]*href="${f.path}"[^>]*>([\\s\\S]*?)<\\/a>`).exec(card);
+    assert.ok(link, `${f.key}: no link to ${f.path}`);
+    assert.equal(plain(link![1]!), `Fix: ${f.linkLabel}`, `${f.key}: the fix link is mislabelled`);
+
+    // The phrase its count implies, and no other.
+    const tag = plain(/<span\b[^>]*class="[^"]*\bfd__count\b[^"]*"[^>]*>([\s\S]*?)<\/span>/.exec(card)?.[1] ?? '');
+    assert.equal(tag.toLowerCase(), often(f.count), `${f.key}: found in ${f.count} of the audits but the card says "${tag}"`);
+
+    // The bar is the same proportion, drawn.
+    const bar = /class="fd__bar"[^>]*>\s*<i\b[^>]*style="width:\s*([\d.]+)%"/.exec(card);
+    assert.ok(bar, `${f.key}: no bar`);
+    assert.ok(
+      Math.abs(Number(bar![1]) - (f.count / AUDIT_COUNT) * 100) < 0.05,
+      `${f.key}: the bar is ${bar![1]}% wide but the count gives ${(f.count / AUDIT_COUNT) * 100}%`,
+    );
+    widths.push(Number(bar![1]));
+  });
+
+  assert.deepEqual([...widths].sort((a, b) => b - a), widths, 'findings are not ordered most common first');
+  assert.deepEqual(
+    FINDINGS.map((f) => f.count),
+    [...FINDINGS].map((f) => f.count).sort((a, b) => b - a),
+    'src/data/findings.ts is not ordered most common first',
+  );
+
+  // The overview chart draws the same nine bars in the same order.
+  const overview = [...html.matchAll(/<i\b[^>]*class="fd__fill[^"]*"[^>]*style="width:\s*([\d.]+)%"/g)].map((m) => Number(m[1]));
+  assert.deepEqual(overview, widths, 'the overview chart and the cards disagree');
+
+  // The opening paragraph names the two most common faults; each claim is the
+  // one the data supports.
+  const text = plain(html.slice(html.indexOf('<body'))).toLowerCase();
+  assert.ok(text.includes(`att handling needed fixing ${often(FINDINGS[0]!.count)}`), 'the headline claim about ATT does not match its count');
+  assert.ok(
+    text.includes(`revenue or purchase events were missing or wrong ${often(FINDINGS[1]!.count)}`),
+    'the claim about revenue events does not match its count',
+  );
+
   assert.match(html, /How these were counted/);
   assert.match(html, /What this cannot show/);
+});
+
+test('the homepage report card says no more about the findings than the data does', { skip }, () => {
+  // HomeInsights writes its two claims as prose ("ATT handled badly in every
+  // audit. Revenue or purchase events missing or wrong in nearly all of them.")
+  // rather than computing them, so they are checked against the counts here.
+  // If a count changes, this fails until the sentence is rewritten.
+  const home = plain(read('index.html').replace(/^[\s\S]*<body/, '<body'));
+  const [first, second] = FINDINGS;
+
+  if (/ATT handled badly in every audit/.test(home)) {
+    assert.equal(first!.title, 'ATT handled badly');
+    assert.equal(first!.count, AUDIT_COUNT, 'the homepage says "in every audit" about a fault that was not in every audit');
+  }
+  if (/missing or wrong in nearly all of them/.test(home)) {
+    assert.equal(second!.title, 'Revenue or purchase events missing or wrong');
+    assert.ok(
+      second!.count >= AUDIT_COUNT - 1 && second!.count < AUDIT_COUNT,
+      'the homepage says "nearly all" about a count that is not one short of all',
+    );
+  }
+
+  // Its four bars are the four most common faults, scaled to the most common.
+  const card = /<a\b[^>]*class="[^"]*\breport\b[^"]*"[^>]*>([\s\S]*?)<\/a>/.exec(read('index.html'))?.[1] ?? '';
+  const rows = [...card.matchAll(/class="report__row"[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>\s*<i\b[^>]*style="width:\s*([\d.]+)%"/g)];
+  const top = Math.max(...FINDINGS.map((f) => f.count));
+  assert.deepEqual(
+    rows.map((m) => [plain(m[1]!), Number(m[2])]),
+    FINDINGS.slice(0, 4).map((f) => [f.title, Math.round((f.count / top) * 100)]),
+    'the homepage report bars are not the top four findings in proportion',
+  );
+});
+
+/**
+ * No page shows how many audits there were.
+ *
+ * The owner's rule, written into docs/redesign-brief.md: never "10 audits",
+ * "of 10", "/ 10" or "ten audits", anywhere. One page keeping an old sentence
+ * is enough to undo it, so this reads every built page, head and structured
+ * data included (a meta description is shown in search results).
+ *
+ * The patterns follow AUDIT_COUNT, so the sweep keeps working after the next
+ * audit. One kind of hit is let through, and only in a blog post: "of 10" in a
+ * sentence that has nothing to do with audits ("steps of 10 to 20 per cent").
+ * A post body is prose about other people's numbers; everywhere else a bare
+ * "of 10" is far more likely to be the count coming back.
+ */
+test('no built page shows the number of audits', { skip }, () => {
+  const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  const n = String(AUDIT_COUNT);
+  const word = WORDS[AUDIT_COUNT];
+  const num = word ? `(?:${n}|${word})` : n;
+
+  const patterns = [
+    // "10 audits", "ten mobile attribution audits", "10 MMP audits"
+    new RegExp(`\\b${num}\\s+(?:[a-z-]+\\s+){0,3}audits?\\b`, 'gi'),
+    // "6 of 10", "of ten"
+    new RegExp(`\\bof\\s+${num}\\b(?!\\s*%)`, 'gi'),
+    // "6/10", "6 / 10"
+    new RegExp(`\\d\\s*\\/\\s*${n}\\b(?![\\d.%])`, 'g'),
+    // "audits: 10", "audits (10)"
+    new RegExp(`\\baudits?\\b[^a-z0-9<]{1,4}${num}\\b`, 'gi'),
+  ];
+
+  const walk = (dir: string, prefix = ''): string[] =>
+    fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory()
+        ? e.name === '_astro' ? [] : walk(path.join(dir, e.name), `${prefix}${e.name}/`)
+        : e.name.endsWith('.html') ? [`${prefix}${e.name}`] : [],
+    );
+
+  const pages = walk(DIST);
+  assert.ok(pages.length >= 30, `only ${pages.length} pages were found in dist/`);
+
+  const hits: string[] = [];
+
+  for (const file of pages) {
+    const text = read(file)
+      // Styles and behaviour are not copy; JSON-LD is, so it stays.
+      .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+      .replace(/<script(?![^>]*application\/ld\+json)[\s\S]*?<\/script>/gi, ' ')
+      // Drawings: path data is full of digits and slashes are legal in it.
+      .replace(/<svg[\s\S]*?<\/svg>/gi, ' ')
+      // What is left of each tag is its human-readable attributes.
+      .replace(/<[^>]+>/g, (tag) => ' ' + [...tag.matchAll(/\b(?:content|alt|title|aria-label)="([^"]*)"/g)].map((m) => m[1]).join(' ') + ' ')
+      .replace(/\s+/g, ' ');
+
+    const isPost = /^blog\/(?!index\.html$)/.test(file);
+
+    for (const re of patterns) {
+      for (const m of text.matchAll(re)) {
+        const around = text.slice(Math.max(0, m.index! - 70), m.index! + m[0].length + 70);
+        if (isPost && !/audit/i.test(around)) continue;
+        hits.push(`${file}: …${around.trim()}…`);
+      }
+    }
+  }
+
+  assert.deepEqual(hits, [], 'The number of audits is on show:\n  ' + hits.join('\n  '));
 });

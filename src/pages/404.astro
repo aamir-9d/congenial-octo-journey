@@ -1,22 +1,116 @@
 ---
-import Prose from '../layouts/Prose.astro';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import PageHero from '../components/PageHero.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import type { IconName } from '../data/icons';
 
+/**
+ * Page not found.
+ *
+ * Board: design/v3/NotFound.dc.html. One centred header with the page's own
+ * message and the way home, then three cards to the pages a lost visitor most
+ * likely wanted. `noindex`, no breadcrumb, and no closing band: the board ends
+ * on the cards.
+ *
+ * The card for the audit findings describes them in words only. The number of
+ * audits is never shown.
+ */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const cards: { href: string; icon: IconName; title: string; text: string; go: string; glow: string }[] = [
+  {
+    href: `${base}/services`,
+    icon: 'magnifying-glass',
+    title: 'Services',
+    text: 'Attribution audits and fixes, one problem at a time.',
+    go: 'See the services',
+    glow: '--gx:100%;--gy:0%',
+  },
+  {
+    href: `${base}/mmp-audit-findings`,
+    icon: 'article',
+    title: 'Audit findings',
+    text: 'The faults that keep turning up in MMP audits.',
+    go: 'Read the findings',
+    glow: '--gx:50%;--gy:100%',
+  },
+  {
+    href: `${base}/payback-calculator`,
+    icon: 'chart-line',
+    title: 'Payback calculator',
+    text: 'See the day a campaign earns its spend back.',
+    go: 'Open the payback calculator',
+    glow: '--gx:100%;--gy:100%',
+  },
+];
 ---
 
-<Prose
-  title="Page not found — E2E Apps"
-  description="That page does not exist."
-  path="/404"
-  heading="That page isn't here."
-  noindex
->
-  <p>
-    Nothing at this address. It was either moved, or the link was wrong to begin with &#8212; which
-    is, in fairness, the same class of problem as the rest of this site.
-  </p>
-  <p>
-    <a href={`${base}/`} class="link">Back to the homepage</a> &#183;
-    <a href="mailto:hello@e2eapp.com" class="link">hello@e2eapp.com</a>
-  </p>
-</Prose>
+<Base title="Page not found — E2E Apps" description="That page does not exist." path="/404" noindex>
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <PageHero
+        label="Page not found"
+        title="That page isn't here."
+        lead="Nothing at this address. It was either moved, or the link was wrong to begin with — which is, in fairness, the same class of problem as the rest of this site."
+        cta={{ href: `${base}/`, text: 'Back to the homepage' }}
+        section="not-found"
+      >
+        <a class="nf__mail" href="mailto:hello@e2eapp.com">hello@e2eapp.com</a>
+      </PageHero>
+
+      <section class="section" data-section="not-found-links">
+        <div class="wrap">
+          <div class="ggrid ggrid--3 nf__grid">
+            {
+              cards.map((c) => (
+                <a class="gcard" href={c.href} style={c.glow}>
+                  <span class="gcard__icon">
+                    <Icon name={c.icon} size={24} />
+                  </span>
+                  <span class="gcard__title">{c.title}</span>
+                  <span class="gcard__text">{c.text}</span>
+                  <span class="gcard__go">
+                    {c.go}
+                    <Icon name="arrow-right" size={15} />
+                  </span>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+  }
+
+  .nf__mail {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-accent-text);
+  }
+
+  .nf__mail:hover {
+    color: var(--color-text);
+  }
+
+  /* Three cards: three columns as soon as there is room, never 2 + 1. */
+  @media (min-width: 760px) {
+    .nf__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

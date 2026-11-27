@@ -138,7 +138,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     position: sticky;
     top: 0;
     z-index: 90;
-    background: rgba(14, 16, 20, 0.86);
+    background: rgba(var(--rgb-bg), 0.86);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--color-line-soft);
@@ -183,7 +183,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
   }
 
   .nav__link:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   /* 44px is a touch-target floor, and this control is the primary action on
@@ -234,7 +234,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     position: fixed;
     inset: 0;
     z-index: 100;
-    background: rgba(14, 16, 20, 0.98);
+    background: rgba(var(--rgb-bg), 0.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     padding: var(--s6);
@@ -257,8 +257,8 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
     border-radius: 50%;
     background: radial-gradient(
       circle at 50% 50%,
-      rgba(227, 154, 31, 0.2),
-      rgba(227, 154, 31, 0) 66%
+      rgba(var(--rgb-accent), 0.2),
+      rgba(var(--rgb-accent), 0) 66%
     );
     filter: blur(38px);
     pointer-events: none;
@@ -302,7 +302,7 @@ const sheetLinks: { href: string; label: string; note: string; icon: IconName }[
   .sheet__icon {
     display: inline-flex;
     flex: none;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .sheet__label {

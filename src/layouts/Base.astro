@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/redesign.css';
 import Analytics from '../components/Analytics.astro';
 import ConsentBanner from '../components/ConsentBanner.astro';
 
@@ -48,6 +49,9 @@ const LATIN =
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* The site has a dark and a light theme and follows the device. Declaring
+        both lets the browser paint form controls and scrollbars to match. */}
+    <meta name="color-scheme" content="dark light" />
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -76,12 +80,13 @@ const LATIN =
     <link rel="icon" href={asset('/favicon-16.png')} sizes="16x16" type="image/png" />
     <link rel="apple-touch-icon" href={asset('/apple-touch-icon.png')} sizes="180x180" />
     <link rel="manifest" href={asset('/site.webmanifest')} />
-    <meta name="theme-color" content="#0E1014" />
+    <meta name="theme-color" content="#0E1014" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F6F7F9" media="(prefers-color-scheme: light)" />
 
-    {/* 700 carries the h1, which is the LCP element; 400 carries the lead
+    {/* 500 carries the h1 since the November 2026 redesign, which is the LCP element; 400 carries the lead
         paragraph beneath it. The other two weights and the mono face load with
         the stylesheet rather than spending preload slots against the LCP. */}
-    <link rel="preload" href={FONTS.body700} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={FONTS.body500} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={FONTS.body400} as="font" type="font/woff2" crossorigin />
 
     <style is:inline set:html={`
@@ -186,6 +191,7 @@ const LATIN =
       import { initEngagement } from '../scripts/engagement';
       import { initDisclose } from '../scripts/disclose';
       import { initProducts } from '../scripts/products';
+      import { initSwipe } from '../scripts/swipe';
 
       // Capture click IDs first: everything downstream reads the cookie it writes.
       captureAttribution();
@@ -193,6 +199,7 @@ const LATIN =
       initDisclose();
       initProducts();
       initEngagement();
+      initSwipe();
     </script>
   </body>
 </html>

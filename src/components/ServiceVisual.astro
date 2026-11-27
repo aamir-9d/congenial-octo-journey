@@ -3,9 +3,13 @@ import ServiceTable from './ServiceTable.astro';
 import type { Visual } from '../data/services';
 
 /**
- * The exhibit at the top of a service page. Plain markup throughout, so every
- * word in it is readable by a screen reader and a crawler. Horizontal on a
- * desktop, vertical on a phone, never scaled down.
+ * The exhibit near the top of a service page: a glowing scene panel with the
+ * page's own diagram on data cards.
+ *
+ * Board: design/v3/ServiceDetail.dc.html (the audit's five steps). The other
+ * four kinds follow the same construction. Plain markup throughout, so every
+ * word is readable by a screen reader and a crawler. Horizontal on a desktop,
+ * vertical on a phone, never scaled down.
  */
 interface Props {
   visual: Visual;
@@ -24,75 +28,103 @@ const orders = [
   { title: 'No wait', good: false, steps: ['App opens', 'SDK sends install', 'Prompt appears', 'User allows'], mark: 1, result: 'The answer arrives after the install was sent.' },
   { title: 'With the wait set', good: true, steps: ['App opens, wait set', 'Prompt appears', 'User allows', 'SDK sends install'], mark: 3, result: 'The install can carry the identifier.' },
 ];
+
+const two = (n: number) => String(n).padStart(2, '0');
 ---
 
-{visual.kind === 'windows' && (
-  <div>
-    <ol class="vis-win" role="list">
-      {windows.map((w) => (
-        <li class={`vis-win__item vis-win__item--${w.tone}`} style={`--grow:${w.grow}`}>
-          <span class="vis-win__bar">
-            <span class="vis-win__name">{w.name}</span>
-            <span class="vis-win__days">{w.days}</span>
-          </span>
-          <span class="vis-win__text">{w.text}</span>
-        </li>
-      ))}
-    </ol>
-    <ServiceTable
-      head={['Window', 'Postback delay', 'Value available']}
-      rows={[
-        ['1', '24 to 48 hours', 'Fine (0 to 63) or coarse, depending on the data tier'],
-        ['2', '24 to 144 hours', 'Coarse, unless the tier is 0'],
-        ['3', '24 to 144 hours', 'Coarse, unless the tier is 0'],
-      ]}
-    />
-  </div>
-)}
-
-{visual.kind === 'order' && (
-  <div class="vis-order">
-    {orders.map((o) => (
-      <div>
-        <h3 class:list={['vis-order__title', { 'vis-order__title--good': o.good }]}>{o.title}</h3>
-        <ol class="vis-order__steps" role="list">
-          {o.steps.map((s, i) => (
-            <li class:list={['vis-order__step', i === o.mark && (o.good ? 'vis-order__step--good' : 'vis-order__step--bad')]}>{s}</li>
+<div class="scene svis">
+  <div class="svis__dots" aria-hidden="true"></div>
+  <div class="svis__in">
+    {visual.kind === 'chain' && (
+      <>
+        {/* The chain is the audit's exhibit, so its two labels are the audit's. */}
+        <div class="svis__top">
+          <span class="svis__label">What gets checked at each step</span>
+          <span class="badge">Ranked by impact</span>
+        </div>
+        <ol class="vis-chain" role="list">
+          {visual.steps.map(([name, text], i) => (
+            <li class:list={['dcard', 'vis-chain__step', { 'dcard--raised vis-chain__step--last': i === visual.steps.length - 1 }]}>
+              <span class="vis-chain__n" aria-hidden="true">{two(i + 1)}</span>
+              <span class="vis-chain__copy">
+                <span class="vis-chain__name">{name}</span>
+                <span class="vis-chain__text">{text}</span>
+              </span>
+            </li>
           ))}
         </ol>
-        <p class="vis-order__result">{o.result}</p>
+      </>
+    )}
+
+    {visual.kind === 'windows' && (
+      <div class="svis__stack">
+        <div class="dcard svis__card">
+          <ol class="vis-win" role="list">
+            {windows.map((w) => (
+              <li class={`vis-win__item vis-win__item--${w.tone}`} style={`--grow:${w.grow}`}>
+                <span class="vis-win__bar">
+                  <span class="vis-win__name">{w.name}</span>
+                  <span class="vis-win__days">{w.days}</span>
+                </span>
+                <span class="vis-win__text">{w.text}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div class="dcard svis__card">
+          <ServiceTable
+            head={['Window', 'Postback delay', 'Value available']}
+            rows={[
+              ['1', '24 to 48 hours', 'Fine (0 to 63) or coarse, depending on the data tier'],
+              ['2', '24 to 144 hours', 'Coarse, unless the tier is 0'],
+              ['3', '24 to 144 hours', 'Coarse, unless the tier is 0'],
+            ]}
+          />
+        </div>
       </div>
-    ))}
+    )}
+
+    {visual.kind === 'order' && (
+      <div class="svis__stack">
+        {orders.map((o) => (
+          <div class:list={['dcard', 'svis__card', { 'dcard--raised vis-order--good': o.good }]}>
+            <h3 class:list={['vis-order__title', { 'vis-order__title--good': o.good }]}>{o.title}</h3>
+            <ol class="vis-order__steps" role="list">
+              {o.steps.map((s, i) => (
+                <li class:list={['vis-order__step', i === o.mark && (o.good ? 'vis-order__step--good' : 'vis-order__step--bad')]}>
+                  <span class="vis-order__n" aria-hidden="true">{two(i + 1)}</span>
+                  {s}
+                </li>
+              ))}
+            </ol>
+            <p class="vis-order__result">{o.result}</p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {visual.kind === 'spec' && (
+      <dl class="dcard svis__card vis-spec">
+        <div class="vis-spec__name">
+          <dt class="vis-spec__key">Name</dt>
+          <dd class="vis-spec__event">{visual.name}</dd>
+        </div>
+        {visual.fields.map(([k, v]) => (
+          <div class="vis-spec__field">
+            <dt class="vis-spec__key">{k}</dt>
+            <dd class="vis-spec__value">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+
+    {visual.kind === 'table' && (
+      <div class="dcard svis__card">
+        <ServiceTable head={visual.head} rows={visual.rows} />
+      </div>
+    )}
   </div>
-)}
-
-{visual.kind === 'chain' && (
-  <ol class="vis-chain" role="list">
-    {visual.steps.map(([name, text]) => (
-      <li class="vis-chain__step">
-        <span class="vis-chain__name">{name}</span>
-        <span class="vis-chain__text">{text}</span>
-      </li>
-    ))}
-  </ol>
-)}
-
-{visual.kind === 'spec' && (
-  <dl class="vis-spec">
-    <div class="vis-spec__name">
-      <dt class="vis-spec__key">Name</dt>
-      <dd class="vis-spec__event">{visual.name}</dd>
-    </div>
-    {visual.fields.map(([k, v]) => (
-      <div class="vis-spec__field">
-        <dt class="vis-spec__key">{k}</dt>
-        <dd class="vis-spec__value">{v}</dd>
-      </div>
-    ))}
-  </dl>
-)}
-
-{visual.kind === 'table' && <ServiceTable head={visual.head} rows={visual.rows} />}
+</div>
 
 <style>
   ol,
@@ -103,10 +135,144 @@ const orders = [
     list-style: none;
   }
 
+  .svis {
+    overflow: hidden;
+    min-height: 0;
+    padding: clamp(16px, 3.4vw, 44px);
+  }
+
+  .svis__dots {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle at center, rgba(var(--rgb-text), var(--dot-grid)) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .svis__in {
+    position: relative;
+    min-width: 0;
+  }
+
+  .svis__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+    margin-bottom: var(--s8);
+  }
+
+  .svis__label {
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .svis__stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .svis__card {
+    min-width: 0;
+    padding: clamp(16px, 2.2vw, 28px);
+  }
+
+  /* --- chain: the audit's five steps --- */
+
+  .vis-chain {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .vis-chain__step {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s6);
+    min-width: 0;
+    padding: 18px 20px;
+  }
+
+  .vis-chain__step--last {
+    box-shadow:
+      0 0 0 1px rgba(var(--rgb-accent), 0.6),
+      0 26px 50px -22px rgba(0, 0, 0, 0.55);
+  }
+
+  .vis-chain__n {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-accent-text);
+  }
+
+  .vis-chain__step--last .vis-chain__n {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  .vis-chain__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    min-width: 0;
+  }
+
+  .vis-chain__name {
+    font-size: var(--t-h3-station);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.2;
+  }
+
+  .vis-chain__text {
+    font-size: var(--t-body-sm);
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+
+  @media (min-width: 700px) {
+    .vis-chain {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .vis-chain {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(12px, 1.6vw, 24px);
+    }
+
+    .vis-chain__step {
+      flex-direction: column;
+      gap: 20px;
+      min-height: 190px;
+      padding: 24px 22px;
+    }
+
+    .vis-chain__name {
+      font-size: var(--t-h3);
+    }
+  }
+
+  /* --- windows: SKAN's three windows --- */
+
   .vis-win {
     display: flex;
     gap: 4px;
-    margin-top: 22px;
   }
 
   .vis-win__item {
@@ -154,119 +320,93 @@ const orders = [
   }
 
   .vis-win__text {
+    padding-right: var(--s4);
     font-size: var(--t-card-sm);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .vis-order {
-    display: grid;
-    gap: 16px;
-    margin-top: 22px;
-  }
+  /* --- order: ATT, the same four steps twice --- */
 
   .vis-order__title {
-    font-size: var(--t-body-sm);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-snug);
-    color: var(--color-text-2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
   }
 
   .vis-order__title--good {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
+  }
+
+  .vis-order--good {
+    box-shadow:
+      0 0 0 1px rgba(var(--rgb-accent), 0.6),
+      0 26px 50px -22px rgba(0, 0, 0, 0.55);
   }
 
   .vis-order__steps {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
-    margin-top: var(--s4);
+    margin-top: var(--s6);
   }
 
   .vis-order__step {
-    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    min-width: 0;
+    padding: 14px 16px;
     border-radius: var(--radius-sm);
-    background: var(--color-surface-sunk);
-    font-size: var(--t-card);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
     line-height: var(--lh-snug);
   }
 
+  .vis-order__n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    font-weight: var(--fw-regular);
+    color: var(--color-text-4);
+  }
+
   .vis-order__step--bad {
-    box-shadow: inset 0 0 0 1px var(--color-text-4);
+    box-shadow: inset 0 0 0 1.5px var(--color-text-4);
   }
 
   .vis-order__step--good {
     background: var(--color-accent);
+    box-shadow: none;
     color: var(--color-ink);
-    font-weight: var(--fw-semibold);
+  }
+
+  .vis-order__step--good .vis-order__n {
+    color: var(--color-ink);
   }
 
   .vis-order__result {
-    margin-top: var(--s3);
-    font-size: var(--t-card-sm);
+    margin-top: var(--s6);
+    font-size: var(--t-body-sm);
     line-height: var(--lh-card);
     color: var(--color-text-2);
   }
 
-  .vis-chain {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 22px;
-  }
-
-  .vis-chain__step {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: var(--s2);
-    padding-top: 26px;
-  }
-
-  .vis-chain__step::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--color-accent);
-  }
-
-  .vis-chain__step:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 18px;
-    right: -10px;
-    height: 2px;
-    background: var(--color-line-strong);
-  }
-
-  .vis-chain__name {
-    font-size: var(--t-post-title);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-snug);
-    line-height: var(--lh-h3);
-  }
-
-  .vis-chain__text {
-    font-size: var(--t-card-sm);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
-  }
+  /* --- spec: one event from a tracking plan --- */
 
   .vis-spec {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
     gap: 0 24px;
-    margin-top: 14px;
   }
 
   .vis-spec__name {
     grid-column: 1 / -1;
-    padding: 12px 0 18px;
+    padding: 0 0 18px;
   }
 
   .vis-spec__event {
@@ -274,11 +414,12 @@ const orders = [
     font-family: var(--font-mono);
     font-size: var(--t-stat);
     line-height: var(--lh-tight);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     overflow-wrap: anywhere;
   }
 
   .vis-spec__field {
+    min-width: 0;
     padding: 14px 0;
     border-top: 1px solid var(--color-line-strong);
   }
@@ -286,19 +427,19 @@ const orders = [
   .vis-spec__key {
     font-family: var(--font-mono);
     font-size: var(--t-mono-2xs);
-    letter-spacing: var(--ls-kicker);
+    letter-spacing: var(--ls-label);
     text-transform: uppercase;
     color: var(--color-text-3);
   }
 
   .vis-spec__value {
     margin-top: var(--s2);
-    font-size: var(--t-card);
+    font-size: var(--t-body-sm);
     line-height: var(--lh-snug);
     overflow-wrap: anywhere;
   }
 
-  @media (max-width: 767px) {
+  @media (max-width: 899px) {
     .vis-win {
       flex-direction: column;
     }
@@ -313,6 +454,7 @@ const orders = [
     .vis-win__bar {
       min-height: 0;
       flex-direction: row;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: baseline;
     }
@@ -322,31 +464,17 @@ const orders = [
     .vis-win__item--c .vis-win__bar {
       min-height: 110px;
     }
+  }
 
+  @media (max-width: 767px) {
     .vis-order__steps {
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .vis-chain {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 0;
-    }
-
-    .vis-chain__step {
-      padding: 0 0 22px 28px;
-    }
-
-    .vis-chain__step::before {
-      top: 5px;
-    }
-
-    .vis-chain__step:not(:last-child)::after {
-      top: 22px;
-      bottom: 0;
-      left: 5px;
-      right: auto;
-      width: 2px;
-      height: auto;
+    .vis-order__step {
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--s4);
     }
   }
 </style>

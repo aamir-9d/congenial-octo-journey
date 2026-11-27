@@ -9,6 +9,16 @@ read off the source or measured by a script, not recalled — the contrast ratio
 come from `scripts/check-contrast.mjs`, the tokens from `src/styles/tokens.css`,
 the component inventory from `src/components/`.
 
+> **Superseded in part, November 2026.** The site was redesigned and now has a
+> light theme as well as the dark one. The source of truth for the look is
+> `design/v3/*.dc.html` (the approved boards), `src/styles/tokens.css` (both
+> themes) and `src/styles/redesign.css` (shared pieces);
+> `docs/redesign-brief.md` is the working guide. The sections below describe the
+> dark palette and the type and spacing scales, which still hold; the "Bento"
+> design files in section 0 are the previous design. Where this document says
+> amber is never set on a light ground, the rule now reads: the brand amber is
+> never TEXT on a light ground; `--color-accent-text` is.
+
 ---
 
 ## 0. The chain of authority

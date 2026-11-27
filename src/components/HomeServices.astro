@@ -1,0 +1,99 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from '../data/icons';
+import { SERVICES } from '../data/services';
+import { TEASER } from '../data/automation';
+
+/**
+ * "What I fix": the five specialist services and AI reporting as six cards.
+ *
+ * Board: design/v3/Main.dc.html. The audit is the lead card (full glow, amber
+ * ring); the others carry the faint glow that brightens on hover. Below 700px
+ * the grid becomes one swipe row that moves on by itself (src/scripts/swipe.ts).
+ *
+ * Names and summaries come from src/data/services.ts and the automation teaser,
+ * so a card can never say something its page does not.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const ICONS: IconName[] = ['magnifying-glass', 'shield-check', 'cursor-click', 'list', 'arrows-clockwise'];
+/* Where each card's glow sits, as left / top percentages. */
+const GLOW = [
+  ['100%', '0%'],
+  ['100%', '100%'],
+  ['0%', '0%'],
+  ['0%', '100%'],
+  ['55%', '0%'],
+  ['100%', '60%'],
+];
+
+const cards = [
+  ...SERVICES.map((s, i) => ({
+    href: `${base}/services/${s.slug}`,
+    icon: ICONS[i] ?? 'stack',
+    title: s.name,
+    text: s.summary,
+    go: i === 0 ? 'Start here' : 'See the fixes',
+  })),
+  {
+    href: `${base}/automation`,
+    icon: 'plugs-connected' as IconName,
+    title: 'AI reporting & automation',
+    text: TEASER.body,
+    go: 'Explore automation',
+  },
+];
+---
+
+<section id="specialist" class="section" data-section="services" data-added="redesign-2026-11">
+  <div class="wrap">
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">What I fix</p>
+      <h2 class="shead__title">Attribution audits and fixes, one problem at a time</h2>
+      <p class="shead__aside">
+        Start with the audit if you do not know which one you need. It names every fault in writing,
+        with a fix for each.
+      </p>
+    </div>
+
+    <div class="sbody">
+      <div class="ggrid ggrid--3 swipe" data-swipe>
+        {
+          cards.map((c, i) => (
+            <a
+              class:list={['gcard', 'svc', { 'gcard--lead': i === 0 }]}
+              href={c.href}
+              style={`--gx:${GLOW[i]![0]};--gy:${GLOW[i]![1]}`}
+            >
+              <span class="gcard__icon">
+                <Icon name={c.icon} size={24} />
+              </span>
+              <span class="gcard__title">{c.title}</span>
+              <span class="gcard__text">{c.text}</span>
+              <span class="gcard__go">
+                {c.go}
+                <Icon name="arrow-right" size={15} />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+      <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+        <span class="swipe__dots" data-swipe-dots>{cards.map(() => <i />)}</span>
+        <span data-swipe-count>1 of {cards.length}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .svc {
+    min-height: 300px;
+  }
+
+  @media (max-width: 699px) {
+    .svc {
+      min-height: 268px;
+    }
+  }
+</style>

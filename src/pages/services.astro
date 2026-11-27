@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Problems from '../components/Problems.astro';
 import Stack from '../components/Stack.astro';
 import ServiceIndex from '../components/ServiceIndex.astro';
@@ -20,6 +22,10 @@ import { SERVICES } from '../data/services';
  *
  * Nothing was cut in the move. The homepage keeps a compressed problem
  * statement; the full argument and the ten capability bundles live here.
+ *
+ * Board: design/v3/Services.dc.html. The h1 and lead sit in the PageHero; the
+ * problem cards, the five services, the situations, the ways to work together
+ * and the bundles follow, and the page closes on the shared ask.
  */
 
 const title = 'Mobile Attribution & App Growth Services — E2E Apps';
@@ -48,10 +54,18 @@ const list = {
     <Nav />
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Services', path: '/services' }]} />
-      <Problems lead />
+      <PageHero
+        label="Why your numbers don't reconcile"
+        title="Three places the money goes missing. And one place it was never there."
+        lead="The first isn't a measurement failure, and no amount of attribution accuracy will save you from it. The other three are — the revenue exists and you can't see it."
+        cta={{ href: `${base}/#contact`, text: 'Get a free first look' }}
+        section="services-hero"
+      />
+      <Problems />
       <ServiceIndex />
       <Engage />
       <Stack />
+      <Cta />
     </main>
 
     <Footer />
@@ -63,5 +77,4 @@ const list = {
     min-height: 100vh;
     background: var(--color-bg);
   }
-
 </style>

@@ -388,6 +388,37 @@ found" button, and the "What I do" eyebrow. The hero wording was chosen by the
 owner. The stats figures are imported, never typed: `tests/pages.test.ts`
 compares the rendered strip with the data files.
 
+### The November 2026 redesign
+
+The whole site was rebuilt from boards the owner approved (`design/v3/`). The
+Bento notes above describe the previous design and are history now. What a
+future session needs to know:
+
+- **Two themes, no switch.** Dark and light follow `prefers-color-scheme`.
+  Never hard-code a colour. Amber text is `--color-accent-text`; amber fills,
+  bars and rings are `--color-accent` with `--color-ink` on them. Chart strokes
+  use `--chart-true`. Run `node scripts/check-contrast.mjs` after touching
+  tokens: it checks both themes.
+- **Cards on photographs stay dark in both themes** (`.scene--photo .dcard`
+  re-pins the tokens). That is deliberate: the photographs are evening scenes.
+- **The photographs are generated.** Four images in `src/assets/loop/`. Never
+  caption them as the founders, the team or clients.
+- **No audit count, anywhere.** Owner's decision: a small number on show reads
+  as inexperience. Frequencies are words and bar lengths. A test fails the
+  build if a count comes back.
+- **Glow.** One lead card per group carries the full corner glow; the others
+  carry a faint one that brightens on hover. The owner found a glow on every
+  card overwhelming.
+- **Build pages from `docs/redesign-brief.md`.** It lists the shared classes
+  and the rules that keep text from overflowing.
+- **Look before showing.** `chrome --headless=new --screenshot` needs nothing
+  installed; add `--force-dark-mode` for the dark theme.
+
+New wording awaiting sign-off: headings and labels added where a page had
+none ("What I fix", "How the work runs", "At a glance", "How it runs", "The
+detail", "Field notes on attribution, subscriptions and campaigns", and
+similar). The hero headline was chosen by the owner.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These

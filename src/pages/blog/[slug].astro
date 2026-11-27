@@ -5,11 +5,17 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import Cta from '../../components/Cta.astro';
+import PostArt from '../../components/PostArt.astro';
 import { AUTHORS } from '../../data/authors';
 import { SERVICES } from '../../data/services';
 
 /**
  * A single post.
+ *
+ * Board: design/v3/BlogPost.dc.html. The board fades the article out after a
+ * few sections because it is a mock-up; the page shows the whole post.
  *
  * Canonical points at this page, not at LinkedIn: the site should be able to
  * rank for its own author's work. The original is credited visibly at the foot
@@ -74,6 +80,8 @@ const schema = {
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+const stamp = (d: Date) =>
+  `${d.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase()} | ${d.getFullYear()}`;
 ---
 
 <Base
@@ -93,67 +101,107 @@ const fmt = (d: Date) =>
         of this page" and is what the skip link targets, `article` is "this is a
         self-contained post". Swapping one for the other would have traded a
         landmark for a semantic instead of gaining one. */}
-    <main id="main" class="section">
+    <main id="main">
       <article class="post">
-        <a class="post__back" href={`${base}/blog`}>&#8592; All posts</a>
-
-        <div class="post__meta">
-          <span class="post__tag">{post.data.tag}</span>
-          <time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt(post.data.date)}</time>
-          <span class="post__byline">By {author ? author.name : 'E2E Apps'}</span>
-        </div>
-
-        <h1 class="post__title">{post.data.title}</h1>
-        <p class="post__kicker">{post.data.kicker}</p>
-
-        <div class="post__body">
-          <Content />
-        </div>
-
-        <aside class="post__cta">
-          <p class="post__cta-text">{post.data.cta}</p>
-          <a class="btn-primary post__cta-btn" href={`${base}/#contact`}>
-            Book a call
-            <Icon name="arrow-right" size={14} />
-          </a>
-        </aside>
-
-        {
-          post.data.source && (
-            <p class="post__source">
-              First published on{' '}
-              <a class="link" href={post.data.source} target="_blank" rel="noopener">
-                LinkedIn &#8599;
-              </a>
+        <div class="post__hero">
+          <PageHero label={post.data.tag} title={post.data.title} lead={post.data.kicker} section="post-hero">
+            <p class="post__meta">
+              <span class="post__byline">By {author ? author.name : 'E2E Apps'}</span>
+              <i class="post__dot" aria-hidden="true"></i>
+              <time datetime={post.data.date.toISOString().slice(0, 10)}>{fmt(post.data.date)}</time>
             </p>
-          )
-        }
+          </PageHero>
+        </div>
 
-        {
-          author && (
-            <aside class="post__author" aria-label="About the author">
-              <p class="post__author-name">
-                {author.name} <span class="post__author-role">{author.role}</span>
-              </p>
-              <p class="post__author-bio">{author.bio}</p>
-              <a class="link" href={author.linkedin} target="_blank" rel="noopener">
-                Meet on LinkedIn &#8599;
-              </a>
+        <div class="post__wrap">
+          <div class="post__col">
+            <div class="post__body">
+              <Content />
+            </div>
+
+            <aside class="gcard gcard--lead post__cta" style="--gx:0%;--gy:0%">
+              <p class="post__cta-text">{post.data.cta}</p>
+              <div class="post__cta-row">
+                <a class="btn-primary post__cta-btn" href={`${base}/#contact`}>
+                  Book a call
+                  <Icon name="arrow-right" size={14} />
+                </a>
+                <a class="post__cta-link" href={`${base}${next.path}`}>{next.label}<Icon name="arrow-right" size={13} /></a>
+              </div>
             </aside>
-          )
-        }
 
-        <nav class="post__related" aria-labelledby="related">
-          <h2 id="related" class="post__related-head">Read next</h2>
-          <ul class="post__related-list">
-            {related.map((p) => (
-              <li><a class="link" href={`${base}/blog/${p.id}`}>{p.data.title}</a></li>
-            ))}
-            <li><a class="link" href={`${base}${next.path}`}>{next.label}</a></li>
-            <li><a class="link" href={`${base}/services`}>What we fix in mobile measurement</a></li>
-          </ul>
-        </nav>
+            {
+              post.data.source && (
+                <p class="post__source">
+                  First published on{' '}
+                  <a class="link" href={post.data.source} target="_blank" rel="noopener">
+                    LinkedIn &#8599;
+                  </a>
+                </p>
+              )
+            }
+
+            {
+              author && (
+                <aside class="post__author" aria-label="About the author">
+                  <p class="post__author-name">
+                    {author.name} <span class="post__author-role">{author.role}</span>
+                  </p>
+                  <p class="post__author-bio">{author.bio}</p>
+                  <a class="link" href={author.linkedin} target="_blank" rel="noopener">
+                    Meet on LinkedIn &#8599;
+                  </a>
+                </aside>
+              )
+            }
+
+            <p class="post__back-row">
+              <a class="post__back" href={`${base}/blog`}>&#8592; All posts</a>
+            </p>
+          </div>
+        </div>
       </article>
+
+      <nav class="section next" aria-labelledby="related" data-section="post-related">
+        <div class="wrap">
+          <div class="shead">
+            <p class="shead__label">Related posts</p>
+            <h2 id="related" class="shead__title">Read next</h2>
+            <div class="next__links">
+              <a class="next__tile next__tile--on" href={`${base}${next.path}`}>{next.label}<Icon name="arrow-right" size={13} /></a>
+              <a class="next__tile" href={`${base}/services`}>What we fix in mobile measurement<Icon name="arrow-right" size={13} /></a>
+            </div>
+          </div>
+
+          <ul class="sbody ggrid ggrid--3 next__list" role="list">
+            {
+              related.map((p, i) => (
+                <li class="next__item">
+                  <a class="pcard" href={`${base}/blog/${p.id}`}>
+                    <PostArt slug={p.id} tag={p.data.tag} ground={i} />
+                    <span class="pcard__body">
+                      <span class="pcard__tag">{p.data.tag}</span>
+                      <span class="pcard__title">{p.data.title}</span>
+                      <span class="pcard__kicker">{p.data.kicker}</span>
+                      <span class="pcard__foot">
+                        <time class="pcard__date" datetime={p.data.date.toISOString().slice(0, 10)}>
+                          {stamp(p.data.date)}
+                        </time>
+                        <span class="pcard__read">
+                          Read
+                          <Icon name="arrow-right" size={13} />
+                        </span>
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </nav>
+
+      <Cta />
     </main>
 
     <Footer />
@@ -166,84 +214,95 @@ const fmt = (d: Date) =>
     background: var(--color-bg);
   }
 
-  .section {
-    padding-top: calc(var(--section-pad) + 48px);
+  /* --- Header ------------------------------------------------------------- */
+  /* Post titles are sentences, so the header gives them a wider measure than
+     a page name gets. */
+  .post__hero :global(.phero__title) {
+    max-width: 26ch;
   }
 
-  .post {
-    max-width: 760px;
-    margin: 0 auto;
-  }
-
-  .post__back {
-    font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    color: var(--color-accent);
-    text-decoration: none;
+  .post__hero :global(.phero__lead) {
+    max-width: 66ch;
   }
 
   .post__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--s3) var(--s6);
+    justify-content: center;
+    align-items: center;
+    gap: var(--s3) var(--s4);
     margin-top: var(--s12);
     font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    color: var(--color-text-4);
+    font-size: 13px;
+    color: var(--color-text-3);
   }
 
-  .post__tag {
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--color-accent);
+  .post__dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-line-hover);
   }
 
-  /* Always its own line. Sharing one, it wrapped or not depending on whether
-     the mono face had loaded, and shifted the whole article. */
-  .post__byline {
-    flex-basis: 100%;
+  /* --- Article column ----------------------------------------------------- */
+  .post__wrap {
+    padding: clamp(40px, 6vw, 88px) var(--gutter) var(--section-pad);
   }
 
-  .post__title {
-    margin-top: var(--s6);
-    font-size: var(--t-h2);
-    color: var(--color-text);
-  }
-
-  .post__kicker {
-    margin-top: var(--s8);
-    font-size: var(--t-lead);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
+  .post__col {
+    max-width: 720px;
+    margin: 0 auto;
+    min-width: 0;
   }
 
   /* The article body is rendered Markdown, so these have to reach elements
      this component does not itself declare. */
   .post__body {
-    margin-top: var(--s16);
-    padding-top: var(--s12);
-    border-top: 1px solid var(--color-line);
-    font-size: var(--t-body);
-    line-height: var(--lh-body);
+    font-size: clamp(16.5px, 1.3vw, 18px);
+    line-height: 1.75;
     color: var(--color-text-2);
   }
 
+  .post__body > :global(:first-child) {
+    margin-top: 0;
+  }
+
+  /* The opening paragraph reads as the standfirst. */
+  .post__body > :global(p:first-child) {
+    font-size: clamp(18px, 1.6vw, 21px);
+    line-height: var(--lh-prose);
+    color: var(--color-text);
+  }
+
   .post__body :global(h2) {
-    margin-top: var(--s16);
-    font-size: var(--t-h3-station);
+    margin-top: clamp(44px, 5.5vw, 72px);
+    font-size: clamp(24px, 2.6vw, 32px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h2-card);
+    line-height: 1.18;
     color: var(--color-text);
   }
 
   .post__body :global(h3) {
+    margin-top: var(--s16);
+    font-size: clamp(19px, 1.8vw, 22px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+    color: var(--color-text);
+  }
+
+  .post__body :global(h4) {
     margin-top: var(--s12);
-    font-size: var(--t-post-title);
+    font-size: var(--t-section-lead);
+    font-weight: var(--fw-semibold);
     color: var(--color-text);
   }
 
   .post__body :global(p),
   .post__body :global(ul),
   .post__body :global(ol) {
-    margin-top: var(--s6);
+    margin-top: 22px;
   }
 
   .post__body :global(ul),
@@ -253,35 +312,71 @@ const fmt = (d: Date) =>
 
   .post__body :global(li) {
     margin-top: var(--s3);
+    padding-left: 4px;
+  }
+
+  .post__body :global(li::marker) {
+    color: var(--color-accent-text);
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+  }
+
+  .post__body :global(li > ul),
+  .post__body :global(li > ol) {
+    margin-top: var(--s3);
   }
 
   .post__body :global(strong) {
+    font-weight: var(--fw-semibold);
     color: var(--color-text);
   }
 
   .post__body :global(a) {
-    color: var(--color-accent);
-    border-bottom: 1px solid rgba(var(--rgb-accent), 0.35);
+    color: var(--color-accent-text);
+    border-bottom: 1px solid rgba(var(--rgb-accent), 0.45);
+    overflow-wrap: anywhere;
+  }
+
+  .post__body :global(a:hover) {
+    border-bottom-color: var(--color-accent-text);
+  }
+
+  .post__body :global(hr) {
+    margin: var(--s16) 0 0;
+    border: 0;
+    border-top: 1px solid var(--color-line);
   }
 
   /* Inline code. Fenced blocks are Shiki's <pre><code> and are handled below. */
   .post__body :global(:not(pre) > code) {
     font-family: var(--font-mono);
-    font-size: 0.92em;
-    background: var(--color-surface);
-    border-radius: 3px;
-    padding: 0.12em 0.35em;
+    font-size: 0.88em;
+    background: var(--color-surface-sunk);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    border-radius: 5px;
+    padding: 0.12em 0.4em;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
   }
 
+  /* Fenced code. Shiki writes its own dark ground and token colours inline, so
+     the block stays dark in both themes rather than fighting it: dark code on a
+     light page is ordinary, half-recoloured code is not. */
   .post__body :global(pre) {
-    margin-top: var(--s6);
+    margin-top: var(--s8);
     padding: var(--s6) var(--s8);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 1px var(--color-line-strong);
     /* Long lines scroll inside the block rather than widening the page. */
     overflow-x: auto;
-    font-size: var(--t-mono);
+    font-family: var(--font-mono);
+    font-size: 13.5px;
     line-height: var(--lh-prose);
+    tab-size: 2;
+  }
+
+  .post__body :global(pre code) {
+    font-family: inherit;
   }
 
   /* Figures.
@@ -302,54 +397,99 @@ const fmt = (d: Date) =>
     max-height: 520px;
     width: auto;
     height: auto;
-    border-radius: var(--radius-sm);
-    /* A hairline, so a screenshot with a light ground does not float on the
-       dark page with no edge. */
-    box-shadow: var(--ring);
+    border-radius: var(--radius-lg);
+    /* A hairline, so a screenshot does not float on the page with no edge. */
+    box-shadow: 0 0 0 1px var(--color-line-strong);
   }
 
   .post__body :global(p:has(img) em) {
     display: block;
     margin-top: var(--s4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-card-sm);
     font-style: normal;
-    line-height: var(--lh-snug);
-    color: var(--color-text-4);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
   }
 
-  /* Original diagrams, drawn in the site's own palette rather than lifted
-     from a source deck. <figure> because they carry a caption that is part of
-     the argument, not a label. */
+  /* Original diagrams. <figure> because they carry a caption that is part of
+     the argument, not a label. The drawing sits on a scene panel; the caption
+     sits under it. */
   .post__body :global(figure) {
-    margin: var(--s12) 0 0;
-    padding: var(--s8);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    margin: var(--s16) 0 0;
     overflow-x: auto;
   }
 
   .post__body :global(figure svg) {
     display: block;
+    box-sizing: border-box;
     width: 100%;
     height: auto;
     /* The diagrams are drawn on a fixed viewBox; below this they stop being
        legible and should scroll inside the figure instead of shrinking. */
     min-width: 460px;
+    padding: clamp(16px, 3vw, 28px);
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at 86% 10%, rgba(var(--rgb-accent), calc(var(--bloom-amber) * 0.8)), transparent 50%),
+      radial-gradient(circle at 8% 96%, rgba(64, 86, 140, var(--bloom-blue)), transparent 55%),
+      var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+
+  /* The diagrams were drawn with the dark palette written into their
+     attributes. Each of those values is mapped back onto its token here, so a
+     diagram follows the theme without the article being edited. */
+  .post__body :global(figure svg [fill='#E39A1F']) {
+    fill: var(--color-accent);
+  }
+  .post__body :global(figure svg text[fill='#E39A1F']) {
+    fill: var(--color-accent-text);
+  }
+  .post__body :global(figure svg [fill='#101725']) {
+    fill: var(--color-ink);
+  }
+  .post__body :global(figure svg [fill='#E8EAED']) {
+    fill: var(--color-text);
+  }
+  .post__body :global(figure svg [fill='#A8AEB6']) {
+    fill: var(--color-text-2);
+  }
+  .post__body :global(figure svg [fill='#8E959E']),
+  .post__body :global(figure svg [fill='#7C838D']) {
+    fill: var(--color-text-3);
+  }
+  .post__body :global(figure svg [fill='#16191F']) {
+    fill: var(--color-bg);
+  }
+  .post__body :global(figure svg [fill='#1D2128']) {
+    fill: var(--color-surface-sunk);
+  }
+  .post__body :global(figure svg [fill='#3A4048']) {
+    fill: var(--chart-bar-dim);
+  }
+  .post__body :global(figure svg [stroke='#E39A1F']) {
+    stroke: var(--chart-true);
+  }
+  .post__body :global(figure svg [stroke='#23272E']),
+  .post__body :global(figure svg [stroke='#2C3138']) {
+    stroke: var(--color-line-strong);
+  }
+  .post__body :global(figure svg [stroke='#4A515A']) {
+    stroke: var(--chart-rule);
+  }
+  .post__body :global(figure svg [stroke='#5B626B']) {
+    stroke: var(--chart-measured);
   }
 
   .post__body :global(figcaption) {
     margin-top: var(--s6);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
+    font-size: var(--t-body-sm);
     line-height: var(--lh-body);
-    color: var(--color-text-4);
+    color: var(--color-text-3);
   }
 
-  /* Case studies carry comparison tables. Wrapped in its own scroller so a
-     wide table never widens the page -- the same rule the site holds itself
-     to at phone width. */
+  /* Case studies carry comparison tables. The table is its own scroller so a
+     wide one never widens the page. */
   .post__body :global(table) {
     display: block;
     overflow-x: auto;
@@ -357,16 +497,16 @@ const fmt = (d: Date) =>
     margin-top: var(--s8);
     border-collapse: collapse;
     font-family: var(--font-mono);
-    font-size: var(--t-mono);
+    font-size: 13.5px;
     line-height: var(--lh-snug);
   }
 
   .post__body :global(thead) {
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line-strong);
   }
 
   .post__body :global(th) {
-    padding: var(--s3) var(--s6) var(--s3) 0;
+    padding: var(--s4) var(--s8) var(--s4) 0;
     text-align: left;
     white-space: nowrap;
     font-weight: var(--fw-regular);
@@ -377,65 +517,79 @@ const fmt = (d: Date) =>
   }
 
   .post__body :global(td) {
-    padding: var(--s3) var(--s6) var(--s3) 0;
-    border-top: 1px solid var(--color-line-soft);
+    padding: var(--s4) var(--s8) var(--s4) 0;
+    border-top: 1px solid var(--color-line);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
+    color: var(--color-text);
   }
 
   /* The row label reads as prose, the figures as data. */
   .post__body :global(td:first-child) {
     white-space: normal;
+    min-width: 12ch;
     font-family: var(--font-body);
-    color: var(--color-text-4);
+    color: var(--color-text-2);
   }
 
   .post__body :global(td strong) {
-    color: var(--color-accent);
-    font-weight: var(--fw-regular);
+    color: var(--color-accent-text);
+    font-weight: var(--fw-semibold);
   }
 
+  /* Blockquotes in these posts are notes and formulas, some of them several
+     lines long, so they are set as marked asides rather than as display
+     quotes. */
   .post__body :global(blockquote) {
-    margin-top: var(--s6);
-    padding-left: var(--s6);
-    border-left: 2px solid var(--color-accent);
-    color: var(--color-text-4);
+    margin: var(--s12) 0 0;
+    padding: 2px 0 2px var(--s8);
+    border-left: 3px solid var(--color-accent);
+    color: var(--color-text);
   }
 
-  /* Closing CTA. Every post carries one, tailored to what it just argued --
-     the copy comes from the post's own frontmatter, so the technical articles
-     close on the failure mode they imply rather than on a generic pitch. */
+  .post__body :global(blockquote > :first-child) {
+    margin-top: 0;
+  }
+
+  /* --- Closing CTA --------------------------------------------------------
+     Every post carries one, tailored to what it just argued: the copy comes
+     from the post's own frontmatter. */
   .post__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s6);
-    margin-top: var(--s16);
-    padding: var(--s8);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow: var(--ring-accent);
+    margin-top: clamp(44px, 5vw, 64px);
   }
 
   .post__cta-text {
-    flex: 1;
-    min-width: min(100%, 34ch);
     margin: 0;
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
-    color: var(--color-text-2);
+    font-size: clamp(16.5px, 1.5vw, 19px);
+    line-height: var(--lh-body);
+    color: var(--color-text);
+  }
+
+  .post__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s4) var(--s8);
+    margin-top: var(--s8);
   }
 
   .post__cta-btn {
     flex: none;
   }
 
-  @media (max-width: 640px) {
-    .post__cta {
-      padding: var(--s6);
-      gap: var(--s4);
-    }
+  .post__cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s3);
+    min-width: 0;
+    min-height: 44px;
+    font-weight: var(--fw-semibold);
+    font-size: var(--t-body);
+    line-height: 1.3;
+    color: var(--color-accent-text);
+  }
 
+  @media (max-width: 640px) {
     .post__cta-btn {
       width: 100%;
       justify-content: center;
@@ -444,17 +598,22 @@ const fmt = (d: Date) =>
   }
 
   .post__author,
-  .post__related {
+  .post__source,
+  .post__back-row {
     margin-top: var(--s12);
     padding-top: var(--s8);
     border-top: 1px solid var(--color-line);
-    font-size: var(--t-card);
-    line-height: var(--lh-card);
+  }
+
+  .post__author {
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
     color: var(--color-text-2);
   }
 
   .post__author-name {
     font-weight: var(--fw-semibold);
+    font-size: var(--t-body);
     color: var(--color-text);
   }
 
@@ -470,25 +629,172 @@ const fmt = (d: Date) =>
     margin: var(--s3) 0;
   }
 
-  .post__related-head {
-    font-size: var(--t-post-title);
-    color: var(--color-text);
-  }
-
-  .post__related-list {
-    margin: var(--s4) 0 0;
-    padding: 0;
-    list-style: none;
-    display: grid;
-    gap: var(--s4);
-  }
-
   .post__source {
-    margin-top: var(--s16);
-    padding-top: var(--s8);
-    border-top: 1px solid var(--color-line);
     font-family: var(--font-mono);
     font-size: var(--t-mono);
     color: var(--color-text-4);
+  }
+
+  .post__back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-accent-text);
+  }
+
+  /* --- Read next ---------------------------------------------------------- */
+  .next {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .next__links {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s6) 32px;
+    min-width: 0;
+  }
+
+  /* Side by side only while the head is one column; beside the heading the
+     column is too narrow for two. */
+  @media (min-width: 520px) and (max-width: 899px) {
+    .next__links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .next__tile {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--s4);
+    min-width: 0;
+    min-height: 44px;
+    padding-top: var(--s6);
+    border-top: 2px solid var(--color-line-strong);
+    font-size: var(--t-section-lead);
+    font-weight: var(--fw-bold);
+    line-height: 1.3;
+  }
+
+  .next__tile--on {
+    border-top-color: var(--color-accent);
+  }
+
+  .next__tile :global(svg) {
+    margin-top: 5px;
+    color: var(--color-accent-text);
+  }
+
+  .next__tile:hover {
+    color: var(--color-accent-text);
+  }
+
+  .next__list {
+    margin-bottom: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .next__item {
+    display: flex;
+    min-width: 0;
+  }
+
+  .pcard {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    color: var(--color-text);
+    transition: box-shadow 200ms var(--ease-out-soft);
+  }
+
+  .pcard:hover,
+  .pcard:focus-visible {
+    box-shadow: var(--ring-accent);
+  }
+
+  .pcard__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 22px 24px;
+  }
+
+  .pcard__tag {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-chip);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
+  }
+
+  .pcard__title {
+    margin-top: var(--s4);
+    font-size: 19.5px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-snug);
+    line-height: 1.25;
+  }
+
+  .pcard__kicker {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    margin-top: 10px;
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .pcard__foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--s3) var(--s6);
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
+  .pcard__date {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-4);
+  }
+
+  .pcard__read {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent-text);
+  }
+
+  @media (max-width: 767px) {
+    .pcard {
+      --art-h: 160px;
+    }
+
+    .pcard__title {
+      font-size: 17px;
+      line-height: 1.3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pcard {
+      transition: none;
+    }
   }
 </style>

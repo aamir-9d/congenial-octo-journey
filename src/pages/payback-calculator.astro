@@ -2,24 +2,28 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Payback from '../components/Payback.astro';
-import { INITIAL_STATE, cycleDays } from '../scripts/calc-model.ts';
+import { INITIAL_STATE, cycleDays, subModel, computeView } from '../scripts/calc-model.ts';
 import { computePayback, crossingLabel, SEARCH_MAX } from '../scripts/payback-model.ts';
 import { ASSUMPTIONS } from '../data/payback.ts';
 
 /**
  * The payback calculator on a page of its own.
  *
- * The homepage keeps the tool; this page adds what a homepage section cannot
- * hold: the method in plain words, two worked examples and the limits, so the
- * page can be shared, linked and cited on its own.
+ * Board: design/v3/Calculator.dc.html. The live tool is <Payback />; this page
+ * adds what the tool cannot hold: the method in plain words, two worked
+ * examples and the limits, so the page can be shared, linked and cited on its
+ * own.
  *
- * The worked examples are computed here, at build time, by the same engine the
- * tool uses (calc-model.ts through payback-model.ts). Nothing below is typed in
- * by hand, so the page and the tool cannot disagree. The inputs are the tool's
- * own default scenario: example inputs, not client data or market averages.
+ * The worked examples and the "measured vs real" panel are computed here, at
+ * build time, by the same engine the tool uses (calc-model.ts through
+ * payback-model.ts). Nothing below is typed in by hand, so the page and the
+ * tool cannot disagree. The inputs are the tool's own default scenario: example
+ * inputs, not client data or market averages.
  */
 
 const title = 'App Payback Calculator for Subscription & Ad Apps — E2E Apps';
@@ -33,10 +37,12 @@ const sub = INITIAL_STATE;
 const ad = { ...INITIAL_STATE, mode: 'ad' as const };
 const subP = computePayback(sub, H);
 const adP = computePayback(ad, H);
+const adView = computeView(ad);
 
 const money = (v: number) => (v < 0 ? '−$' : '$') + Math.abs(v).toFixed(2);
 const pct = (v: number) => `${v}%`;
 const times = (v: number | null) => (v === null ? '—' : v.toFixed(2) + '×');
+const nn = (i: number) => String(i + 1).padStart(2, '0');
 
 const subInputs: [string, string][] = [
   ['Install to trial', pct(sub.i2t)],
@@ -54,11 +60,40 @@ const adInputs: [string, string][] = [
   ['Day 30 retention', pct(ad.d30)],
   ['Cost per install', money(ad.adCpi)],
 ];
+/* What the model derives from those four inputs: the same three readouts the
+   calculator shows under its ad inputs. */
+const adDerived: [string, string][] = [
+  ['Modelled D7 retention', adView.predD7Label],
+  ['Fitted decay exponent b', adView.bLabel],
+  ['Cumulative active days by D30', adView.activeD30Label],
+];
 const results = (p: typeof subP): [string, string][] => [
   ['Payback', crossingLabel(p.crossing, H)],
   [`Revenue per install by day ${H}`, money(p.revenueAt)],
   [`Return on spend by day ${H}`, times(p.roas)],
 ];
+
+/* Measured vs real, for the example scenario with all three coverage switches
+   off (the tool's default): what the cohort earns per install by day H, and
+   what a dashboard with those gaps would report. */
+const model = subModel(sub);
+const netReal = money(model.trueRev(H) - model.cpi);
+const netMeasured = money(model.measRev(H) - model.cpi);
+
+const subSteps = [
+  'Payers per install = install-to-trial rate × trial-to-paid rate.',
+  'Each payment is the plan price after store commission and refunds.',
+  `The first charge lands when the trial ends, then one charge per billing cycle (${cycleDays({ ...sub, period: 'weekly' })} days weekly, ${cycleDays(sub)} monthly, ${cycleDays({ ...sub, period: 'annual' })} annual).`,
+  'At every renewal the same share of payers stays (renewal retention), so payments shrink cycle by cycle.',
+  'Revenue per install on any day = payers per install × net payment × payments reached so far.',
+];
+const adSteps = [
+  'A retention curve is drawn through your day 1 and day 30 retention (a power curve, so it falls fast and then flattens).',
+  'Active days per install = the install day plus the retained share of every day after it.',
+  'Revenue per install = revenue per active user per day × active days.',
+];
+
+const limits = [...ASSUMPTIONS, 'Surplus is before operating costs, so it is not profit.'];
 
 const home = new URL(`${base}/`, Astro.site).href;
 const app = {
@@ -82,135 +117,214 @@ const app = {
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Payback calculator', path: '/payback-calculator' }]} />
 
-      <section class="section section--lead" data-section="calc-intro">
-        <div class="wrap">
-          <div class="section-head">
-          <p class="eyebrow eyebrow--amber">Free tool</p>
-          <h1 class="calc__h1">App payback calculator</h1>
-          <p class="section-lead">
-            Find the day an install earns back what it cost to acquire, for a subscription app or an
-            ad-monetised one. Set your own funnel, price, retention and cost per install. Results are
-            modelled from the assumptions you enter: a planning estimate, not a forecast of what a
-            campaign will do.
-          </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        label="Free tool"
+        title="App payback calculator"
+        lead="Find the day an install earns back what it cost to acquire, for a subscription app or an ad-monetised one. Set your own funnel, price, retention and cost per install. Results are modelled from the assumptions you enter: a planning estimate, not a forecast of what a campaign will do."
+        section="calc-intro"
+      />
 
       <Payback eyebrow="The calculator" methodLink={false} />
 
-      <section class="section" data-section="calc-method">
+      <section class="section section--band" data-section="calc-method">
         <div class="wrap">
-          <h2 class="calc__h2">How the calculator works</h2>
-          <div class="calc__grid">
-            <div class="calc__card">
-              <h3 class="calc__h3">Subscription apps</h3>
-              <ol class="calc__steps">
-                <li>Payers per install = install-to-trial rate × trial-to-paid rate.</li>
-                <li>Each payment is the plan price after store commission and refunds.</li>
-                <li>
-                  The first charge lands when the trial ends, then one charge per billing cycle
-                  ({cycleDays({ ...sub, period: 'weekly' })} days weekly, {cycleDays(sub)} monthly,
-                  {' '}{cycleDays({ ...sub, period: 'annual' })} annual).
-                </li>
-                <li>
-                  At every renewal the same share of payers stays (renewal retention), so payments
-                  shrink cycle by cycle.
-                </li>
-                <li>
-                  Revenue per install on any day = payers per install × net payment × payments
-                  reached so far.
-                </li>
-              </ol>
-            </div>
-            <div class="calc__card">
-              <h3 class="calc__h3">Ad-monetised apps</h3>
-              <ol class="calc__steps">
-                <li>
-                  A retention curve is drawn through your day 1 and day 30 retention (a power curve,
-                  so it falls fast and then flattens).
-                </li>
-                <li>Active days per install = the install day plus the retained share of every day after it.</li>
-                <li>Revenue per install = revenue per active user per day × active days.</li>
-              </ol>
-            </div>
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">Method</p>
+            <h2 class="shead__title">How the calculator works</h2>
+            <p class="shead__aside">
+              In both models, payback is the first day revenue per install reaches the cost per
+              install.
+            </p>
           </div>
-          <p class="calc__note">
-            In both models, payback is the first day revenue per install reaches the cost per install.
-            The search runs to day {SEARCH_MAX.toLocaleString('en-US')}; when it finds no crossing, the
-            calculator says so rather than calling it never.
-          </p>
+
+          <div class="sbody">
+            <div class="ggrid">
+              <div class="gcard" style="--gx:0%;--gy:0%">
+                <span class="gcard__icon"><Icon name="arrows-clockwise" size={24} /></span>
+                <h3 class="gcard__title">Subscription apps</h3>
+                <ol class="calc__steps" role="list">
+                  {
+                    subSteps.map((step, i) => (
+                      <li>
+                        <span class="calc__step-n" aria-hidden="true">{nn(i)}</span>
+                        <span>{step}</span>
+                      </li>
+                    ))
+                  }
+                </ol>
+              </div>
+              <div class="gcard" style="--gx:100%;--gy:100%">
+                <span class="gcard__icon"><Icon name="chart-line" size={24} /></span>
+                <h3 class="gcard__title">Ad-monetised apps</h3>
+                <ol class="calc__steps" role="list">
+                  {
+                    adSteps.map((step, i) => (
+                      <li>
+                        <span class="calc__step-n" aria-hidden="true">{nn(i)}</span>
+                        <span>{step}</span>
+                      </li>
+                    ))
+                  }
+                </ol>
+              </div>
+            </div>
+            <p class="calc__note">
+              The search runs to day {SEARCH_MAX.toLocaleString('en-US')}; when it finds no crossing,
+              the calculator says so rather than calling it never.
+            </p>
+          </div>
         </div>
       </section>
 
       <section class="section" data-section="calc-examples">
         <div class="wrap">
-          <h2 class="calc__h2">Worked examples</h2>
-          <p class="section-lead calc__lead">
-            Both use the calculator's default scenario: example inputs chosen to show how the model
-            behaves, not client data and not market averages. Every result below is computed by the
-            same model as the tool above.
-          </p>
-          <div class="calc__grid">
-            <div class="calc__card">
-              <h3 class="calc__h3">Subscription example</h3>
-              <table class="calc__table">
-                <caption class="visually-hidden">Subscription example inputs and results</caption>
-                <tbody>
-                  {subInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
-                </tbody>
-                <tbody class="calc__results">
-                  {results(subP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
-                </tbody>
-              </table>
-            </div>
-            <div class="calc__card">
-              <h3 class="calc__h3">Ad-monetised example</h3>
-              <table class="calc__table">
-                <caption class="visually-hidden">Ad-monetised example inputs and results</caption>
-                <tbody>
-                  {adInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
-                </tbody>
-                <tbody class="calc__results">
-                  {results(adP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
-                </tbody>
-              </table>
+          {/* The paragraph is taller than the heading here, so the pair is
+              top-aligned instead of the head's default bottom alignment. */}
+          <div class="shead" style="align-items: start" data-reveal="1">
+            <p class="shead__label">Example scenario</p>
+            <h2 class="shead__title">Worked examples</h2>
+            <p class="shead__aside">
+              Both use the calculator's default scenario: example inputs chosen to show how the model
+              behaves, not client data and not market averages. Every result below is computed by the
+              same model as the tool above.
+            </p>
+          </div>
+
+          <div class="sbody">
+            <div class="ggrid">
+              <div class="gcard gcard--lead" style="--gx:100%;--gy:0%">
+                <div class="calc__card-head">
+                  <h3 class="gcard__title calc__card-title">Subscription example</h3>
+                  <span class="gcard__kicker">Example</span>
+                </div>
+                <div class="calc__scroll">
+                  <table class="calc__table">
+                    <caption class="visually-hidden">Subscription example inputs and results</caption>
+                    <tbody>
+                      {subInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                    </tbody>
+                    <tbody class="calc__results">
+                      {results(subP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="gcard" style="--gx:0%;--gy:100%">
+                <div class="calc__card-head">
+                  <h3 class="gcard__title calc__card-title">Ad-monetised example</h3>
+                  <span class="gcard__kicker">Example</span>
+                </div>
+                <div class="calc__scroll">
+                  <table class="calc__table">
+                    <caption class="visually-hidden">Ad-monetised example inputs and results</caption>
+                    <tbody>
+                      {adInputs.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                    </tbody>
+                    <tbody class="calc__derived">
+                      {adDerived.map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                    </tbody>
+                    <tbody class="calc__results">
+                      {results(adP).map(([k, v]) => <tr><th scope="row">{k}</th><td>{v}</td></tr>)}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section" data-section="calc-measured">
-        <div class="wrap calc__narrow">
-          <h2 class="calc__h2">Why your dashboard can show a later payback</h2>
-          <p class="calc__p">
-            The calculator models the revenue a cohort really earns. Your MMP and ad platforms often
-            see less of it. Three switches under the chart simulate the usual gaps: renewals that are
-            never sent from the server, a SKAN schema that is not mapped to revenue, and web-to-app
-            clicks that never connect to the install. With a gap switched on, the reported line falls
-            below the real one, and campaigns that pay back look as if they do not.
-          </p>
-          <p class="calc__p">
-            Closing those gaps is the work behind the{' '}
-            <a class="link" href={`${base}/services/mobile-attribution-audit`}>attribution audit</a> and{' '}
-            <a class="link" href={`${base}/services/subscription-revenue-tracking`}>subscription revenue tracking</a>.
-          </p>
+      <section class="section section--band" data-section="calc-measured">
+        <div class="wrap">
+          <div class="row">
+            <div class="calc__copy" data-reveal="1">
+              <p class="shead__label">Measured vs real</p>
+              <h2 class="shead__title calc__h2">Why your dashboard can show a later payback</h2>
+              <p class="calc__p">
+                The calculator models the revenue a cohort really earns. Your MMP and ad platforms often
+                see less of it. Three switches under the chart simulate the usual gaps: renewals that are
+                never sent from the server, a SKAN schema that is not mapped to revenue, and web-to-app
+                clicks that never connect to the install. With a gap switched on, the reported line falls
+                below the real one, and campaigns that pay back look as if they do not.
+              </p>
+              <p class="calc__p">
+                Closing those gaps is the work behind the{' '}
+                <a class="link" href={`${base}/services/mobile-attribution-audit`}>attribution audit</a> and{' '}
+                <a class="link" href={`${base}/services/subscription-revenue-tracking`}>subscription revenue tracking</a>.
+              </p>
+            </div>
+
+            <div class="scene calc__scene" data-reveal="1">
+              <span class="badge calc__badge">Simulated</span>
+              <div class="dcard calc__sees">
+                <div class="dcard__label">
+                  <span>What your dashboard currently sees</span>
+                  <span>Example</span>
+                </div>
+                <ul class="calc__gaps" role="list">
+                  <li>
+                    <span class="calc__switch" aria-hidden="true"></span>
+                    <span>
+                      <span class="calc__gap-name">Server-side renewal capture</span>
+                      <span class="calc__gap-note">Off: only the first payment is ever counted.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="calc__switch" aria-hidden="true"></span>
+                    <span>
+                      <span class="calc__gap-name">SKAN schema mapped to revenue</span>
+                      <span class="calc__gap-note">Off: null conversion values report zero revenue.</span>
+                    </span>
+                  </li>
+                  <li>
+                    <span class="calc__switch" aria-hidden="true"></span>
+                    <span>
+                      <span class="calc__gap-name">Web-to-app click stitching</span>
+                      <span class="calc__gap-note">Off: paid installs get miscredited to organic.</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <div class="dcard dcard--raised calc__net">
+                <div class="dcard__label"><span>Example scenario, net per install by D{H}</span></div>
+                <dl class="calc__net-rows">
+                  <dt>Real</dt>
+                  <dd class="calc__net-real tabular">{netReal}</dd>
+                  <dt>What the dashboard measures</dt>
+                  <dd class="tabular">{netMeasured}</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="section" data-section="calc-limits">
-        <div class="wrap calc__narrow">
-          <h2 class="calc__h2">Limits of the model</h2>
-          <ul class="calc__list">
-            {ASSUMPTIONS.map((a) => <li>{a}</li>)}
-            <li>Surplus is before operating costs, so it is not profit.</li>
-          </ul>
-          <a class="btn-primary calc__btn" href={`${base}/#contact`}>
-            Check it against your own data
-            <Icon name="arrow-right" size={14} />
-          </a>
+        <div class="wrap">
+          <div class="calc__limits">
+            <div class="calc__copy" data-reveal="1">
+              <p class="shead__label">Limits</p>
+              <h2 class="shead__title calc__h2">Limits of the model</h2>
+              <a class="btn-primary calc__btn" href={`${base}/#contact`}>
+                Check it against your own data
+                <Icon name="arrow-right" size={14} />
+              </a>
+            </div>
+            <ol class="calc__list" role="list" data-reveal="1">
+              {
+                limits.map((a, i) => (
+                  <li>
+                    <span class="calc__step-n" aria-hidden="true">{nn(i)}</span>
+                    <span>{a}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
         </div>
       </section>
+
+      <Cta />
     </main>
 
     <Footer />
@@ -224,64 +338,85 @@ const app = {
     overflow-x: clip;
   }
 
-  .calc__h1 {
-    margin-top: var(--s4);
-    font-size: var(--t-h1);
-    line-height: var(--lh-h1);
-    letter-spacing: var(--ls-h1);
-  }
-
-  .calc__lead {
-    max-width: 68ch;
-  }
-
-  .calc__h2 {
-    font-size: var(--t-h2);
-  }
-
-  .calc__h3 {
-    font-size: var(--t-h3-sm);
-  }
-
-  .calc__grid {
-    margin-top: var(--s8);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-    gap: var(--s6);
-  }
-
-  .calc__card {
-    padding: var(--s8);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
+  .calc__copy {
     min-width: 0;
   }
 
+  .calc__h2 {
+    margin-top: var(--s6);
+  }
+
+  /* --- method --------------------------------------------------------------- */
   .calc__steps,
   .calc__list {
-    margin: var(--s6) 0 0;
-    padding-left: 1.25em;
     display: grid;
-    gap: var(--s3);
-    color: var(--color-text-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
     line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
-  .calc__note,
+  .calc__steps {
+    gap: var(--s4);
+    margin-top: var(--s8);
+    font-size: var(--t-body);
+  }
+
+  .calc__steps li,
+  .calc__list li {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    column-gap: var(--s3);
+  }
+
+  .calc__step-n {
+    padding-top: 3px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-accent-text);
+  }
+
+  .calc__note {
+    margin-top: var(--s8);
+    max-width: 68ch;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-3);
+  }
+
   .calc__p {
     margin-top: var(--s6);
-    max-width: 68ch;
-    color: var(--color-text-2);
+    max-width: 56ch;
+    font-size: var(--t-section-lead);
     line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
-  .calc__narrow {
-    max-width: 860px;
+  .calc__p + .calc__p {
+    margin-top: var(--s4);
+  }
+
+  /* --- worked examples -------------------------------------------------------- */
+  .calc__card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s2) var(--s6);
+  }
+
+  .calc__card-title {
+    margin-top: 0;
+  }
+
+  /* The table scrolls inside its own box if a phone is too narrow for it. */
+  .calc__scroll {
+    margin-top: var(--s6);
+    overflow-x: auto;
   }
 
   .calc__table {
-    margin-top: var(--s6);
     width: 100%;
     border-collapse: collapse;
     font-size: var(--t-body-sm);
@@ -289,22 +424,30 @@ const app = {
 
   .calc__table th,
   .calc__table td {
-    padding: 10px 0;
+    padding: 11px 0;
     border-bottom: 1px solid var(--color-line);
     text-align: left;
     vertical-align: top;
   }
 
   .calc__table th {
+    padding-right: var(--s4);
     font-weight: var(--fw-regular);
     color: var(--color-text-2);
-    padding-right: var(--s4);
   }
 
   .calc__table td {
     font-family: var(--font-mono);
     text-align: right;
     white-space: nowrap;
+  }
+
+  .calc__derived th {
+    color: var(--color-text-3);
+  }
+
+  .calc__derived td {
+    color: var(--color-text-2);
   }
 
   .calc__results th,
@@ -318,7 +461,159 @@ const app = {
     border-top: 2px solid var(--color-accent);
   }
 
+  .calc__results tr:first-child td {
+    color: var(--color-accent-text);
+  }
+
+  .calc__results tr:last-child th,
+  .calc__results tr:last-child td {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  /* --- measured vs real: cards in normal flow, so nothing overlaps ------------ */
+  .calc__scene {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--s6);
+    padding: clamp(14px, 2.6vw, 34px);
+    min-height: 0;
+  }
+
+  .calc__badge {
+    align-self: flex-end;
+  }
+
+  .calc__sees {
+    width: 100%;
+    max-width: 440px;
+    min-width: 0;
+  }
+
+  .calc__gaps {
+    display: grid;
+    gap: var(--s4);
+    margin: var(--s6) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .calc__gaps li {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  /* A switch drawn in its off position. It is a picture of the calculator's
+     own three checkboxes, not a control. */
+  .calc__switch {
+    position: relative;
+    margin-top: 3px;
+    height: 22px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunk);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  }
+
+  .calc__switch::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-text-4);
+  }
+
+  .calc__gap-name {
+    display: block;
+    font-size: var(--t-card);
+    font-weight: var(--fw-semibold);
+    line-height: 1.4;
+  }
+
+  .calc__gap-note {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-text-2);
+  }
+
+  .calc__net {
+    align-self: flex-end;
+    width: 100%;
+    max-width: 320px;
+    padding: 16px 18px;
+  }
+
+  .calc__net-rows {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 6px 12px;
+    margin: var(--s3) 0 0;
+    font-size: 13.5px;
+    color: var(--color-text-2);
+  }
+
+  .calc__net-rows dd {
+    margin: 0;
+    font-size: 22px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    color: var(--color-text);
+  }
+
+  .calc__net-rows .calc__net-real {
+    color: var(--color-accent-text);
+  }
+
+  /* --- limits ------------------------------------------------------------------ */
+  .calc__limits {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+  }
+
   .calc__btn {
-    margin-top: var(--s8);
+    margin-top: var(--s12);
+  }
+
+  .calc__list {
+    min-width: 0;
+    font-size: var(--t-body);
+  }
+
+  .calc__list li {
+    padding: var(--s6) 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .calc__list li:first-child {
+    padding-top: 0;
+  }
+
+  .calc__list li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  @media (min-width: 900px) {
+    .calc__limits {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(40px, 6vw, 80px);
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .calc__btn {
+      white-space: normal;
+    }
   }
 </style>

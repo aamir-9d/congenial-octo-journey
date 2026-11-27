@@ -99,7 +99,11 @@ export function initPayback(): void {
     const cpiKey = mode === 'sub' ? 'cpi' : 'adCpi';
     if (range && range !== document.activeElement) range.value = String(s[cpiKey]);
 
-    const cpiNum = $<HTMLInputElement>('[data-input="cpi"]');
+    /* The one number field serves both models, so its key is rewritten when the
+       model changes. It has to be found under either name: looking it up as
+       "cpi" alone meant that after one trip to the ad model it stayed "adCpi"
+       for good, and on the way back the field kept writing the ad model's cost. */
+    const cpiNum = $<HTMLInputElement>('[data-input="cpi"], [data-input="adCpi"]');
     if (cpiNum) cpiNum.dataset.input = cpiKey;
 
     const plan = $<HTMLElement>('[data-plan-summary]');

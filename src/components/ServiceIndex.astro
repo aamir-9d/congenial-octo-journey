@@ -1,121 +1,233 @@
 ---
 import Icon from './Icon.astro';
+import type { IconName } from '../data/icons';
 import { SERVICES } from '../data/services';
 
-/** Links to the live specialist pages. Lists only what src/data/services.ts holds. */
+/**
+ * The five specialist services as glow cards, on /services and /about.
+ *
+ * Board: design/v3/Services.dc.html. The audit is the lead card, full width,
+ * with the path it follows drawn beside it; the other four sit in one row and
+ * become a swipe row below 700px.
+ *
+ * Lists only what src/data/services.ts holds: names, summaries and the audit's
+ * five steps all come from there.
+ */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 interface Props {
-  /** The homepage calls this section "What I do"; /services and /about keep the default. */
+  /** The label above the heading. */
   eyebrow?: string;
 }
 
-const { eyebrow = 'SPECIALIST SERVICES' } = Astro.props;
+const { eyebrow = 'Specialist services' } = Astro.props;
+
+const ICONS: IconName[] = ['magnifying-glass', 'shield-check', 'cursor-click', 'list', 'arrows-clockwise'];
+const GLOW = [
+  ['100%', '100%'],
+  ['0%', '0%'],
+  ['0%', '100%'],
+  ['100%', '0%'],
+];
+
+const [audit, ...rest] = SERVICES;
+const steps = audit!.visual.kind === 'chain' ? audit!.visual.steps.map(([name]) => name) : [];
 ---
 
 <section id="specialist" class="section" data-section="specialist-services">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      <div class="eyebrow">{eyebrow}</div>
-      <h2 class="svi__h">One problem per page.</h2>
-      <p class="section-lead">
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">{eyebrow}</p>
+      <h2 class="shead__title">One problem per page.</h2>
+      <p class="shead__aside">
         Each shows what apps get wrong and how to fix it. Start with the audit if you do not know
         which one you need.
       </p>
     </div>
-    <ul class="svi__grid" role="list">
-      {SERVICES.map((s, i) => (
-        <li class={i === 0 ? 'svi__item--lead' : undefined}>
-          <a class:list={['svi__card', { 'svi__card--ring': i === 0 }]} href={`${base}/services/${s.slug}`}>
-            <span class="svi__name">{s.name}</span>
-            <span class="svi__text">{s.summary}</span>
-            <span class="svi__go">
-              See the fixes
-              <Icon name="arrow-right" size={13} />
+
+    <div class="sbody">
+      <a class="gcard gcard--lead svi__lead" href={`${base}/services/${audit!.slug}`} style="--gx:0%;--gy:0%">
+        <span class="svi__lead-copy">
+          <span class="gcard__icon">
+            <Icon name={ICONS[0]!} size={24} />
+          </span>
+          <span class="svi__lead-title">{audit!.name}</span>
+          <span class="gcard__text svi__lead-text">{audit!.summary}</span>
+          <span class="gcard__go">
+            Start here
+            <Icon name="arrow-right" size={15} />
+          </span>
+        </span>
+        {
+          steps.length > 0 && (
+            <span class="svi__panel">
+              <span class="dcard svi__path">
+                <span class="dcard__label">
+                  <span>{audit!.visualTitle}</span>
+                </span>
+                <span class="svi__steps">
+                  {steps.map((s, i) => (
+                    <span class:list={['svi__step', { 'svi__step--last': i === steps.length - 1 }]}>{s}</span>
+                  ))}
+                </span>
+              </span>
             </span>
-          </a>
-        </li>
-      ))}
-    </ul>
+          )
+        }
+      </a>
+
+      <div class="ggrid ggrid--4 swipe svi__grid" data-swipe>
+        {
+          rest.map((s, i) => (
+            <a
+              class="gcard svi__card"
+              href={`${base}/services/${s.slug}`}
+              style={`--gx:${GLOW[i % GLOW.length]![0]};--gy:${GLOW[i % GLOW.length]![1]}`}
+            >
+              <span class="gcard__icon">
+                <Icon name={ICONS[i + 1] ?? 'stack'} size={24} />
+              </span>
+              <span class="gcard__title svi__name">{s.name}</span>
+              <span class="gcard__text">{s.summary}</span>
+              <span class="gcard__go">
+                See the fixes
+                <Icon name="arrow-right" size={15} />
+              </span>
+            </a>
+          ))
+        }
+      </div>
+      <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+        <span class="swipe__dots" data-swipe-dots>{rest.map(() => <i />)}</span>
+        <span data-swipe-count>1 of {rest.length}</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <style>
-  .svi__h {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-    line-height: var(--lh-h2);
+  .svi__lead {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s8);
+    align-items: center;
+    padding: clamp(22px, 3vw, 40px);
+  }
+
+  .svi__lead-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .svi__lead-title {
+    margin-top: var(--s8);
+    font-size: var(--t-h2-card);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h2-card);
+    line-height: 1.14;
+  }
+
+  .svi__lead-text {
+    max-width: 42ch;
+    font-size: var(--t-section-lead);
+  }
+
+  /* The path the audit follows, on a small glowing panel. */
+  .svi__panel {
+    display: block;
+    min-width: 0;
+    padding: clamp(16px, 2.6vw, 32px);
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 88% 10%, rgba(var(--rgb-accent), var(--bloom-amber)), transparent 52%),
+      radial-gradient(circle at 6% 96%, rgba(64, 86, 140, var(--bloom-blue)), transparent 55%),
+      var(--color-band);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  }
+
+  .svi__path {
+    display: block;
+  }
+
+  .svi__steps {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--s6);
+  }
+
+  .svi__step {
+    position: relative;
+    padding: 8px 11px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+    font-size: 13px;
+    font-weight: var(--fw-semibold);
+    line-height: 1.3;
+  }
+
+  .svi__step--last {
+    box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.7);
   }
 
   .svi__grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin: clamp(40px, 4vw, 64px) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .svi__item--lead {
-    grid-column: 1 / -1;
+    margin-top: 16px;
   }
 
   .svi__card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 26px;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
-    transition: box-shadow 180ms var(--ease-out-soft);
-  }
-
-  .svi__card--ring,
-  .svi__card:hover {
-    box-shadow: var(--ring-accent);
+    min-height: 268px;
   }
 
   .svi__name {
-    font-size: var(--t-post-title);
-    font-weight: var(--fw-semibold);
-    letter-spacing: var(--ls-h3);
-    line-height: var(--lh-h3);
+    font-size: var(--t-h3);
+    line-height: 1.2;
   }
 
-  .svi__text {
-    margin-top: 10px;
-    font-size: var(--t-card);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
-  }
-
-  .svi__go {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    margin-top: auto;
-    padding-top: 22px;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-disclosure);
-    color: var(--color-accent);
-  }
-
-  @media (max-width: 1023px) {
-    .svi__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+  @media (min-width: 900px) {
+    .svi__lead {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      column-gap: clamp(32px, 6vw, 96px);
     }
   }
 
-  @media (max-width: 640px) {
-    .svi__grid {
-      grid-template-columns: minmax(0, 1fr);
+  /* One line, joined by amber rules, where there is room for it. */
+  @media (min-width: 1280px) {
+    .svi__steps {
+      flex-wrap: nowrap;
+      gap: 0;
     }
 
+    .svi__step {
+      flex: none;
+    }
+
+    .svi__step:not(:first-child) {
+      margin-left: 20px;
+    }
+
+    .svi__step:not(:first-child)::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      width: 20px;
+      height: 2px;
+      margin-top: -1px;
+      background: var(--color-accent);
+    }
+  }
+
+  @media (min-width: 1024px) {
     .svi__card {
-      padding: 20px;
+      min-height: 300px;
+    }
+
+    .svi__name {
+      min-height: 2.4em;
     }
   }
 </style>

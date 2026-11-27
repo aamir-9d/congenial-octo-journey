@@ -3,11 +3,15 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import Cta from '../components/Cta.astro';
 import Faq from '../components/Faq.astro';
 import Schema from '../components/Schema.astro';
 
 /**
  * FAQ.
+ *
+ * Board: design/v3/Faq.dc.html.
  *
  * This was 29% of the homepage -- 1,211 words and nineteen disclosures, more
  * than any other section, sitting in front of visitors who had not yet asked
@@ -17,6 +21,8 @@ import Schema from '../components/Schema.astro';
  * Every question and answer is unchanged; src/data/faq.ts is still the single
  * source, and it still feeds the FAQPage structured data.
  */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const title = 'Mobile Attribution & App Growth FAQ — E2E Apps';
 const description =
@@ -29,7 +35,15 @@ const description =
     <Nav />
     <main id="main">
       <Breadcrumbs trail={[{ name: 'FAQ', path: '/faq' }]} />
-      <Faq lead />
+      <PageHero
+        label="Before you book"
+        title="Questions people ask before booking."
+        lead="Including the ones that are awkward to answer."
+        cta={{ href: `${base}/#contact`, text: 'Get a free first look' }}
+        section="faq-hero"
+      />
+      <Faq />
+      <Cta />
     </main>
 
     <Footer />
@@ -41,7 +55,4 @@ const description =
     min-height: 100vh;
     background: var(--color-bg);
   }
-
-
-
 </style>

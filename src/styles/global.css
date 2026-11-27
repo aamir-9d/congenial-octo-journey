@@ -92,7 +92,7 @@ a {
 
 /* Opt-in link treatment, for prose links that need to look like links. */
 .link {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   border-bottom: 1px solid rgba(var(--rgb-accent), 0.35);
   transition: color 0.15s ease, border-color 0.15s ease;
 }
@@ -116,7 +116,7 @@ summary::marker {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -489,7 +489,7 @@ h1.eyebrow {
 }
 
 .eyebrow--amber {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .section-lead {
@@ -547,7 +547,7 @@ h1.eyebrow {
     font-family: var(--font-mono);
     font-size: var(--t-mono);
     letter-spacing: var(--ls-disclosure);
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     background: transparent;
     border: 0;
     cursor: pointer;
@@ -574,7 +574,7 @@ h1.eyebrow {
 }
 
 .disclose--on-dark .disclose__toggle {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* Copy that has a shorter phone form. Only one of the pair is ever displayed,

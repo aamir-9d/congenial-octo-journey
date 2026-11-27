@@ -1,158 +1,225 @@
 ---
+import Icon from './Icon.astro';
 import { PRODUCTS, megabytes } from '../data/products';
 
 /**
- * NEW DESIGN. The signed-off export had no products section.
+ * The three product overviews, one large card each.
  *
- * Placed after the audit findings and before the founders: the page has just
- * finished claiming these problems are findable, and this is the evidence that
- * the tooling to find them actually exists. It sits above the FAQ, where "can
- * you show me results from other clients" is answered — these are our own
- * tools, so they carry no client data and can be shown in full.
+ * Board: design/v3/Products.dc.html. Copy on one side, a small visual panel on
+ * the other, sides alternating down the page.
  *
- * Card language is borrowed from the sections above rather than invented: the
- * mono kicker of Problems, the white card and hairline of Loop, and the big
- * Archivo figure of Proof. Every string comes from the PDF it opens.
+ * Every string comes from src/data/products.ts, which lifts it from the PDF the
+ * card opens. The visual panel is built from that product's `stats` (the PDF's
+ * cover figures) and nothing else: the first is the large figure, with one
+ * square drawn per unit when it is a small whole number; the second is the
+ * smaller card; the third is the badge. The board's captions under the figures
+ * are not in the data, so they are not shown.
  *
- * The whole card is one <a>. Not a card with a button inside it — that gives
- * two tab stops and a small target for the same destination.
+ * The whole card is one <a>. Not a card with a button inside it: that gives
+ * two tab stops and a small target for the same destination. Because
+ * tests/products.test.ts matches the card's class attribute exactly, the card
+ * cannot also carry `.gcard`; the glow-card look is restated on
+ * `.products__card` below. src/scripts/products.ts reads `data-product` and
+ * `.products__name` to report which overview was opened.
+ *
+ * The page's h1 is in <PageHero>, in src/pages/products.astro.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-/**
- * `lead` makes this section the page's opening block.
- *
- * On its own page there is no separate page header — this section IS the
- * header, so its heading becomes the h1 and it takes the top padding that
- * clears the fixed nav. Wrapping it in another eyebrow/heading/lead stack was
- * the bug: /products ended up printing "TOOLS BUILT FOR THIS WORK" and "Three
- * products, in detail." twice, word for word.
- */
-interface Props {
-  lead?: boolean;
-}
+/** One square per unit, for a figure small enough to count by eye. */
+const squares = (value: string) => {
+  const n = /^\d+$/.test(value) ? Number(value) : 0;
+  return n >= 2 && n <= 60 ? n : 0;
+};
+const columns = (n: number) => (n <= 10 ? n : n <= 30 ? 8 : 10);
 
-const { lead = false } = Astro.props;
+/* Where each card's glow sits. */
+const GLOW = ['100%;--gy:0%', '0%;--gy:100%', '100%;--gy:100%'];
 ---
 
-<section id="products" class:list={['section', { 'section--lead': lead }]} data-section="products" data-added="products">
+<section id="products" class="section" data-section="products" data-added="products">
   <div class="wrap">
-    <div class="section-head" data-reveal="1">
-      {
-        lead ? (
-          <h1 class="eyebrow">Monetization and app store optimization tools</h1>
-        ) : (
-          <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
-        )
-      }
-      <h2 class="products__head">Three products, in detail.</h2>
-      <p class="section-lead">
-        Each one a full overview &#8212; what it does, how it works, and screenshots from the
-        running build.
+    <div class="shead" data-reveal="1">
+      <p class="shead__label">Tools built for this work</p>
+      <h2 class="shead__title">Three products, in detail.</h2>
+      <p class="shead__aside">
+        Three tools built for measurement and store work: Monetization Scout, ASO Suite and ASO
+        Agent. Each links to a full overview.
       </p>
     </div>
 
-    <div class="products__grid">
+    <div class="products__grid sbody">
       {
-        PRODUCTS.map((p) => (
-          <a
-            class="products__card"
-            href={`${base}/pdf/${p.file}`}
-            target="_blank"
-            rel="noopener"
-            data-product={p.id}
-            aria-label={`${p.name} overview, PDF, ${p.pages} pages, opens in a new tab`}
-            data-reveal="1"
-          >
-            <div class="products__kicker">{p.kicker}</div>
-            <h3 class="products__name">{p.name}</h3>
-            <p class="products__headline">{p.headline}</p>
-            <p class="products__summary">{p.summary}</p>
+        PRODUCTS.map((p, i) => {
+          const [main, second, third] = p.stats;
+          const n = main ? squares(main.value) : 0;
+          return (
+            <a
+              class="products__card"
+              href={`${base}/pdf/${p.file}`}
+              target="_blank"
+              rel="noopener"
+              data-product={p.id}
+              data-flip={i % 2 === 1 ? '' : undefined}
+              aria-label={`${p.name} overview, PDF, ${p.pages} pages, opens in a new tab`}
+              style={`--gx:${GLOW[i % GLOW.length]}`}
+              data-reveal="1"
+            >
+              <div class="products__copy">
+                <div class="products__kicker">{p.kicker}</div>
+                <h3 class="products__name">{p.name}</h3>
+                <p class="products__headline">{p.headline}</p>
+                <p class="products__summary">{p.summary}</p>
+                <p class="products__stack">{p.stack}</p>
 
-            <div class="products__foot">
-              <span class="products__stack">{p.stack}</span>
-              <span class="products__actions">
-                <span class="products__open">Read the overview &#8599;</span>
-                <span class="products__meta">
-                  <span class="wide-only">
+                <div class="products__foot">
+                  <span class="products__open">
+                    Read the overview
+                    <Icon name="arrow-up-right" size={14} />
+                  </span>
+                  <span class="products__meta">
                     PDF &#183; {p.pages} pages &#183; {megabytes(p.bytes)}
                   </span>
-                  <span class="narrow-only">PDF &#183; {megabytes(p.bytes)}</span>
-                </span>
-              </span>
-            </div>
-          </a>
-        ))
+                </div>
+              </div>
+
+              <div class="scene products__scene">
+                {main && (
+                  <div class="dcard products__main">
+                    <div class="dcard__label">
+                      <span>{main.label}</span>
+                      <span>From the overview</span>
+                    </div>
+                    <p class="products__fig tabular">{main.value}</p>
+                    {n > 0 && (
+                      <div class="products__dots" style={`--cols:${columns(n)}`} aria-hidden="true">
+                        {Array.from({ length: n }, () => (
+                          <i />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div class="products__row">
+                  {second && (
+                    <div class="dcard dcard--raised products__second">
+                      <div class="dcard__label products__amber">
+                        <span>{second.label}</span>
+                      </div>
+                      <p class="products__fig products__fig--sm tabular">{second.value}</p>
+                    </div>
+                  )}
+                  {third && (
+                    <span class="badge products__badge">
+                      {third.value} {third.label}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </a>
+          );
+        })
       }
     </div>
   </div>
 </section>
 
 <style>
-
-
-  .products__head {
-    margin-top: 16px;
-    font-size: var(--t-h2);
-    letter-spacing: var(--ls-h2);
-  }
-
-  /* Same 280px floor every other grid on the page uses — deliberately not the
-     420px that broke the founders section below 480px. */
   .products__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-    gap: var(--s6);
-    margin-top: var(--s16);
-    align-items: stretch;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
   }
 
+  /* The glow card (`.gcard` in redesign.css), restated: see the note above. */
   .products__card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: center;
+    min-width: 0;
+    padding: clamp(20px, 3.4vw, 48px);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+    color: var(--color-text);
+    transition: box-shadow 200ms var(--ease-out-soft);
+  }
+
+  .products__card::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: var(--gx, 100%);
+    top: var(--gy, 0%);
+    width: 420px;
+    height: 420px;
+    margin: -210px 0 0 -210px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(var(--rgb-accent)), transparent);
+    opacity: var(--glow);
+    transition: opacity 240ms var(--ease-out-soft);
+    pointer-events: none;
+  }
+
+  .products__card:hover,
+  .products__card:focus-visible {
+    box-shadow: var(--ring-accent);
+  }
+
+  .products__card:hover::before,
+  .products__card:focus-visible::before {
+    opacity: var(--glow-lead);
+  }
+
+  /* The card is the link, so the focus ring belongs on the whole card. */
+  .products__card:focus-visible {
+    outline: 2px solid var(--color-accent-text);
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 900px) {
+    .products__card {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: clamp(32px, 4vw, 56px);
+    }
+
+    .products__card[data-flip] > .products__copy {
+      order: 2;
+    }
+  }
+
+  .products__copy {
     display: flex;
     flex-direction: column;
-    background: var(--color-surface);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-card);
-    padding: var(--s8);
-    color: inherit;
-    text-decoration: none;
-    transition:
-      border-color 0.15s ease,
-      box-shadow 0.15s ease,
-      transform 0.15s var(--ease-out-soft);
-  }
-
-  .products__card:hover {
-    box-shadow: var(--ring-accent), var(--shadow-card-hover);
-    transform: translateY(-3px);
+    min-width: 0;
   }
 
   .products__kicker {
     font-family: var(--font-mono);
-    font-size: var(--t-mono-xs);
-    letter-spacing: var(--ls-meta);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-label);
     line-height: var(--lh-snug);
-    color: var(--color-accent);
+    text-transform: uppercase;
+    color: var(--color-accent-text);
   }
 
   .products__name {
-    margin-top: var(--s3);
-    font-size: var(--t-h3-sm);
-    letter-spacing: var(--ls-tight);
+    margin-top: var(--s4);
+    font-size: clamp(26px, 3vw, 40px);
+    letter-spacing: var(--ls-h2);
+    line-height: 1.1;
     color: var(--color-text);
   }
 
-  .products__kicker,
   .products__headline {
-    min-height: 3.1em;
-  }
-
-  .products__headline {
-    margin-top: 10px;
-    min-height: 2.7em;
+    margin-top: var(--s4);
+    font-size: clamp(17px, 1.6vw, 20px);
     font-weight: var(--fw-semibold);
-    font-size: var(--t-body);
     line-height: var(--lh-tight);
     letter-spacing: var(--ls-snug);
     color: var(--color-text);
@@ -160,125 +227,148 @@ const { lead = false } = Astro.props;
 
   .products__summary {
     margin-top: var(--s4);
-    font-size: var(--t-card);
+    font-size: var(--t-body);
     line-height: var(--lh-body);
     color: var(--color-text-2);
-    /* Pushes the footer to the bottom, so the three cards line up
-       however differently the summaries wrap. */
-    flex: 1;
-  }
-
-  .products__foot {
-    margin-top: var(--s8);
-    padding-top: var(--s4);
-    border-top: 1px solid var(--color-line);
   }
 
   .products__stack {
-    display: block;
+    margin-top: var(--s6);
     font-family: var(--font-mono);
-    font-size: var(--t-mono-2xs);
+    font-size: var(--t-mono-sm);
     line-height: var(--lh-snug);
-    color: var(--color-text-4);
+    color: var(--color-text-3);
   }
 
-  .products__actions {
-    display: block;
+  .products__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s4) var(--s8);
+    margin-top: var(--s8);
+    padding-top: var(--s8);
+    border-top: 1px solid var(--color-line);
   }
 
+  /* Looks like the site's pill link; the link itself is the whole card. */
   .products__open {
-    display: block;
-    margin-top: var(--s3);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono);
-    color: var(--color-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 26px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-line-strong);
+    font-size: var(--t-body);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+    transition: border-color 180ms var(--ease-out-soft);
+  }
+
+  .products__open :global(svg) {
+    flex: none;
+    color: var(--color-accent-text);
   }
 
   .products__card:hover .products__open {
-    color: var(--color-accent);
+    border-color: var(--color-line-hover);
   }
 
   .products__meta {
-    display: block;
-    margin-top: var(--s2);
-    font-size: var(--t-mono-2xs);
-    color: var(--color-text-4);
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--color-text-3);
   }
 
-  /* The card is the link, so the ring belongs on the whole card. */
-  .products__card:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+  /* --- the visual panel: the overview's cover figures ---------------------- */
+
+  .products__scene {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    min-height: 0;
+    padding: clamp(14px, 2.4vw, 28px);
+  }
+
+  /* The shared card shadow is a fixed black; here it follows the theme. */
+  .products__main,
+  .products__second {
+    min-width: 0;
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      var(--shadow-card-hover);
+  }
+
+  .products__fig {
+    margin-top: var(--s3);
+    font-family: var(--font-heading);
+    font-size: clamp(34px, 3.6vw, 46px);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: 1.05;
+    color: var(--color-text);
+  }
+
+  .products__fig--sm {
+    margin-top: var(--s2);
+    font-size: clamp(26px, 2.6vw, 34px);
+  }
+
+  .products__amber {
+    color: var(--color-accent-text);
+  }
+
+  .products__dots {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 8), minmax(0, 1fr));
+    gap: clamp(3px, 0.6vw, 7px);
+    margin-top: var(--s6);
+  }
+
+  .products__dots i {
+    aspect-ratio: 3 / 2;
+    border-radius: 3px;
+    background: var(--color-accent);
+    opacity: 0.6;
+  }
+
+  .products__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .products__second {
+    flex: 0 1 220px;
+    padding: 14px 18px;
+  }
+
+  .products__badge {
+    min-width: 0;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    text-align: center;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .products__card {
+    .products__card,
+    .products__card::before,
+    .products__open {
       transition: none;
-    }
-
-    .products__card:hover {
-      transform: none;
     }
   }
 
-  /* --- phone ------------------------------------------------------------- */
-
-  @media (max-width: 767px) {
-    .products__card {
-      padding: var(--s6);
-    }
-
-    .products__kicker {
-      font-size: 10px;
-      line-height: var(--lh-tight);
-    }
-
-    .products__name {
-      margin-top: var(--s3);
-      font-size: 21px;
-    }
-
-    .products__headline {
-      margin-top: var(--s2);
-      font-size: var(--t-body-sm);
-      line-height: 1.35;
-    }
-
-    .products__summary {
-      margin-top: var(--s3);
-      font-size: 13.5px;
-    }
-
-    .products__stack {
-      margin-top: var(--s6);
-      padding-top: var(--s3);
-      font-size: 10.5px;
-      line-height: var(--lh-tight);
-    }
-
-    /* The affordance and the file size share a line: the reader wants to know
-       what it costs them to tap before they tap it. The stack line stays on
-       its own row above, which is what the design draws. */
-    .products__actions {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: var(--s3);
-    }
-
+  @media (max-width: 520px) {
     .products__open {
-      flex: 1;
-      min-width: 0;
-      margin-top: 0;
-      font-size: 13.5px;
+      padding: 0 20px;
     }
 
     .products__meta {
-      flex: none;
-      margin-top: 0;
-      font-size: 10.5px;
-      white-space: nowrap;
+      font-size: var(--t-mono-xs);
     }
   }
 </style>
