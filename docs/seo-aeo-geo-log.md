@@ -17,6 +17,25 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Findings page from the 10 audits
+
+The owner confirmed that text repeated across audit workbooks was left over from a copied template.
+
+### Done (branch `growth-plan`)
+- `/mmp-audit-findings`: nine findings, most common first, each with its count out of 10, what it does to
+  the numbers, and a link to the page that fixes it. ATT handling 10 of 10, revenue or purchase events 9,
+  SKAN conversion values or reporting 6, re-engagement settings 6, partner postbacks and integrations 6,
+  uninstall measurement 5, view-through attribution 4, web-to-app tracking 3, server-side renewals 2.
+- Method on the page: one count per audit when at least one check in the area needed fixing; attribution
+  platform checks only; checks copied word for word between workbooks, and ones marked not applicable, not
+  counted; every match read by hand. A "What this cannot show" note says the apps asked for an audit and
+  ten is a small sample.
+- Not counted: findings that only recommended adding SKAdNetworkItems to the advertised app.
+- No app or client named anywhere (scanned). In the sitemap and footer; linked from `/case-studies`.
+- One test; 158 pass.
+
+---
+
 ## 2026-11-27: Growth plan, first build
 
 Plan saved as `docs/growth-plan.md` (proof, entity and buyer content, from the three audits and a

@@ -24,6 +24,7 @@ const PAGES = [
   { path: '/automation', priority: '0.9', changefreq: 'monthly' },
   { path: '/payback-calculator', priority: '0.8', changefreq: 'monthly' },
   { path: '/case-studies', priority: '0.8', changefreq: 'monthly' },
+  { path: '/mmp-audit-findings', priority: '0.8', changefreq: 'monthly' },
   { path: '/products', priority: '0.7', changefreq: 'monthly' },
   { path: '/blog', priority: '0.8', changefreq: 'weekly' },
   { path: '/about', priority: '0.7', changefreq: 'monthly' },
