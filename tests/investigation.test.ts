@@ -306,17 +306,16 @@ test('the homepage section stays a summary', { skip }, () => {
 
 test('the homepage order is the one the brief sets', { skip }, () => {
   const order = [...home.matchAll(/data-section="([a-z-]+)"/g)].map((m) => m[1]);
-  /* The 27 November 2026 restructure: what is sold, the track record, the
-     services, the evidence, the method, then the ask. The full calculator is
-     on /payback-calculator and Problems is on /services; neither is deleted. */
+  /* The signed-off sections in the order set on 27 November 2026: the claim,
+     how the work runs, the evidence, the visitor's own numbers, then the ask.
+     Diagnostics sits directly above Payback because it points down at it. */
   assert.deepEqual(order, [
     'hero',
-    'stats',
-    'specialist-services',
-    'proof',
-    'case-study',
     'loop',
-    'payback-teaser',
+    'case-study',
+    'proof',
+    'diagnostics',
+    'payback',
     'automation',
     // 'founders' is hidden on the homepage until the portraits exist.
     'contact',

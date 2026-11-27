@@ -2,10 +2,9 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
-import Stats from '../components/Stats.astro';
-import ServiceIndex from '../components/ServiceIndex.astro';
+import Diagnostics from '../components/Diagnostics.astro';
 import Proof from '../components/Proof.astro';
-import PaybackTeaser from '../components/PaybackTeaser.astro';
+import Payback from '../components/Payback.astro';
 import Automation from '../components/Automation.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import Loop from '../components/Loop.astro';
@@ -18,30 +17,29 @@ import Schema from '../components/Schema.astro';
 /**
  * The homepage.
  *
- * Restructured on 27 November 2026 so the page follows one line of argument:
- * what is sold, the track record, the services, the evidence, the method, then
- * the ask. Before this it opened on attribution, moved to "three checks" and a
- * full payback calculator, and only reached the services and the way of
- * working at the bottom. The owner's verdict was that a visitor could not tell
- * what was being sold.
+ * The sections are the signed-off ones, unchanged. Only their order moved, on
+ * 27 November 2026, so the page makes one argument from top to bottom. Before
+ * that it opened on attribution, went to "three checks" and the calculator,
+ * and reached the way of working, which is what is actually sold, last.
  *
- *   Hero           the service and the buyer, and one action
- *   Stats          four figures, each read from the file that owns it
- *   ServiceIndex   what I do: the specialist services, audit first
- *   Proof          what audits turn up, with a link to the findings page
- *   CaseStudy      one case, shown all the way down
- *   Loop           how the work runs
- *   PaybackTeaser  a pointer to the calculator on /payback-calculator
- *   Automation     ongoing reporting
- *   Founders       HIDDEN for now: no portraits yet. /about shows both.
- *   Contact        the one action, again
+ *   Hero        the service and the buyer, and one action
+ *   Loop        01  how the work runs: the four stations are the service
+ *   CaseStudy   02  one case, shown all the way down
+ *   Proof           three more findings, as its tail
+ *   Diagnostics 03  three checks a visitor can run on their own setup
+ *   Payback     04  the payback map: test it with your own numbers
+ *   Automation      ongoing reporting, once the problem and evidence have landed
+ *   Founders        HIDDEN for now: no portraits yet. /about shows both.
+ *   Contact         the one action, again
  *
- * Off this page, not deleted: the full calculator (on /payback-calculator)
- * and Problems (on /services). The "three checks" block (Diagnostics.astro) is
- * removed; its three links are covered by the services grid. Git history has it.
+ * Diagnostics stays directly above Payback: its closing line points down at
+ * the payback map. Proof stays a SIBLING of CaseStudy, not a child: CaseStudy
+ * is marked data-added and the copy-parity check strips such blocks whole,
+ * which would take Proof's signed-off copy with it.
  *
- * Proof is a full section again rather than the nested tail of the case
- * study, because it now comes before the case.
+ * A same-day attempt replaced several sections with new ones (a stats strip,
+ * a services grid, a calculator pointer). The owner preferred the originals;
+ * they are back and the new ones are deleted.
  */
 
 const title = 'Mobile Attribution Audits & Fixes for Subscription Apps — E2E Apps';
@@ -59,12 +57,11 @@ const description =
     <Nav />
     <main id="main">
       <Hero />
-      <Stats />
-      <ServiceIndex eyebrow="WHAT I DO" />
-      <Proof />
-      <CaseStudy />
       <Loop />
-      <PaybackTeaser />
+      <CaseStudy />
+      <Proof nested />
+      <Diagnostics />
+      <Payback eyebrow="04 / The payback map" />
       <Automation />
       {/* Hidden until the founder portraits exist. To bring it back, restore
           the import above and this line:

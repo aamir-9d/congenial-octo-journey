@@ -1,7 +1,4 @@
 ---
-import Icon from './Icon.astro';
-import { AUDIT_COUNT } from '../data/findings';
-
 /**
  * "Three findings, from real audits." Three cards, not three bare columns.
  *
@@ -54,8 +51,6 @@ interface Props {
 
 const { nested = false } = Astro.props;
 
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-
 ---
 
 <section class:list={['section', { 'proof--nested': nested }]} data-section="proof">
@@ -94,16 +89,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     </div>
 
     <p class="proof__note">Client names withheld. Details available on a call.</p>
-    {
-      !nested && (
-        <p class="proof__more" data-added="structure-2026-11">
-          <a class="btn-secondary" href={`${base}/mmp-audit-findings`}>
-            See what {AUDIT_COUNT} attribution audits found
-            <Icon name="arrow-right" size={14} />
-          </a>
-        </p>
-      )
-    }
   </div>
 </section>
 
@@ -114,12 +99,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
      
      So the two read as one movement through spacing instead: no section padding
      on top, and a hairline where the beat falls. */
-  .proof__more {
-    display: flex;
-    justify-content: center;
-    margin-top: var(--s8);
-  }
-
   .proof--nested {
     padding-top: 0;
   }

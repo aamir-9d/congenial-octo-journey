@@ -388,6 +388,16 @@ found" button, and the "What I do" eyebrow. The hero wording was chosen by the
 owner. The stats figures are imported, never typed: `tests/pages.test.ts`
 compares the rendered strip with the data files.
 
+### Homepage order (27 Nov)
+
+The homepage sections are the signed-off designs; only their order was changed
+on 27 November, to hero, loop, case study and findings, three checks,
+calculator, automation, contact. Two attempts the same day to replace sections
+with new ones were rejected by the owner. A request to "restructure" this page
+means reorder, not redesign: do not add or restyle sections without being
+asked. The reasoning for the order is in the comment at the top of
+`src/pages/index.astro`.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These

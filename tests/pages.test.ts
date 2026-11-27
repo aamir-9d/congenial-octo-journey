@@ -138,23 +138,3 @@ test('sections are not separated by a screen of empty space', () => {
   assert.ok(Number(m[1]) <= 56, `phone section padding ${m[1]}px is too tall`);
   assert.ok(Number(m[2]) <= 96, `desktop section padding ${m[2]}px is too tall`);
 });
-
-test('the homepage stats strip shows the figures the data files hold', { skip }, async () => {
-  // Four numbers under the hero. Each is imported from the file that owns it;
-  // this fails if someone types a figure into the component instead.
-  const { AUDIT_COUNT } = await import('../src/data/findings.ts');
-  const { SERVICES } = await import('../src/data/services.ts');
-  const { PORTFOLIO_APPS, YEARS, AUTHORS } = await import('../src/data/authors.ts');
-
-  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
-  const strip = home.slice(home.indexOf('data-section="stats"'));
-  const shown = [...strip.slice(0, strip.indexOf('</section>')).matchAll(/<dd[^>]*>([^<]+)<\/dd>/g)].map(
-    (m) => m[1]!.trim(),
-  );
-
-  assert.deepEqual(shown, [String(AUDIT_COUNT), String(SERVICES.length), PORTFOLIO_APPS, String(YEARS.count)]);
-
-  // The bio is the published source of the last two.
-  assert.ok(AUTHORS.aamir.bio.includes(`${PORTFOLIO_APPS} iOS and Android apps`));
-  assert.ok(AUTHORS.aamir.bio.includes(`${YEARS.word} years`));
-});
