@@ -162,7 +162,7 @@ Plan phases referred to below:
 - **Rich Results Test.** Run after merge, on the live URLs.
 - **Per-page share images.** Lower priority; helps link previews, not rankings.
 - **Schema for `/products`.** Waiting on the owner to confirm the tools are live products.
-- **Original data from past audits.** Waiting on an owner decision.
+- **Original data from past audits.** Owner decision (27 November): the audits are the owner's own work and can be used, anonymised, with no client names.
 
 ### Waiting on the owner (Phase 2)
 
