@@ -125,7 +125,10 @@ test('blog rows are stacked blocks closing on a Read affordance', { skip }, () =
 test('the payback map becomes one column with 44px targets', { skip }, () => {
   // The two-column composition is a min-width query, so below it the map is
   // already one column; what matters is that the controls stay tappable.
-  const all = html.replace(/\s+/g, '');
+  // Read from /payback-calculator: the calculator left the homepage on
+  // 27 November 2026.
+  const calc = fs.readFileSync(path.join(path.dirname(DIST), 'payback-calculator.html'), 'utf8');
+  const all = calc.replace(/\s+/g, '');
 
   assert.ok(
     /\.pm__cols\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(all.replace(/\s+/g, '')) ||

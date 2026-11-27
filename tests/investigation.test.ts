@@ -306,19 +306,18 @@ test('the homepage section stays a summary', { skip }, () => {
 
 test('the homepage order is the one the brief sets', { skip }, () => {
   const order = [...home.matchAll(/data-section="([a-z-]+)"/g)].map((m) => m[1]);
-  /* The approved composition (docs/design-explorations/homepage-redesign-
-     concept.md) replaces the bento with three diagnostic rows and folds Proof
-     into the case-study movement as its tail rather than standing it up as a
-     second credibility section ahead of it. Problems is not deleted -- it
-     renders in full on /services, which is where each diagnostic row links. */
+  /* The 27 November 2026 restructure: what is sold, the track record, the
+     services, the evidence, the method, then the ask. The full calculator is
+     on /payback-calculator and Problems is on /services; neither is deleted. */
   assert.deepEqual(order, [
     'hero',
-    'diagnostics',
-    'payback',
-    'case-study',
+    'stats',
+    'specialist-services',
     'proof',
-    'automation',
+    'case-study',
     'loop',
+    'payback-teaser',
+    'automation',
     // 'founders' is hidden on the homepage until the portraits exist.
     'contact',
   ]);
