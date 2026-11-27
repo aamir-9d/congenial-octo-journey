@@ -17,6 +17,32 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Fixes from a second outside audit
+
+An outside audit (ChatGPT, 27 November) checked all 29 sitemap URLs: each has a distinct title, one H1, a
+meta description, a self-canonical and parseable structured data. Its fixes, and what was done:
+
+### Done (branch `hide-homepage-founders`)
+- Homepage "Find the gaps" cards: each linked "Learn more" to `/services`. Now each links to the page that
+  answers it, with a label that says so: subscription revenue tracking, event tracking plan, and the payback
+  map.
+- `/about` founder cards: "Real portrait to be added" replaced by the founders' initials. The homepage
+  section stays hidden until portraits exist.
+- Specific H1s: `/automation` is now "AI reporting for app growth teams" and `/products` "Monetization and
+  app store optimization tools", set as the eyebrow line so the page looks the same.
+- Paywall case study retitled "Paywall case study: cost per payer fell from $92.95 to $20.91" (figures
+  from the post itself; URL unchanged). The post already states the 18-day and 9-day windows.
+- Already in place: old GitHub Pages links return 301 to the matching e2eapp.com page (checked).
+
+### Not done
+- Standalone payback calculator page with worked examples: planned, not built.
+- Test enquiry end to end: waiting on the owner's go-ahead.
+- The "SKAN only measures revenue" card heading: left as is; it sits under a heading that names it as a
+  mistake.
+- Blog-to-service mapping for the 15 posts: later, with Search Console data (Phase 4).
+
+---
+
 ## 2026-11-27: Phase 3 set up
 
 ### Done

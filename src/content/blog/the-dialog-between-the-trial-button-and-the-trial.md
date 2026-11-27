@@ -1,5 +1,5 @@
 ---
-title: The dialog between the trial button and the trial
+title: 'Paywall case study: cost per payer fell from $92.95 to $20.91'
 kicker: A PDF scanner app ran the same daily spend through a rebuilt paywall. Install-to-trial went from 0.6% to 4.0%, and the top of the funnel never moved.
 date: 2026-08-26
 tag: Paywall

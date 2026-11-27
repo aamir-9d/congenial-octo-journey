@@ -64,8 +64,8 @@ const service = {
         <div class="wrap">
           <div class="intro">
             <div class="intro__lede">
-              <p class="eyebrow eyebrow--amber">AI reporting &amp; automation</p>
-              <h1 class="intro__h1">See what changed.<br />Know what to check.</h1>
+              <h1 class="eyebrow eyebrow--amber">AI reporting for app growth teams</h1>
+              <p class="intro__h1">See what changed.<br />Know what to check.</p>
             </div>
 
             <div class="intro__aside">
@@ -173,8 +173,14 @@ const service = {
     }
   }
 
+  /* A <p> since the H1 moved to the eyebrow, so it restates the heading look
+     the h1 element used to give it. */
   .intro__h1 {
     margin-top: var(--s4);
+    margin-bottom: 0;
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    text-wrap: balance;
     font-size: clamp(34px, 4.2vw, 56px);
     line-height: var(--lh-h1);
     letter-spacing: var(--ls-h1);

@@ -31,6 +31,7 @@ const hasPhoto = (file: string) => fs.existsSync(path.join(publicDir, 'img', fil
 const founders = [
   {
     file: 'aamir.jpg',
+    initials: 'AJ',
     name: 'Aamir Jan Khan',
     role: 'MEASUREMENT & GROWTH',
     alt: 'Aamir Jan Khan',
@@ -40,6 +41,7 @@ const founders = [
   },
   {
     file: 'faisal.jpg',
+    initials: 'MF',
     name: 'Muhammad Faisal Khan',
     role: 'INFRASTRUCTURE & OPERATIONS',
     alt: 'Muhammad Faisal Khan',
@@ -75,11 +77,7 @@ const founders = [
                       class="founders__photo"
                     />
                   ) : (
-                    <span class="founders__await">
-                      Real portrait
-                      <br />
-                      to be added
-                    </span>
+                    <span class="founders__await" aria-hidden="true">{f.initials}</span>
                   )
                 }
               </div>
@@ -162,13 +160,14 @@ const founders = [
 
   /* Says what it is. A user glyph reads as an avatar that failed to load; this
      reads as a frame with a photo still to come, which is what it is. */
+  /* No photo yet: the founder's initials, not a "portrait to be added" note,
+     which read as unfinished on the live page. */
   .founders__await {
-    padding: 4px;
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-3xs);
-    line-height: var(--lh-tight);
-    text-align: center;
-    color: var(--color-text-4);
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.02em;
+    color: var(--color-accent);
   }
 
   .founders__photo {

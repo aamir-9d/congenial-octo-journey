@@ -59,18 +59,24 @@ const CHECKS = [
     icon: 'bars',
     title: 'Revenue after install',
     desc: 'Count renewals, refunds and server events.',
+    href: `${services}/subscription-revenue-tracking`,
+    link: 'Subscription revenue tracking',
   },
   {
     n: '02',
     icon: 'nodes',
     title: 'The route to purchase',
     desc: 'Find where installs stop becoming customers.',
+    href: `${services}/event-tracking-plan`,
+    link: 'Event tracking plan',
   },
   {
     n: '03',
     icon: 'globe',
     title: 'Economics by market',
     desc: 'Know which markets can support your spend.',
+    href: '#payback',
+    link: 'Check it on the payback map',
   },
 ];
 ---
@@ -116,8 +122,10 @@ const CHECKS = [
             <h3 class="gaps__title">{c.title}</h3>
             <p class="gaps__desc">{c.desc}</p>
 
-            <a class="gaps__link" href={services}>
-              Learn more
+            {/* Each card links to the page that answers it, with a label that
+                says where it goes, rather than three "Learn more" links to one hub. */}
+            <a class="gaps__link" href={c.href}>
+              {c.link}
               <span class="gaps__arrow" aria-hidden="true">&#8594;</span>
             </a>
           </li>
