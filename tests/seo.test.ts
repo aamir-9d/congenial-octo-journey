@@ -105,3 +105,19 @@ test('contact form asks, optionally, where people heard about us', { skip }, () 
   assert.match(html, /name="heard"/);
   assert.doesNotMatch(html, /name="heard"[^>]*required/, 'the source question must stay optional');
 });
+
+test('/case-studies lists every case and states its limits', { skip }, () => {
+  const html = read('case-studies.html');
+  assert.ok(types(html).has('CollectionPage'));
+  assert.match(read('sitemap.xml'), /\/case-studies</);
+  const cards = html.match(/class="cs__case"/g) ?? [];
+  assert.ok(cards.length >= 2, 'fewer than two cases');
+  assert.equal((html.match(/What this cannot show:/g) ?? []).length, cards.length, 'a case has no limits note');
+});
+
+test('/services routes each situation to a page and names the ways to work together', { skip }, () => {
+  const html = read('services.html');
+  assert.match(html, /Pick your situation/);
+  assert.match(html, /Fixed-price audit/);
+  assert.match(html, /href="\/payback-calculator"/);
+});

@@ -1,0 +1,172 @@
+---
+import Icon from './Icon.astro';
+import { SERVICES } from '../data/services';
+
+/**
+ * "Pick your situation" and the ways to work together, on /services.
+ *
+ * Situations point to the page that answers them. The two engagement shapes
+ * are the ones the FAQ already describes; no price is published, as on the
+ * rest of the site ("figures on a call").
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const name = (slug: string) => SERVICES.find((s) => s.slug === slug)!.name;
+
+const SITUATIONS = [
+  { when: 'Your MMP and ad platforms disagree, or paid installs show up as organic', path: '/services/mobile-attribution-audit', label: name('mobile-attribution-audit') },
+  { when: 'iOS campaigns report almost nothing, or you are setting up SKAN and AdAttributionKit', path: '/services/skan-adattributionkit-setup', label: name('skan-adattributionkit-setup') },
+  { when: 'ATT consent looks wrong (near 0% or 100%), or installs arrive without an advertising ID', path: '/services/att-consent-timing', label: name('att-consent-timing') },
+  { when: 'You are starting with an MMP, or adding events and ad partners', path: '/services/event-tracking-plan', label: name('event-tracking-plan') },
+  { when: 'Renewals are missing and subscription ROAS looks too low', path: '/services/subscription-revenue-tracking', label: name('subscription-revenue-tracking') },
+  { when: 'You want to know when your spend pays back', path: '/payback-calculator', label: 'Payback calculator' },
+  { when: 'Your team builds the weekly growth report by hand', path: '/automation', label: 'AI reporting & automation' },
+];
+---
+
+<section id="situations" class="section" data-section="situations">
+  <div class="wrap">
+    <div class="section-head" data-reveal="1">
+      <div class="eyebrow">WHERE TO START</div>
+      <h2 class="eng__h">Pick your situation.</h2>
+      <p class="section-lead">Each one points to the page that deals with it.</p>
+    </div>
+    <ul class="eng__sit" role="list">
+      {
+        SITUATIONS.map((s) => (
+          <li>
+            <a class="eng__row" href={`${base}${s.path}`}>
+              <span class="eng__when">{s.when}</span>
+              <span class="eng__go">
+                {s.label}
+                <Icon name="arrow-right" size={13} />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<section id="engage" class="section" data-section="engage">
+  <div class="wrap">
+    <div class="section-head" data-reveal="1">
+      <div class="eyebrow">WAYS TO WORK TOGETHER</div>
+      <h2 class="eng__h">Start with an audit. Keep going if it is worth it.</h2>
+    </div>
+    <div class="eng__ways">
+      <div class="eng__way">
+        <h3 class="eng__h3">Fixed-price audit</h3>
+        <p class="eng__p">
+          A full review of the measurement stack, the gaps ranked by what each is costing, and a
+          written remediation plan. The usual starting point, because it tells both of us whether
+          more work is worth anyone's money.
+        </p>
+      </div>
+      <div class="eng__way">
+        <h3 class="eng__h3">Monthly retainer</h3>
+        <p class="eng__p">The fixes get implemented and the campaigns get run, by the people who found the problems.</p>
+      </div>
+      <div class="eng__way eng__way--free">
+        <h3 class="eng__h3">Free first look</h3>
+        <p class="eng__p">
+          Send your app's store link and we reply in writing with three measurement checks for it. No
+          call needed.
+        </p>
+        <a class="link eng__link" href={`${base}/#contact`}>Send your app link</a>
+      </div>
+    </div>
+    <p class="eng__note">Prices are given on a call, once the size of the stack is clear.</p>
+  </div>
+</section>
+
+<style>
+  .eng__h {
+    margin-top: 16px;
+    font-size: var(--t-h2);
+    letter-spacing: var(--ls-h2);
+    line-height: var(--lh-h2);
+  }
+
+  .eng__sit {
+    margin: clamp(32px, 3vw, 48px) auto 0;
+    padding: 0;
+    list-style: none;
+    max-width: 980px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .eng__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4) var(--s8);
+    min-height: 44px;
+    padding: var(--s6) 0;
+    border-bottom: 1px solid var(--color-line);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .eng__when {
+    flex: 1 1 380px;
+    color: var(--color-text);
+    line-height: var(--lh-card);
+  }
+
+  .eng__go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-accent);
+    font-weight: var(--fw-medium);
+    font-size: var(--t-card);
+  }
+
+  .eng__row:hover .eng__when {
+    color: var(--color-accent);
+  }
+
+  .eng__ways {
+    margin-top: clamp(32px, 3vw, 48px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: var(--s8);
+  }
+
+  .eng__way {
+    padding: var(--s8);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+  }
+
+  .eng__way--free {
+    border-color: rgba(var(--rgb-accent), 0.5);
+  }
+
+  .eng__h3 {
+    font-size: var(--t-h3-sm);
+  }
+
+  .eng__p {
+    margin-top: var(--s4);
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .eng__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: var(--s4);
+  }
+
+  .eng__note {
+    margin-top: var(--s8);
+    text-align: center;
+    color: var(--color-text-3);
+    font-size: var(--t-body-sm);
+  }
+</style>

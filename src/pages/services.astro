@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Problems from '../components/Problems.astro';
 import Stack from '../components/Stack.astro';
 import ServiceIndex from '../components/ServiceIndex.astro';
+import Engage from '../components/Engage.astro';
 import { SERVICES } from '../data/services';
 
 /**
@@ -49,6 +50,7 @@ const list = {
       <Breadcrumbs trail={[{ name: 'Services', path: '/services' }]} />
       <Problems lead />
       <ServiceIndex />
+      <Engage />
       <Stack />
     </main>
 

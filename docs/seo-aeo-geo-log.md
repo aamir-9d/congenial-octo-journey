@@ -17,6 +17,27 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Growth plan, first build
+
+Plan saved as `docs/growth-plan.md` (proof, entity and buyer content, from the three audits and a
+competitor teardown).
+
+### Done (branch `growth-plan`)
+- `/case-studies`: one card per case with client type, market, windows compared and the work done; then
+  problem, change, result, and "What this cannot show". Two cases, figures copied from the posts. In the
+  sitemap and footer; CollectionPage structured data.
+- `/services`: "Pick your situation" (seven situations, each linked to its page) and "Ways to work
+  together": fixed-price audit, monthly retainer, and a free first look. No prices.
+- Contact form: "send your app's store link and get three measurement checks in writing, free".
+- Two tests; 157 pass. Pages checked with headless Chrome at 1440 px.
+
+### Blocked
+- Findings page from the 10 audits: the extraction (1,500 checks) found three files sharing about half their
+  rows word for word, including status. The GA4 tab is identical in all eight files that have one, so it
+  is excluded. Counts wait for the owner to confirm.
+
+---
+
 ## 2026-11-27: Third outside audit (re-audit)
 
 The re-audit found all 30 sitemap URLs pass the shared checks and confirmed the earlier fixes are live.
