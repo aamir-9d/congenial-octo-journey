@@ -17,6 +17,19 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Live check after merge (PR #13 and #14)
+
+- Checked on e2eapp.com: `/payback-calculator` is live with its H1 and in the sitemap; the homepage links it
+  and its three cards go to their own pages; the form shows "How did you hear about us?"; `/about` shows
+  initials, no placeholder and no repeated closing line; `/products` and `/automation` show their specific
+  H1s; the case study title, the "Mistake:" headings, the related-page link on posts and the JQL note are
+  live; the homepage has no founders section.
+- IndexNow: all 30 sitemap URLs submitted, HTTP 200. Passing single paths from Git Bash failed (422)
+  because Git Bash rewrites `/path` arguments into Windows paths; prefix the command with
+  `MSYS_NO_PATHCONV=1`, or submit the whole sitemap.
+
+---
+
 ## 2026-11-27: Remaining audit items
 
 ### Done (branch `hide-homepage-founders`)
