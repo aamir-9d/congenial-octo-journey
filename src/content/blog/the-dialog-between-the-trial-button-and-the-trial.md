@@ -23,7 +23,7 @@ Most paywall case studies compare two periods that differ in more than the paywa
 | Ad spend | $651 | $665 | +2.1% |
 | Installs | 4,283 | 4,293 | +0.2% |
 
-Eighteen days before the change, nine days after, both windows aged until the trials in them had resolved. Same daily budget, same daily install volume, same campaigns, same countries. The top of the funnel was held still. Whatever moved below it moved because of the change.
+Eighteen days before the change, nine days after, both windows aged until the trials in them had resolved. Same daily budget, same daily install volume, same campaigns, same countries. The top of the funnel was held still, so what moved below it came with the paywall release. Three changes shipped together (listed next), and this comparison cannot say how much each one contributed.
 
 ## What actually changed
 

@@ -17,6 +17,28 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Third outside audit (re-audit)
+
+The re-audit found all 30 sitemap URLs pass the shared checks and confirmed the earlier fixes are live.
+
+### Done (branch `reaudit-fixes`)
+- Paywall case study: "Whatever moved below it moved because of the change" replaced. The post now says the
+  change came with the paywall release and that the comparison cannot separate the three changes that shipped
+  together. The figures are unchanged.
+
+### Checked
+- Old GitHub Pages link to the case study: HTTP 301 to the matching e2eapp.com page.
+
+### Left as is, and why
+- Its suggested SKAN heading ("Audit finding: this app's SKAN schema captured only revenue") describes one
+  app. The card lists a common mistake, not a single finding, and already reads "Mistake: The SKAN schema
+  measures only revenue".
+
+### Not done
+- URL Inspection for `/payback-calculator`: the automated browser disconnected; to run in the next session.
+
+---
+
 ## 2026-11-27: Live check after merge (PR #13 and #14)
 
 - Checked on e2eapp.com: `/payback-calculator` is live with its H1 and in the sitemap; the homepage links it
