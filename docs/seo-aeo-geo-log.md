@@ -17,6 +17,18 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Indexing requested for the new pages (after PR #16)
+
+- Live: `/payback-calculator`, `/case-studies` and `/mmp-audit-findings` return 200; the sitemap lists 32 URLs.
+- IndexNow: all 32 sitemap URLs, HTTP 200.
+- Google Search Console, URL Inspection then Request indexing: the three new pages (each was "URL is unknown
+  to Google") and a recrawl of `/services` and the paywall case study (both already indexed). Each showed
+  "Indexing requested".
+- Bing Webmaster Tools, URL Inspection then Request indexing: the three new pages (each already "Discovered
+  but not crawled" via IndexNow). Each showed "URL submitted successfully". 98 of 100 daily submissions left.
+
+---
+
 ## 2026-11-27: Findings page from the 10 audits
 
 The owner confirmed that text repeated across audit workbooks was left over from a copied template.
