@@ -1,0 +1,229 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { FINDINGS, AUDIT_COUNT } from '../data/findings.ts';
+
+/**
+ * Original data: what ten mobile attribution audits found. Counts and method
+ * live in src/data/findings.ts. No app or client is named.
+ */
+
+const title = 'What 10 Mobile Attribution Audits Found — E2E Apps';
+const description =
+  'The measurement problems found across ten mobile attribution audits of AppsFlyer, Adjust and Singular setups: ATT, revenue events, SKAN and more.';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = new URL(`${base}/`, Astro.site).href;
+const top = FINDINGS[0]!;
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'What 10 mobile attribution audits found',
+  description,
+  url: new URL(`${base}/mmp-audit-findings`, Astro.site).href,
+  datePublished: '2026-11-27',
+  author: { '@type': 'Organization', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+  publisher: { '@type': 'Organization', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+};
+---
+
+<Base title={title} description={description} path="/mmp-audit-findings">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(article)} />
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <Breadcrumbs trail={[{ name: 'Audit findings', path: '/mmp-audit-findings' }]} />
+
+      <section class="section section--lead" data-section="findings-intro">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow eyebrow--amber">Original data</p>
+            <h1 class="fd__h1">What {AUDIT_COUNT} mobile attribution audits found</h1>
+            <p class="section-lead">
+              Across {AUDIT_COUNT} audits of subscription and ad-monetised apps, mostly on AppsFlyer with
+              Adjust and Singular, the most common problem was ATT handling: it needed fixing in
+              {' '}{top.count} of {AUDIT_COUNT}. Revenue or purchase events were missing or wrong in
+              {' '}{FINDINGS[1]!.count}. No app is named here.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section fd__list" data-section="findings">
+        <div class="wrap fd__narrow">
+          <h2 class="visually-hidden">Findings, most common first</h2>
+          <ol class="fd__items" role="list">
+            {
+              FINDINGS.map((f) => (
+                <li class="fd__item">
+                  <div class="fd__top">
+                    <h3 class="fd__title">{f.title}</h3>
+                    <p class="fd__count">
+                      <strong>{f.count}</strong> of {AUDIT_COUNT} audits
+                    </p>
+                  </div>
+                  <div class="fd__bar" aria-hidden="true">
+                    <span style={`width:${(f.count / AUDIT_COUNT) * 100}%`} />
+                  </div>
+                  <p class="fd__effect">{f.effect}</p>
+                  <a class="link fd__link" href={`${base}${f.path}`}>
+                    Fix: {f.linkLabel}
+                    <Icon name="arrow-right" size={13} />
+                  </a>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" data-section="findings-method">
+        <div class="wrap fd__narrow">
+          <h2 class="fd__h2">How these were counted</h2>
+          <ul class="fd__method">
+            <li>Each audit is a workbook of checks marked "Looks good", "Needs review" or "Needs fixes".</li>
+            <li>An audit counts once for a finding if at least one check in that area needed fixing. "Needs review" is not counted.</li>
+            <li>Only the attribution platform checks are used. Analytics checks are left out.</li>
+            <li>A check copied word for word between audit workbooks is not counted, and nor is one marked not applicable after discussion.</li>
+            <li>Every match was read by hand before it was counted.</li>
+          </ul>
+          <h2 class="fd__h2">What this cannot show</h2>
+          <p class="fd__p">
+            These are apps whose teams asked for an audit, so they are more likely than average to have
+            problems. Ten audits is a small sample: read the counts as what to check first, not as an
+            industry rate.
+          </p>
+          <div class="fd__next">
+            <a class="btn-primary" href={`${base}/services/mobile-attribution-audit`}>
+              See what the audit covers
+              <Icon name="arrow-right" size={14} />
+            </a>
+            <a class="link" href={`${base}/case-studies`}>Case studies</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+    overflow-x: clip;
+  }
+
+  .fd__h1 {
+    margin-top: var(--s4);
+    font-size: var(--t-h1);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+  }
+
+  .fd__list {
+    padding-top: 0;
+  }
+
+  .fd__narrow {
+    max-width: 920px;
+  }
+
+  .fd__items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .fd__item {
+    padding: var(--s12) 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .fd__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s4) var(--s8);
+  }
+
+  .fd__title {
+    font-size: var(--t-h3-sm);
+  }
+
+  .fd__count {
+    margin: 0;
+    font-family: var(--font-mono);
+    color: var(--color-text-3);
+    white-space: nowrap;
+  }
+
+  .fd__count strong {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    color: var(--color-accent);
+    margin-right: 4px;
+  }
+
+  .fd__bar {
+    margin-top: var(--s6);
+    height: 8px;
+    border-radius: 4px;
+    background: var(--color-surface-sunk);
+    overflow: hidden;
+  }
+
+  .fd__bar span {
+    display: block;
+    height: 100%;
+    background: var(--color-accent);
+  }
+
+  .fd__effect,
+  .fd__p {
+    margin-top: var(--s6);
+    max-width: 68ch;
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .fd__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    margin-top: var(--s4);
+  }
+
+  .fd__h2 {
+    margin-top: var(--s12);
+    font-size: var(--t-h2-card);
+  }
+
+  .fd__h2:first-child {
+    margin-top: 0;
+  }
+
+  .fd__method {
+    margin: var(--s6) 0 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: var(--s4);
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .fd__next {
+    margin-top: var(--s12);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s8);
+  }
+</style>

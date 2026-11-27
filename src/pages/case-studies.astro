@@ -1,0 +1,309 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { CASES } from '../data/cases.ts';
+
+/**
+ * Case studies hub.
+ *
+ * One card per case: the facts a buyer checks first (market, what kind of app,
+ * the windows compared), then problem, change, result and what the comparison
+ * cannot show. Every figure is copied from the linked write-up; see
+ * src/data/cases.ts.
+ */
+
+const title = 'Mobile App Growth Case Studies — E2E Apps';
+const description =
+  'Mobile app measurement and monetisation case studies: what was wrong, what changed, the numbers, and what each comparison cannot show.';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const home = new URL(`${base}/`, Astro.site).href;
+
+const list = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'E2E Apps case studies',
+  description,
+  url: new URL(`${base}/case-studies`, Astro.site).href,
+  publisher: { '@type': 'Organization', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+  mainEntity: {
+    '@type': 'ItemList',
+    itemListElement: CASES.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.title,
+      url: new URL(`${base}/blog/${c.post}`, Astro.site).href,
+    })),
+  },
+};
+---
+
+<Base title={title} description={description} path="/case-studies">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(list)} />
+  <div class="page">
+    <Nav />
+    <main id="main">
+      <Breadcrumbs trail={[{ name: 'Case studies', path: '/case-studies' }]} />
+
+      <section class="section section--lead" data-section="cases-intro">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow eyebrow--amber">Case studies</p>
+            <h1 class="cs__h1">What was wrong, what changed, and what the numbers show</h1>
+            <p class="section-lead">
+              Each case says which windows were compared and what the comparison cannot prove. Client
+              names are withheld.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cs__list" data-section="cases">
+        <div class="wrap">
+          <ol class="cs__cases" role="list">
+            {
+              CASES.map((c, i) => (
+                <li class="cs__case">
+                  <aside class="cs__facts" aria-label="Case facts">
+                    <p class="cs__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+                    <dl>
+                      <dt>Client</dt>
+                      <dd>{c.client}</dd>
+                      <dt>Market</dt>
+                      <dd>{c.market}</dd>
+                      <dt>Compared</dt>
+                      <dd>{c.compared}</dd>
+                      <dt>Work</dt>
+                      <dd>{c.services.join(', ')}</dd>
+                    </dl>
+                  </aside>
+                  <div class="cs__body">
+                    <h2 class="cs__h2">{c.title}</h2>
+                    <h3 class="cs__h3">The problem</h3>
+                    <p class="cs__p">{c.problem}</p>
+                    <h3 class="cs__h3">What changed</h3>
+                    <ul class="cs__changes">{c.change.map((x) => <li>{x}</li>)}</ul>
+                    <h3 class="cs__h3">The result</h3>
+                    {c.results.length > 0 ? (
+                      <ul class="cs__results" role="list">
+                        {c.results.map((r) => (
+                          <li>
+                            <span class="cs__value">{r.value}</span>
+                            <span class="cs__label">{r.label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="cs__p">No figures published for this case.</p>
+                    )}
+                    <p class="cs__limits"><strong>What this cannot show:</strong> {c.limits}</p>
+                    <p class="cs__takeaway">{c.takeaway}</p>
+                    <a class="link cs__read" href={`${base}/blog/${c.post}`}>
+                      Read the full case
+                      <Icon name="arrow-right" size={13} />
+                    </a>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+          <div class="cs__next">
+            <p class="cs__p">
+              Want the same look at your own funnel? See also{' '}
+              <a class="link" href={`${base}/mmp-audit-findings`}>what 10 attribution audits found</a>.
+            </p>
+            <a class="btn-primary" href={`${base}/#contact`}>
+              Book a call
+              <Icon name="arrow-right" size={14} />
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-bg);
+    overflow-x: clip;
+  }
+
+  .cs__h1 {
+    margin-top: var(--s4);
+    font-size: var(--t-h1);
+    line-height: var(--lh-h1);
+    letter-spacing: var(--ls-h1);
+  }
+
+  .cs__list {
+    padding-top: 0;
+  }
+
+  .cs__cases {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--s16);
+  }
+
+  .cs__case {
+    display: grid;
+    grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+    gap: var(--s16);
+    align-items: start;
+  }
+
+  .cs__facts {
+    padding: var(--s8);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+  }
+
+  .cs__num {
+    margin: 0 0 var(--s6);
+    font-family: var(--font-heading);
+    font-size: 44px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .cs__facts dl {
+    margin: 0;
+    display: grid;
+    gap: var(--s2);
+  }
+
+  .cs__facts dt {
+    margin-top: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--color-text-4);
+  }
+
+  .cs__facts dt:first-child {
+    margin-top: 0;
+  }
+
+  .cs__facts dd {
+    margin: 0;
+    color: var(--color-text-2);
+    line-height: var(--lh-card);
+  }
+
+  .cs__h2 {
+    font-size: var(--t-h2-card);
+    line-height: var(--lh-h2);
+  }
+
+  .cs__h3 {
+    margin-top: var(--s12);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-weight: var(--fw-regular);
+    text-transform: uppercase;
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--color-accent);
+  }
+
+  .cs__p,
+  .cs__limits,
+  .cs__takeaway {
+    margin-top: var(--s4);
+    max-width: 68ch;
+    color: var(--color-text-2);
+    line-height: var(--lh-body);
+  }
+
+  .cs__changes {
+    margin: var(--s4) 0 0;
+    padding-left: 1.2em;
+    display: grid;
+    gap: var(--s2);
+    color: var(--color-text-2);
+  }
+
+  .cs__results {
+    margin: var(--s6) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: var(--s6);
+  }
+
+  .cs__results li {
+    padding: var(--s6);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    display: grid;
+    gap: var(--s2);
+  }
+
+  .cs__value {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .cs__label {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-3);
+  }
+
+  .cs__limits {
+    margin-top: var(--s8);
+    padding-left: var(--s6);
+    border-left: 2px solid var(--color-line-strong);
+    font-size: var(--t-body-sm);
+  }
+
+  .cs__takeaway {
+    color: var(--color-text);
+    font-weight: var(--fw-medium);
+  }
+
+  .cs__read {
+    margin-top: var(--s8);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+  }
+
+  .cs__next {
+    margin-top: var(--s16);
+    padding-top: var(--s12);
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s8);
+  }
+
+  .cs__next .cs__p {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--t-h3-sm);
+  }
+
+  @media (max-width: 860px) {
+    .cs__case {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--s8);
+    }
+  }
+</style>

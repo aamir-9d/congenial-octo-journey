@@ -105,3 +105,30 @@ test('contact form asks, optionally, where people heard about us', { skip }, () 
   assert.match(html, /name="heard"/);
   assert.doesNotMatch(html, /name="heard"[^>]*required/, 'the source question must stay optional');
 });
+
+test('/case-studies lists every case and states its limits', { skip }, () => {
+  const html = read('case-studies.html');
+  assert.ok(types(html).has('CollectionPage'));
+  assert.match(read('sitemap.xml'), /\/case-studies</);
+  const cards = html.match(/class="cs__case"/g) ?? [];
+  assert.ok(cards.length >= 2, 'fewer than two cases');
+  assert.equal((html.match(/What this cannot show:/g) ?? []).length, cards.length, 'a case has no limits note');
+});
+
+test('/services routes each situation to a page and names the ways to work together', { skip }, () => {
+  const html = read('services.html');
+  assert.match(html, /Pick your situation/);
+  assert.match(html, /Fixed-price audit/);
+  assert.match(html, /href="\/payback-calculator"/);
+});
+
+test('/mmp-audit-findings: counts within range, each links its fix, no app names', { skip }, () => {
+  const html = read('mmp-audit-findings.html');
+  assert.match(read('sitemap.xml'), /\/mmp-audit-findings</);
+  const counts = [...html.matchAll(/<strong[^>]*>(\d+)<\/strong> of 10 audits/g)].map((m) => Number(m[1]));
+  assert.ok(counts.length >= 6, 'too few findings');
+  for (const c of counts) assert.ok(c >= 1 && c <= 10, `count ${c} out of range`);
+  assert.deepEqual([...counts].sort((a, b) => b - a), counts, 'findings are not ordered most common first');
+  assert.match(html, /How these were counted/);
+  assert.match(html, /What this cannot show/);
+});

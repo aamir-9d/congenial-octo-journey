@@ -19,7 +19,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
-const PAGES = ['services', 'products', 'faq', 'about', 'payback-calculator', 'blog'];
+const PAGES = ['services', 'products', 'faq', 'about', 'payback-calculator', 'case-studies', 'mmp-audit-findings', 'blog'];
 
 const built = fs.existsSync(path.join(DIST, 'services.html'));
 const skip = !built && 'run `npm run build` first';

@@ -17,6 +17,68 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Findings page from the 10 audits
+
+The owner confirmed that text repeated across audit workbooks was left over from a copied template.
+
+### Done (branch `growth-plan`)
+- `/mmp-audit-findings`: nine findings, most common first, each with its count out of 10, what it does to
+  the numbers, and a link to the page that fixes it. ATT handling 10 of 10, revenue or purchase events 9,
+  SKAN conversion values or reporting 6, re-engagement settings 6, partner postbacks and integrations 6,
+  uninstall measurement 5, view-through attribution 4, web-to-app tracking 3, server-side renewals 2.
+- Method on the page: one count per audit when at least one check in the area needed fixing; attribution
+  platform checks only; checks copied word for word between workbooks, and ones marked not applicable, not
+  counted; every match read by hand. A "What this cannot show" note says the apps asked for an audit and
+  ten is a small sample.
+- Not counted: findings that only recommended adding SKAdNetworkItems to the advertised app.
+- No app or client named anywhere (scanned). In the sitemap and footer; linked from `/case-studies`.
+- One test; 158 pass.
+
+---
+
+## 2026-11-27: Growth plan, first build
+
+Plan saved as `docs/growth-plan.md` (proof, entity and buyer content, from the three audits and a
+competitor teardown).
+
+### Done (branch `growth-plan`)
+- `/case-studies`: one card per case with client type, market, windows compared and the work done; then
+  problem, change, result, and "What this cannot show". Two cases, figures copied from the posts. In the
+  sitemap and footer; CollectionPage structured data.
+- `/services`: "Pick your situation" (seven situations, each linked to its page) and "Ways to work
+  together": fixed-price audit, monthly retainer, and a free first look. No prices.
+- Contact form: "send your app's store link and get three measurement checks in writing, free".
+- Two tests; 157 pass. Pages checked with headless Chrome at 1440 px.
+
+### Blocked
+- Findings page from the 10 audits: the extraction (1,500 checks) found three files sharing about half their
+  rows word for word, including status. The GA4 tab is identical in all eight files that have one, so it
+  is excluded. Counts wait for the owner to confirm.
+
+---
+
+## 2026-11-27: Third outside audit (re-audit)
+
+The re-audit found all 30 sitemap URLs pass the shared checks and confirmed the earlier fixes are live.
+
+### Done (branch `reaudit-fixes`)
+- Paywall case study: "Whatever moved below it moved because of the change" replaced. The post now says the
+  change came with the paywall release and that the comparison cannot separate the three changes that shipped
+  together. The figures are unchanged.
+
+### Checked
+- Old GitHub Pages link to the case study: HTTP 301 to the matching e2eapp.com page.
+
+### Left as is, and why
+- Its suggested SKAN heading ("Audit finding: this app's SKAN schema captured only revenue") describes one
+  app. The card lists a common mistake, not a single finding, and already reads "Mistake: The SKAN schema
+  measures only revenue".
+
+### Not done
+- URL Inspection for `/payback-calculator`: the automated browser disconnected; to run in the next session.
+
+---
+
 ## 2026-11-27: Live check after merge (PR #13 and #14)
 
 - Checked on e2eapp.com: `/payback-calculator` is live with its H1 and in the sitemap; the homepage links it

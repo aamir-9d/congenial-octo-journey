@@ -40,6 +40,8 @@ const PAGES = [
   'faq.html',
   'about.html',
   'payback-calculator.html',
+  'case-studies.html',
+  'mmp-audit-findings.html',
   'blog.html',
   'privacy.html',
   'terms.html',
