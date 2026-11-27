@@ -48,6 +48,20 @@ const blog = defineCollection({
      * article it closes. `tests/blog.test.ts` fails if two posts share one.
      */
     cta: z.string(),
+    /**
+     * The page a reader of this post most likely wants next: a service slug,
+     * `payback-calculator` or `automation`. Required, so every post links on to
+     * a page that sells or applies what it explains.
+     */
+    related: z.enum([
+      'mobile-attribution-audit',
+      'skan-adattributionkit-setup',
+      'att-consent-timing',
+      'event-tracking-plan',
+      'subscription-revenue-tracking',
+      'payback-calculator',
+      'automation',
+    ]),
   }),
 });
 

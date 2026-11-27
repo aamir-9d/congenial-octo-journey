@@ -89,7 +89,7 @@ export const SERVICES: Service[] = [
     mistakesTitle: 'Common attribution mistakes, and the fix.',
     mistakes: [
       { wrong: 'The SDK starts before consent is answered', shows: 'iOS installs arrive without an advertising ID', fix: 'Set the launch order and wait time, then test each answer' },
-      { wrong: 'SKAN only measures revenue', shows: 'Trial apps send empty or low values', fix: 'Map early signals that happen inside the first window' },
+      { wrong: 'The SKAN schema measures only revenue', shows: 'Trial apps send empty or low values', fix: 'Map early signals that happen inside the first window' },
       { wrong: 'Ad platforms receive the wrong events', shows: 'Campaigns optimise for a weak signal', fix: 'Map the events that match the campaign goal' },
       { wrong: 'Revenue has no value or currency', shows: 'Conversions count but ROAS is zero', fix: 'Send both fields in the right format' },
       { wrong: 'Re-engagement has no inactivity rule', shows: 'Active users are credited to retargeting', fix: 'Set the window to match how often people use the app' },

@@ -140,6 +140,10 @@ const distExists = fs.existsSync(PORT);
  */
 const REPLACED: { text: string; why: string }[] = [
   {
+    text: 'Nothing gets handed off. You talk to the two people doing the work.',
+    why: 'founders closing line: hidden with the homepage section until portraits exist, and left off /about, where it repeated the section heading and the page lead (2026-11-27)',
+  },
+  {
     text: 'Your dashboard says the campaign is losing money.',
     why: 'hero headline replaced at the request of 2026-09-20 — the page now opens on what the work delivers rather than on a claim about the reader being wrong',
   },

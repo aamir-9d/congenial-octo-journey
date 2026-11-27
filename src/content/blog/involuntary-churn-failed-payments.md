@@ -6,6 +6,7 @@ description: "A large share of subscription cancellations are failed payments, n
 tag: Subscriptions
 cta: >-
   Most teams cannot say what share of their churn is involuntary, because the cancellation reaches analytics as one undifferentiated event. Separating the two is a measurement change, not a product change, and it usually reorders the roadmap.
+related: subscription-revenue-tracking
 ---
 
 There are two ways a subscriber stops paying you, and they have almost nothing in common.

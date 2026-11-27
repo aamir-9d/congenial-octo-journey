@@ -6,6 +6,7 @@ description: "Tapping cancel starts a funnel. Most subscription apps have severa
 tag: Subscriptions
 cta: >-
   Pause, resubscribe and the cancellation survey are on by default, which means you are probably already running interventions you have never measured. Reading what they are doing takes a subscription platform audit, not a development cycle.
+related: subscription-revenue-tracking
 ---
 
 When a subscriber taps cancel, most teams treat it as a terminal event. The row moves from active to churned, the dashboard updates, and attention moves on.

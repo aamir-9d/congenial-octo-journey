@@ -6,6 +6,7 @@ description: "Stores score apps on uninstalls, engagement, ad load and stability
 tag: Campaigns
 cta: >-
   If a campaign stopped spending and the bids, budget and policy status are all clean, the next thing to check is not in the ad account at all. Working out whether a serving restriction is a media problem or a product problem is usually a day, and it changes who owns the fix.
+related: payback-calculator
 ---
 
 Here is a failure that reliably sends media teams down the wrong path for a week.

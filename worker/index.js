@@ -57,6 +57,19 @@ const SPEND_BANDS = new Set([
   'Over $250k / month',
 ]);
 
+/** "How did you hear about us?" Optional; anything outside this list is dropped. */
+const HEARD = new Set([
+  'Google search',
+  'ChatGPT',
+  'Claude',
+  'Perplexity',
+  'Gemini',
+  'Microsoft Copilot',
+  'LinkedIn',
+  'A colleague or referral',
+  'Other',
+]);
+
 function validate(body) {
   const errors = [];
   const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
@@ -66,6 +79,8 @@ function validate(body) {
   const appUrl = str(body.appUrl, 400);
   const spend = str(body.spend, 60);
   const message = str(body.message, 4000);
+  const heardRaw = str(body.heard, 60);
+  const heard = HEARD.has(heardRaw) ? heardRaw : '';
 
   if (!name) errors.push('name');
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.push('email');
@@ -73,7 +88,7 @@ function validate(body) {
   if (!spend || !SPEND_BANDS.has(spend)) errors.push('spend');
   if (message.length < 10) errors.push('message');
 
-  return { errors, clean: { name, email, appUrl, spend, message } };
+  return { errors, clean: { name, email, appUrl, spend, message, heard } };
 }
 
 /** Both gates, reapplied. The honeypot must be empty and the fill must be human-slow. */
@@ -106,7 +121,8 @@ async function sendEmail(env, clean, attribution, meta) {
   const html = `
 <h2>${esc(clean.name)} — ${esc(clean.spend)}</h2>
 <p><strong>Email:</strong> <a href="mailto:${esc(clean.email)}">${esc(clean.email)}</a><br>
-<strong>App:</strong> ${clean.appUrl ? `<a href="${esc(clean.appUrl)}">${esc(clean.appUrl)}</a>` : '—'}</p>
+<strong>App:</strong> ${clean.appUrl ? `<a href="${esc(clean.appUrl)}">${esc(clean.appUrl)}</a>` : '—'}<br>
+<strong>Heard about us:</strong> ${clean.heard ? esc(clean.heard) : 'not answered'}</p>
 <h3>Message</h3>
 <p style="white-space:pre-wrap">${esc(clean.message)}</p>
 <h3>Attribution</h3>

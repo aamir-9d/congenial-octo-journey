@@ -6,6 +6,7 @@ description: "A missing aspect ratio is a set of ad auctions your app campaign i
 tag: Creative
 cta: >-
   If your asset slots are not full, the cheapest performance work available to you is filling them, and it does not require a single new idea — only the missing shapes and lengths. Auditing coverage against the surfaces you are eligible for takes an hour.
+related: payback-calculator
 ---
 
 Creative discussions in most performance teams are about quality: which video is best, which headline converts, what to cut. Useful questions, all downstream of a more basic one that rarely gets asked.

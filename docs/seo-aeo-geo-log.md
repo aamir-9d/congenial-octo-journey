@@ -17,6 +17,73 @@ Plan phases referred to below:
 
 ---
 
+## 2026-11-27: Remaining audit items
+
+### Done (branch `hide-homepage-founders`)
+- New page `/payback-calculator`: the calculator, the method in plain words for subscription and ad-monetised
+  apps, two worked examples, why dashboards show a later payback, and the model's limits. The examples are
+  computed at build time by the calculator's own model from its default inputs (labelled as example inputs,
+  not client data). WebApplication structured data; in the sitemap and footer; the homepage calculator links
+  to it.
+- Service pages: every mistake card heading now starts "Mistake:" (a visible label plus hidden text in the
+  heading), so it reads on its own when quoted. The SKAN card now says "The SKAN schema measures only revenue".
+- Blog: every post names its next page (`related` in the front matter, required for new posts) and links to
+  it: a service page or the payback calculator. All 15 mapped.
+- JQL tutorial: a dated note that Mixpanel lists JQL as in maintenance mode, with its recommended
+  alternatives. The Python and Pandas tutorials use standard functions and were left as they are.
+- `/about`: the founders' closing line, which repeated the heading and the page lead, removed there.
+- Contact form: optional "How did you hear about us?" (Google search, ChatGPT, Claude, Perplexity, Gemini,
+  Microsoft Copilot, LinkedIn, a colleague or referral, other). The form Worker accepts only those values and
+  shows the answer in the lead email. Worker deployed with its existing settings and secret kept.
+- Five new tests; 155 pass.
+
+### Verified
+- Test enquiry on the live site, tagged `utm_campaign=internal-form-test`: a blank submit showed four field
+  errors, sent no analytics event and did not reach the Worker; the real submit showed the success message,
+  sent exactly one `generate_lead` to GA4, and delivered one email within a second carrying the landing page,
+  UTM source and campaign. A second test sent straight to the Worker with the new field delivered "Heard about
+  us: ChatGPT". Both test leads are in GA4 under the internal campaign.
+- Google: the Page indexing summary is dated 23 November (before the domain move) and shows 0 indexed, 19
+  "Crawled, currently not indexed". URL Inspection today: the homepage and a blog post are indexed;
+  `/services/att-consent-timing` is "Discovered, currently not indexed" (indexing requested on 26 November).
+- Bing Site Explorer: no indexed URLs yet, two days after submission.
+- GA4 already has a predefined "AI Assistant" channel in its default channel group, so visits from AI
+  assistants get their own row without a custom group. A draft custom group was started and discarded unsaved.
+
+### Not done
+- Outreach for links (newsletters, practitioners, partners): needs a researched prospect list and the
+  owner's emails.
+- A case study from the owner's past audits: next content piece.
+- IndexNow for the new and changed pages: after this branch is merged.
+
+---
+
+## 2026-11-27: Fixes from a second outside audit
+
+An outside audit (ChatGPT, 27 November) checked all 29 sitemap URLs: each has a distinct title, one H1, a
+meta description, a self-canonical and parseable structured data. Its fixes, and what was done:
+
+### Done (branch `hide-homepage-founders`)
+- Homepage "Find the gaps" cards: each linked "Learn more" to `/services`. Now each links to the page that
+  answers it, with a label that says so: subscription revenue tracking, event tracking plan, and the payback
+  map.
+- `/about` founder cards: "Real portrait to be added" replaced by the founders' initials. The homepage
+  section stays hidden until portraits exist.
+- Specific H1s: `/automation` is now "AI reporting for app growth teams" and `/products` "Monetization and
+  app store optimization tools", set as the eyebrow line so the page looks the same.
+- Paywall case study retitled "Paywall case study: cost per payer fell from $92.95 to $20.91" (figures
+  from the post itself; URL unchanged). The post already states the 18-day and 9-day windows.
+- Already in place: old GitHub Pages links return 301 to the matching e2eapp.com page (checked).
+
+### Not done
+- Standalone payback calculator page with worked examples: planned, not built.
+- Test enquiry end to end: waiting on the owner's go-ahead.
+- The "SKAN only measures revenue" card heading: left as is; it sits under a heading that names it as a
+  mistake.
+- Blog-to-service mapping for the 15 posts: later, with Search Console data (Phase 4).
+
+---
+
 ## 2026-11-27: Phase 3 set up
 
 ### Done
@@ -162,7 +229,7 @@ Plan phases referred to below:
 - **Rich Results Test.** Run after merge, on the live URLs.
 - **Per-page share images.** Lower priority; helps link previews, not rankings.
 - **Schema for `/products`.** Waiting on the owner to confirm the tools are live products.
-- **Original data from past audits.** Waiting on an owner decision.
+- **Original data from past audits.** Owner decision (27 November): the audits are the owner's own work and can be used, anonymised, with no client names.
 
 ### Waiting on the owner (Phase 2)
 

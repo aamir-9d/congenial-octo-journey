@@ -120,6 +120,7 @@ export function initContactForm(): void {
       email: String(data.get('email') ?? '').trim(),
       appUrl: String(data.get('appUrl') ?? '').trim(),
       spend: String(data.get('spend') ?? '').trim(),
+      heard: String(data.get('heard') ?? '').trim(),
       message: String(data.get('message') ?? '').trim(),
       // Spam gates. The Worker checks both again.
       company_website: String(data.get('company_website') ?? ''),
@@ -165,6 +166,7 @@ export function initContactForm(): void {
         form_name: 'contact',
         monthly_spend: payload.spend,
         has_app_url: payload.appUrl !== '',
+        heard_about: payload.heard,
         gclid: attr.gclid ?? '',
         gbraid: attr.gbraid ?? '',
         wbraid: attr.wbraid ?? '',

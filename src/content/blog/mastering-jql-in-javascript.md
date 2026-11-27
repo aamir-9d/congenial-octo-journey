@@ -7,7 +7,10 @@ tag: Mixpanel
 source: https://www.linkedin.com/pulse/mastering-jql-javascript-advanced-analytics-mixpanel-aamir-jan-khan-poywf/
 cta: >-
   JQL will answer whatever you ask it, including questions your event schema cannot actually support. If your Mixpanel numbers do not reconcile with your MMP or your subscription platform, the query is rarely the thing that is wrong.
+related: event-tracking-plan
 ---
+
+> **Update, November 2026:** Mixpanel now lists JQL as in maintenance mode and recommends moving to its Export API, Query API or Data Pipelines ([Mixpanel docs](https://docs.mixpanel.com/docs/reports/apps/jql)). The funnel and property logic below still applies; for new work, run it through one of those instead.
 
 ## What is Mixpanel?
 

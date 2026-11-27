@@ -481,6 +481,13 @@ h3 {
   color: var(--color-text-4);
 }
 
+/* An eyebrow that is also the page's H1 (a specific, searchable label above a
+   short display line) keeps the eyebrow's look, not the heading weight. */
+h1.eyebrow {
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-body);
+}
+
 .eyebrow--amber {
   color: var(--color-accent);
 }

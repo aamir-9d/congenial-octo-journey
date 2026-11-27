@@ -39,14 +39,14 @@ const { lead = false } = Astro.props;
 <section id="products" class:list={['section', { 'section--lead': lead }]} data-section="products" data-added="products">
   <div class="wrap">
     <div class="section-head" data-reveal="1">
-      <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
       {
         lead ? (
-          <h1 class="products__head">Three products, in detail.</h1>
+          <h1 class="eyebrow">Monetization and app store optimization tools</h1>
         ) : (
-          <h2 class="products__head">Three products, in detail.</h2>
+          <div class="eyebrow">TOOLS BUILT FOR THIS WORK</div>
         )
       }
+      <h2 class="products__head">Three products, in detail.</h2>
       <p class="section-lead">
         Each one a full overview &#8212; what it does, how it works, and screenshots from the
         running build.

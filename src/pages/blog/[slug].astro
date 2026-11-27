@@ -6,7 +6,7 @@ import Footer from '../../components/Footer.astro';
 import Icon from '../../components/Icon.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { AUTHORS } from '../../data/authors';
-import { SERVICE_FOR_POST } from '../../data/services';
+import { SERVICES } from '../../data/services';
 
 /**
  * A single post.
@@ -39,7 +39,16 @@ const related = (await getCollection('blog'))
   )
   .slice(0, 3);
 
-const service = SERVICE_FOR_POST.get(post.id);
+/* Every post names the page a reader most likely wants next (frontmatter
+   `related`): a service, the payback calculator or the automation page. */
+const OTHER_PAGES: Record<string, { path: string; label: string }> = {
+  'payback-calculator': { path: '/payback-calculator', label: 'Tool: App payback calculator' },
+  automation: { path: '/automation', label: 'AI reporting for app growth teams' },
+};
+const relatedService = SERVICES.find((s) => s.slug === post.data.related);
+const next = relatedService
+  ? { path: `/services/${relatedService.slug}`, label: `Service: ${relatedService.name}` }
+  : OTHER_PAGES[post.data.related]!;
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -140,7 +149,7 @@ const fmt = (d: Date) =>
             {related.map((p) => (
               <li><a class="link" href={`${base}/blog/${p.id}`}>{p.data.title}</a></li>
             ))}
-            {service && <li><a class="link" href={`${base}/services/${service.slug}`}>Service: {service.name}</a></li>}
+            <li><a class="link" href={`${base}${next.path}`}>{next.label}</a></li>
             <li><a class="link" href={`${base}/services`}>What we fix in mobile measurement</a></li>
           </ul>
         </nav>
