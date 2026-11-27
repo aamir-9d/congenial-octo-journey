@@ -311,8 +311,8 @@ test('the homepage order is the one the brief sets', { skip }, () => {
      on /payback-calculator and Problems is on /services; neither is deleted. */
   assert.deepEqual(order, [
     'hero',
-    'stats',
-    'specialist-services',
+    'services',
+    'findings',
     'proof',
     'case-study',
     'loop',

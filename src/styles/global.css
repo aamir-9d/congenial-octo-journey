@@ -525,6 +525,81 @@ h1.eyebrow {
 }
 
 /* ---------------------------------------------------------------------------
+   The homepage split: heading and one action on the left, a panel on the right.
+
+   The case study and the automation section each carry this composition in
+   their own scoped styles. The sections added in November 2026 (services,
+   findings, the calculator pointer) share it from here, in the case study's
+   proportions, so every homepage section below the hero starts on the same
+   left edge and gives its panel the same column. A centred header over a card
+   grid, which those sections first shipped with, is what made the top of the
+   page read as a different site from the bottom.
+   --------------------------------------------------------------------------- */
+.split {
+  display: grid;
+  gap: var(--s12);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+    gap: var(--s16);
+  }
+}
+
+.split__copy {
+  min-width: 0;
+}
+
+.split__h2 {
+  margin-top: var(--s4);
+  font-size: var(--t-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  color: var(--color-text);
+}
+
+.split__lead {
+  margin-top: var(--s8);
+  max-width: 42ch;
+  font-size: var(--t-section-lead);
+  line-height: var(--lh-body);
+  color: var(--color-text-2);
+}
+
+.split__cta {
+  margin-top: var(--s12);
+}
+
+.panel {
+  padding: var(--s8);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--ring);
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .split__lead {
+    margin-top: var(--s4);
+    font-size: var(--t-body-sm);
+  }
+
+  .split__cta {
+    margin-top: var(--s8);
+    width: 100%;
+    justify-content: center;
+    min-height: 52px;
+  }
+
+  .panel {
+    padding: var(--s6);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Mobile disclosure. Added after the Bento brief was written, so it still uses
    the `.js` gate — that is now the only remaining reason the class exists.
    --------------------------------------------------------------------------- */

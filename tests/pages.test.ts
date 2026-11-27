@@ -139,22 +139,48 @@ test('sections are not separated by a screen of empty space', () => {
   assert.ok(Number(m[2]) <= 96, `desktop section padding ${m[2]}px is too tall`);
 });
 
-test('the homepage stats strip shows the figures the data files hold', { skip }, async () => {
-  // Four numbers under the hero. Each is imported from the file that owns it;
+test('the hero track record shows the figures the data files hold', { skip }, async () => {
+  // Three numbers under the hero. Each is imported from the file that owns it;
   // this fails if someone types a figure into the component instead.
   const { AUDIT_COUNT } = await import('../src/data/findings.ts');
-  const { SERVICES } = await import('../src/data/services.ts');
   const { PORTFOLIO_APPS, YEARS, AUTHORS } = await import('../src/data/authors.ts');
 
   const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
-  const strip = home.slice(home.indexOf('data-section="stats"'));
-  const shown = [...strip.slice(0, strip.indexOf('</section>')).matchAll(/<dd[^>]*>([^<]+)<\/dd>/g)].map(
-    (m) => m[1]!.trim(),
+  const row = home.slice(home.indexOf('class="hero__proof"'));
+  const shown = [...row.slice(0, row.indexOf('</dl>')).matchAll(/<dd[^>]*>([^<]+)<\/dd>/g)].map((m) =>
+    m[1]!.trim(),
   );
 
-  assert.deepEqual(shown, [String(AUDIT_COUNT), String(SERVICES.length), PORTFOLIO_APPS, String(YEARS.count)]);
+  assert.deepEqual(shown, [String(AUDIT_COUNT), PORTFOLIO_APPS, String(YEARS.count)]);
 
   // The bio is the published source of the last two.
   assert.ok(AUTHORS.aamir.bio.includes(`${PORTFOLIO_APPS} iOS and Android apps`));
   assert.ok(AUTHORS.aamir.bio.includes(`${YEARS.word} years`));
+});
+
+test('the homepage findings panel repeats the findings data, bar for bar', { skip }, async () => {
+  const { AUDIT_COUNT, FINDINGS } = await import('../src/data/findings.ts');
+  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  const sec = home.slice(home.indexOf('data-section="findings"'));
+  const panel = sec.slice(0, sec.indexOf('</section>'));
+  const counts = [...panel.matchAll(/class="fnd__count[^"]*"[^>]*>\s*(\d+)\s*\/\s*(\d+)/g)].map((m) => [
+    Number(m[1]),
+    Number(m[2]),
+  ]);
+
+  assert.ok(counts.length >= 4, 'the findings panel lost its rows');
+  counts.forEach(([n, of], k) => {
+    assert.equal(n, FINDINGS[k]!.count, `row ${k + 1} shows a count the data does not hold`);
+    assert.equal(of, AUDIT_COUNT);
+  });
+});
+
+test('the calculator pointer shows the breakeven the model computes', { skip }, async () => {
+  const { INITIAL_STATE } = await import('../src/scripts/calc-model.ts');
+  const { computePayback, crossingLabel } = await import('../src/scripts/payback-model.ts');
+  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  const shown = home.match(/data-teaser-crossing[^>]*>([^<]+)</);
+
+  assert.ok(shown, 'the calculator pointer has no breakeven figure');
+  assert.equal(shown[1]!.trim(), crossingLabel(computePayback(INITIAL_STATE, 365).crossing, 365));
 });

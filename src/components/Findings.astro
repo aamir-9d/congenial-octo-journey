@@ -1,0 +1,159 @@
+---
+import Icon from './Icon.astro';
+import { AUDIT_COUNT, FINDINGS } from '../data/findings';
+
+/**
+ * "Ten audits. The same faults keep turning up."
+ *
+ * The homepage's proof, in the page's own composition: heading and one action
+ * on the left, a panel on the right. The panel is a bar per finding, counted
+ * out of AUDIT_COUNT, straight from src/data/findings.ts, so it cannot say
+ * anything /mmp-audit-findings does not.
+ *
+ * Six rows, not all nine: the panel should match the copy column's height, and
+ * the button leads to the rest. The three single findings (Proof, nested)
+ * follow as this section's tail.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const SHOWN = 6;
+const rows = FINDINGS.slice(0, SHOWN);
+const words = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+const countWord = words[AUDIT_COUNT] ?? String(AUDIT_COUNT);
+---
+
+<section id="findings" class="section" data-section="findings" data-added="design-2026-11">
+  <div class="wrap">
+    <div class="split">
+      <div class="split__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">What the audits turn up</p>
+        <h2 class="split__h2">{countWord} audits. The same faults keep turning up.</h2>
+        <p class="split__lead">
+          Each bar counts the audits, out of {AUDIT_COUNT}, with at least one check marked "needs
+          fixes" in that area. No app or client is named.
+        </p>
+        <a href={`${base}/mmp-audit-findings`} class="btn-primary split__cta">
+          See all {FINDINGS.length} findings
+          <Icon name="arrow-right" size={15} />
+        </a>
+      </div>
+
+      <div class="panel fnd" data-reveal="1">
+        <p class="fnd__meta">
+          <span class="fnd__kicker">Faults found</span>
+          <span class="fnd__scale">Audits out of {AUDIT_COUNT}</span>
+        </p>
+        <ul class="fnd__list" role="list">
+          {
+            rows.map((f) => (
+              <li>
+                <a class="fnd__row" href={`${base}${f.path}`}>
+                  <span class="fnd__title">{f.title}</span>
+                  <span class="fnd__count tabular">
+                    {f.count} / {AUDIT_COUNT}
+                  </span>
+                  <span class="fnd__track" aria-hidden="true">
+                    <span class="fnd__bar" style={`width:${(f.count / AUDIT_COUNT) * 100}%`} />
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .fnd {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+  }
+
+  .fnd__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s6);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+  }
+
+  .fnd__kicker {
+    color: var(--color-accent);
+  }
+
+  .fnd__scale {
+    color: var(--color-text-4);
+  }
+
+  .fnd__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fnd__list li + li {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .fnd__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: var(--s3) var(--s6);
+    padding: var(--s4) 0 var(--s6);
+  }
+
+  .fnd__title {
+    font-size: var(--t-body);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-snug);
+    line-height: var(--lh-tight);
+    color: var(--color-text);
+    transition: color 180ms var(--ease-out-soft);
+  }
+
+  .fnd__row:hover .fnd__title {
+    color: var(--color-accent);
+  }
+
+  .fnd__count {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-2);
+  }
+
+  .fnd__track {
+    grid-column: 1 / -1;
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--color-surface-sunk);
+    overflow: hidden;
+  }
+
+  .fnd__bar {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .fnd__row {
+      padding: var(--s4) 0;
+    }
+
+    .fnd__title {
+      font-size: var(--t-card);
+    }
+
+    .fnd__track {
+      height: 6px;
+    }
+  }
+</style>

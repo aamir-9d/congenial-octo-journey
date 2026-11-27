@@ -1,35 +1,96 @@
 ---
 import Icon from './Icon.astro';
+import { INITIAL_STATE } from '../scripts/calc-model.ts';
+import { computePayback, crossingLabel } from '../scripts/payback-model.ts';
 
 /**
  * The homepage's pointer to the payback calculator.
  *
- * The full calculator used to sit here: 817 of the homepage's roughly 2,000
- * words, directly under the hero, ahead of the services. It now lives only on
- * /payback-calculator, and this card links to it. The id stays `payback` so an
- * old link to the homepage section still lands on something that explains
- * where it went.
+ * The full calculator lives on /payback-calculator. This section sends people
+ * there, in the page's own composition: heading and one action on the left, a
+ * panel on the right. The id stays `payback` so an old link to the homepage
+ * section still lands on something that explains where it went.
  *
- * New section (27 November 2026), marked `data-added`. The heading is the
- * calculator's own.
+ * The panel is not a drawing. It plots the calculator's own example scenario
+ * (INITIAL_STATE) through the same model the calculator runs, so the curve and
+ * the breakeven day here are the ones a visitor sees on arrival there.
+ * tests/pages.test.ts checks the day shown against the model.
  */
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const HORIZON = 365;
+const pb = computePayback(INITIAL_STATE, HORIZON);
+const series = pb.series;
+
+/* Chart box. The y range is padded so the curve never touches an edge. */
+const W = 560;
+const H = 220;
+const PAD = { l: 8, r: 8, t: 18, b: 26 };
+const lo = Math.min(...series);
+const hi = Math.max(...series, 0);
+const span = hi - lo || 1;
+const x = (d: number) => PAD.l + (d / HORIZON) * (W - PAD.l - PAD.r);
+const y = (v: number) => PAD.t + (1 - (v - lo) / span) * (H - PAD.t - PAD.b);
+const r1 = (n: number) => Math.round(n * 10) / 10;
+
+const line = series.map((v, d) => `${d === 0 ? 'M' : 'L'}${r1(x(d))} ${r1(y(v))}`).join(' ');
+const zeroY = r1(y(0));
+const crossDay = pb.crossing.kind === 'within' ? pb.crossing.day : null;
+const crossX = crossDay === null ? null : r1(x(crossDay));
+const label = crossingLabel(pb.crossing, HORIZON);
+const money = (n: number) => `$${n.toFixed(2)}`;
 ---
 
-<section id="payback" class="section" data-section="payback-teaser" data-added="structure-2026-11">
+<section id="payback" class="section" data-section="payback-teaser" data-added="design-2026-11">
   <div class="wrap">
-    <div class="pbt" data-reveal="1">
-      <div>
-        <p class="eyebrow eyebrow--amber">FREE TOOL</p>
-        <h2 class="pbt__h2">See when your spend comes back.</h2>
-        <p class="pbt__body">
+    <div class="split">
+      <div class="split__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">Free tool</p>
+        <h2 class="split__h2">See when your spend comes back.</h2>
+        <p class="split__lead">
           Enter your cost per install, conversion rates and retention. The calculator shows the day
           a campaign earns its spend back, for subscription and ad-funded apps.
         </p>
+        <a href={`${base}/payback-calculator`} class="btn-primary split__cta">
+          Open the payback calculator
+          <Icon name="arrow-right" size={15} />
+        </a>
       </div>
-      <a href={`${base}/payback-calculator`} class="btn-primary pbt__cta">
-        Open the payback calculator
-        <Icon name="arrow-right" size={15} />
+
+      <a class="panel pbt" href={`${base}/payback-calculator`} data-reveal="1">
+        <span class="pbt__meta">
+          <span class="pbt__kicker">Example scenario</span>
+          <span class="pbt__scale">Net per install, day 0 to {HORIZON}</span>
+        </span>
+
+        <span class="pbt__figure">
+          <span class="pbt__day tabular" data-teaser-crossing>{label}</span>
+          <span class="pbt__day-note">breakeven, at {money(pb.cost)} cost per install</span>
+        </span>
+
+        <svg
+          class="pbt__chart"
+          viewBox={`0 0 ${W} ${H}`}
+          role="img"
+          aria-label={`Cumulative net revenue per install over ${HORIZON} days in the example scenario. It crosses zero on ${label.toLowerCase()}.`}
+        >
+          <line class="pbt__zero" x1={PAD.l} y1={zeroY} x2={W - PAD.r} y2={zeroY}></line>
+          <path class="pbt__line" d={line}></path>
+          {
+            crossX !== null && (
+              <>
+                <line class="pbt__drop" x1={crossX} y1={zeroY} x2={crossX} y2={H - PAD.b + 6} />
+                <circle class="pbt__dot" cx={crossX} cy={zeroY} r="6" />
+              </>
+            )
+          }
+        </svg>
+
+        <span class="pbt__axis" aria-hidden="true">
+          <span>Day 0</span>
+          <span>Spend recovered above the dashed line</span>
+          <span>Day {HORIZON}</span>
+        </span>
       </a>
     </div>
   </div>
@@ -38,44 +99,100 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <style>
   .pbt {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: var(--s6);
+    transition: box-shadow 180ms var(--ease-out-soft);
+  }
+
+  .pbt:hover {
+    box-shadow: var(--ring-accent);
+  }
+
+  .pbt__meta {
+    display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--s8);
-    padding: clamp(28px, 4vw, 48px);
-    border-radius: var(--radius-panel);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
+    gap: var(--s3) var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
   }
 
-  .pbt__h2 {
-    margin-top: var(--s3);
-    font-size: var(--t-h2-card);
-    letter-spacing: var(--ls-h2-card);
-    line-height: var(--lh-h2);
+  .pbt__kicker {
+    color: var(--color-accent);
   }
 
-  .pbt__body {
-    margin-top: var(--s3);
-    max-width: 56ch;
+  .pbt__scale {
+    color: var(--color-text-4);
+  }
+
+  .pbt__figure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s2) var(--s4);
+  }
+
+  .pbt__day {
+    font-family: var(--font-heading);
+    font-size: var(--t-h2);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h1);
+    line-height: var(--lh-flat);
+    color: var(--color-text);
+  }
+
+  .pbt__day-note {
     font-size: var(--t-card);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
+    color: var(--color-text-3);
   }
 
-  .pbt__cta {
-    flex: none;
+  .pbt__chart {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
-  @media (max-width: 767px) {
-    .pbt {
-      flex-direction: column;
-      align-items: stretch;
-      gap: var(--s6);
-    }
+  .pbt__zero {
+    stroke: var(--chart-rule);
+    stroke-width: 1;
+    stroke-dasharray: 4 6;
+  }
 
-    .pbt__cta {
-      justify-content: center;
-      min-height: 52px;
+  .pbt__line {
+    fill: none;
+    stroke: var(--chart-true);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .pbt__drop {
+    stroke: var(--chart-true);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+    opacity: 0.7;
+  }
+
+  .pbt__dot {
+    fill: var(--chart-true);
+    stroke: var(--color-surface);
+    stroke-width: 3;
+  }
+
+  .pbt__axis {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    color: var(--color-text-4);
+  }
+
+  @media (max-width: 640px) {
+    .pbt__axis span:nth-child(2) {
+      display: none;
     }
   }
 </style>

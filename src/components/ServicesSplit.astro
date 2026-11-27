@@ -1,0 +1,174 @@
+---
+import Icon from './Icon.astro';
+import { SERVICES } from '../data/services';
+
+/**
+ * The homepage's services section.
+ *
+ * Same composition as the case study and the automation section below it:
+ * heading and one action on the left, a panel on the right. The first version
+ * of this section was a centred header over five equal cards, which matched
+ * nothing else on the page (the owner's review, 27 November 2026).
+ *
+ * /services and /about keep ServiceIndex, the card grid; this is homepage only.
+ * The list is src/data/services.ts, so a new service page appears here unasked.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const [audit, ...fixes] = SERVICES;
+const num = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section id="specialist" class="section" data-section="services" data-added="design-2026-11">
+  <div class="wrap">
+    <div class="split">
+      <div class="split__copy" data-reveal="1">
+        <p class="eyebrow eyebrow--amber">What I do</p>
+        <h2 class="split__h2">Start with an audit. Keep going if it is worth it.</h2>
+        <p class="split__lead">
+          The audit names every fault in writing. Each fix is its own piece of work, with its own
+          page.
+        </p>
+        <a href={`${base}/services/${audit!.slug}`} class="btn-primary split__cta">
+          See what the audit checks
+          <Icon name="arrow-right" size={15} />
+        </a>
+      </div>
+
+      <ol class="panel svl" data-reveal="1">
+        <li>
+          <a class="svl__row svl__row--lead" href={`${base}/services/${audit!.slug}`}>
+            <span class="svl__n">{num(0)}</span>
+            <span class="svl__body">
+              <span class="svl__tag">Start here</span>
+              <span class="svl__name">{audit!.name}</span>
+              <span class="svl__text">{audit!.summary}</span>
+            </span>
+            <span class="svl__go"><Icon name="arrow-right" size={16} /></span>
+          </a>
+        </li>
+        {
+          fixes.map((s, i) => (
+            <li>
+              <a class="svl__row" href={`${base}/services/${s.slug}`}>
+                <span class="svl__n">{num(i + 1)}</span>
+                <span class="svl__body">
+                  <span class="svl__name">{s.name}</span>
+                  <span class="svl__text">{s.summary}</span>
+                </span>
+                <span class="svl__go"><Icon name="arrow-right" size={16} /></span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .svl {
+    margin: 0;
+    padding: var(--s2) var(--s8);
+    list-style: none;
+  }
+
+  .svl li + li {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .svl__row {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: var(--s6);
+    min-height: 84px;
+    padding: var(--s4) 0;
+  }
+
+  .svl__row--lead {
+    padding: var(--s8) 0;
+  }
+
+  .svl__n {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-accent);
+  }
+
+  .svl__body {
+    display: block;
+    min-width: 0;
+  }
+
+  .svl__tag {
+    display: block;
+    margin-bottom: var(--s2);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-2xs);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .svl__name {
+    display: block;
+    font-size: var(--t-post-title);
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: var(--lh-h3);
+    color: var(--color-text);
+  }
+
+  .svl__row--lead .svl__name {
+    font-size: var(--t-h3);
+  }
+
+  .svl__text {
+    display: block;
+    margin-top: 3px;
+    font-size: var(--t-card);
+    line-height: var(--lh-card);
+    color: var(--color-text-2);
+  }
+
+  .svl__go {
+    display: inline-flex;
+    color: var(--color-text-4);
+    transition:
+      color 180ms var(--ease-out-soft),
+      transform 180ms var(--ease-out-soft);
+  }
+
+  .svl__row:hover .svl__go {
+    color: var(--color-accent);
+    transform: translateX(3px);
+  }
+
+  @media (max-width: 640px) {
+    .svl {
+      padding: var(--s2) var(--s6);
+    }
+
+    .svl__row {
+      grid-template-columns: 24px minmax(0, 1fr) 16px;
+      gap: var(--s4);
+      min-height: 76px;
+    }
+
+    .svl__row--lead {
+      padding: var(--s6) 0;
+    }
+
+    .svl__name {
+      font-size: var(--t-body);
+    }
+
+    .svl__row--lead .svl__name {
+      font-size: var(--t-post-title);
+    }
+
+    .svl__text {
+      font-size: var(--t-card-sm);
+    }
+  }
+</style>
