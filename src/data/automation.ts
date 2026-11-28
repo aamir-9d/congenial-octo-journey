@@ -54,7 +54,7 @@
  * before the server is, so `ACCOUNTS_OPEN` needs both.
  */
 export const MCP = {
-  status: 'coming' as 'coming' | 'live',
+  status: 'live' as 'coming' | 'live',
   address: 'https://mcp.e2eapp.com/mcp',
   accounts: 'coming' as 'coming' | 'live',
 };
