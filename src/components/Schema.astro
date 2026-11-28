@@ -20,6 +20,10 @@ import { ALL_FAQ, toText } from '../data/faq';
  *
  * The LinkedIn URLs are the ones already in the design, used as `sameAs` so the
  * two Person entries are resolvable to real profiles rather than bare strings.
+ *
+ * The business node has no `sameAs`: that property is for profiles of E2E Apps
+ * itself, and a founder's personal profile is not one. Add the company's own
+ * profile URLs there as each goes live.
  */
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -57,7 +61,6 @@ const graph = {
         'App store optimisation',
       ],
       employee: [{ '@id': `${home}#aamir` }, { '@id': `${home}#faisal` }],
-      sameAs: [AAMIR, FAISAL],
     },
     {
       '@type': 'Person',

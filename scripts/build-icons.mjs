@@ -10,6 +10,8 @@
  *   favicon.svg      scalable, and the only one that adapts to dark mode
  *   favicon-32.png   the tab icon most desktop browsers actually use
  *   favicon-16.png   the fallback, drawn in the reduced single-glyph form
+ *   favicon.ico      the 16, 32 and 48px PNGs in one file, for the browsers and
+ *                    crawlers that request /favicon.ico whatever the page says
  *   apple-touch-icon iOS home screen, 180px, must be opaque with no transparency
  *   icon-192 / 512   PWA manifest, 512 is also what stores and link unfurls take
  *
@@ -61,8 +63,43 @@ const TARGETS = [
   { file: 'icon-512.png', size: 512, opaque: true },
 ];
 
+/**
+ * An .ico file that wraps PNGs as they are.
+ *
+ * The format is a 6-byte header, one 16-byte directory entry per image, then
+ * the images. Since Windows Vista an image may be a whole PNG file instead of
+ * a bitmap, which every current browser reads, so no encoder is needed.
+ */
+function ico(images) {
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(images.length, 4);
+
+  let offset = 6 + 16 * images.length;
+  const entries = images.map(({ size, png }) => {
+    const e = Buffer.alloc(16);
+    e.writeUInt8(size >= 256 ? 0 : size, 0); // width
+    e.writeUInt8(size >= 256 ? 0 : size, 1); // height
+    e.writeUInt8(0, 2); // palette colours
+    e.writeUInt8(0, 3); // reserved
+    e.writeUInt16LE(1, 4); // colour planes
+    e.writeUInt16LE(32, 6); // bits per pixel
+    e.writeUInt32LE(png.length, 8);
+    e.writeUInt32LE(offset, 12);
+    offset += png.length;
+    return e;
+  });
+
+  return Buffer.concat([header, ...entries, ...images.map((i) => i.png)]);
+}
+
+/** The sizes favicon.ico carries, each the PNG already written above. */
+const ICO_SIZES = [16, 32, 48];
+
 async function main() {
   fs.mkdirSync(OUT, { recursive: true });
+  const rendered = new Map();
 
   /* The scalable one. Written at a size above the reduction threshold so it
      carries the full three-glyph form; a browser scaling it down keeps the
@@ -84,10 +121,15 @@ async function main() {
       .toBuffer();
 
     fs.writeFileSync(path.join(OUT, t.file), buf);
+    rendered.set(t.file, buf);
 
     const form = t.size <= COMPACT_AT_OR_BELOW ? 'compact' : 'full';
     console.log(`  ${t.file}`.padEnd(30) + `${(buf.length / 1024).toFixed(1)} KB`.padEnd(10) + form);
   }
+
+  const icon = ico(ICO_SIZES.map((size) => ({ size, png: rendered.get(`favicon-${size}.png`) })));
+  fs.writeFileSync(path.join(OUT, 'favicon.ico'), icon);
+  console.log('  favicon.ico'.padEnd(30) + `${(icon.length / 1024).toFixed(1)} KB`);
 }
 
 /** The PWA manifest. Base-path aware, like every other asset URL here. */

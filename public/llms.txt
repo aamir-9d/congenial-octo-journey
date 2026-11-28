@@ -1,0 +1,37 @@
+# E2E Apps
+
+> E2E Apps is a mobile attribution consultancy for subscription and ad-monetised apps. It audits and fixes mobile measurement: attribution and MMP work (AppsFlyer, Adjust, Singular), SKAdNetwork and AdAttributionKit schemas, server-side revenue pipelines, and the paid media that runs on top of them.
+
+E2E Apps is two specialists: one owns the growth loop, the second owns the infrastructure it runs on. Client names are withheld in everything published here.
+
+## Services
+
+- [Services](https://e2eapp.com/services): What breaks in mobile measurement and the services that deal with it.
+- [Mobile attribution audit](https://e2eapp.com/services/mobile-attribution-audit): A full review from the ad to the renewal, with a written fix for each finding.
+- [SKAN & AdAttributionKit setup](https://e2eapp.com/services/skan-adattributionkit-setup): Conversion values, windows and postbacks.
+- [ATT & consent timing](https://e2eapp.com/services/att-consent-timing): Prompt order, waiting time and testing.
+- [Event tracking plan & mapping](https://e2eapp.com/services/event-tracking-plan): What to send, when and in what format.
+- [Subscription revenue tracking](https://e2eapp.com/services/subscription-revenue-tracking): Trials, renewals and refunds, counted once.
+- [AI reporting & automation](https://e2eapp.com/automation): Ad platforms, analytics and subscription data connected to Claude or ChatGPT, answering questions with the source figures attached.
+
+## Evidence
+
+- [Audit findings](https://e2eapp.com/mmp-audit-findings): What mobile attribution (MMP) audits of AppsFlyer, Adjust and Singular setups keep finding: ATT handling, revenue events, SKAN, postbacks and more.
+- [Case studies](https://e2eapp.com/case-studies): What was wrong, what changed, the numbers, and what each comparison cannot show.
+- [Blog](https://e2eapp.com/blog): Findings from live mobile measurement stacks.
+
+## Tools
+
+- [App payback calculator](https://e2eapp.com/payback-calculator): Estimate the day an install pays back its acquisition cost, for subscription or ad-monetised apps. A planning estimate, not a forecast.
+- [Products](https://e2eapp.com/products): Monetization Scout, ASO Suite and ASO Agent, each with a full overview.
+
+## About
+
+- [About E2E Apps](https://e2eapp.com/about): Who does the work.
+- [FAQ](https://e2eapp.com/faq): Pricing, timelines, access, MMPs, SKAdNetwork, web-to-app and subscription revenue.
+- [Sitemap](https://e2eapp.com/sitemap.xml)
+
+## Contact
+
+- Email: hello@e2eapp.com
+- Free first look: send your app's store link through the form at https://e2eapp.com/#contact and get a written reply with three measurement checks.

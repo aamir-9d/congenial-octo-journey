@@ -59,7 +59,7 @@ export interface Service {
 }
 
 /** The date shown on the pages. Change it when the advice changes. */
-export const UPDATED = { iso: '2026-11-25', label: '25 November 2026' };
+export const UPDATED = { iso: '2026-11-28', label: '28 November 2026' };
 
 const APPLE = 'https://developer.apple.com/documentation';
 
