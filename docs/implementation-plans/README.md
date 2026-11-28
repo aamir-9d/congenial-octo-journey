@@ -16,6 +16,7 @@ keys, client names, prices or anything confidential in a plan.
 | Plan | Area | Question it answers |
 | --- | --- | --- |
 | [e2e-apps-mcp-plan.md](e2e-apps-mcp-plan.md) | The E2E Apps MCP server | What is built, in what order, and what waits on the owner? |
+| [mcp-launch-and-automation-page-plan.md](mcp-launch-and-automation-page-plan.md) | Deploying the MCP, account sign-in, listings, the new Automation page | In what order does it go live, and what do Google and the assistants require? |
 | [seo-audit-2026-11-28-plan.md](seo-audit-2026-11-28-plan.md) | Search and AI answers | Which audit actions are done in code, and which are left? |
 
 Older plans written before this folder existed: `docs/redesign-plan.md`,
