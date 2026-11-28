@@ -52,6 +52,9 @@ function palette(theme) {
     line: get('color-line'),
     lineStrong: get('color-line-strong'),
     measured: get('chart-measured'),
+    washAmber: get('color-wash-amber'),
+    washBlue: get('color-wash-blue'),
+    blueText: get('color-blue-text'),
   };
 }
 
@@ -135,6 +138,16 @@ const pairs = (C) => [
   ['Focus ring on ground', C.focus, C.bg, 'ui'],
   ['Focus ring on surface', C.focus, C.surface, 'ui'],
   ['Amber text on band', C.accentText, C.band, 'text'],
+
+  // Tinted surfaces. Plain surfaces in the dark theme; an amber and a blue
+  // wash in the light theme, where the lead card and chart panels sit on them.
+  ['Body text on amber wash', C.text, C.washAmber, 'text'],
+  ['Body copy on amber wash', C.text2, C.washAmber, 'text'],
+  ['Labels and meta on amber wash', C.text4, C.washAmber, 'text'],
+  ['Amber text on amber wash', C.accentText, C.washAmber, 'text'],
+  ['Body copy on blue wash', C.text2, C.washBlue, 'text'],
+  ['Labels and meta on blue wash', C.text4, C.washBlue, 'text'],
+  ['Blue link on blue wash', C.blueText, C.washBlue, 'text'],
 
   ['Card outline on ground', C.line, C.bg, 'decor'],
   ['Control border on surface', C.lineStrong, C.surface, 'decor'],

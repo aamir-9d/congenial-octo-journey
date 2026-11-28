@@ -419,6 +419,22 @@ none ("What I fix", "How the work runs", "At a glance", "How it runs", "The
 detail", "Field notes on attribution, subscriptions and campaigns", and
 similar). The hero headline was chosen by the owner.
 
+### Light theme palette (28 Nov)
+
+The light theme is not the dark layout with pale values. It has its own
+ladder: page `#E9EDF4`, white cards with a visible edge and shadow, an amber
+wash and a blue wash, and dark sections. Rules:
+
+- No corner glow in light (`--glow` and `--glow-lead` are 0). A glow on white
+  reads as a stain. The lead card takes `--color-wash-amber` instead.
+- Panels behind charts take `--color-wash-blue`.
+- A section that should be dark in the light theme gets the class `island`
+  (tokens.css). It re-pins the tokens, so components inside need no rules of
+  their own. Used on the homepage calculator preview and the footer. Keep it
+  to two or three per page.
+- Judge the light theme from screenshots of the light theme. It shipped
+  washed out once because only token contrast was checked, not the page.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These
