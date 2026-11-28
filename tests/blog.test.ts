@@ -185,6 +185,11 @@ test('the sitemap covers the posts, dated when they were published', { skip }, (
   for (const file of sources) {
     const slug = file.replace(/\.md$/, '');
     const { fields } = frontmatter(file);
+    // A post marked noindex is deliberately left out (tests/seo.test.ts).
+    if (fields.noindex === 'true') {
+      assert.ok(!xml.includes(`/blog/${slug}<`), `${slug} is noindex but still in the sitemap`);
+      continue;
+    }
     assert.ok(xml.includes(`/blog/${slug}`), `${slug} is missing from the sitemap`);
 
     // Its own date, not the build date — a rebuild must not claim a year-old

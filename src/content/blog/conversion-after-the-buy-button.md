@@ -1,5 +1,6 @@
 ---
 title: The conversion work that happens after the buy button
+seoTitle: Conversion work after the buy button
 kicker: Paywall optimisation usually stops at the paywall. The billing sheet is a funnel step too, it converts differently in every market, and most teams have never seen their own in the markets that matter.
 date: 2026-08-26
 description: "The billing sheet is a funnel step too. It converts differently in every market, and most teams have never seen theirs in the markets that matter."

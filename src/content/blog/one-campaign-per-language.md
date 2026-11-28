@@ -1,5 +1,6 @@
 ---
 title: One campaign per language, not one campaign for all of them
+seoTitle: One campaign per language, not one for all
 kicker: Targeting a country is not the same as targeting the people in it. Splitting by language rather than geography routinely surfaces audiences that a single country campaign was never reaching.
 date: 2026-08-28
 description: "Targeting a country is not the same as targeting the people in it. Splitting campaigns by language surfaces audiences a country campaign never reached."

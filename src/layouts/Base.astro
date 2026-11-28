@@ -1,4 +1,5 @@
 ---
+import fs from 'node:fs';
 import '../styles/global.css';
 import '../styles/redesign.css';
 import Analytics from '../components/Analytics.astro';
@@ -21,7 +22,13 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const asset = (p: string) => `${base}${p}`;
 
 const canonical = new URL(`${base}${path === '/' ? '/' : path}`, Astro.site).href;
-const ogImage = new URL(asset('/og-image.png'), Astro.site).href;
+/* A page's own share image, when scripts/build-og-cards.mjs has made one:
+   public/og/<the path with slashes turned into dashes>.png. Every other page
+   keeps the site card. Looked up on disk at build time, so a page never
+   points at an image that is not there. */
+const ogSlug = path.replace(/^\/+|\/+$/g, '').replace(/\//g, '-');
+const ogOwn = ogSlug && fs.existsSync(`public/og/${ogSlug}.png`) ? `/og/${ogSlug}.png` : '/og-image.png';
+const ogImage = new URL(asset(ogOwn), Astro.site).href;
 
 /* One list, two consumers: the preload links and the @font-face src below.
    Keeping them in step is what stops a preload from fetching a URL the CSS

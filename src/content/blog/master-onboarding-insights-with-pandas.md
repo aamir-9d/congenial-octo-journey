@@ -1,5 +1,7 @@
 ---
 title: 'Master Onboarding Insights: Quick Pandas Go-To Functions'
+seoTitle: 'Onboarding Insights: Quick Pandas Functions'
+noindex: true
 kicker: The handful of Pandas functions that do most of the work in onboarding analysis — aggregating by device, standardising statuses, and calculating per-country conversion rates.
 date: 2024-10-30
 description: "The Pandas functions that do most of the work in onboarding analysis: aggregating by device, standardising statuses, and conversion rates per country."

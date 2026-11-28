@@ -1,5 +1,6 @@
 ---
 title: Your app's quality score decides whether your ads run at all
+seoTitle: Your app quality score decides if your ads run
 kicker: Store platforms score apps on uninstalls, engagement, ad load and stability, and that score gates access to ad inventory. No bid change and no support ticket can override it.
 date: 2026-08-28
 description: "Stores score apps on uninstalls, engagement, ad load and stability, and that score gates ad inventory. No bid change or support ticket overrides it."

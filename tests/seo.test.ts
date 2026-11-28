@@ -496,3 +496,58 @@ test('/terms no longer refers to a homepage section that is gone', { skip }, () 
   // The disclaimer under it is word for word what it was.
   assert.match(text(html), /They are not a forecast of what we would find in yours, and they are not a promise of a result\./);
 });
+
+/* ------------------------------------------- titles, share images, noindex */
+
+const pagesIn = (dir: string, prefix = ''): string[] =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory()
+      ? pagesIn(path.join(dir, e.name), `${prefix}${e.name}/`)
+      : e.name.endsWith('.html') && e.name !== 'index.html' ? [`${prefix}${e.name}`] : [],
+  );
+const decodeTitle = (h: string) =>
+  (/<title>([^<]*)<\/title>/.exec(h)?.[1] ?? '').replace(/&amp;/g, '&').replace(/&#39;|&#x27;/g, "'").replace(/&quot;/g, '"');
+
+test('no page title is longer than 60 characters', { skip }, () => {
+  // Search engines cut a title at about 60 characters, and the part cut is
+  // the brand name at the end. Posts with a long headline carry a shorter
+  // `seoTitle` in their front matter; the h1 keeps the full headline.
+  const DIST = path.resolve(import.meta.dirname, '..', 'dist');
+  const long = pagesIn(DIST)
+    .filter((f) => !/^(brand-book|logo-directions|design)\//.test(f))
+    .map((f) => [f, decodeTitle(fs.readFileSync(path.join(DIST, f), 'utf8'))] as const)
+    .filter(([, t]) => t.length > 60)
+    .map(([f, t]) => `${f} (${t.length}): ${t}`);
+  assert.deepEqual(long, []);
+});
+
+test('service pages and posts carry their own share image, and it exists', { skip }, () => {
+  const DIST = path.resolve(import.meta.dirname, '..', 'dist');
+  const pages = pagesIn(DIST).filter((f) => /^(services|blog)\//.test(f));
+  assert.ok(pages.length >= 20, `expected the service pages and posts, found ${pages.length}`);
+  for (const f of [...pages, 'payback-calculator.html', 'automation.html', 'mmp-audit-findings.html']) {
+    const html = fs.readFileSync(path.join(DIST, f), 'utf8');
+    const og = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1] ?? '';
+    const want = `/og/${f.replace(/\.html$/, '').replace(/\//g, '-')}.png`;
+    assert.ok(og.endsWith(want), `${f}: og:image is ${og}, expected its own card ${want}`);
+    assert.ok(fs.existsSync(path.join(DIST, want)), `${f}: ${want} is not in the build`);
+  }
+  // A page without a card still has the site card.
+  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8');
+  assert.match(home, /<meta property="og:image" content="[^"]*\/og-image\.png"/);
+});
+
+test('posts marked noindex say so and are left out of the sitemap', { skip }, () => {
+  const DIST = path.resolve(import.meta.dirname, '..', 'dist');
+  const dir = path.resolve(import.meta.dirname, '..', 'src', 'content', 'blog');
+  const marked = fs.readdirSync(dir).filter((f) => f.endsWith('.md') && /^noindex:\s*true\s*$/m.test(fs.readFileSync(path.join(dir, f), 'utf8').split(/^---\s*$/m)[1] ?? '')).map((f) => f.replace(/\.md$/, ''));
+  assert.ok(marked.length >= 1, 'no post is marked noindex; delete this test if that is now intended');
+  const sitemap = fs.readFileSync(path.join(DIST, 'sitemap.xml'), 'utf8');
+  for (const slug of marked) {
+    const html = fs.readFileSync(path.join(DIST, 'blog', `${slug}.html`), 'utf8');
+    assert.match(html, /<meta name="robots" content="noindex, follow"/, `${slug}: no robots noindex`);
+    assert.ok(!sitemap.includes(`/blog/${slug}<`), `${slug}: still in the sitemap`);
+  }
+  const indexed = fs.readdirSync(path.join(DIST, 'blog')).filter((f) => f.endsWith('.html') && !marked.includes(f.replace(/\.html$/, '')));
+  for (const f of indexed) assert.doesNotMatch(fs.readFileSync(path.join(DIST, 'blog', f), 'utf8'), /name="robots" content="noindex/, `${f} is noindex by mistake`);
+});
