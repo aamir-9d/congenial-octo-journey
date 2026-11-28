@@ -21,7 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const DIST = path.resolve(import.meta.dirname, '..', 'dist');
-const PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', 'payback-calculator.html', ...['mobile-attribution-audit', 'skan-adattributionkit-setup', 'att-consent-timing', 'event-tracking-plan', 'subscription-revenue-tracking'].map((s) => `services/${s}.html`)];
+const PAGES = ['index.html', 'services.html', 'products.html', 'faq.html', 'privacy.html', 'terms.html', '404.html', 'payback-calculator.html', 'automation.html', 'mcp/privacy.html', 'mcp/terms.html', ...['mobile-attribution-audit', 'skan-adattributionkit-setup', 'att-consent-timing', 'event-tracking-plan', 'subscription-revenue-tracking'].map((s) => `services/${s}.html`)];
 
 const distExists = fs.existsSync(path.join(DIST, 'index.html'));
 const skip = !distExists && 'run `npm run build` first';

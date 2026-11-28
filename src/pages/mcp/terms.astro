@@ -1,0 +1,77 @@
+---
+import Prose from '../../layouts/Prose.astro';
+import { MCP, MCP_LEGAL_UPDATED } from '../../data/automation.ts';
+
+/**
+ * Terms for the E2E Apps MCP server, and only the server: the website has its
+ * own page at /terms.
+ *
+ * It states what is true of the server as built. The governing-law sentence is
+ * the one /terms already carries, word for word; nothing else about a company,
+ * an address or a jurisdiction is stated, because none is on record here.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Prose
+  title="MCP Server Terms — E2E Apps"
+  description="Terms for the E2E Apps MCP server: what it offers, and that its results are planning estimates and general guidance, not advice."
+  path="/mcp/terms"
+  heading="E2E Apps MCP terms"
+  updated={MCP_LEGAL_UPDATED}
+  lead="Terms for using the E2E Apps MCP server from an AI assistant."
+>
+  <p>
+    These terms cover the E2E Apps MCP server only: the tools an AI assistant can call at
+    <code>{MCP.address}</code>. The website has its own
+    <a href={`${base}/terms`} class="link">terms page</a>. The server is not open to the public yet;
+    this describes it as it is built.
+  </p>
+
+  <h2>What the server offers</h2>
+  <p>
+    Six read-only method tools and four saved prompts. It requires no account and no sign-in. No tool
+    in it writes to anything.
+  </p>
+
+  <h2>Results are estimates and general guidance</h2>
+  <p>
+    What the tools return are planning estimates and general guidance. They are worked out from the
+    inputs your assistant sends, and they are only as good as those inputs. They are not advice, and
+    they are not a measurement of your app.
+  </p>
+
+  <h2>No warranty</h2>
+  <p>
+    The server is provided as it is, with no warranty. We do not guarantee it will be available, or
+    that its results are free of error.
+  </p>
+
+  <h2>Your data</h2>
+  <p>
+    The server stores nothing. What it receives and what the hosting provider keeps are set out on
+    the <a href={`${base}/mcp/privacy`} class="link">MCP privacy page</a>.
+  </p>
+
+  <h2>Governing law</h2>
+  <p>
+    These terms are governed by the laws of England and Wales, and its courts have exclusive
+    jurisdiction.
+  </p>
+
+  <h2>Before account connection opens</h2>
+  <p>
+    Connecting your own accounts to the server is not open. This page will be updated before it is.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    <a href="mailto:hello@e2eapp.com" class="link">hello@e2eapp.com</a>
+  </p>
+
+  <p>
+    <a href={`${base}/mcp/privacy`} class="link">MCP privacy</a> ·
+    <a href={`${base}/automation`} class="link">Back to Automation</a>
+  </p>
+</Prose>

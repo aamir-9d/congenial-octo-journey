@@ -2,40 +2,64 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import PageHero from '../components/PageHero.astro';
 import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Investigation from '../components/Investigation.astro';
-import type { IconName } from '../data/icons';
-import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER, OFFER, CONNECTIONS } from '../data/automation.ts';
+import {
+  MCP,
+  MCP_HOST,
+  SERVER_OPEN,
+  ACCOUNTS_OPEN,
+  HEADER,
+  STEPS,
+  PROMISES,
+  PANEL,
+  panelStatus,
+  PLATFORMS,
+  STATUS_LABEL,
+  TOOLS,
+  SECURITY,
+  FAQS,
+  DISCLOSURES,
+  EXAMPLES,
+} from '../data/automation.ts';
 
 /**
  * /automation
  *
- * Board: design/v3/Automation.dc.html.
+ * Board: the approved automation page with the E2E Apps MCP (desktop and
+ * phone), November 2026. Structure and wording come from the board; the
+ * interactive report in section 4 is the page's own and stays.
+ *
+ * NOTHING IS OPEN YET. Every statement about the server being usable reads
+ * `MCP` in src/data/automation.ts. While `MCP.status` is 'coming' the header
+ * shows the address marked "Opening soon" and one button to the contact form;
+ * set it to 'live' and the header becomes the board's: the address, Copy,
+ * Add to Claude, Add to ChatGPT. `MCP.accounts` does the same for everything
+ * about connecting a platform. See the comment on `MCP`.
  *
  * Sequence:
- *   1  PageHero: the h1, the two-line promise, what the service is, one action
- *   1b What you get: three cards (setup, the E2E Apps MCP, prompts)
- *   2  the live example report (Investigation.astro): four chips, one panel
- *   3  connected sources, how each platform connects, assistant options
- *   4  A simple working relationship: Connect, Investigate, Review
- *   5  the detail: three disclosures beside one heading and the action
- *   6  Cta
+ *   1  header: label, h1, lead, the address, the action, a sample chat
+ *   2  three steps
+ *   3  every platform through one connection, with the connections panel
+ *   4  ask a business question: the live example report (Investigation.astro)
+ *   5  what's inside: the method tools, and the account data
+ *   6  security
+ *   7  platforms: the status table
+ *   8  done for you
+ *   9  the detail: three disclosures
+ *  10  common questions (FAQPage structured data from the same array)
+ *  11  Cta
  *
- * 1b and the connection list were added on 28 November 2026: the page showed
- * a demonstration and never said what was being sold. Every row of cards is a
- * swipe row below 700px.
- *
- * All copy is the page's own or comes from src/data/automation.ts (the section
- * 3 heading and its aside are the homepage teaser's, held in TEASER). The one
- * line that is new is the section 5 heading, which the board supplies.
+ * Rows of equal cards (the steps, the security cards) are swipe rows below
+ * 700px. Lists, the table and the questions stack.
  */
 
-const title = 'AI Reporting & Automation for App Growth — E2E Apps';
-const description =
-  'We connect Google Ads, GA4, AdMob and RevenueCat to Claude, ChatGPT or Gemini, so you can ask a business question and get an answer with the source figures attached.';
+const title = 'AI Reporting for App Growth in Claude & ChatGPT — E2E Apps';
+const description = SERVER_OPEN
+  ? 'The E2E Apps MCP puts our audit method, and your GA4, AdMob, RevenueCat and Google Ads figures, inside Claude and ChatGPT. Free to use and read-only.'
+  : 'The E2E Apps MCP puts our audit method, and next your GA4, AdMob, RevenueCat and Google Ads figures, inside Claude and ChatGPT. Read-only. Opening soon.';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -54,82 +78,262 @@ const service = {
   provider: { '@type': 'ProfessionalService', '@id': `${home}#business`, name: 'E2E Apps', url: home },
 };
 
-/* One icon per source, in SOURCES order. */
-const SOURCE_ICONS: IconName[] = ['chart-line', 'cursor-click', 'receipt', 'arrows-clockwise'];
+/* The questions, as structured data, from the array the page prints. */
+const faqPage = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+/* The sample chat in the header is the 'earnings' example, read from the same
+   data the report in section 4 draws: its question, its finding, its next
+   check, and the two daily averages either side of the step. */
+const sample = EXAMPLES.find((e) => e.id === 'earnings')!;
+const pts = sample.chart.points;
+const split = sample.chart.splitAfter ?? 0;
+const mean = (from: number, to: number) => pts.slice(from, to).reduce((s, p) => s + p.v, 0) / (to - from);
+const before = mean(0, split + 1);
+const after = mean(split + 1, pts.length);
+const money = (v: number) => `${sample.chart.prefix ?? ''}${Math.round(v).toLocaleString('en-US')}`;
+const bars = [
+  { label: `${pts[0]!.label}–${pts[split]!.label}`, value: money(before), width: 100, focus: false },
+  {
+    label: `${pts[split + 1]!.label}–${pts[pts.length - 1]!.label}`,
+    value: money(after),
+    width: Math.round((after / before) * 100),
+    focus: true,
+  },
+];
+
 /* Where each card's glow sits, so a row does not repeat one corner. */
 const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
-const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
+const TAG = { available: 'tag--fix', coming: 'tag--review', next: 'tag--ok' } as const;
+
+/* The Copy button, rendered only once the address is usable. */
+const COPY_SCRIPT = `document.querySelectorAll('[data-copy]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(b.getAttribute('data-copy')).then(function () {
+      b.textContent = 'Copied';
+      setTimeout(function () { b.textContent = 'Copy'; }, 1600);
+    });
+  });
+});`;
+
+const security = ACCOUNTS_OPEN ? SECURITY.accounts : SECURITY.built;
+const reads = PLATFORMS.filter((p) => p.reads);
 ---
 
 <Base title={title} description={description} path="/automation">
   <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(service)} />
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(faqPage)} />
   <div class="page">
     <Nav />
 
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Automation', path: '/automation' }]} />
 
-      {/* ------------------------------------------------ 1 · introduction */}
-      <PageHero
-        label={TEASER.eyebrow}
-        title="AI reporting for app growth teams"
-        cta={{ href: `${base}/#contact`, text: 'Discuss your setup' }}
-        section="automation-intro"
-      >
-        <Fragment>
-          <p class="phero__line">See what changed.<br />Know what to check.</p>
-          <p class="intro__copy">
-            We connect your ad platforms, analytics and subscription data to Claude or ChatGPT. You
-            ask a question in plain words and get an answer with the source figures attached.
-          </p>
-        </Fragment>
-      </PageHero>
+      {/* ------------------------------------------------------ 1 · header */}
+      <section class="phero" data-section="automation-intro">
+        <div class="phero__grid" aria-hidden="true"></div>
+        <div class="phero__inner hero2">
+          <div class="hero2__copy">
+            <p class="phero__label">{HEADER.label}</p>
+            <h1 class="phero__title">{HEADER.title}</h1>
+            <p class="phero__lead">{HEADER.lead}</p>
 
-      {/* --------------------------------------------- 1b · the offer ----- */}
-      <section class="section" data-section="automation-offer" data-added="automation-offer-2026-11">
-        <div class="wrap">
-          <div class="shead" data-reveal="1">
-            <p class="shead__label">What you get</p>
-            <h2 class="shead__title">Your growth stack, answering in plain words.</h2>
-            <p class="shead__aside">
-              We set it up, define the metrics, and keep it read-only unless you approve a change.
-            </p>
-          </div>
-
-          <div class="sbody">
-            <div class="ggrid ggrid--3 swipe" data-swipe>
+            <div class="addr" data-mcp-address={SERVER_OPEN ? 'live' : 'coming'}>
+              <span class="addr__k">Address</span>
+              <span class="addr__v">{MCP.address}</span>
               {
-                OFFER.map((o, i) => (
-                  <div class:list={['gcard', { 'gcard--lead': i === 0 }]} style={`--gx:${GLOW[i % GLOW.length]}`}>
-                    <span class="offer__top">
-                      <span class="gcard__icon">
-                        <Icon name={OFFER_ICONS[i] ?? 'stack'} size={24} />
-                      </span>
-                      {o.soon && <span class="tag tag--review">Coming</span>}
-                    </span>
-                    <h3 class="gcard__title">{o.title}</h3>
-                    <p class="gcard__text">{o.body}</p>
-                  </div>
-                ))
+                SERVER_OPEN ? (
+                  <button type="button" class="addr__copy" data-copy={MCP.address}>
+                    Copy
+                  </button>
+                ) : (
+                  <span class="tag tag--review addr__soon">{HEADER.soon}</span>
+                )
               }
             </div>
-            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
-              <span class="swipe__dots" data-swipe-dots>{OFFER.map(() => <i />)}</span>
-              <span data-swipe-count>1 of {OFFER.length}</span>
+
+            <div class="phero__actions">
+              {
+                SERVER_OPEN ? (
+                  <Fragment>
+                    <a href="#steps" class="btn-primary">
+                      Add to Claude
+                      <Icon name="arrow-right" size={16} />
+                    </a>
+                    <a href="#steps" class="btn-secondary">
+                      Add to ChatGPT
+                    </a>
+                  </Fragment>
+                ) : (
+                  <a href={`${base}/#contact`} class="btn-primary">
+                    Discuss your setup
+                    <Icon name="arrow-right" size={16} />
+                  </a>
+                )
+              }
+            </div>
+            <p class="phero__note">{HEADER.note}</p>
+          </div>
+
+          <div class="chat">
+            <p class="chat__top">
+              <span>In your assistant</span>
+              <span>Sample data</span>
+            </p>
+            <p class="chat__q">{sample.question}</p>
+            <p class="chat__tools">
+              <span class="tag tag--review">E2E Apps · {sample.source} · read</span>
+              <span class="tag tag--ok">E2E Apps · monetisation checks</span>
+            </p>
+            <div class="chat__a">
+              <p class="chat__finding">{sample.finding}</p>
+              <div class="chat__bars">
+                {
+                  bars.map((b) => (
+                    <Fragment>
+                      <span class:list={['chat__bar-label', { 'is-focus': b.focus }]}>{b.label}</span>
+                      <span class="chat__track">
+                        <span class:list={['chat__bar', { 'is-focus': b.focus }]} style={`width:${b.width}%`} />
+                      </span>
+                      <span class:list={['chat__bar-value', { 'is-focus': b.focus }]}>{b.value}</span>
+                    </Fragment>
+                  ))
+                }
+              </div>
+              <p class="chat__next">
+                <strong>Next check:</strong>
+                {sample.next}
+              </p>
+              <p class="chat__meta">
+                {sample.source} · {sample.period.toLowerCase()} · nothing was changed
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --------------------------------------------- 2 · the evidence --- */}
-      <section class="section section--band" data-section="automation-report">
+      {/* --------------------------------------------------- 2 · three steps */}
+      <section id="steps" class="section" data-section="automation-steps" data-added="automation-mcp-2026-11">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">How to start</p>
+            <h2 class="shead__title">Three steps, about five minutes.</h2>
+            <p class="shead__aside">
+              {
+                SERVER_OPEN
+                  ? 'No code and no cloud project. If you can sign in to Google, you can set this up.'
+                  : 'No code and no cloud project. If you can sign in to Google, you will be able to set this up.'
+              }
+            </p>
+          </div>
+
+          <div class="sbody">
+            <ol class="ggrid ggrid--3 swipe steps" data-swipe data-swipe-label="Step">
+              {
+                STEPS.map((s, i) => (
+                  <li
+                    class:list={['gcard', { 'gcard--lead': i === 0 }]}
+                    style={`--gx:${GLOW[i % GLOW.length]}`}
+                    data-step={s.n}
+                  >
+                    <span class="step__top">
+                      <span class="step__n">{s.n}</span>
+                      {s.coming && <span class="tag tag--review">{STATUS_LABEL.coming}</span>}
+                    </span>
+                    <h3 class="gcard__title step__title">{s.title}</h3>
+                    <p class="gcard__text">{s.body}</p>
+                    <span class:list={['step__foot', { 'is-accent': i === 0 }]}>{s.foot}</span>
+                  </li>
+                ))
+              }
+            </ol>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{STEPS.map(() => <i />)}</span>
+              <span data-swipe-count>Step 1 of {STEPS.length}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------- 3 · one connection ---- */}
+      <section class="section section--band" data-section="automation-connect" data-added="automation-mcp-2026-11">
+        <div class="wrap row">
+          <div class="one" data-reveal="1">
+            <p class="shead__label">One sign-in, not five setups</p>
+            <h2 class="shead__title one__title">Every platform through one connection.</h2>
+            <p class="one__text">
+              Connecting each platform to an assistant yourself means a separate server and a
+              separate setup for each one.
+              {
+                ACCOUNTS_OPEN
+                  ? 'Here you connect on one page of ours and choose what to share.'
+                  : 'Here you will connect on one page of ours and choose what to share.'
+              }
+            </p>
+            <ul class="ticks" role="list">
+              {PROMISES.map((p) => <li>{p}</li>)}
+            </ul>
+          </div>
+
+          <div class="cpanel" data-connections={ACCOUNTS_OPEN ? 'live' : 'preview'}>
+            <p class="cpanel__top">
+              <span class="cpanel__name">Your connections</span>
+              {
+                ACCOUNTS_OPEN ? (
+                  <span class="cpanel__where">{MCP_HOST.replace(/\/mcp$/, '/connect')}</span>
+                ) : (
+                  <span class="tag tag--review">Preview</span>
+                )
+              }
+            </p>
+            <ul class="cpanel__rows" role="list">
+              {
+                PANEL.map((r) => {
+                  const st = panelStatus(r.platforms);
+                  const open = st === 'available' && 'action' in r;
+                  const on = open && 'connected' in r;
+                  return (
+                    <li class:list={['crow', { 'crow--on': on, 'crow--later': st === 'next' }]}>
+                      <span class="crow__text">
+                        <span class="crow__title">{r.title}</span>
+                        <span class="crow__note">{open && 'sample' in r ? r.sample : r.note}</span>
+                      </span>
+                      {open ? (
+                        <span class:list={[on ? 'badge' : 'crow__action']}>{r.action}</span>
+                      ) : (
+                        <span class:list={['tag', TAG[st]]}>{STATUS_LABEL[st]}</span>
+                      )}
+                    </li>
+                  );
+                })
+              }
+            </ul>
+            {
+              !ACCOUNTS_OPEN && (
+                <p class="cpanel__foot">A drawing of the page being built. Nothing connects yet.</p>
+              )
+            }
+          </div>
+        </div>
+      </section>
+
+      {/* --------------------------------------------- 4 · the evidence --- */}
+      <section class="section" data-section="automation-report">
         <div class="wrap">
           <div class="shead" data-reveal="1">
             <p class="shead__label">What asking looks like</p>
             <h2 class="shead__title">Ask a business question.</h2>
             <p class="shead__aside">
-              Ask about spend, user behavior and revenue. Get an answer with the source figures
-              attached.
+              Four saved questions come with it. Each one says where the figures come from and what
+              to check next.
             </p>
           </div>
 
@@ -139,109 +343,180 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
         </div>
       </section>
 
-      {/* ------------------- 3 · integrations, supporting the story ------- */}
-      <section class="section" data-section="automation-sources" data-added="redesign-2026-11">
+      {/* --------------------------------------------- 5 · what's inside --- */}
+      <section class="section section--band" data-section="automation-inside" data-added="automation-mcp-2026-11">
         <div class="wrap">
           <div class="shead" data-reveal="1">
-            <p class="shead__label">{TEASER.sourcesLabel}</p>
-            <h2 class="shead__title">{TEASER.heading[0]}<br />{TEASER.heading[1]}</h2>
-            <p class="shead__aside">{TEASER.support} {TEASER.note}</p>
+            <p class="shead__label">What's inside</p>
+            <h2 class="shead__title">Your data, and the method to read it.</h2>
+          </div>
+
+          <div class="sbody inside">
+            <div class="gcard" style="--gx:0%;--gy:0%">
+              <p class="inside__tags">
+                <span class="tag tag--ok">No sign-in needed</span>
+              </p>
+              <h3 class="gcard__title inside__title">Our method, as tools</h3>
+              <ul class="kv" role="list">
+                {
+                  TOOLS.map((t) => (
+                    <li>
+                      <span class="kv__k">{t.name}</span>
+                      <span class="kv__v">{t.does}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+
+            <div class="gcard gcard--lead" style="--gx:100%;--gy:0%" data-account-data={ACCOUNTS_OPEN ? 'live' : 'coming'}>
+              <p class="inside__tags">
+                <span class="tag tag--fix">With your accounts connected</span>
+                {!ACCOUNTS_OPEN && <span class="tag tag--review">{STATUS_LABEL.coming}</span>}
+              </p>
+              <h3 class="gcard__title inside__title">Your numbers, read for you</h3>
+              <ul class="kv" role="list">
+                {
+                  reads.map((p) => (
+                    <li>
+                      <span class="kv__k">{p.name}</span>
+                      <span class="kv__v">{p.reads}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+              <p class="inside__foot">
+                {
+                  ACCOUNTS_OPEN
+                    ? 'The traps are handled for you: all ad networks are counted, long reports are read in full, and installs are not mixed with other conversions.'
+                    : 'The traps will be handled for you: all ad networks are counted, long reports are read in full, and installs are not mixed with other conversions.'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* -------------------------------------------------- 6 · security --- */}
+      <section class="section" data-section="automation-security" data-added="automation-mcp-2026-11">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">Security</p>
+            <h2 class="shead__title">It can read. It cannot change anything.</h2>
+            <p class="shead__aside">
+              No tool in this server can edit a campaign, a budget, a product or a setting. That is
+              how it is built, not a promise about behaviour.
+            </p>
           </div>
 
           <div class="sbody">
-            <h3 class="sub">Data sources</h3>
+            {!ACCOUNTS_OPEN && <h3 class="sub">As it is built today</h3>}
             <div class="ggrid ggrid--4 swipe" data-swipe>
               {
-                SOURCES.map((s, i) => (
-                  <div class="gcard src" style={`--gx:${GLOW[i % GLOW.length]}`}>
-                    <span class="gcard__icon">
-                      <Icon name={SOURCE_ICONS[i] ?? 'stack'} size={24} />
-                    </span>
-                    <span class="gcard__title">{s.name}</span>
-                    <span class="src__note">{s.note}</span>
+                security.map((c, i) => (
+                  <div class="gcard" style={`--gx:${GLOW[i % GLOW.length]}`}>
+                    <h3 class="sec__title">{c.title}</h3>
+                    <p class="sec__text">{c.body}</p>
                   </div>
                 ))
               }
             </div>
             <div class="swipe__meta" data-swipe-meta aria-hidden="true">
-              <span class="swipe__dots" data-swipe-dots>{SOURCES.map(() => <i />)}</span>
-              <span data-swipe-count>1 of {SOURCES.length}</span>
+              <span class="swipe__dots" data-swipe-dots>{security.map(() => <i />)}</span>
+              <span data-swipe-count>1 of {security.length}</span>
             </div>
 
-            <h3 class="sub sub--next">How each platform connects</h3>
-            <ul class="conn" role="list">
-              {
-                CONNECTIONS.map((c) => (
-                  <li class="conn__row">
-                    <span class="conn__name">{c.name}</span>
-                    <span class="conn__route">{c.route}</span>
-                    <span class="conn__access">{c.access}</span>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-
-          <div class="sbody">
-            <h3 class="sub">Assistant options</h3>
-            <div class="ggrid ggrid--3 swipe opts" data-swipe>
-              {
-                ASSISTANTS.map((a, i) => (
-                  <div class="gcard" style={`--gx:${GLOW[(i + 1) % GLOW.length]}`}>
-                    <span class="gcard__title opt__name">{a.name}</span>
-                    <span class="gcard__text">{a.route}</span>
-                  </div>
-                ))
-              }
-            </div>
-            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
-              <span class="swipe__dots" data-swipe-dots>{ASSISTANTS.map(() => <i />)}</span>
-              <span data-swipe-count>1 of {ASSISTANTS.length}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --------------------------------------------- 4 · how we work ---- */}
-      <section class="section section--band" data-section="automation-process">
-        <div class="wrap">
-          <div class="shead" data-reveal="1">
-            <p class="shead__label">How it runs</p>
-            <h2 class="shead__title">A simple working relationship.</h2>
-          </div>
-
-          <div class="sbody">
-          <ol class="ggrid ggrid--3 swipe steps" data-swipe data-swipe-label="Step">
             {
-              STEPS.map((s, i) => (
-                <li class="gcard step" style={`--gx:${GLOW[(i + 2) % GLOW.length]}`}>
-                  <span class="step__n">
-                    <span>{s.n}</span> Step
-                  </span>
-                  <span class="gcard__title step__title">{s.title}</span>
-                  <p class="gcard__text">{s.body}</p>
-                </li>
-              ))
+              !ACCOUNTS_OPEN && (
+                <div class="later" data-when-accounts-open>
+                  <h3 class="sub">When account connection opens</h3>
+                  <ul class="kv kv--panel" role="list">
+                    {SECURITY.accounts.map((c) => (
+                      <li>
+                        <span class="kv__k">{c.title}</span>
+                        <span class="kv__v">{c.body}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
             }
-          </ol>
-          <div class="swipe__meta" data-swipe-meta aria-hidden="true">
-            <span class="swipe__dots" data-swipe-dots>{STEPS.map(() => <i />)}</span>
-            <span data-swipe-count>Step 1 of {STEPS.length}</span>
-          </div>
           </div>
         </div>
       </section>
 
-      {/* ------------------------------------------------ 5 · the detail -- */}
+      {/* ------------------------------------------------- 7 · platforms --- */}
+      <section class="section section--band" data-section="automation-platforms" data-added="automation-mcp-2026-11">
+        <div class="wrap detail">
+          <div class="detail__head" data-reveal="1">
+            <p class="shead__label">Platforms</p>
+            <h2 class="detail__title">
+              {ACCOUNTS_OPEN ? 'What connects today, and what is next.' : 'What connects first, and what is next.'}
+            </h2>
+            <p class="detail__text">
+              A platform is listed as available only after it has been tested against real accounts.
+            </p>
+          </div>
+
+          <div class="ptable">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Platform</th>
+                  <th scope="col">How you connect</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  PLATFORMS.map((p) => (
+                    <tr data-platform-status={p.status}>
+                      <th scope="row" class:list={['ptable__name', { 'is-later': p.status === 'next' }]}>
+                        {p.name}
+                      </th>
+                      <td class="ptable__how">{p.how}</td>
+                      <td>
+                        <span class:list={['tag', TAG[p.status]]}>{STATUS_LABEL[p.status]}</span>
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------- 8 · done for you -- */}
+      <section class="section" data-section="automation-setup" data-added="automation-mcp-2026-11">
+        <div class="wrap">
+          <div class="gcard gcard--lead done" style="--gx:100%;--gy:0%">
+            <div class="done__copy">
+              <p class="shead__label">Done for you</p>
+              <h2 class="done__title">Want it set up and tuned to your reporting?</h2>
+              <p class="done__text">
+                We connect your accounts with you, agree what each metric means, and write the saved
+                questions your team will ask every week.
+              </p>
+            </div>
+            <div class="done__act">
+              <a href={`${base}/#contact`} class="btn-primary">
+                Discuss your setup
+                <Icon name="arrow-right" size={16} />
+              </a>
+              <a class="cta__mail" href="mailto:hello@e2eapp.com">hello@e2eapp.com</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------ 9 · the detail -- */}
       <section class="section detail-sec" data-section="automation-detail" data-added="redesign-2026-11">
         <div class="wrap detail">
           <div class="detail__head" data-reveal="1">
             <p class="shead__label">The detail</p>
             <h2 class="detail__title">What connects, who approves, how figures are defined</h2>
-            <a href={`${base}/#contact`} class="pill-link detail__cta">
-              Discuss your setup
-              <Icon name="arrow-up-right" size={14} />
-            </a>
+            <p class="detail__text">How a setup done for you works today.</p>
           </div>
 
           <div class="detail__list">
@@ -261,11 +536,38 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
         </div>
       </section>
 
+      {/* ------------------------------------------- 10 · common questions -- */}
+      <section class="section detail-sec" data-section="automation-faq" data-added="automation-mcp-2026-11">
+        <div class="wrap detail">
+          <div class="detail__head" data-reveal="1">
+            <p class="shead__label">Before you add it</p>
+            <h2 class="detail__title">Common questions.</h2>
+          </div>
+
+          <div class="detail__list">
+            {
+              FAQS.map((f) => (
+                <div class="qa" data-faq>
+                  <h3 class="qa__q">{f.q}</h3>
+                  <p class="qa__a">{f.a}</p>
+                </div>
+              ))
+            }
+            <p class="legal" data-mcp-legal>
+              <span>The server's own pages:</span>
+              <a href={`${base}/mcp/privacy`}>MCP privacy</a>
+              <a href={`${base}/mcp/terms`}>MCP terms</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
       <Cta />
     </main>
 
     <Footer />
   </div>
+  {SERVER_OPEN && <script is:inline set:html={COPY_SCRIPT} />}
 </Base>
 
 <style>
@@ -274,69 +576,263 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
     background: var(--color-bg);
   }
 
-  /* --- 1 · introduction ---------------------------------------------------- */
+  /* --- 1 · header -----------------------------------------------------------
+     The shared `.phero` (redesign.css) with two columns on a wide screen: the
+     copy on the left, a sample chat on the right. Below 1000px it is the
+     centred header every other page has, with the chat under it. */
 
-  /* The display line under the h1 is the shared `.phero__line`
-     (src/styles/redesign.css). */
-
-  .intro__copy {
-    margin: var(--s4) auto 0;
-    max-width: 60ch;
-    font-size: var(--t-lead);
-    line-height: var(--lh-body);
-    color: var(--color-text-2);
+  .hero2 {
+    display: grid;
+    /* The page's own width, so the copy starts on the same left edge as every
+       section under it. */
+    max-width: var(--wrap);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s16);
+    align-items: center;
   }
 
-  /* PageHero renders its slot after the button; these two lines belong above
-     it, so the header's inner block becomes a column and the button goes last. */
-  :global([data-section='automation-intro'] .phero__inner) {
+  .hero2__copy {
+    min-width: 0;
+  }
+
+  .hero2 .phero__title {
+    max-width: 18ch;
+  }
+
+  .addr {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px var(--s4);
+    box-sizing: border-box;
+    max-width: 560px;
+    min-height: 60px;
+    margin: var(--s12) auto 0;
+    padding: 8px 10px 8px 20px;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: 0 0 0 1px var(--color-line-strong);
+    text-align: left;
   }
 
-  :global([data-section='automation-intro'] .phero__actions) {
-    order: 1;
-  }
-
-  /* --- 3 · sources and assistants ------------------------------------------ */
-
-  .sub {
-    margin-bottom: var(--s6);
+  .addr__k {
     font-family: var(--font-mono);
     font-size: var(--t-mono-sm);
-    font-weight: var(--fw-regular);
     letter-spacing: var(--ls-label);
-    line-height: var(--lh-body);
     text-transform: uppercase;
-    color: var(--color-text-4);
-  }
-
-  .sub--next {
-    margin-top: var(--s16);
-  }
-
-  .src__note {
-    margin-top: var(--s2);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-meta);
     color: var(--color-text-3);
   }
 
-  .opt__name {
-    margin-top: 0;
+  .addr__v {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.15vw, 16.5px);
+    color: var(--color-text);
+    overflow-wrap: anywhere;
   }
 
-  /* Three assistants: three columns as soon as there is room, never 2 + 1. */
-  @media (min-width: 700px) {
-    .opts {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Not open: the address is there to be read, not used. */
+  .addr[data-mcp-address='coming'] .addr__v {
+    color: var(--color-text-3);
+  }
+
+  .addr__soon {
+    padding: 8px 14px;
+    font-size: var(--t-mono-sm);
+  }
+
+  .addr__copy {
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-surface-sunk);
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+    cursor: pointer;
+  }
+
+  .addr__copy:hover {
+    border-color: var(--color-line-hover);
+  }
+
+  .hero2 .phero__actions {
+    margin-top: var(--s6);
+  }
+
+  .hero2 .phero__note {
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 479px) {
+    .addr {
+      padding: 12px 16px;
+    }
+
+    .addr__k {
+      display: none;
+    }
+
+    .addr__v {
+      flex-basis: 100%;
+      text-align: center;
     }
   }
 
-  /* --- 4 · how we work ----------------------------------------------------- */
+  @media (min-width: 1000px) {
+    .hero2 {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      column-gap: clamp(40px, 6vw, 96px);
+      text-align: left;
+    }
 
-  /* No padding reset below 700px: there the list is a swipe row, and its side
+    .hero2 .phero__title {
+      margin-inline: 0;
+      font-size: clamp(40px, 4vw, 56px);
+    }
+
+    .hero2 .phero__lead,
+    .hero2 .phero__note,
+    .addr {
+      margin-inline: 0;
+    }
+
+    .addr {
+      justify-content: flex-start;
+    }
+
+    .hero2 .phero__actions {
+      justify-content: flex-start;
+    }
+  }
+
+  /* The sample chat. */
+  .chat {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    width: 100%;
+    max-width: 540px;
+    margin-inline: auto;
+    box-sizing: border-box;
+    padding: clamp(16px, 2vw, 22px);
+    border-radius: 22px;
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 40px 80px -44px rgba(0, 0, 0, 0.6);
+    text-align: left;
+  }
+
+  .chat__top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s4);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .chat__q {
+    align-self: flex-end;
+    max-width: 82%;
+    padding: 12px 16px;
+    border-radius: 16px 16px 4px 16px;
+    background: var(--color-surface-sunk);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+    font-size: var(--t-body);
+    color: var(--color-text);
+  }
+
+  .chat__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chat__tools .tag {
+    padding: 6px 12px;
+    white-space: normal;
+  }
+
+  .chat__a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s4);
+    padding: 16px 18px;
+    border-radius: 4px 16px 16px 16px;
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+
+  .chat__finding {
+    font-size: var(--t-body);
+    line-height: 1.5;
+    color: var(--color-text);
+  }
+
+  .chat__bars {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    align-items: center;
+    font-size: 13.5px;
+    color: var(--color-text-2);
+  }
+
+  .chat__track {
+    display: block;
+    min-width: 0;
+  }
+
+  .chat__bar {
+    display: block;
+    height: 12px;
+    border-radius: 4px;
+    background: var(--chart-bar-dim);
+  }
+
+  .chat__bar.is-focus {
+    background: var(--chart-true);
+  }
+
+  .chat__bar-value {
+    font-family: var(--font-mono);
+    text-align: right;
+  }
+
+  .chat__bar-label.is-focus,
+  .chat__bar-value.is-focus {
+    color: var(--color-accent-text);
+  }
+
+  .chat__next {
+    font-size: var(--t-card);
+    line-height: 1.5;
+    color: var(--color-text-2);
+  }
+
+  .chat__next strong {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .chat__meta {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    color: var(--color-text-3);
+  }
+
+  /* --- 2 · three steps ------------------------------------------------------
+     No padding reset below 700px: there the list is a swipe row, and its side
      padding is what lines the first card up with the page gutter. */
   .steps {
     list-style: none;
@@ -350,94 +846,472 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
     }
   }
 
-  /* --- 1b · the offer ------------------------------------------------------ */
-
-  .offer__top {
+  .step__top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--s4);
   }
 
-  /* --- how each platform connects ------------------------------------------
-     Three columns where there is room; on a phone each platform is a short
-     block, so nothing has to scroll sideways. */
-  .conn {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--ring);
-  }
-
-  .conn__row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2px;
-    padding: 14px clamp(16px, 2.4vw, 28px);
-  }
-
-  .conn__row + .conn__row {
-    border-top: 1px solid var(--color-line-soft);
-  }
-
-  .conn__name {
-    font-weight: var(--fw-semibold);
-    color: var(--color-text);
-  }
-
-  .conn__route {
-    color: var(--color-text-2);
-  }
-
-  .conn__access {
-    font-size: var(--t-card-sm);
-    color: var(--color-text-3);
-  }
-
-  @media (min-width: 700px) {
-    .conn__row {
-      grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 5fr);
-      gap: var(--s8);
-      align-items: baseline;
-    }
-
-    .conn__access {
-      font-size: inherit;
-    }
-  }
-
   .step__n {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s4);
-    font-family: var(--font-mono);
-    font-size: var(--t-mono-sm);
-    letter-spacing: var(--ls-label);
-    text-transform: uppercase;
-    color: var(--color-text-3);
-  }
-
-  .step__n span {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    flex: none;
     border-radius: 50%;
     border: 1.5px solid var(--color-accent-text);
+    font-family: var(--font-mono);
+    font-size: 14px;
     color: var(--color-accent-text);
-    letter-spacing: 0;
+  }
+
+  .gcard--lead .step__n {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-ink);
   }
 
   .step__title {
     margin-top: var(--s6);
   }
 
-  /* --- 5 · the detail ------------------------------------------------------ */
+  .step__foot {
+    margin-top: auto;
+    padding-top: var(--s8);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono);
+    color: var(--color-text-3);
+    overflow-wrap: anywhere;
+  }
 
-  /* Plain ground with a hairline: the closing band follows directly, and two
-     bands in a row would read as one. */
+  .step__foot.is-accent {
+    color: var(--color-accent-text);
+  }
+
+  /* --- 3 · one connection --------------------------------------------------- */
+
+  .one {
+    min-width: 0;
+  }
+
+  .one__title {
+    margin-top: var(--s6);
+    max-width: 16ch;
+  }
+
+  .one__text {
+    margin-top: var(--s8);
+    max-width: 52ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .ticks {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s4);
+    margin: var(--s8) 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-text);
+  }
+
+  .ticks li {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  /* A drawn tick: the icon set has none, and the brief adds no icons. */
+  .ticks li::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0.3em;
+    width: 7px;
+    height: 13px;
+    border: solid var(--color-accent-text);
+    border-width: 0 2.4px 2.4px 0;
+    transform: rotate(45deg);
+  }
+
+  .cpanel {
+    min-width: 0;
+    padding: 12px;
+    border-radius: 22px;
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-line-strong),
+      0 40px 80px -44px rgba(0, 0, 0, 0.6);
+  }
+
+  .cpanel__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3) var(--s4);
+    padding: 12px 12px 16px;
+  }
+
+  .cpanel__name {
+    font-size: 18px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .cpanel__where {
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+    overflow-wrap: anywhere;
+  }
+
+  .cpanel__rows {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .crow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s3) var(--s6);
+    padding: 16px 18px;
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+    box-shadow: inset 0 0 0 1px var(--color-line);
+  }
+
+  .crow--on {
+    box-shadow: inset 0 0 0 1px var(--color-wash-amber-line);
+  }
+
+  .crow__text {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    flex: 1 1 200px;
+    min-width: 0;
+  }
+
+  .crow__title {
+    font-size: 17px;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .crow__note {
+    font-size: var(--t-card);
+    color: var(--color-text-2);
+  }
+
+  .crow--later .crow__title {
+    color: var(--color-text-2);
+  }
+
+  .crow--later .crow__note {
+    color: var(--color-text-3);
+  }
+
+  /* Drawn, not a control: the panel is a picture of a page. */
+  .crow__action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-surface-sunk);
+    font-size: var(--t-body-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .crow .tag {
+    padding: 7px 14px;
+    font-size: var(--t-mono-sm);
+  }
+
+  .cpanel__foot {
+    padding: 14px 12px 6px;
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    color: var(--color-text-3);
+  }
+
+  /* --- 5 · what's inside ---------------------------------------------------- */
+
+  .inside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  @media (min-width: 900px) {
+    .inside {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .inside__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .inside__tags .tag {
+    padding: 6px 12px;
+    font-size: var(--t-mono-sm);
+  }
+
+  .inside__title {
+    margin-top: var(--s6);
+  }
+
+  .inside__foot {
+    margin-top: auto;
+    padding-top: var(--s8);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  /* A name and what it does, row after row. One column on a phone. */
+  .kv {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: var(--s8) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .kv li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 14px 0;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .gcard--lead .kv li {
+    border-top-color: var(--color-wash-amber-line);
+  }
+
+  .kv__k {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .kv__v {
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  @media (min-width: 560px) {
+    .kv li {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--s8);
+      align-items: baseline;
+    }
+  }
+
+  .kv--panel {
+    margin-top: 0;
+    padding: 4px clamp(16px, 2.4vw, 28px);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .kv--panel li:first-child {
+    border-top: 0;
+  }
+
+  /* --- 6 · security --------------------------------------------------------- */
+
+  .sub {
+    margin-bottom: var(--s6);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-sm);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    line-height: var(--lh-body);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .sec__title {
+    font-size: 20px;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.2;
+  }
+
+  .sec__text {
+    margin-top: var(--s4);
+    font-size: var(--t-body-sm);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .later {
+    margin-top: var(--s16);
+  }
+
+  /* --- 7 · platforms --------------------------------------------------------
+     A real table. Three columns where there is room; below 700px each row is a
+     short block (name and status on one line, the route under them), so
+     nothing scrolls sideways. */
+
+  .ptable {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    background: var(--color-surface);
+    box-shadow: var(--ring), var(--shadow-lift);
+  }
+
+  .ptable table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  .ptable thead th {
+    padding: 14px clamp(16px, 2vw, 24px);
+    font-family: var(--font-mono);
+    font-size: var(--t-mono-xs);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+  }
+
+  .ptable tbody th,
+  .ptable tbody td {
+    padding: 14px clamp(16px, 2vw, 24px);
+    border-top: 1px solid var(--color-line);
+    vertical-align: middle;
+  }
+
+  .ptable__name {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .ptable__name.is-later {
+    color: var(--color-text-2);
+  }
+
+  .ptable__how {
+    font-size: var(--t-body-sm);
+    color: var(--color-text-2);
+  }
+
+  .ptable .tag {
+    padding: 6px 12px;
+    font-size: var(--t-mono-sm);
+  }
+
+  @media (max-width: 699px) {
+    .ptable thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .ptable table,
+    .ptable tbody {
+      display: block;
+    }
+
+    .ptable tbody tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 2px var(--s4);
+      align-items: center;
+      padding: 14px 16px;
+      border-top: 1px solid var(--color-line);
+    }
+
+    .ptable tbody tr:first-child {
+      border-top: 0;
+    }
+
+    .ptable tbody th,
+    .ptable tbody td {
+      display: block;
+      padding: 0;
+      border-top: 0;
+    }
+
+    .ptable__how {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  /* --- 8 · done for you ----------------------------------------------------- */
+
+  .done {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s12);
+    align-items: center;
+    padding: clamp(26px, 4.4vw, 60px);
+    border-radius: 24px;
+  }
+
+  @media (min-width: 900px) {
+    .done {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      column-gap: clamp(40px, 6vw, 96px);
+    }
+  }
+
+  .done__copy,
+  .done__act {
+    min-width: 0;
+  }
+
+  .done__title {
+    margin-top: var(--s6);
+    max-width: 20ch;
+    font-size: clamp(26px, 2.9vw, 40px);
+    letter-spacing: var(--ls-h2);
+    line-height: 1.1;
+  }
+
+  .done__text {
+    margin-top: var(--s6);
+    max-width: 56ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .done__act {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s2);
+  }
+
+  /* --- 7, 9, 10 · a heading beside its content ------------------------------ */
+
+  /* Plain ground with a hairline: two plain sections in a row need the rule
+     to read as two. */
   .detail-sec {
     border-top: 1px solid var(--color-line);
   }
@@ -468,8 +1342,12 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
     line-height: 1.1;
   }
 
-  .detail__cta {
-    margin-top: var(--s8);
+  .detail__text {
+    margin-top: var(--s6);
+    max-width: 40ch;
+    font-size: var(--t-section-lead);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
   }
 
   .detail__list {
@@ -540,5 +1418,62 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
 
   .disc__body p + p {
     margin-top: var(--s4);
+  }
+
+  /* --- 10 · common questions ------------------------------------------------ */
+
+  .qa {
+    padding: 22px 0;
+    border-top: 1px solid var(--color-line-strong);
+  }
+
+  .qa:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .qa__q {
+    font-size: 20px;
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-h3);
+    line-height: 1.25;
+  }
+
+  .qa__a {
+    margin-top: var(--s3);
+    max-width: 68ch;
+    font-size: var(--t-body);
+    line-height: var(--lh-body);
+    color: var(--color-text-2);
+  }
+
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--s8);
+    padding-top: var(--s4);
+    border-top: 1px solid var(--color-line-strong);
+    font-size: var(--t-card);
+    color: var(--color-text-3);
+  }
+
+  .legal a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-accent-text);
+  }
+
+  /* On a phone the two links share a line under the label. */
+  @media (max-width: 479px) {
+    .legal span {
+      flex-basis: 100%;
+      padding-top: var(--s3);
+    }
+  }
+
+  .legal a:hover {
+    color: var(--color-accent-hover);
   }
 </style>

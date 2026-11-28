@@ -43,6 +43,8 @@ const PAGES = [
   { path: '/faq', priority: '0.6', changefreq: 'monthly', lastmod: '2026-11-28' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly', lastmod: '2026-11-25' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly', lastmod: '2026-11-28' },
+  { path: '/mcp/privacy', priority: '0.3', changefreq: 'yearly', lastmod: '2026-11-28' },
+  { path: '/mcp/terms', priority: '0.3', changefreq: 'yearly', lastmod: '2026-11-28' },
 ];
 
 export const GET: APIRoute = async ({ site }) => {
