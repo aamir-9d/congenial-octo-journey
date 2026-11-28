@@ -355,15 +355,15 @@ const library = [
   }
 
   /* Newest posts. */
-  .posts {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--s12) 32px;
-  }
-
+  /* A grid only from 700px. Below that `.swipe` (redesign.css) lays the cards
+     out as one snapping row; a `display: grid` here outranks it, because a
+     scoped rule is more specific, and the cards then stack under dots that
+     count a row that is not there. */
   @media (min-width: 700px) {
     .posts {
+      display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--s12) 32px;
     }
   }
 

@@ -642,36 +642,46 @@ const WIDTHS = [480, 720, 960, 1200];
       align-content: start;
     }
 
+    /* The photograph takes the top of the scene and the card the bottom, with
+       a short overlap. With the card laid over the photograph, as on wider
+       screens, a 320px card hides the person in it: the owner's phone showed
+       station 01 with only a shoulder left. Every station gets the same two
+       heights so the copy under it starts on the same line as the row moves. */
     .loop__scene {
-      height: 300px;
+      height: 372px;
       min-height: 0;
       border-radius: 20px;
+      background: none;
+      box-shadow: none;
+    }
+
+    .loop__scene :global(.scene__photo) {
+      inset: 0 0 auto;
+      height: 214px;
     }
 
     .loop__scene :global(.scene__photo img) {
-      object-position: 100% 20%;
+      object-position: 100% 18%;
     }
 
     .loop__scene :global(.scene__photo)::after {
-      background:
-        linear-gradient(180deg, rgba(14, 16, 20, 0) 30%, rgba(14, 16, 20, 0.78) 100%),
-        linear-gradient(90deg, rgba(14, 16, 20, 0.62), rgba(14, 16, 20, 0) 62%);
+      background: linear-gradient(180deg, rgba(14, 16, 20, 0) 58%, rgba(14, 16, 20, 0.66) 100%);
     }
 
-    .loop__card--main {
-      left: 14px;
-      bottom: 14px;
-      width: 236px;
-      padding: 12px 13px;
-    }
-
-    .loop__card--bars {
-      width: 152px;
-      height: 178px;
-    }
-
-    .loop__card--chart {
-      width: 204px;
+    .loop__card--main,
+    .loop__card--bars,
+    .loop__card--chart,
+    .loop__card--cost {
+      top: 188px;
+      right: 12px;
+      bottom: 0;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: auto;
+      height: auto;
+      padding: 12px 14px;
     }
 
     .sheet {

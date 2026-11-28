@@ -7,8 +7,11 @@ import { SERVICES } from '../data/services';
  * The five specialist services as glow cards, on /services and /about.
  *
  * Board: design/v3/Services.dc.html. The audit is the lead card, full width,
- * with the path it follows drawn beside it; the other four sit in one row and
- * become a swipe row below 700px.
+ * with the path it follows drawn beside it; the other four sit in one row.
+ *
+ * Below 700px all five are ONE swipe row, the audit first. The lead card is a
+ * child of the grid for that reason: when it sat above the row, a phone showed
+ * one tall stacked card and then a row counting "1 of 4" for five services.
  *
  * Lists only what src/data/services.ts holds: names, summaries and the audit's
  * five steps all come from there.
@@ -46,6 +49,7 @@ const steps = audit!.visual.kind === 'chain' ? audit!.visual.steps.map(([name]) 
     </div>
 
     <div class="sbody">
+      <div class="ggrid ggrid--4 swipe" data-swipe>
       <a class="gcard gcard--lead svi__lead" href={`${base}/services/${audit!.slug}`} style="--gx:0%;--gy:0%">
         <span class="svi__lead-copy">
           <span class="gcard__icon">
@@ -76,7 +80,6 @@ const steps = audit!.visual.kind === 'chain' ? audit!.visual.steps.map(([name]) 
         }
       </a>
 
-      <div class="ggrid ggrid--4 swipe svi__grid" data-swipe>
         {
           rest.map((s, i) => (
             <a
@@ -98,8 +101,8 @@ const steps = audit!.visual.kind === 'chain' ? audit!.visual.steps.map(([name]) 
         }
       </div>
       <div class="swipe__meta" data-swipe-meta aria-hidden="true">
-        <span class="swipe__dots" data-swipe-dots>{rest.map(() => <i />)}</span>
-        <span data-swipe-count>1 of {rest.length}</span>
+        <span class="swipe__dots" data-swipe-dots>{SERVICES.map(() => <i />)}</span>
+        <span data-swipe-count>1 of {SERVICES.length}</span>
       </div>
     </div>
   </div>
@@ -174,8 +177,38 @@ const steps = audit!.visual.kind === 'chain' ? audit!.visual.steps.map(([name]) 
     box-shadow: inset 0 0 0 1px rgba(var(--rgb-accent), 0.7);
   }
 
-  .svi__grid {
-    margin-top: 16px;
+  .svi__lead {
+    grid-column: 1 / -1;
+  }
+
+  /* In the phone row the audit is a card like the other four: same width,
+     same type size, and the path panel is left to the audit's own page. */
+  @media (max-width: 699px) {
+    .svi__lead {
+      align-items: stretch;
+      padding: clamp(22px, 2.6vw, 36px);
+    }
+
+    .svi__lead-copy {
+      height: 100%;
+    }
+
+    .svi__lead-title {
+      font-size: var(--t-h3);
+      line-height: 1.2;
+    }
+
+    .svi__lead-text {
+      font-size: inherit;
+    }
+
+    .svi__panel {
+      display: none;
+    }
+
+    .svi__lead .gcard__go {
+      margin-top: auto;
+    }
   }
 
   .svi__card {

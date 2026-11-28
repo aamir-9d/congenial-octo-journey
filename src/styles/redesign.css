@@ -131,6 +131,17 @@ a {
   color: var(--color-text-3);
 }
 
+/* No blur filter on a phone. iOS browsers painted a solid black bar in the
+   hero's top-left corner, as wide as the gap before the blue bloom's blurred
+   edge: a filtered layer clipped by `overflow: hidden`. The gradients already
+   fade to nothing, so the blooms keep their shape without it. */
+@media (max-width: 699px) {
+  .phero::before,
+  .phero::after {
+    filter: none;
+  }
+}
+
 @media (max-width: 640px) {
   .phero__actions > * {
     flex: 1 1 100%;
