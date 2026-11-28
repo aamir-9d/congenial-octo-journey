@@ -1,6 +1,6 @@
 # E2E Apps MCP: implementation plan
 
-**Status: in progress. Phases 0 and 1 delivered 28 November 2026. Phase 3 is gated on the owner's answer about packages; phase 4 on his go-ahead to deploy.**
+**Status: in progress. Phases 0 and 1 delivered 28 November 2026; phase 2 part-built the same day (four of the knowledge tools, awaiting the owner's read). Phase 3 is gated on the owner's answer about packages; phase 4 on his go-ahead to deploy.**
 
 ## Context
 
@@ -58,7 +58,7 @@ chosen option avoids.
 | --- | --- | --- | --- | --- |
 | 0 | Research | Current spec revision, hosting route and library read from the primary pages, not from memory | none | **Delivered 28 Nov** |
 | 1 | Core tools, no server | `payback_calculate` and `common_faults` with tests; no packages | none | **Delivered 28 Nov** |
-| 2 | Knowledge into tools | `audit_checklist`, `skan_schema_review`, `att_timing_review`, `tracking_plan_review`, and four saved prompts | Owner reads every distilled file before it is committed | Not started |
+| 2 | Knowledge into tools | Rule tools from the owner's knowledge, three reviewers that take the user's own setup, and four saved prompts | Owner reads every distilled file before the repository is published | **Part-built 28 Nov**: `audit_checklist`, `ios_google_ads_measurement`, `google_ads_scaling_rules`, `ad_monetization_checks`. Reviewers and prompts not started |
 | 3 | The server | Worker file wrapping the tool list; called locally with an MCP inspector; every tool answers | **Owner approves the packages** (below) | Blocked on owner |
 | 4 | Deploy | Live at `mcp.e2eapp.com`; added to Claude by address and each tool called once; CPU time per call measured | **Owner approves the DNS record and the deploy** | Not started |
 | 5 | Site | Automation card changes from "Coming" to the address; short privacy and terms pages for the server | Phase 4 live | Not started |
@@ -106,6 +106,34 @@ Rules for this phase:
 4. **Private source, public result.** Source material stays in a folder
    outside every repository.
 
+### Phase 2: what was built on 28 November
+
+| Tool | Built from | Size |
+| --- | --- | --- |
+| `audit_checklist` | The mistakes and fixes published on the five service pages | 5 areas, 37 checks |
+| `ios_google_ads_measurement` | The owner's earlier work on ODM, ICM, several MMPs together, SDK start order, web-to-app, the tracking plan and server-side renewals | 61 rules in 9 topics |
+| `google_ads_scaling_rules` | Advice the owner received on scaling Google Ads app campaigns, paraphrased | 57 rules in 8 topics |
+| `ad_monetization_checks` | An ad-monetisation audit method the owner received and replicated, paraphrased | 73 rules in 13 topics |
+
+How a rule set is made: a private distilled file holds each rule with why, how
+to check it, a confidence mark and a pointer to where it came from.
+`scripts/build-knowledge.mjs` publishes only the rules marked "stated", drops
+the pointer, and fails if private wording or a listed name is left in. Rules
+that were someone's reading without a source behind it, and everything filed
+as uncertain or conflicting, stay private: 40 rules across the three sets.
+
+The owner decided on 28 November that advice from his two consultants may be
+used. It is paraphrased as method; no person, app or account figure is in it.
+
+Still to do in this phase:
+
+- The owner reads the three distilled files. Nothing is published before that.
+- A names list beside the distilled files, so the build can scan for clients
+  and apps by name.
+- SKAN and AdAttributionKit have too little material for a rule topic yet.
+- The three reviewers (`skan_schema_review`, `att_timing_review`,
+  `tracking_plan_review`) and the saved prompts.
+
 ### Phase 3: the packages question
 
 The owner's rule is no new package without asking. Two ways to write the
@@ -122,7 +150,7 @@ packages live in the MCP repository only. The site stays at zero.
 
 ## Verification
 
-- Phase 1, run 28 November 2026: 12 tests pass.
+- Phases 1 and 2, run 28 November 2026: 18 tests pass. Besides the items below: every rule tool returns its topics with no filter and its rules by topic, and no published rule carries a source pointer, a person, a dollar figure or a file path.
   - Subscription example pays back on day 277; ad example on day 122. Both are
     the figures the site publishes.
   - 400 random scenarios per model give the same payback day, revenue, surplus
@@ -134,7 +162,10 @@ packages live in the MCP repository only. The site stays at zero.
 ## Stated limits
 
 - Nothing is hosted. There is no address to add to an assistant yet.
-- The four review tools do not exist yet; the Automation page says "Coming".
+- The three reviewers do not exist yet; the Automation page says "Coming".
+- The iOS rules are a snapshot of 2026 vendor behaviour (SDK versions, beta
+  programmes). Each answer says so; the rules need a re-read against current
+  vendor documentation before release and on a schedule after it.
 - Hosting cost is expected to be nil on the Workers free plan (100,000
   requests a day, 10 ms of CPU per request, read from Cloudflare's pricing
   page on 28 November 2026). That is an expectation until phase 4 measures it.
