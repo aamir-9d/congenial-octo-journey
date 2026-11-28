@@ -219,7 +219,9 @@ a {
   padding: clamp(22px, 2.6vw, 36px);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
-  box-shadow: var(--ring);
+  box-shadow:
+    var(--ring),
+    var(--shadow-lift);
   color: var(--color-text);
   transition: box-shadow 200ms var(--ease-out-soft);
 }
@@ -242,7 +244,9 @@ a {
 
 a.gcard:hover,
 a.gcard:focus-visible {
-  box-shadow: var(--ring-accent);
+  box-shadow:
+    var(--ring-accent),
+    var(--shadow-lift);
 }
 
 a.gcard:hover::before,
@@ -250,8 +254,13 @@ a.gcard:focus-visible::before {
   opacity: var(--glow-lead);
 }
 
+/* The lead card: glow and amber ring on dark; a flat amber wash on light,
+   where the wash tokens take their values (tokens.css). */
 .gcard--lead {
-  box-shadow: var(--ring-accent);
+  background: var(--color-wash-amber);
+  box-shadow:
+    0 0 0 1px var(--color-wash-amber-line),
+    var(--shadow-lift);
 }
 
 .gcard--lead::before {
@@ -266,10 +275,12 @@ a.gcard:focus-visible::before {
   flex: none;
   border-radius: 12px;
   background: var(--color-accent-dim);
+  box-shadow: inset 0 0 0 1px var(--color-wash-amber-line);
   color: var(--color-accent-text);
 }
 
 .gcard--lead .gcard__icon {
+  box-shadow: none;
   background: var(--color-accent);
   color: var(--color-ink);
 }
@@ -685,5 +696,64 @@ a.gcard:focus-visible::before {
 
   .marquee__track > span[aria-hidden='true'] {
     display: none;
+  }
+}
+
+/* ===========================================================================
+   Light theme only.
+
+   The light theme first shipped as the dark layout with pale values, and it
+   read as washed out: page, card and band within 1.07:1 of each other, no dark
+   section, one hue. The token values fix most of that (tokens.css). These few
+   rules cover what a token cannot: where a GRADIENT glow must become a flat
+   wash, and which chrome should lift.
+   =========================================================================== */
+@media (prefers-color-scheme: light) {
+  /* Panels behind data cards: a flat blue wash, not two blooms on white. */
+  .scene:not(.scene--photo) {
+    background: var(--color-wash-blue);
+    box-shadow: inset 0 0 0 1px var(--color-wash-blue-line);
+  }
+
+  .scene:not(.scene--photo) .dcard {
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-wash-blue-line),
+      0 26px 50px -26px rgba(47, 79, 143, 0.55);
+  }
+
+  .scene--photo {
+    box-shadow: 0 30px 60px -34px rgba(16, 23, 37, 0.7);
+  }
+
+  /* The closing ask: an amber card on the page, not a grey band. */
+  .cta {
+    background: var(--color-bg);
+    border-top: 0;
+  }
+
+  .cta::before {
+    display: none;
+  }
+
+  .cta__inner {
+    padding: clamp(28px, 4.5vw, 56px) clamp(22px, 5vw, 64px);
+    border-radius: 18px;
+    background: var(--color-wash-amber);
+    box-shadow: 0 0 0 1px var(--color-wash-amber-line);
+  }
+
+  .tag--review {
+    background: var(--color-wash-amber);
+    box-shadow: inset 0 0 0 1px var(--color-wash-amber-line);
+  }
+
+  .tag--ok {
+    background: var(--color-surface-sunk);
+  }
+
+  .pill-link,
+  .btn-secondary {
+    background: var(--color-surface);
   }
 }

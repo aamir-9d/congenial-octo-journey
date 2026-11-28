@@ -38,6 +38,16 @@
   /* The focus ring. Amber on dark; a deeper amber on light, where the brand
      amber is 2.2:1 against the ground and a ring must reach 3:1. */
   --color-focus: #e39a1f;
+  /* Tinted surfaces. In the dark theme a lead card is lifted by its corner
+     glow, so these are plain surfaces there; in the light theme a glow reads
+     as a stain, so the lead card and the chart panels take a flat wash. */
+  --color-wash-amber: #16191f;
+  --color-wash-amber-line: rgba(227, 154, 31, 0.34);
+  --color-wash-blue: #16191f;
+  --color-wash-blue-line: #23272e;
+  --color-blue-text: #a8aeb6;
+  /* Lift under a card. None on dark, where the hairline does the work. */
+  --shadow-lift: 0 0 0 0 transparent;
   --color-accent-hover: #f0ab33;
   --color-accent-dim: rgba(227, 154, 31, 0.12);
   --color-ink: #101725; /* text on a filled accent button, 7.6:1 */
@@ -183,43 +193,89 @@
    --------------------------------------------------------------------------- */
 @media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #f6f7f9;
+    --color-bg: #e9edf4;
     --color-surface: #ffffff;
-    --color-surface-sunk: #eef0f4;
-    --color-line: #e1e4ea;
-    --color-line-soft: #e9ecf1;
-    --color-line-strong: #cbd1da;
-    --color-line-hover: #a9b1bd;
-    --color-band: #eef0f4;
+    --color-surface-sunk: #f3f5f9;
+    --color-line: #c9d0dc;
+    --color-line-soft: #dbe0e9;
+    --color-line-strong: #aab3c2;
+    --color-line-hover: #8792a4;
+    --color-band: #f2f4f9;
 
     --color-text: #101725; /* 16.6:1 on --color-bg */
-    --color-text-2: #3c4454; /*  9.3:1 */
-    --color-text-3: #4f5868; /*  6.7:1 */
-    --color-text-4: #5a6474; /*  5.6:1 */
+    --color-text-2: #364053; /*  8.9:1 on --color-bg */
+    --color-text-3: #48526a; /*  6.6:1 */
+    --color-text-4: #55607a; /*  5.3:1 */
 
-    --color-accent-text: #8a5600; /* 5.9:1 on white, 5.5:1 on --color-bg */
-    --color-focus: #a86a00;
+    --color-accent-text: #9a5b00; /* 5.4:1 on white, 4.6:1 on --color-bg */
+    --color-wash-amber: #fbefd9;
+    --color-wash-amber-line: #ebd3a2;
+    --color-wash-blue: #dde6f5;
+    --color-wash-blue-line: #b9c8e2;
+    --color-blue-text: #2f4f8f;
+    --shadow-lift: 0 18px 36px -26px rgba(16, 23, 37, 0.4);
+    --color-focus: #9a5b00;
     --color-accent-dim: rgba(227, 154, 31, 0.16);
     --rgb-text: 16, 23, 37;
-    --rgb-bg: 246, 247, 249;
+    --rgb-bg: 233, 237, 244;
     --rgb-surface: 255, 255, 255;
     --bloom-amber: 0.55;
-    --bloom-blue: 0.34;
-    --glow: 0.12;
-    --glow-lead: 0.34;
-    --dot-grid: 0.09;
+    --bloom-blue: 0.5;
+    --glow: 0;
+    --glow-lead: 0;
+    --dot-grid: 0.12;
 
     --chart-true: #b87400; /* 3.6:1 on white */
-    --chart-measured: #8a93a1;
-    --chart-axis: #cbd1da;
-    --chart-rule: #a9b1bd;
-    --chart-bar-dim: #cbd1da;
+    --chart-measured: #7a8598;
+    --chart-axis: #aab3c2;
+    --chart-rule: #8792a4;
+    --chart-bar-dim: #b9c8e2;
 
     --shadow-accent: 0 8px 22px -12px rgba(16, 23, 37, 0.35);
     --shadow-accent-hover: 0 12px 28px -10px rgba(16, 23, 37, 0.4);
     --shadow-accent-sm: 0 6px 16px -10px rgba(16, 23, 37, 0.3);
     --shadow-card-hover: 0 18px 44px rgba(16, 23, 37, 0.14);
     --ring-accent: 0 0 0 1px rgba(184, 116, 0, 0.5);
+  }
+
+  /* A dark island on a light page. The light theme needs sections that go
+     dark (the calculator preview, the footer) or the page has nothing to
+     anchor it and reads as one pale sheet. `.island` re-pins every colour
+     token to its dark value for everything inside, so a component placed in
+     one needs no rule of its own. In the dark theme the class does nothing. */
+  .island {
+    --color-bg: #101725;
+    --color-surface: #18203a;
+    --color-surface-sunk: #1f2947;
+    --color-line: #27314f;
+    --color-line-soft: #212a45;
+    --color-line-strong: #33405f;
+    --color-line-hover: #47567a;
+    --color-band: #101725;
+    --color-text: #e8eaed;
+    --color-text-2: #b3bac6;
+    --color-text-3: #98a1b0;
+    --color-text-4: #8d97a8;
+    --color-accent-text: #e39a1f;
+    --color-focus: #e39a1f;
+    --color-wash-amber: #18203a;
+    --color-wash-amber-line: rgba(227, 154, 31, 0.34);
+    --color-wash-blue: #18203a;
+    --color-wash-blue-line: #27314f;
+    --color-blue-text: #b3bac6;
+    --rgb-text: 232, 234, 237;
+    --rgb-bg: 16, 23, 37;
+    --rgb-surface: 24, 32, 58;
+    --bloom-amber: 0.3;
+    --chart-true: #e39a1f;
+    --chart-measured: #6d7890;
+    --chart-axis: #33405f;
+    --chart-rule: #56648a;
+    --chart-bar-dim: #3a4868;
+    --shadow-lift: 0 0 0 0 transparent;
+    --ring-accent: 0 0 0 1px rgba(227, 154, 31, 0.34);
+    background: var(--color-bg);
+    color: var(--color-text);
   }
 }
 
