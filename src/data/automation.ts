@@ -36,46 +36,218 @@
  */
 
 /**
- * What a client gets. The page opened on a demonstration and a list of
- * connections and never said what was for sale; these three cards are the
- * answer, and they sit directly under the header.
+ * The E2E Apps MCP: what is open, and what is not.
  *
- * The second is a public tool that does not exist yet. It is marked `soon` and
- * the page shows that word; change it only when the server is live.
+ * THE ONE SWITCH. Everything /automation says about the server being usable
+ * reads these two flags, so the page cannot claim more than is true:
+ *
+ *   status    'coming' until the server answers at `address`. While it is
+ *             'coming' the header shows the address marked "Opening soon" with
+ *             no Copy button and no "Add to…" buttons, and the steps and
+ *             answers are written in the future tense.
+ *   accounts  'coming' until a visitor can sign in and connect a platform.
+ *             While it is 'coming' the connections panel is labelled "Preview"
+ *             and shows no row as connected, and every promise about account
+ *             access sits under "When account connection opens".
+ *
+ * Change a flag to 'live' only on the day it is true. Accounts cannot be live
+ * before the server is, so `ACCOUNTS_OPEN` needs both.
  */
-export const OFFER = [
+export const MCP = {
+  status: 'live' as 'coming' | 'live',
+  address: 'https://mcp.e2eapp.com/mcp',
+  accounts: 'coming' as 'coming' | 'live',
+};
+
+export const SERVER_OPEN = MCP.status === 'live';
+export const ACCOUNTS_OPEN = SERVER_OPEN && MCP.accounts === 'live';
+
+/** The address without its scheme, as the step card and the panel print it. */
+export const MCP_HOST = MCP.address.replace(/^https?:\/\//, '');
+
+/** The date both /mcp/privacy and /mcp/terms print. */
+export const MCP_LEGAL_UPDATED = '28 November 2026';
+
+/** The page header. `soon` is the mark on the address while it is not open. */
+export const HEADER = {
+  label: 'AI reporting & automation · the E2E Apps MCP',
+  title: "Your app's growth data, inside Claude and ChatGPT",
+  lead: ACCOUNTS_OPEN
+    ? 'Add one address. Sign in once. Then ask about ad revenue, user behaviour, subscriptions and spend in plain words, and get the answer with the source figures attached.'
+    : SERVER_OPEN
+      ? 'Add one address to use our payback calculator, checklists and rule sets from inside your assistant. Signing in to read your own ad revenue, user behaviour, subscriptions and spend is being built and is not open yet.'
+      : 'The E2E Apps MCP is one address you will add to Claude or ChatGPT. Sign in once, then ask about ad revenue, user behaviour, subscriptions and spend in plain words, and get the answer with the source figures attached. It is not open yet.',
+  soon: 'Opening soon',
+  note: SERVER_OPEN
+    ? 'Free to use. Read-only. The calculator and checklists work before you connect anything.'
+    : 'The server is being opened. Ask, and we will tell you when you can add it. It will be free to use and read-only.',
+} as const;
+
+export type PlatformStatus = 'available' | 'coming' | 'next';
+
+export const STATUS_LABEL: Record<PlatformStatus, string> = {
+  available: 'Available',
+  coming: 'Coming',
+  next: 'Next',
+};
+
+export interface Platform {
+  name: string;
+  /** How a visitor connects it. */
+  how: string;
+  /** 'available' only after it has been tested against real accounts. */
+  status: PlatformStatus;
+  /** What the server reads from it. Only the first four have this. */
+  reads?: string;
+}
+
+/**
+ * Every platform, once. The status table, the connections panel and the
+ * "Your numbers" list are all written from this array.
+ *
+ * A row becomes 'available' by hand, one at a time, and never while
+ * `MCP.accounts` is 'coming' (tests/automation-mcp.test.ts fails the build).
+ */
+export const PLATFORMS: Platform[] = [
   {
-    title: 'Setup',
-    body: 'We connect your ad, analytics and subscription accounts to Claude, ChatGPT or Gemini. Access is to named accounts, and read-only unless you approve a change.',
-    soon: false,
+    name: 'Google Ads',
+    how: 'Connector on your computer',
+    status: 'coming',
+    reads: 'Spend, installs and cost per install by campaign and country',
+  },
+  { name: 'GA4', how: 'Google sign-in', status: 'coming', reads: 'Events, funnels, active users and ad revenue' },
+  {
+    name: 'AdMob',
+    how: 'Google sign-in',
+    status: 'coming',
+    reads: 'Earnings by network, format and country, every network counted',
+  },
+  { name: 'RevenueCat', how: 'Read-only key', status: 'coming', reads: 'Trials, conversions, renewals and revenue' },
+  { name: 'Meta Ads', how: 'Meta sign-in', status: 'next' },
+  { name: 'TikTok Ads', how: 'TikTok sign-in', status: 'next' },
+  { name: 'Google Play', how: 'Google sign-in', status: 'next' },
+  { name: 'App Store Connect', how: 'Your API key', status: 'next' },
+];
+
+/**
+ * The connections panel in "Every platform through one connection": a drawing
+ * of the page a visitor will connect on. Each row names the platforms it
+ * stands for, and takes its status from them, so the drawing cannot show a
+ * platform as further along than the table does.
+ *
+ * `action` and `sample` are what the finished page shows for a platform that
+ * is 'available'. Neither is rendered before that.
+ */
+export const PANEL = [
+  {
+    title: 'Google',
+    platforms: ['GA4', 'AdMob'],
+    note: 'GA4 · AdMob · one Google sign-in',
+    sample: 'GA4 · AdMob · 2 properties and 1 AdMob account shared',
+    action: 'Connected · read-only',
+    connected: true,
   },
   {
-    title: 'The E2E Apps MCP',
-    body: 'Our audit method as tools your assistant can call: the payback calculation, the attribution audit checklist and the common faults. Free to use.',
-    soon: true,
+    title: 'RevenueCat',
+    platforms: ['RevenueCat'],
+    note: 'Trials, renewals, revenue · paste a read-only key',
+    action: 'Connect',
   },
   {
-    title: 'Prompts and definitions',
-    body: 'Saved questions for the weekly review, a spend change, a funnel drop and a renewal change, with agreed metric definitions, so two people asking get the same number.',
-    soon: false,
+    title: 'Google Ads',
+    platforms: ['Google Ads'],
+    note: "Runs on your computer, as Google's rules ask · one command",
+    action: 'Set up',
+  },
+  { title: 'Meta Ads · TikTok Ads', platforms: ['Meta Ads', 'TikTok Ads'], note: 'Spend and results by campaign' },
+  {
+    title: 'Google Play · App Store Connect',
+    platforms: ['Google Play', 'App Store Connect'],
+    note: 'Store performance and reviews',
   },
 ] as const;
 
+/** A panel row is as far along as the least ready platform it stands for. */
+export function panelStatus(platforms: readonly string[]): PlatformStatus {
+  const all = platforms.map((n) => PLATFORMS.find((p) => p.name === n)?.status ?? 'next');
+  if (!ACCOUNTS_OPEN) return all.includes('next') ? 'next' : 'coming';
+  return all.includes('next') ? 'next' : all.includes('coming') ? 'coming' : 'available';
+}
+
+/** What the sign-in asks of a visitor. Future tense until accounts open. */
+export const PROMISES = ACCOUNTS_OPEN
+  ? [
+      "You sign in on Google's own page. We never see your password.",
+      'We ask for reading permission only.',
+      'Disconnect any platform with one click.',
+    ]
+  : [
+      "You will sign in on Google's own page. We never see your password.",
+      'We will ask for reading permission only.',
+      'You will be able to disconnect any platform with one click.',
+    ];
+
 /**
- * How each platform connects, one row each. The first four restate what
- * DISCLOSURES says in full; the last four are platforms clients ask about that
- * have not been set up and checked, and say so rather than implying support.
+ * The six method tools. These are built: they need no account and no sign-in,
+ * and they are what the server offers on the day it opens.
  */
-export const CONNECTIONS = [
-  { name: 'Google Ads', route: 'Official MCP server', access: 'Read-only' },
-  { name: 'GA4', route: 'Official Google Analytics MCP server', access: 'Reporting reads' },
-  { name: 'AdMob', route: 'Our adapter over the documented REST API', access: 'Reporting reads' },
-  { name: 'RevenueCat', route: 'Official hosted MCP server', access: 'Only the tools an engagement needs' },
-  { name: 'Meta Ads', route: 'On request', access: 'Scoped and checked before it is offered' },
-  { name: 'TikTok Ads', route: 'On request', access: 'Scoped and checked before it is offered' },
-  { name: 'Google Play', route: 'On request', access: 'Scoped and checked before it is offered' },
-  { name: 'App Store Connect', route: 'On request', access: 'Scoped and checked before it is offered' },
+export const TOOLS = [
+  { name: 'Payback calculator', does: 'The day an install earns back its cost' },
+  { name: 'Attribution audit checklist', does: 'What an audit checks, area by area' },
+  { name: 'Common faults', does: 'What audits keep finding, most common first' },
+  { name: 'iOS measurement for Google Ads', does: 'ODM, ICM, several MMPs, where each SDK starts' },
+  { name: 'Google Ads scaling rules', does: 'When to scale, hold or cut' },
+  { name: 'Ad monetisation checks', does: 'Where to look when ad revenue moves' },
 ] as const;
+
+/**
+ * Security.
+ *
+ * `built` is true of the method-tools server as it stands, with or without
+ * accounts. `accounts` is what account connection adds; until it opens those
+ * four are promises, written in the future tense and shown under their own
+ * sub-heading.
+ */
+export const SECURITY = {
+  built: [
+    { title: 'It signs in to nothing', body: 'The server holds no account and no key, and using it needs no sign-in.' },
+    {
+      title: 'It stores nothing',
+      body: 'What your assistant sends is used to work out the answer. We do not keep it or write it to logs.',
+    },
+    {
+      title: 'No tool that writes',
+      body: 'Six tools, every one read-only. None can edit a campaign, a budget, a product or a setting.',
+    },
+    { title: 'No outbound requests', body: 'It calls no other service while it answers.' },
+  ],
+  accounts: [
+    {
+      title: 'Read-only access',
+      body: ACCOUNTS_OPEN
+        ? 'We ask each platform for permission to read reports, and nothing more.'
+        : 'We will ask each platform for permission to read reports, and nothing more.',
+    },
+    {
+      title: 'Encrypted access keys',
+      body: ACCOUNTS_OPEN
+        ? 'The access a platform gives us is stored encrypted and used only to answer your questions.'
+        : 'The access a platform gives us will be stored encrypted and used only to answer your questions.',
+    },
+    {
+      title: 'Your figures are not kept',
+      body: ACCOUNTS_OPEN
+        ? 'Reports pass through to your assistant. We do not store them or write them to logs.'
+        : 'Reports will pass through to your assistant. We will not store them or write them to logs.',
+    },
+    {
+      title: 'Leave any time',
+      body: ACCOUNTS_OPEN
+        ? 'Disconnect on our page or in your Google account. Access ends at once and is deleted.'
+        : 'You will be able to disconnect on our page or in your Google account. Access will end at once and be deleted.',
+    },
+  ],
+} as const;
 
 /** Four connected sources. GA4 covers the behaviour gap between the other three. */
 export const SOURCES = [
@@ -272,24 +444,90 @@ export const EXAMPLES: ExampleState[] = [
   },
 ];
 
-/** Connect → Investigate → Review. */
+/**
+ * How to start: add the address, connect your accounts, ask.
+ *
+ * Steps one and three follow the server; step two follows account connection
+ * and carries the "Coming" mark until that opens.
+ */
 export const STEPS = [
   {
     n: '01',
-    title: 'Connect',
-    body: 'Choose your reporting sources.',
+    title: 'Add the address',
+    body: SERVER_OPEN
+      ? 'In Claude or ChatGPT, open Connectors, choose Add custom connector and paste our address.'
+      : 'When it opens, you add our address in Claude or ChatGPT: open Connectors, choose Add custom connector and paste it.',
+    foot: SERVER_OPEN ? MCP_HOST : HEADER.soon,
+    coming: false,
   },
   {
     n: '02',
-    title: 'Investigate',
-    body: 'Ask a business question.',
+    title: 'Connect your accounts',
+    body: ACCOUNTS_OPEN
+      ? 'One Google sign-in covers GA4 and AdMob. Add RevenueCat with a read-only key. Google Ads connects from your own computer, with one command.'
+      : 'When account connection opens, one Google sign-in will cover GA4 and AdMob, RevenueCat will take a read-only key, and Google Ads will connect from your own computer, with one command.',
+    foot: SERVER_OPEN
+      ? 'Optional. Skip it and the free tools still work.'
+      : 'Optional. The free tools will work without it.',
+    coming: !ACCOUNTS_OPEN,
   },
   {
     n: '03',
-    title: 'Review',
-    body: 'Agree on the next action.',
+    title: 'Ask',
+    body: SERVER_OPEN
+      ? 'Type a question, or start from a saved one: weekly review, why spend changed, where the funnel drops, are renewals arriving.'
+      : 'Then you type a question, or start from a saved one: weekly review, why spend changed, where the funnel drops, are renewals arriving.',
+    foot: 'Every answer names its source and dates.',
+    coming: false,
   },
 ] as const;
+
+/**
+ * Common questions. The visible list and the FAQPage structured data are both
+ * written from this array, so they cannot disagree.
+ */
+export const FAQS: { q: string; a: string }[] = [
+  ...(SERVER_OPEN
+    ? []
+    : [
+        {
+          q: 'When does it open?',
+          a: 'The server is built and is being opened now. Send a note through the contact form and we will tell you when you can add it.',
+        },
+      ]),
+  {
+    q: 'Can it change my campaigns or my app?',
+    a: ACCOUNTS_OPEN
+      ? 'No. It has no tool that writes, and it asks each platform for reading permission only.'
+      : 'No. It has no tool that writes. When account connection opens, it will ask each platform for reading permission only.',
+  },
+  {
+    q: 'Do I have to connect my accounts?',
+    a: ACCOUNTS_OPEN
+      ? 'No. The calculator, the checklists and the rule sets work without it. You type your own figures.'
+      : SERVER_OPEN
+        ? 'No. The calculator, the checklists and the rule sets work without it: you type your own figures. Account connection is not open yet.'
+        : 'No. The calculator, the checklists and the rule sets are built to work without it: you type your own figures. Account connection is not open yet.',
+  },
+  {
+    q: 'Which assistants does it work with?',
+    a: SERVER_OPEN
+      ? 'Claude on every plan, and ChatGPT on the plans that allow custom connectors. Other assistants that support MCP work too.'
+      : 'It is built for Claude, and for ChatGPT on the plans that allow custom connectors. Other assistants that support MCP should work too.',
+  },
+  {
+    q: 'Who pays for the AI?',
+    a: SERVER_OPEN
+      ? 'Your own Claude or ChatGPT plan. Our server only answers the questions your assistant sends it.'
+      : 'Your own Claude or ChatGPT plan. Our server will only answer the questions your assistant sends it.',
+  },
+  {
+    q: 'How do I disconnect?',
+    a: ACCOUNTS_OPEN
+      ? 'On the connections page, or in your Google account under third-party access. Either one ends our access.'
+      : 'Until account connection opens there is nothing to disconnect: the server signs in to nothing. After that, on the connections page or in your Google account under third-party access. Either one will end our access.',
+  },
+];
 
 export interface Disclosure {
   label: string;
@@ -311,7 +549,7 @@ export const DISCLOSURES: Disclosure[] = [
     label: 'Access and approvals',
     body: [
       'Access is granted to named accounts — your Google Ads customer IDs, your GA4 properties, your AdMob publisher account, your RevenueCat projects — and can be withdrawn at any time.',
-      'Credentials are held by us as the operator. There is no self-serve connection: this is a consulting engagement, and a connect button would promise something nothing behind it can keep.',
+      'Today a connection is set up with us, as part of an engagement, and credentials are held by us as the operator. Self-serve account connection through the E2E Apps MCP is being built and is not open yet; this page marks it "Coming" until it is.',
       'Restrictions are enforced in the tools and the backend authorisation, not by instructing a model to stay inside them. A prompt is not an access boundary.',
       'Anything that writes to an account runs through a separately authorised path with its own approval record, never as a side effect of asking a question. Scheduled reporting is kept separate from it, and an assistant connection is not an unattended service — that needs job execution, retries, deduplication, source snapshots and failure reporting.',
     ],

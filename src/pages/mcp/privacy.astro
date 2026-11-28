@@ -1,0 +1,75 @@
+---
+import Prose from '../../layouts/Prose.astro';
+import { MCP, MCP_LEGAL_UPDATED, TOOLS } from '../../data/automation.ts';
+
+/**
+ * Privacy for the E2E Apps MCP server, and only the server: the website has
+ * its own page at /privacy.
+ *
+ * It states what is true of the server as built: six read-only method tools
+ * and four saved prompts, no account, no sign-in, nothing stored, no outbound
+ * request. Account connection is not built. Before it opens, this page must be
+ * rewritten to cover what that collects; the last section says so.
+ */
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Prose
+  title="MCP Server Privacy — E2E Apps"
+  description="What the E2E Apps MCP server receives, keeps and sends: it needs no account, stores nothing and makes no outbound requests."
+  path="/mcp/privacy"
+  heading="E2E Apps MCP privacy"
+  updated={MCP_LEGAL_UPDATED}
+  lead="What the E2E Apps MCP server receives, what it keeps, and what it sends elsewhere."
+>
+  <p>
+    This page covers the E2E Apps MCP server only: the tools an AI assistant can call at
+    <code>{MCP.address}</code>. The website has its own
+    <a href={`${base}/privacy`} class="link">privacy page</a>. The server is not open to the public
+    yet; this describes it as it is built.
+  </p>
+
+  <h2>What the server is</h2>
+  <p>
+    It offers six read-only method tools and four saved prompts. The tools are:
+  </p>
+  <ul>
+    {TOOLS.map((t) => <li>{t.name}</li>)}
+  </ul>
+  <p>It requires no account and no sign-in.</p>
+
+  <h2>What it receives</h2>
+  <p>
+    When your assistant calls a tool, it sends the inputs for that tool: for example, the figures you
+    typed for the payback calculator. Those inputs are used to compute the answer. They are not kept
+    and they are not logged.
+  </p>
+
+  <h2>What it stores</h2>
+  <p>Nothing.</p>
+
+  <h2>What it sends elsewhere</h2>
+  <p>Nothing. The server makes no outbound requests.</p>
+
+  <h2>Hosting</h2>
+  <p>
+    The server is hosted on Cloudflare. Cloudflare processes requests as the hosting provider and
+    keeps standard request metadata.
+  </p>
+
+  <h2>Before account connection opens</h2>
+  <p>
+    Connecting your own accounts to the server is not open. This page will be updated before it is.
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    <a href="mailto:hello@e2eapp.com" class="link">hello@e2eapp.com</a>
+  </p>
+
+  <p>
+    <a href={`${base}/mcp/terms`} class="link">MCP terms</a> ·
+    <a href={`${base}/automation`} class="link">Back to Automation</a>
+  </p>
+</Prose>

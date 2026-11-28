@@ -1,6 +1,6 @@
 # E2E Apps MCP: implementation plan
 
-**Status: in progress. Phases 0 and 1 delivered 28 November 2026; phase 2 part-built the same day (four of the knowledge tools, awaiting the owner's read). Phase 3 (the server) delivered 28 November after the owner approved the packages. Phase 4 waits on his go-ahead to deploy.**
+**Status: in progress. Phases 0 and 1 delivered 28 November 2026; phase 2 part-built the same day (four of the knowledge tools, awaiting the owner's read). Phase 3 (the server) delivered 28 November after the owner approved the packages. Phase 4 (deploy) delivered 28 November: live at `https://mcp.e2eapp.com/mcp`. Later work is in `mcp-launch-and-automation-page-plan.md`.**
 
 ## Context
 

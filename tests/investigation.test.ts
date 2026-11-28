@@ -22,7 +22,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { EXAMPLES, SOURCES, ASSISTANTS, TEASER } from '../src/data/automation.ts';
+import { EXAMPLES, SOURCES, ASSISTANTS, TEASER, MCP } from '../src/data/automation.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const PAGE = path.join(ROOT, 'dist', 'automation.html');
@@ -247,10 +247,12 @@ test('each state changes the question and the finding', { skip }, () => {
 });
 
 test('every state labels its sample data and carries its own limit', { skip }, () => {
+  // One label per state, and one on the sample chat in the page header, which
+  // shows the earnings example's figures a second time.
   assert.equal(
     (html.match(/Sample data/g) ?? []).length,
-    STATES.length,
-    'a state is missing its sample-data label',
+    STATES.length + 1,
+    'a state, or the sample chat in the header, is missing its sample-data label',
   );
   for (const e of EXAMPLES) {
     assert.ok(e.limit.trim().length > 0, `${e.id}: no limit stated`);
@@ -282,7 +284,20 @@ test('the expensive limits survive', { skip }, () => {
   assert.match(data, /read-only/i, 'the Google Ads read-only limit is gone');
   assert.match(data, /no official Google-maintained MCP server for AdMob/i, 'the AdMob gap is no longer disclosed');
   assert.match(data, /does not edit Analytics configuration/i, 'the GA4 reporting-only limit is gone');
-  assert.doesNotMatch(html, /Connect your accounts/i, 'a self-serve connect promise appeared');
+  /* Self-serve connection was not offered at all until November 2026, and
+     this line forbade the phrase. It is now a step the page announces, so the
+     rule is the one that matters: until it can be done, the step is marked
+     "Coming", it is said once, and nothing reads as connected. The full set of
+     rules for that state is in tests/automation-mcp.test.ts. */
+  if (MCP.status !== 'live' || MCP.accounts !== 'live') {
+    const step = /<li\b[^>]*data-step="02"[^>]*>[\s\S]*?<\/li>/.exec(html)?.[0] ?? '';
+    assert.match(step, /Connect your accounts/, 'the connect step is missing');
+    assert.match(step, />Coming</, 'a self-serve connect promise appeared without its "Coming" mark');
+    // Case-sensitive: the heading. "We connect your accounts with you" is the
+    // done-for-you service, which exists today.
+    assert.equal((html.match(/Connect your accounts/g) ?? []).length, 1, 'the connect promise is made outside its marked step');
+    assert.doesNotMatch(html, />[^<]*\bConnected\b/, 'something reads as connected before accounts can connect');
+  }
 });
 
 test('no assistant is presented as the default', { skip }, () => {
