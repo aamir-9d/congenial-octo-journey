@@ -1,6 +1,6 @@
 # MCP launch and the new Automation page: implementation plan
 
-**Status: planned 28 November 2026. Nothing in this plan is built. The design is on a private canvas for the owner's review.**
+**Status: phases 1 and 3 delivered 28 November 2026 (the server is live at `https://mcp.e2eapp.com/mcp`; the new Automation page is built on branch `automation-mcp-page`). Phase 2 is half done (the two pages exist; the code is not public yet). Account sign-in, phases 4 to 10, is not started.**
 
 ## Context
 
@@ -113,9 +113,9 @@ Rules for building it:
 
 | # | Phase | Done looks like | Gate | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Deploy the method tools | Live at `mcp.e2eapp.com`; `scripts/smoke.mjs` passes against it; added to Claude by address and every tool called; CPU time per call measured | Owner's go-ahead; owner has read the distilled rules | Ready to do |
-| 2 | Trust pages and public code | `/mcp/privacy` and `/mcp/terms` on the site; the code repository public | Owner creates the repository | Not started |
-| 3 | Automation page, first version | The page as designed, with account connection marked "Coming" | Owner signs off the design and wording | Not started |
+| 1 | Deploy the method tools | Live at `mcp.e2eapp.com`; `scripts/smoke.mjs` passes against it; added to Claude by address and every tool called; CPU time per call measured | Owner's go-ahead | **Delivered 28 Nov**, except: not yet added to an assistant, CPU time not read |
+| 2 | Trust pages and public code | `/mcp/privacy` and `/mcp/terms` on the site; the code repository public | Owner creates the repository | Pages built 28 Nov; repository not public |
+| 3 | Automation page, first version | The page as designed, with account connection marked "Coming" | Owner signs off the design and wording | **Built 28 Nov** on a branch; awaits merge and wording sign-off |
 | 4 | Ask Google | A written question to the Ads API compliance team about our use; brand verification started for the Cloud project | Owner sends it from the company's Google account | Not started |
 | 5 | Sign-in on our server | Users can sign in and manage connections; access stored encrypted; tested with test users | Owner approves one more package and a storage binding | Not started |
 | 6 | GA4 and AdMob tools | Read tools over the user's own properties, with the traps handled; Google verification submitted and passed | Phase 5; Google's review | Not started |
@@ -168,6 +168,23 @@ From the read-only benchmark of 28 November (results kept privately):
 A listing is for being found. Anyone can add the server by its address from
 phase 1 onwards.
 
+### What phases 1 to 3 delivered
+
+- The server runs in the Cloudflare account that holds the site's domain,
+  the owner's choice, since only that account can create `mcp.e2eapp.com`.
+- Before going live it gained: a list of sites allowed to call it from a
+  browser, a 64 KB limit on a request, and a limit of 600 requests a minute
+  per address (high on purpose: assistants share addresses). It logs nothing
+  a caller sends.
+- `src/data/automation.ts` holds one switch for the server and one for
+  account connection. The page is published with the server "live" and
+  accounts "coming": the address, Copy and the two Add buttons show; every
+  platform row reads "Coming" or "Next"; the connections panel is labelled
+  "Preview". A test fails the build if a platform is marked available while
+  accounts are "coming".
+- The heading "Three steps, about five minutes" from the design became "Three
+  steps to start": the five minutes was never measured.
+
 ## Decisions that are the owner's
 
 1. Two lanes as above, or wait for Google's answer before building any
@@ -179,14 +196,29 @@ phase 1 onwards.
 
 ## Verification
 
-Each phase's check is in its "Done looks like" column. Already true today:
+Phase 1, run 28 November 2026 against `https://mcp.e2eapp.com/mcp`: all 27
+checks in `scripts/smoke.mjs` pass (every tool listed and called, both
+protocol forms, a browser request from an unlisted site refused, from the
+assistants' sites accepted, an oversized request refused). Locally, 700 quick
+requests gave 600 answers and 100 refusals.
+
+Phase 3: the site builds; 199 tests pass and 1 is skipped by design (it
+applies only when the server is marked "coming"); the contrast check passes in
+both themes; the page was looked at in screenshots at 1440px in both themes
+and at 390px.
+
+Each later phase's check is in its "Done looks like" column. Also true today:
 the server passes 22 checks run locally; the tools pass 20 tests; the
 read-only guard used in the benchmark is tested against a recording server.
 
 ## Stated limits
 
-- The design shows the finished state. The first published page will show
-  account connection as "Coming".
+- The design shows the finished state. The published page shows account
+  connection as "Coming".
+- The live server has not yet been added to Claude or ChatGPT by a person,
+  and its CPU time per call has not been read.
+- The rule sets it serves were distilled from the owner's material and have
+  not been read line by line by him.
 - Google's review times are Google's estimates. The 100-user cap applies
   until verification passes.
 - Whether the GA4 and AdMob permissions need the lighter or the heavier
