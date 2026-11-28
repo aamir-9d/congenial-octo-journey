@@ -1,5 +1,7 @@
 ---
 title: 'Mastering JQL in JavaScript: Advanced Analytics with Mixpanel'
+seoTitle: 'JQL in JavaScript: Mixpanel Analytics'
+noindex: true
 kicker: Pulling unique property values, exporting every property of an event, and building a twelve-step onboarding funnel — in Mixpanel's JavaScript Query Language.
 date: 2024-10-23
 author: aamir

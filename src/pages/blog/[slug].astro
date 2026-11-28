@@ -85,7 +85,8 @@ const stamp = (d: Date) =>
 ---
 
 <Base
-  title={`${post.data.title} — E2E Apps`}
+  title={`${post.data.seoTitle ?? post.data.title} — E2E Apps`}
+  noindex={post.data.noindex ?? false}
   description={description}
   ogType="article"
   path={`/blog/${post.id}`}

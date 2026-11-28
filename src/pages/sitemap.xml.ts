@@ -52,7 +52,8 @@ export const GET: APIRoute = async ({ site }) => {
 
   const entries = [
     ...PAGES,
-    ...(await getCollection('blog')).map((post) => ({
+    // A post marked noindex stays live but is not offered to search engines.
+    ...(await getCollection('blog')).filter((post) => !post.data.noindex).map((post) => ({
       path: `/blog/${post.id}`,
       priority: '0.6',
       changefreq: 'yearly',

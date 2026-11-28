@@ -1,5 +1,6 @@
 ---
 title: 'How SKAdNetwork Works: Attribution and Postback Copies'
+seoTitle: 'How SKAdNetwork Works: Attribution and Postbacks'
 kicker: How SKAdNetwork records an install, what happens when six ad networks compete for the same one, and how to receive a copy of the winning postback on your own server.
 date: 2024-10-24
 description: "How SKAdNetwork records an install when six ad networks compete for it, and how to receive a copy of the winning postback on your own server."

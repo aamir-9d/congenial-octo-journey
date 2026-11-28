@@ -1,5 +1,6 @@
 ---
 title: The churn that has nothing to do with your product
+seoTitle: Churn that has nothing to do with your product
 kicker: A large share of subscription cancellations are failed payments, not decisions. Grace Period, Account Hold and in-app messaging are configuration rather than product work — and most teams have never measured the split.
 date: 2026-08-26
 description: "A large share of subscription cancellations are failed payments, not decisions. Grace Period and Account Hold are configuration, not product work."

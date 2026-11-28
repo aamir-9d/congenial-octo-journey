@@ -29,6 +29,17 @@ const blog = defineCollection({
     date: z.coerce.date(),
     /** Mono uppercase label on the row. Keep the set small so it reads as a taxonomy. */
     tag: z.string(),
+    /**
+     * The title for the browser tab and search results, when `title` is too
+     * long for them. 49 characters at most: " — E2E Apps" is added, and
+     * search engines cut a title at about 60. The h1 still shows `title`.
+     */
+    seoTitle: z.string().max(49).optional(),
+    /**
+     * Keep the post live but ask search engines not to index it, and leave it
+     * out of the sitemap. For posts that are off the site's subject.
+     */
+    noindex: z.boolean().optional(),
     /** Search snippet, 160 characters at most. Falls back to the kicker. */
     description: z.string().max(160).optional(),
     /** Byline. Set only where the named person really wrote the post. */

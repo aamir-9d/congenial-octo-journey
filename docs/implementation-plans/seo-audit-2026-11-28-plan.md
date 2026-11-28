@@ -1,6 +1,6 @@
 # SEO, AEO and GEO audit of 28 November 2026: action plan
 
-**Status: code-side actions 2, 5, 6, 7 (part), 8 and 11 delivered 28 November 2026 on branch `seo-audit-fixes`. Actions 1, 3, 4, 9, 10, 12 to 15 are open.**
+**Status: code-side actions 2, 5, 6, 7 (part), 8, 11, 12 and 13 delivered 28 November 2026 (branches `seo-audit-fixes`, then `seo-titles-og`). Actions 1, 3, 4, 9, 10, 14 and 15 are open.**
 
 ## Context
 
@@ -50,6 +50,28 @@ Not done on purpose:
 
 Also delivered: each service page links to `/case-studies` and
 `/mmp-audit-findings` in its body, and the byline links to `/about`.
+
+## Second pass (28 November, after the owner re-ran the audit)
+
+The re-run found ten of sixteen site-side items fixed and listed what was
+left. Done on branch `seo-titles-og`:
+
+- **Titles.** No page title is over 60 characters. Eleven posts carry a
+  shorter `seoTitle` in their front matter for the browser tab and search; the
+  h1 keeps the full headline. The Automation title was shortened too.
+- **Share images.** 25 cards in `public/og/`, one each for the five service
+  pages, every post, and Services, Automation, the calculator, the findings
+  and the case studies. `scripts/build-og-cards.mjs` makes them; the layout
+  picks a card up by the page's path and falls back to the site card.
+  Re-run the script when a post is added or a headline changes.
+- **Off-topic posts.** The three posts about JQL, Pandas and Python are marked
+  `noindex` and left out of the sitemap. They stay live and linked. The audit
+  offered "retire or noindex"; noindex was chosen because it can be undone by
+  deleting one line per post.
+
+Left, because they need the owner: the business postal address and founding
+date in the structured data; structured data for `/products`; and everything
+off-site (links, company profiles, indexing requests).
 
 ## Verification
 

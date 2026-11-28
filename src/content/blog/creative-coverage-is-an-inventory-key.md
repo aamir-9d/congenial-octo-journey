@@ -1,5 +1,6 @@
 ---
 title: Creative coverage is an inventory key, not a taste question
+seoTitle: Creative coverage is an inventory key
 kicker: Every ad surface accepts a particular shape. A missing aspect ratio is not an aesthetic gap — it is a set of auctions your campaign is not eligible to enter, and no bid will buy your way in.
 date: 2026-08-28
 description: "A missing aspect ratio is a set of ad auctions your app campaign is not eligible to enter, and no bid will buy your way in."

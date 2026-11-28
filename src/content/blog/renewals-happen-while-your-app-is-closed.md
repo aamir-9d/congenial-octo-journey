@@ -1,5 +1,6 @@
 ---
 title: Renewals happen while your app is closed. Nothing is listening.
+seoTitle: Renewals happen while your app is closed
 kicker: A renewal is a server-side event on Google's or Apple's infrastructure. No client SDK sees it, so it never reaches your MMP or your ad platforms — and every channel looks worse than it is.
 date: 2026-08-26
 description: "A renewal is a server-side event no client SDK sees, so it never reaches your MMP or ad platforms, and every channel looks worse than it is."
