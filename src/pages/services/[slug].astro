@@ -253,7 +253,8 @@ const schema = {
             <h2 id="svc-related" class="shead__title">One problem per page.</h2>
             <p class="shead__aside">Each shows what apps get wrong and how to fix it.</p>
           </div>
-          <ul class="sbody ggrid ggrid--3 svc__related" role="list">
+          <div class="sbody">
+          <ul class="ggrid ggrid--3 swipe svc__related" role="list" data-swipe>
             {related.map((s, i) => (
               <li class="svc__related-item">
                 <a class="gcard svc__rel" href={`${base}/services/${s.slug}`} style={glow(i)}>
@@ -270,6 +271,11 @@ const schema = {
               </li>
             ))}
           </ul>
+          <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+            <span class="swipe__dots" data-swipe-dots>{related.map(() => <i />)}</span>
+            <span data-swipe-count>1 of {related.length}</span>
+          </div>
+          </div>
           {service.post && (
             <p class="svc__post">
               <a class="pill-link" href={`${base}${service.post.href}`}>
@@ -673,10 +679,17 @@ const schema = {
 
   /* --- related ----------------------------------------------------------- */
 
+  /* No padding reset below 700px: there the list is a swipe row, and its
+     side padding is what lines the first card up with the page gutter. */
   .svc__related {
     margin-bottom: 0;
-    padding: 0;
     list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .svc__related {
+      padding: 0;
+    }
   }
 
   .svc__related-item {

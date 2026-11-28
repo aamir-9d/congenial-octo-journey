@@ -95,7 +95,8 @@ const WAYS: Way[] = [
       <h2 class="shead__title">Start with an audit. Keep going if it is worth it.</h2>
       <p class="shead__aside">Prices are given on a call, once the size of the stack is clear.</p>
     </div>
-    <div class="sbody ggrid ggrid--3">
+    <div class="sbody">
+    <div class="ggrid ggrid--3 swipe" data-swipe>
       {
         WAYS.map((w) => (
           <div
@@ -114,6 +115,11 @@ const WAYS: Way[] = [
           </div>
         ))
       }
+    </div>
+    <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+      <span class="swipe__dots" data-swipe-dots>{WAYS.map(() => <i />)}</span>
+      <span data-swipe-count>1 of {WAYS.length}</span>
+    </div>
     </div>
   </div>
 </section>

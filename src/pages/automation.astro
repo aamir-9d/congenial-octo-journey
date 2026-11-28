@@ -8,7 +8,7 @@ import Footer from '../components/Footer.astro';
 import Icon from '../components/Icon.astro';
 import Investigation from '../components/Investigation.astro';
 import type { IconName } from '../data/icons';
-import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER } from '../data/automation.ts';
+import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER, OFFER, CONNECTIONS } from '../data/automation.ts';
 
 /**
  * /automation
@@ -16,12 +16,17 @@ import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER } from '../data/automat
  * Board: design/v3/Automation.dc.html.
  *
  * Sequence:
- *   1  PageHero: the h1, the two-line promise, one action
+ *   1  PageHero: the h1, the two-line promise, what the service is, one action
+ *   1b What you get: three cards (setup, the E2E Apps MCP, prompts)
  *   2  the live example report (Investigation.astro): four chips, one panel
- *   3  connected sources and assistant options, as cards
+ *   3  connected sources, how each platform connects, assistant options
  *   4  A simple working relationship: Connect, Investigate, Review
  *   5  the detail: three disclosures beside one heading and the action
  *   6  Cta
+ *
+ * 1b and the connection list were added on 28 November 2026: the page showed
+ * a demonstration and never said what was being sold. Every row of cards is a
+ * swipe row below 700px.
  *
  * All copy is the page's own or comes from src/data/automation.ts (the section
  * 3 heading and its aside are the homepage teaser's, held in TEASER). The one
@@ -30,7 +35,7 @@ import { STEPS, DISCLOSURES, SOURCES, ASSISTANTS, TEASER } from '../data/automat
 
 const title = 'AI Reporting & Automation for App Growth — E2E Apps';
 const description =
-  'Connect Google Ads, GA4, AdMob and RevenueCat, ask a business question, and get an answer with the source figures attached.';
+  'We connect Google Ads, GA4, AdMob and RevenueCat to Claude, ChatGPT or Gemini, so you can ask a business question and get an answer with the source figures attached.';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
@@ -53,6 +58,7 @@ const service = {
 const SOURCE_ICONS: IconName[] = ['chart-line', 'cursor-click', 'receipt', 'arrows-clockwise'];
 /* Where each card's glow sits, so a row does not repeat one corner. */
 const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
+const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
 ---
 
 <Base title={title} description={description} path="/automation">
@@ -72,17 +78,59 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
       >
         <Fragment>
           <p class="intro__line">See what changed.<br />Know what to check.</p>
-          <p class="intro__copy">Connect your growth data. Get answers with the source figures attached.</p>
+          <p class="intro__copy">
+            We connect your ad platforms, analytics and subscription data to Claude or ChatGPT. You
+            ask a question in plain words and get an answer with the source figures attached.
+          </p>
         </Fragment>
       </PageHero>
 
-      {/* --------------------------------------------- 2 · the evidence --- */}
-      <section class="section" data-section="automation-report">
+      {/* --------------------------------------------- 1b · the offer ----- */}
+      <section class="section" data-section="automation-offer" data-added="automation-offer-2026-11">
         <div class="wrap">
           <div class="shead" data-reveal="1">
-            <p class="shead__label">Example investigations</p>
+            <p class="shead__label">What you get</p>
+            <h2 class="shead__title">Your growth stack, answering in plain words.</h2>
+            <p class="shead__aside">
+              We set it up, define the metrics, and keep it read-only unless you approve a change.
+            </p>
+          </div>
+
+          <div class="sbody">
+            <div class="ggrid ggrid--3 swipe" data-swipe>
+              {
+                OFFER.map((o, i) => (
+                  <div class:list={['gcard', { 'gcard--lead': i === 0 }]} style={`--gx:${GLOW[i % GLOW.length]}`}>
+                    <span class="offer__top">
+                      <span class="gcard__icon">
+                        <Icon name={OFFER_ICONS[i] ?? 'stack'} size={24} />
+                      </span>
+                      {o.soon && <span class="tag tag--review">Coming</span>}
+                    </span>
+                    <h3 class="gcard__title">{o.title}</h3>
+                    <p class="gcard__text">{o.body}</p>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{OFFER.map(() => <i />)}</span>
+              <span data-swipe-count>1 of {OFFER.length}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --------------------------------------------- 2 · the evidence --- */}
+      <section class="section section--band" data-section="automation-report">
+        <div class="wrap">
+          <div class="shead" data-reveal="1">
+            <p class="shead__label">What asking looks like</p>
             <h2 class="shead__title">Ask a business question.</h2>
-            <p class="shead__aside">{TEASER.body}</p>
+            <p class="shead__aside">
+              Ask about spend, user behavior and revenue. Get an answer with the source figures
+              attached.
+            </p>
           </div>
 
           <div class="sbody">
@@ -92,7 +140,7 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
       </section>
 
       {/* ------------------- 3 · integrations, supporting the story ------- */}
-      <section class="section section--band" data-section="automation-sources" data-added="redesign-2026-11">
+      <section class="section" data-section="automation-sources" data-added="redesign-2026-11">
         <div class="wrap">
           <div class="shead" data-reveal="1">
             <p class="shead__label">{TEASER.sourcesLabel}</p>
@@ -120,8 +168,23 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
               <span data-swipe-count>1 of {SOURCES.length}</span>
             </div>
 
-            <h3 class="sub sub--next">Assistant options</h3>
-            <div class="ggrid ggrid--3 opts">
+            <h3 class="sub sub--next">How each platform connects</h3>
+            <ul class="conn" role="list">
+              {
+                CONNECTIONS.map((c) => (
+                  <li class="conn__row">
+                    <span class="conn__name">{c.name}</span>
+                    <span class="conn__route">{c.route}</span>
+                    <span class="conn__access">{c.access}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+
+          <div class="sbody">
+            <h3 class="sub">Assistant options</h3>
+            <div class="ggrid ggrid--3 swipe opts" data-swipe>
               {
                 ASSISTANTS.map((a, i) => (
                   <div class="gcard" style={`--gx:${GLOW[(i + 1) % GLOW.length]}`}>
@@ -131,19 +194,24 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
                 ))
               }
             </div>
+            <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+              <span class="swipe__dots" data-swipe-dots>{ASSISTANTS.map(() => <i />)}</span>
+              <span data-swipe-count>1 of {ASSISTANTS.length}</span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* --------------------------------------------- 4 · how we work ---- */}
-      <section class="section" data-section="automation-process">
+      <section class="section section--band" data-section="automation-process">
         <div class="wrap">
           <div class="shead" data-reveal="1">
             <p class="shead__label">How it runs</p>
             <h2 class="shead__title">A simple working relationship.</h2>
           </div>
 
-          <ol class="sbody ggrid ggrid--3 steps">
+          <div class="sbody">
+          <ol class="ggrid ggrid--3 swipe steps" data-swipe data-swipe-label="Step">
             {
               STEPS.map((s, i) => (
                 <li class="gcard step" style={`--gx:${GLOW[(i + 2) % GLOW.length]}`}>
@@ -156,6 +224,11 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
               ))
             }
           </ol>
+          <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+            <span class="swipe__dots" data-swipe-dots>{STEPS.map(() => <i />)}</span>
+            <span data-swipe-count>Step 1 of {STEPS.length}</span>
+          </div>
+          </div>
         </div>
       </section>
 
@@ -272,15 +345,75 @@ const GLOW = ['100%;--gy:0%', '100%;--gy:100%', '0%;--gy:0%', '0%;--gy:100%'];
 
   /* --- 4 · how we work ----------------------------------------------------- */
 
+  /* No padding reset below 700px: there the list is a swipe row, and its side
+     padding is what lines the first card up with the page gutter. */
   .steps {
     list-style: none;
     margin-bottom: 0;
-    padding: 0;
   }
 
   @media (min-width: 700px) {
     .steps {
+      padding: 0;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* --- 1b · the offer ------------------------------------------------------ */
+
+  .offer__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+  }
+
+  /* --- how each platform connects ------------------------------------------
+     Three columns where there is room; on a phone each platform is a short
+     block, so nothing has to scroll sideways. */
+  .conn {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--ring);
+  }
+
+  .conn__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 14px clamp(16px, 2.4vw, 28px);
+  }
+
+  .conn__row + .conn__row {
+    border-top: 1px solid var(--color-line-soft);
+  }
+
+  .conn__name {
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
+  }
+
+  .conn__route {
+    color: var(--color-text-2);
+  }
+
+  .conn__access {
+    font-size: var(--t-card-sm);
+    color: var(--color-text-3);
+  }
+
+  @media (min-width: 700px) {
+    .conn__row {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 5fr) minmax(0, 5fr);
+      gap: var(--s8);
+      align-items: baseline;
+    }
+
+    .conn__access {
+      font-size: inherit;
     }
   }
 

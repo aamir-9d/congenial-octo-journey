@@ -435,6 +435,21 @@ wash and a blue wash, and dark sections. Rules:
 - Judge the light theme from screenshots of the light theme. It shipped
   washed out once because only token contrast was checked, not the page.
 
+### Phone layout rules (28 Nov)
+
+- A row of equal cards is ONE swipe row below 700px (`swipe` + `data-swipe`,
+  then a `swipe__meta` block as its next sibling). Every card goes in the row,
+  including a lead card that is full width on desktop: make it a child of the
+  grid with `grid-column: 1 / -1`. Lists, accordions, long text and forms stack.
+- Write the dots and the counter from the same array as the cards.
+- A scoped rule on the row outranks `.swipe`. Do not set `display`, or a
+  `padding` reset, on a swipe row outside a `min-width: 700px` query: the first
+  stacks the cards under their dots, the second pulls the first card off the
+  page gutter.
+- A photograph with a data card: on a phone the card goes under the
+  photograph, not over it.
+- No `filter: blur()` on large decorative layers below 700px.
+
 ## Flagged, not fixed
 
 The brief says that if something looks wrong, leave it and note it. These

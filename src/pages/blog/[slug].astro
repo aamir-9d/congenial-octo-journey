@@ -173,7 +173,8 @@ const stamp = (d: Date) =>
             </div>
           </div>
 
-          <ul class="sbody ggrid ggrid--3 next__list" role="list">
+          <div class="sbody">
+          <ul class="ggrid ggrid--3 swipe next__list" role="list" data-swipe data-swipe-label="Post">
             {
               related.map((p, i) => (
                 <li class="next__item">
@@ -198,6 +199,11 @@ const stamp = (d: Date) =>
               ))
             }
           </ul>
+          <div class="swipe__meta" data-swipe-meta aria-hidden="true">
+            <span class="swipe__dots" data-swipe-dots>{related.map(() => <i />)}</span>
+            <span data-swipe-count>Post 1 of {related.length}</span>
+          </div>
+          </div>
         </div>
       </nav>
 
@@ -691,10 +697,17 @@ const stamp = (d: Date) =>
     color: var(--color-accent-text);
   }
 
+  /* No padding reset below 700px: there the list is a swipe row, and its
+     side padding is what lines the first card up with the page gutter. */
   .next__list {
     margin-bottom: 0;
-    padding: 0;
     list-style: none;
+  }
+
+  @media (min-width: 700px) {
+    .next__list {
+      padding: 0;
+    }
   }
 
   .next__item {

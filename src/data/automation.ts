@@ -35,6 +35,48 @@
  * server.
  */
 
+/**
+ * What a client gets. The page opened on a demonstration and a list of
+ * connections and never said what was for sale; these three cards are the
+ * answer, and they sit directly under the header.
+ *
+ * The second is a public tool that does not exist yet. It is marked `soon` and
+ * the page shows that word; change it only when the server is live.
+ */
+export const OFFER = [
+  {
+    title: 'Setup',
+    body: 'We connect your ad, analytics and subscription accounts to Claude, ChatGPT or Gemini. Access is to named accounts, and read-only unless you approve a change.',
+    soon: false,
+  },
+  {
+    title: 'The E2E Apps MCP',
+    body: 'Our audit method as tools your assistant can call: the payback calculation, the attribution audit checklist and the common faults. Free to use.',
+    soon: true,
+  },
+  {
+    title: 'Prompts and definitions',
+    body: 'Saved questions for the weekly review, a spend change, a funnel drop and a renewal change, with agreed metric definitions, so two people asking get the same number.',
+    soon: false,
+  },
+] as const;
+
+/**
+ * How each platform connects, one row each. The first four restate what
+ * DISCLOSURES says in full; the last four are platforms clients ask about that
+ * have not been set up and checked, and say so rather than implying support.
+ */
+export const CONNECTIONS = [
+  { name: 'Google Ads', route: 'Official MCP server', access: 'Read-only' },
+  { name: 'GA4', route: 'Official Google Analytics MCP server', access: 'Reporting reads' },
+  { name: 'AdMob', route: 'Our adapter over the documented REST API', access: 'Reporting reads' },
+  { name: 'RevenueCat', route: 'Official hosted MCP server', access: 'Only the tools an engagement needs' },
+  { name: 'Meta Ads', route: 'On request', access: 'Scoped and checked before it is offered' },
+  { name: 'TikTok Ads', route: 'On request', access: 'Scoped and checked before it is offered' },
+  { name: 'Google Play', route: 'On request', access: 'Scoped and checked before it is offered' },
+  { name: 'App Store Connect', route: 'On request', access: 'Scoped and checked before it is offered' },
+] as const;
+
 /** Four connected sources. GA4 covers the behaviour gap between the other three. */
 export const SOURCES = [
   { name: 'Google Ads', note: 'Campaigns · spend' },
@@ -291,7 +333,7 @@ export const DISCLOSURES: Disclosure[] = [
 export const TEASER = {
   eyebrow: 'AI reporting & automation',
   heading: ['Your numbers.', 'A clearer picture.'],
-  body: 'Ask about spend, user behavior and revenue. Get an answer with the source figures attached.',
+  body: 'Your ad platforms, analytics and subscription data, connected to Claude or ChatGPT. Ask in plain words and get an answer with the source figures attached.',
   support: 'Use Claude, ChatGPT or Gemini.',
   primary: 'Explore automation',
   sourcesLabel: 'Connected sources',

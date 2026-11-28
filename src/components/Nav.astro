@@ -37,11 +37,14 @@ const anchor = (href: string) => (href.startsWith('#') ? `${base}/${href}` : hre
 const links = [
   { href: '#loop', label: 'Approach' },
   { href: `${base}/services`, label: 'Services' },
+  { href: `${base}/payback-calculator`, label: 'Calculator' },
   { href: `${base}/automation`, label: 'Automation' },
   { href: `${base}/products`, label: 'Products' },
   { href: `${base}/blog`, label: 'Blog' },
-  { href: `${base}/faq`, label: 'FAQ' },
 ];
+/* The calculator is the tool visitors are sent to most, so it has a place in
+   the bar. FAQ gave up its place for it (owner's decision, 28 November 2026):
+   it stays in the phone menu below and in the footer. */
 
 /* The sheet rows carry a one-line description each. New copy, on the sign-off
    list — a bare label list would have been cheaper, but on a phone the whole
@@ -49,7 +52,8 @@ const links = [
 const sheetLinks: { href: string; label: string; note: string; icon: IconName }[] = [
   { href: '#loop', label: 'Approach', note: 'Four stations, one cycle', icon: 'arrows-clockwise' },
   { href: `${base}/services`, label: 'Services', note: 'What breaks, and the work that fixes it', icon: 'stack' },
-  { href: `${base}/automation`, label: 'Automation', note: 'One question across the whole stack', icon: 'plugs-connected' },
+  { href: `${base}/payback-calculator`, label: 'Calculator', note: 'The day a campaign earns its spend back', icon: 'chart-line' },
+  { href: `${base}/automation`, label: 'Automation', note: 'Your stack, connected to Claude or ChatGPT', icon: 'plugs-connected' },
   { href: `${base}/products`, label: 'Products', note: 'Tools built for this work', icon: 'cube' },
   { href: `${base}/blog`, label: 'Blog', note: 'Findings from live stacks', icon: 'article' },
   { href: `${base}/faq`, label: 'FAQ', note: 'Before you book', icon: 'question' },

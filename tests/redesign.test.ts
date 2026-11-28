@@ -394,6 +394,51 @@ test('every swipe row has a dot for each card', { skip }, () => {
   assert.match(script, /prefers-reduced-motion/, 'the rows move on by themselves even when motion is reduced');
 });
 
+test('on every page a swipe row counts the cards it holds', { skip }, () => {
+  // The owner's phone, 28 November 2026: /services showed the audit as one tall
+  // stacked card and then a row of the other four counting "4 of 4", and the
+  // homepage showed three stacked posts over dots reading "Post 2 of 3". Both
+  // were a counter describing a row that was not the row on screen. The rule
+  // since: a row of equal cards is ONE swipe row below 700px, every card in it,
+  // and its dots and counter are written from the same list as the cards.
+  const pages = ['services.html', 'automation.html', 'mmp-audit-findings.html', 'about.html'];
+  const first = (dir: string) =>
+    fs.readdirSync(path.join(DIST, dir)).filter((f) => f.endsWith('.html')).map((f) => `${dir}/${f}`)[0]!;
+  pages.push(first('services'), first('blog'));
+
+  for (const page of pages) {
+    const html = fs.readFileSync(path.join(DIST, page), 'utf8');
+    const rows = [...html.matchAll(/<[a-z]+\b[^>]*\sdata-swipe(?=[\s>])[^>]*>/g)];
+    assert.ok(rows.length > 0, `${page}: no swipe row at all`);
+
+    for (const row of rows) {
+      const name = /class="([^"]*)"/.exec(row[0])?.[1] ?? row[0];
+      const { end, children } = element(html, row.index!);
+      const after = html.slice(end);
+      const meta = /^\s*<div\b[^>]*\sdata-swipe-meta(?=[\s>])[^>]*>/.exec(after);
+      assert.ok(meta, `${page} .${name}: the row is not followed by its [data-swipe-meta] block`);
+
+      const block = after.slice(0, element(after, meta!.index).end);
+      const dots = /<span\b[^>]*\sdata-swipe-dots(?=[\s>])[^>]*>([\s\S]*?)<\/span>/.exec(block)?.[1] ?? '';
+      assert.equal((dots.match(/<i\b/g) ?? []).length, children, `${page} .${name}: ${children} cards but a different number of dots`);
+
+      const counter = text(/<span\b[^>]*\sdata-swipe-count(?=[\s>])[^>]*>([\s\S]*?)<\/span>/.exec(block)?.[1] ?? '');
+      assert.match(counter, new RegExp(`\\b1 of ${children}$`), `${page} .${name}: the counter reads "${counter}" for ${children} cards`);
+    }
+  }
+
+  // The audit is in the services row, not above it.
+  const services = fs.readFileSync(path.join(DIST, 'services.html'), 'utf8');
+  const at = services.indexOf('data-section="specialist-services"');
+  const row = /<[a-z]+\b[^>]*\sdata-swipe(?=[\s>])[^>]*>/.exec(services.slice(at))!;
+  assert.equal(element(services, at + row.index).children, SERVICES.length, 'the services row does not hold all the services');
+});
+
+test('the calculator is in the top bar', { skip }, () => {
+  const bar = /<div id="nav-links"[^>]*>([\s\S]*?)<\/div>/.exec(home)?.[1] ?? '';
+  assert.match(bar, /href="\/payback-calculator"[^>]*>Calculator</, 'the top bar has no Calculator link');
+});
+
 test('the services row links every service page, the audit first', { skip }, () => {
   // "Start with the audit if you do not know which one you need." The lead
   // card is the audit, and each card goes to the page its name comes from.
