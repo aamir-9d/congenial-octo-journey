@@ -10,12 +10,15 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
    harmless default.
 
    One button, at the owner's request. Nothing is collected until it is pressed;
-   /privacy carries the control that turns collection off again. */
+   /privacy carries the control that turns collection off again.
+
+   `data-nosnippet`: the banner is in every page's HTML, and Google was quoting
+   it as the search description of pages in place of their own. */
 const enabled = /^GTM-[A-Z0-9]+$/.test(import.meta.env.PUBLIC_GTM_ID ?? '');
 ---
 
 {enabled && (
-<div id="consent-banner" class="consent" data-added="phase-3" role="dialog" aria-label="Cookie choices" aria-live="polite" hidden>
+<div id="consent-banner" class="consent" data-added="phase-3" data-nosnippet role="dialog" aria-label="Cookie choices" aria-live="polite" hidden>
   <div class="consent__inner">
     <p class="consent__copy">
       We use analytics and advertising cookies to see what brings people here and make the site

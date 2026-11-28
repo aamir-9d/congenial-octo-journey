@@ -77,7 +77,7 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
         section="automation-intro"
       >
         <Fragment>
-          <p class="intro__line">See what changed.<br />Know what to check.</p>
+          <p class="phero__line">See what changed.<br />Know what to check.</p>
           <p class="intro__copy">
             We connect your ad platforms, analytics and subscription data to Claude or ChatGPT. You
             ask a question in plain words and get an answer with the source figures attached.
@@ -276,17 +276,8 @@ const OFFER_ICONS: IconName[] = ['plugs-connected', 'stack', 'list'];
 
   /* --- 1 · introduction ---------------------------------------------------- */
 
-  /* The display line under the h1: the promise, set as large as a lead allows
-     without competing with the heading above it. */
-  .intro__line {
-    margin: var(--s8) auto 0;
-    font-family: var(--font-heading);
-    font-size: clamp(21px, 2.3vw, 30px);
-    font-weight: var(--fw-semibold);
-    line-height: 1.22;
-    letter-spacing: var(--ls-h3);
-    color: var(--color-text);
-  }
+  /* The display line under the h1 is the shared `.phero__line`
+     (src/styles/redesign.css). */
 
   .intro__copy {
     margin: var(--s4) auto 0;

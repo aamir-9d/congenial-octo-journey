@@ -95,7 +95,8 @@ const schema = {
         section="service-intro"
       >
         <p class="svc__byline">
-          By {author.name}, updated <time datetime={UPDATED.iso}>{UPDATED.label}</time>
+          By <a class="link" href={`${base}/about`}>{author.name}</a>, updated{' '}
+          <time datetime={UPDATED.iso}>{UPDATED.label}</time>
         </p>
       </PageHero>
 
@@ -276,14 +277,22 @@ const schema = {
             <span data-swipe-count>1 of {related.length}</span>
           </div>
           </div>
-          {service.post && (
-            <p class="svc__post">
+          <p class="svc__post">
+            <a class="pill-link" href={`${base}/case-studies`}>
+              Case studies
+              <Icon name="arrow-right" size={15} />
+            </a>
+            <a class="pill-link" href={`${base}/mmp-audit-findings`}>
+              What attribution audits keep finding
+              <Icon name="arrow-right" size={15} />
+            </a>
+            {service.post && (
               <a class="pill-link" href={`${base}${service.post.href}`}>
                 Read: {service.post.label}
                 <Icon name="arrow-right" size={15} />
               </a>
-            </p>
-          )}
+            )}
+          </p>
         </nav>
       </section>
 
@@ -719,6 +728,9 @@ const schema = {
   }
 
   .svc__post {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s3);
     margin-top: var(--s8);
   }
 

@@ -314,3 +314,185 @@ test('no built page shows the number of audits', { skip }, () => {
 
   assert.deepEqual(hits, [], 'The number of audits is on show:\n  ' + hits.join('\n  '));
 });
+
+/**
+ * The November 2026 search audit.
+ *
+ * Each test below pins one thing that audit found missing, so a later rewrite
+ * of a page header cannot quietly take it away again.
+ */
+const hero = (html: string) => /<section\b[^>]*class="phero[" ][\s\S]*?<\/section>/.exec(html)?.[0] ?? '';
+const text = (h: string) => plain(h.replace(/&#x27;/g, "'"));
+/** Every built page, as a path under dist/ with forward slashes. */
+const htmlFiles = (dir: string, prefix = ''): string[] =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
+    e.isDirectory()
+      ? e.name === '_astro' ? [] : htmlFiles(path.join(dir, e.name), `${prefix}${e.name}/`)
+      : e.name.endsWith('.html') ? [`${prefix}${e.name}`] : [],
+  );
+
+test('the cookie banner is marked so search engines do not quote it', () => {
+  // Google showed the banner's sentence as the description of two pages. The
+  // banner only builds when a tag container is configured, so the source is
+  // the thing to check; the built page is checked too whenever it has one.
+  const src = fs.readFileSync(path.resolve(import.meta.dirname, '..', 'src/components/ConsentBanner.astro'), 'utf8');
+  const root = /<div id="consent-banner"[^>]*>/.exec(src)?.[0] ?? '';
+  assert.ok(root, 'the banner root was not found');
+  assert.match(root, /\sdata-nosnippet[\s>=]/, 'the banner root has no data-nosnippet');
+
+  if (!built) return;
+  const builtRoot = /<div id="consent-banner"[^>]*>/.exec(read('index.html'))?.[0];
+  if (builtRoot) assert.match(builtRoot, /\sdata-nosnippet[\s>=]/, 'the built banner has no data-nosnippet');
+});
+
+test('the key pages name E2E Apps in the opening paragraph of the page header', { skip }, () => {
+  // AI answers credit a passage to the name written in it. The title, the logo
+  // and the schema do not count: the name has to be in the copy.
+  const pages = ['index', 'services', 'mmp-audit-findings', 'case-studies', 'payback-calculator', 'products', 'blog', 'faq'];
+  for (const page of pages) {
+    const lead = /<p class="phero__lead"[^>]*>([\s\S]*?)<\/p>/.exec(hero(read(`${page}.html`)))?.[1];
+    assert.ok(lead, `/${page} has no lead in its page header`);
+    assert.match(text(lead!), /E2E Apps/, `/${page}: the lead does not name E2E Apps`);
+  }
+});
+
+test('four page headers lead with the topic and keep their headline as a display line', { skip }, () => {
+  const want: Record<string, [string, string]> = {
+    services: ['Mobile attribution services for subscription apps', 'Three places the money goes missing. And one place it was never there.'],
+    'case-studies': ['Mobile attribution case studies', 'What was wrong, what changed, and what the numbers show'],
+    blog: ['Mobile attribution blog', "What we're finding in live stacks"],
+    faq: ['Mobile attribution audit FAQ', 'Questions people ask before booking.'],
+  };
+  for (const [page, [h1, line]] of Object.entries(want)) {
+    const h = hero(read(`${page}.html`));
+    assert.equal(text(/<h1 class="phero__title"[^>]*>([\s\S]*?)<\/h1>/.exec(h)?.[1] ?? ''), h1, `/${page} h1`);
+    // The line follows the h1 directly, and is a paragraph: one h1 per page.
+    const after = /<\/h1>\s*<p class="phero__line"[^>]*>([\s\S]*?)<\/p>/.exec(h)?.[1];
+    assert.ok(after, `/${page}: no display line directly under the h1`);
+    assert.equal(text(after!), line, `/${page} display line`);
+  }
+});
+
+test('the business node links no personal profile; each person keeps theirs', { skip }, () => {
+  for (const page of ['index.html', 'about.html', 'faq.html']) {
+    const all = nodes(read(page));
+    const business = all.find((n) => n['@type'] === 'ProfessionalService' && n.employee);
+    assert.ok(business, `${page} has no business node`);
+    // sameAs is for profiles of the business. Empty is not allowed either:
+    // the property is left out until a company profile exists.
+    const same: string[] = business.sameAs ?? [];
+    assert.ok(business.sameAs === undefined || same.length > 0, `${page}: sameAs is present but empty`);
+    for (const u of same) assert.doesNotMatch(u, /linkedin\.com\/in\//, `${page}: the business sameAs lists a personal profile`);
+
+    const people = all.filter((n) => n['@type'] === 'Person');
+    assert.equal(people.length, 2, `${page}: both founders`);
+    for (const p of people) assert.match(p.sameAs?.[0] ?? '', /linkedin\.com\/in\//, `${p.name} lost their profile`);
+  }
+});
+
+test('/blog carries a Blog node that lists every post on the page', { skip }, () => {
+  const html = read('blog.html');
+  const blog = nodes(html).find((n) => n['@type'] === 'Blog');
+  assert.ok(blog, '/blog has no Blog node');
+  assert.equal(blog.url, 'https://e2eapp.com/blog');
+
+  const files = fs.readdirSync(path.join(DIST, 'blog')).filter((f) => f.endsWith('.html') && f !== 'index.html');
+  const urls: string[] = blog.blogPost.map((p: { url: string }) => p.url);
+  assert.equal(urls.length, files.length, 'the Blog node and the built posts disagree');
+  for (const f of files) {
+    const slug = f.replace(/\.html$/, '');
+    assert.ok(urls.includes(`https://e2eapp.com/blog/${slug}`), `${slug} is not in the Blog node`);
+    assert.match(html, new RegExp(`href="/blog/${slug}"`), `${slug} is in the Blog node but not linked on the page`);
+  }
+  for (const p of blog.blogPost) {
+    assert.match(p.datePublished, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(p.headline, 'a listed post has no headline');
+  }
+});
+
+test('titles outside the blog posts fit in 60 characters and name the brand', { skip }, () => {
+  // Google cuts a title at about 60 characters, and the brand is at the end.
+  const pages = htmlFiles(DIST).filter((f) => !/^blog\/(?!index\.html$)/.test(f) && !/\/index\.html$/.test(f));
+  assert.ok(pages.length >= 15, `only ${pages.length} pages checked`);
+  for (const file of pages) {
+    const title = text(/<title>([\s\S]*?)<\/title>/.exec(read(file))?.[1] ?? '');
+    assert.ok(title.length > 0 && title.length <= 60, `${file}: title is ${title.length} characters: "${title}"`);
+    assert.match(title, /E2E Apps/, `${file}: the title does not name E2E Apps`);
+  }
+});
+
+test('every sitemap URL has a lastmod, and none is later than today', { skip }, () => {
+  const sitemap = read('sitemap.xml');
+  const entries = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]!);
+  assert.ok(entries.length >= 30, `only ${entries.length} URLs in the sitemap`);
+  const today = new Date().toISOString().slice(0, 10);
+  for (const e of entries) {
+    const loc = /<loc>([^<]+)<\/loc>/.exec(e)?.[1];
+    const lastmod = /<lastmod>([^<]+)<\/lastmod>/.exec(e)?.[1];
+    assert.ok(lastmod, `${loc} has no lastmod`);
+    assert.match(lastmod!, /^\d{4}-\d{2}-\d{2}$/, `${loc}: lastmod is not a date`);
+    // A typed date, never the build date: it cannot be ahead of the build.
+    assert.ok(lastmod! <= today, `${loc}: lastmod ${lastmod} is in the future`);
+  }
+  // A service page's lastmod is the date its byline prints.
+  for (const s of SERVICES) {
+    const shown = /<time datetime="(\d{4}-\d{2}-\d{2})"/.exec(hero(read(`services/${s.slug}.html`)))?.[1];
+    const mapped = new RegExp(`/services/${s.slug}</loc>\\s*<lastmod>([^<]+)</lastmod>`).exec(sitemap)?.[1];
+    assert.ok(shown, `${s.slug}: no dated byline`);
+    assert.equal(mapped, shown, `${s.slug}: the sitemap and the byline give different dates`);
+  }
+});
+
+test('/favicon.ico is a real icon file wrapping the PNG icons', { skip }, () => {
+  const ico = fs.readFileSync(path.join(DIST, 'favicon.ico'));
+  assert.equal(ico.readUInt16LE(0), 0, 'reserved field');
+  assert.equal(ico.readUInt16LE(2), 1, 'not an icon file');
+  assert.equal(ico.readUInt16LE(4), 3, 'expected the 16, 32 and 48px images');
+  const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  [16, 32, 48].forEach((size, i) => {
+    const at = 6 + i * 16;
+    assert.equal(ico.readUInt8(at), size, `image ${i + 1} width`);
+    const length = ico.readUInt32LE(at + 8);
+    const offset = ico.readUInt32LE(at + 12);
+    const image = ico.subarray(offset, offset + length);
+    assert.ok(image.subarray(0, 8).equals(PNG), `image ${i + 1} is not a PNG`);
+    // The same bytes as the PNG served on its own.
+    assert.ok(image.equals(fs.readFileSync(path.join(DIST, `favicon-${size}.png`))), `image ${i + 1} is not favicon-${size}.png`);
+  });
+});
+
+test('/llms.txt names the business, links only pages that exist, and shows no audit count', { skip }, () => {
+  const txt = read('llms.txt').replace(/\r\n/g, '\n');
+  assert.match(txt, /^# E2E Apps\n/);
+  assert.match(txt, /hello@e2eapp\.com/);
+  const links = [...txt.matchAll(/\]\((https:\/\/e2eapp\.com[^)]*)\)/g)].map((m) => m[1]!);
+  assert.ok(links.length >= 12, 'too few pages listed');
+  const sitemap = read('sitemap.xml');
+  for (const url of links) {
+    if (url.endsWith('/sitemap.xml')) continue;
+    assert.ok(sitemap.includes(`<loc>${url}</loc>`), `${url} is in llms.txt but not in the sitemap`);
+  }
+  // Stricter than the page sweep: the file is short, so the number of audits
+  // may not appear in it at all, as a numeral or as a word.
+  const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  const word = WORDS[AUDIT_COUNT];
+  assert.doesNotMatch(txt, new RegExp(`\b(?:${AUDIT_COUNT}${word ? `|${word}` : ''})\b`, 'i'), 'llms.txt shows the number of audits');
+});
+
+test('each service page links its proof and the about page from its own copy', { skip }, () => {
+  for (const s of SERVICES) {
+    const html = read(`services/${s.slug}.html`);
+    const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+    assert.match(main, /href="\/case-studies"/, `${s.slug} does not link the case studies`);
+    assert.match(main, /href="\/mmp-audit-findings"/, `${s.slug} does not link the audit findings`);
+    assert.match(main, /href="\/about"/, `${s.slug} does not link /about`);
+  }
+});
+
+test('/terms no longer refers to a homepage section that is gone', { skip }, () => {
+  const html = read('terms.html');
+  assert.doesNotMatch(html, /Three findings/);
+  assert.match(text(html), /The figures on the findings and case-study pages/);
+  // The disclaimer under it is word for word what it was.
+  assert.match(text(html), /They are not a forecast of what we would find in yours, and they are not a promise of a result\./);
+});

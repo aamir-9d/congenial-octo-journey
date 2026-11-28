@@ -39,6 +39,27 @@ const title = 'Mobile Attribution & App Growth Blog — E2E Apps';
 const description =
   'Findings from live mobile measurement stacks: SKAdNetwork, Mixpanel JQL, and the Python that turns onboarding data into conversion rates.';
 
+/* The index as a Blog node listing every post, built from the same sorted
+   collection the grid renders, so the two cannot disagree. */
+const home = new URL(`${base}/`, Astro.site).href;
+const blogUrl = new URL(`${base}/blog`, Astro.site).href;
+const blogSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  '@id': `${blogUrl}#blog`,
+  name: 'E2E Apps blog',
+  description,
+  url: blogUrl,
+  inLanguage: 'en',
+  publisher: { '@type': 'Organization', '@id': `${home}#business`, name: 'E2E Apps', url: home },
+  blogPost: posts.map((p) => ({
+    '@type': 'BlogPosting',
+    headline: p.data.title,
+    url: new URL(`${base}/blog/${p.id}`, Astro.site).href,
+    datePublished: p.data.date.toISOString().slice(0, 10),
+  })),
+};
+
 /* The featured card. */
 const featured = posts.find((p) => p.id === CASE_STUDY.slug);
 const money = (n: number) => `$${n.toFixed(2)}`;
@@ -62,14 +83,16 @@ const filterCss = tags
 ---
 
 <Base title={title} description={description} path="/blog">
+  <script slot="head" type="application/ld+json" is:inline set:html={JSON.stringify(blogSchema)} />
   <div class="page">
     <Nav />
     <main id="main">
       <Breadcrumbs trail={[{ name: 'Blog', path: '/blog' }]} />
       <PageHero
         label="From the blog"
-        title="What we're finding in live stacks"
-        lead="Written while the work was happening, not afterwards. Every one of these started as a problem in somebody's stack."
+        title="Mobile attribution blog"
+        line="What we're finding in live stacks"
+        lead="Written by E2E Apps while the work was happening, not afterwards. Every one of these started as a problem in somebody's stack."
         section="blog-hero"
       />
 

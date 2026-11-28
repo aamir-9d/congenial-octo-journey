@@ -109,6 +109,25 @@ a {
   line-height: 1.06;
 }
 
+/* The display line under the h1: the page's own headline, set as large as a
+   lead allows without competing with the heading above it. Shared by
+   <PageHero line> and the /automation header. */
+.phero__line {
+  margin: var(--s8) auto 0;
+  max-width: 34ch;
+  font-family: var(--font-heading);
+  font-size: clamp(21px, 2.3vw, 30px);
+  font-weight: var(--fw-semibold);
+  line-height: 1.22;
+  letter-spacing: var(--ls-h3);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+.phero__line + .phero__lead {
+  margin-top: var(--s4);
+}
+
 .phero__lead {
   margin: var(--s8) auto 0;
   max-width: 60ch;

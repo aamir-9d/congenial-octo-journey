@@ -10,19 +10,25 @@ import Icon from './Icon.astro';
  * The styles are `.phero*` in src/styles/redesign.css. Put a <Breadcrumbs>
  * above this component, not inside it. Anything passed as children renders
  * under the lead (a byline, a second link).
+ *
+ * `line` is a display line directly under the h1. The h1 names the topic in
+ * the words a searcher types; the line carries the page's own headline. It is
+ * a paragraph, not a heading, so the page keeps exactly one h1.
  */
 interface Props {
   /** Small mono line above the headline. */
   label: string;
   /** The page's h1. */
   title: string;
+  /** Display line under the h1 (`.phero__line`). */
+  line?: string;
   lead?: string;
   cta?: { href: string; text: string };
   /** `data-section` value, for the tests that read section order. */
   section?: string;
 }
 
-const { label, title, lead, cta, section = 'page-hero' } = Astro.props;
+const { label, title, line, lead, cta, section = 'page-hero' } = Astro.props;
 ---
 
 <section class="phero" data-section={section}>
@@ -30,6 +36,7 @@ const { label, title, lead, cta, section = 'page-hero' } = Astro.props;
   <div class="phero__inner">
     <p class="phero__label">{label}</p>
     <h1 class="phero__title">{title}</h1>
+    {line && <p class="phero__line">{line}</p>}
     {lead && <p class="phero__lead">{lead}</p>}
     {
       cta && (
